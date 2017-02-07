@@ -1,0 +1,53 @@
+
+.path.bin32 = .
+.path.obj32 = OBJ
+.path.asm32 = ASM
+
+mb: mboot32.bin32
+
+mbbuild: mbclean mb
+
+mbclean:
+  @if exist mboot32.bin32 del mboot32.bin32
+  @if exist mboot32.bin32 del mboot32.exe32
+  @if exist mboot32.map del mboot32.map
+  @if exist mboot32.err del mboot32.err
+  @if exist asm\mboot32.asm32 del asm\mboot32.asm32
+  @if exist obj\mboot32.obj32 del obj\mboot32.obj32
+  @if exist lst\mboot32.lst32 del lst\mboot32.lst32
+  @if exist mboot32.tmp32 del mboot32.tmp32
+
+# AJMB    representa el tamaño del codigo (TEXT) de ajustes.c (mirar en SO1.MAP)
+#         mas el tamaño de la cabecera multiboot de mboot.c (mirar en MULTIBOOT.H
+#         y calcular sizeof(multiboot_header))
+# AJMBEXE representa AJMB mas el tamaño de la cabecera de so1.exe (ejecutar
+#         \PRGTOOLS\BIN\EXE2BIN.EXE -c so1.exe o tdump so1.exe)
+AJMB    = 242            # 0xB2 + 8*8 = 178 + 64 = 242
+AJMBEXE = 290            # 242 + 48 = 290
+
+# En MBOOT.C debe estar ajustado tamFichBin con el tamaño del fichero so1.bin,
+# con el fin de inicializar correctamente la cabecera multiboot.
+
+mboot32.bin32: obj\mboot32.obj32
+  jwlink format raw bin op map, quiet, offset=0x00220000, start=_STARTBIN32 \
+file obj\mboot32.obj32 name mboot32.bin32
+  extraer mboot32.bin32 $(AJMB) 0 mboot32.tmp32
+  parchear so1.bin $(AJMB) -f mboot32.tmp32
+  parchear so1.exe $(AJMBEXE) -f mboot32.tmp32
+  copy so1.bin ..\DISQUETE
+  copy so1.exe ..\DISQUETE
+
+obj\mboot32.obj32::
+# echo $@ $& $.
+  @if not exist $&.c (echo. & echo --- copy _OCULTOS\$. $@ --- & copy _OCULTOS\$. $@)
+  @echo.
+
+.asm32.obj32:
+  tasm32 /la asm\mboot32.asm32, mboot32.obj32, mboot32.lst32
+  move mboot32.obj32 obj
+  move mboot32.lst32 lst
+
+.c.asm32:
+  bcc32 -S -o mboot32.asm32 -DAJMB=$(AJMB) mboot32.c
+  move mboot32.asm32 asm
+
