@@ -1,0 +1,61 @@
+!include "..\MKFILE0"
+
+.autodepend
+
+OBJS     = h_ldiv.obj h_lursh.obj h_llsh.obj f_lxmul.obj n_lxmul.obj
+
+.suffixes: .obj .asm
+
+.path.obj = OBJ
+.path.asm = ASM
+
+all: $(OBJS)
+
+.asm.obj:
+  @echo.
+!if $(AS) == TASM32
+  @copy &&|
+$(AFLAGS)
+| ops.ens > nul
+  @copy &&|
+, $&.obj, $&.lst
+| of.ens > nul
+  $(AS) @ops.ens $< @of.ens
+  @if exist ops.ens erase ops.ens
+  @if exist of.ens erase of.ens
+!elif $(AS) == JWASM
+  $(AS) $(AFLAGS) -Fl $<
+# $(AS) $(AFLAGS) $<
+!else
+!message
+!error la macro AS tiene un valor distinto de TASM32 y de JWASM
+!message
+!endif
+  @move $&.obj obj
+  @move $&.lst lst
+
+clean: obj lst
+
+show:
+  @rem
+
+hide:
+  @rem
+
+delsrc:
+  @rem
+
+obj lst:
+  @if exist $&\*.$& erase $&\*.$&
+
+build: clean all
+
+help:
+# echo off & color 07 & title help & msg * "Hola"
+  @"echo."
+  @"echo    relacion de objetivos disponibles:"
+  @"echo."
+  @"echo    make           compila todos los ficheros .asm y genera los .obj"
+  @"echo    make clean     borra todo salvo los fuentes y el MAKEFILE"
+  @"echo    make build     borra todo y genera nuevos ficheros .obj"
+  @"echo    make help      muestra esta ayuda sobre los objetivos disponibles"

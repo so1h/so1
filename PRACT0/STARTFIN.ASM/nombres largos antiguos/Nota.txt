@@ -1,0 +1,10 @@
+Los ficheros:
+
+  ENTRYDATA.ASM, STARTCODE.ASM y STARTDATA.ASM
+
+se han renombrado a
+
+  ENTRYDTA.ASM, STARTCOD.ASM y STARTDTA.ASM
+
+La razon es que al enlazar los ficheros objeto correspondientes con
+tlink (msdos tlink @so1.res) hay problemas para encontrar los ficheros.

@@ -1,0 +1,158 @@
+!include "..\..\MKF0"
+
+PROGSUSR =   \
+# programas de usuario "normales":
+# --------------------------------
+  atexit/   \
+  ayuda/    \
+  c2c/      \
+  clock/    \
+  date/     \
+  dfs/      \
+  dmp/      \
+  dp/       \
+  dr/       \
+  ecodf0_1/ \
+  escr_s/   \
+  exec/     \
+  fork/     \
+  hello/    \
+  hello2/   \
+  help/     \
+  inic/     \
+  info/     \
+  kill/     \
+  leer_s/   \
+  leetimer/ \
+  l_s/      \
+  login/    \
+  meapila/  \
+  mem/      \
+  mouse/    \
+  ps/       \
+  sh/       \
+  testsegs/ \
+  time/     \
+  tut1_ok/  \
+  v_f/      \
+  ver_args/ \
+  ver_fich/ \
+            \
+# drivers:
+# -------
+  consola/  \
+  conrat/   \
+  raton/    \
+  reloj/    \
+  retardo/  \
+  timer/
+
+DIRS          = $(PROGSUSR:/=)
+DIRS.clean    = $(PROGSUSR:/=.clean)
+DIRS.pule     = $(PROGSUSR:/=.pule)
+DIRS.disquete = $(PROGSUSR:/=.disquete)
+DIRS.show     = $(PROGSUSR:/=.show)
+DIRS.hide     = $(PROGSUSR:/=.hide)
+DIRS.delsrc   = $(PROGSUSR:/=.delsrc)
+
+do: $(DIRS:help=)
+  cd help
+  $(MAKE)
+  cd ..
+
+$(DIRS:help=):
+  cd $*
+  $(MAKE)
+  cd ..
+
+build: clean disquete
+
+disquete: $(DIRS.disquete)
+
+$(DIRS.disquete):
+  cd $*
+  @"$(MAKE) disquete" | extraer +l 1
+  @cd ..
+
+clean: $(DIRS.clean)
+
+$(DIRS.clean):
+  cd $*
+  @"$(MAKE) clean" | extraer +l 1
+  @cd ..
+
+pule: $(DIRS.pule)
+
+$(DIRS.pule):
+  cd $*
+  @"$(MAKE) pule" | extraer +l 1
+  @cd ..
+
+show: $(DIRS.show)
+
+$(DIRS.show):
+  cd $*
+  @"$(MAKE) show" | extraer +l 1
+  @cd ..
+
+hide: $(DIRS.hide)
+
+$(DIRS.hide):
+  cd $*
+  @"$(MAKE) hide" | extraer +l 1
+  @cd ..
+
+delsrc: $(DIRS.delsrc)
+
+$(DIRS.delsrc):
+  cd $*
+  @"$(MAKE) delsrc" | extraer +l 1
+  @cd ..
+
+run:
+  cd ..\disquete
+  start so1.exe
+# so1.exe
+
+rundosbox:
+  cd ..\disquete
+  start $(UUSB):\Interno\dosbox-0.74\dosbox.exe so1.exe -noconsole -exit
+  exit
+
+rundosboxdbg:
+  @echo.
+  cd ..\disquete
+  start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe so1.exe -noconsole -exit
+  exit
+
+
+
+DIRS.otrocomando = $(PROGSUSR:/=.otrocomando)
+
+otrocomando: $(DIRS.otrocomando)
+
+$(DIRS.otrocomando):
+  cd $*
+# mkdir SOURCE
+# copy *.C SOURCE
+# if exist $*.C (move $*.C $*.COLD)
+  if exist $*.COLD (erase $*.COLD)
+# copy *.obj ..\_OCULTOS
+  @cd ..
+
+help:
+# echo off & color 07 & title help & msg * "Hola"
+  @"echo."
+  @"echo    relacion de objetivos disponibles:"
+  @"echo."
+  @"echo    make            genera el .BIN de cada uno de los programas de usuario"
+  @"echo    make pule       borra todo salvo los .BIN, fuentes y MAKEFILEs"
+  @"echo    make clean      borra todo salvo los fuentes y MAKEFILEs"
+  @"echo    make build      borra todo y genera nuevos ficheros .bin"
+  @"echo    make run        ejecuta SO1.EXE en el directorio DISQUETE (Windows)"
+  @"echo    make rundosbox  ejecuta SO1.EXE en el directorio DISQUETE (DOSBox)"
+  @"echo    make show       mueve los ficheros .C de los directorios SOURCE"
+  @"echo    make hide       mueve los ficheros .C a los directorios SOURCE"
+  @"echo                    y guarda los .OBJ en los directorios _OCULTOS"
+  @"echo    make help       muestra esta ayuda sobre los objetivos disponibles"
+

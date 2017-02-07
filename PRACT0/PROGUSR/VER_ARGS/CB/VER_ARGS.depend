@@ -1,0 +1,65 @@
+# depslib dependency file v1.0
+1458240032 source:x:\so\pract0\progusr\ver_args\ver_args.c
+	<so1pub.h\ll_s_so1.h>
+	<so1pub.h\escribir.h>
+
+1479309572 x:\so\pract0\so1pub.h\ll_s_so1.h
+	<so1pub.h\tipos.h>
+	<so1pub.h\def_proc.h>
+	<so1pub.h\def_mem.h>
+	<so1pub.h\def_sf.h>
+	<so1pub.h\def_rat.h>
+	<so1pub.h\fcntl.h>
+	<so1pub.h\ll_s_exc.h>
+
+1478714505 x:\so\pract0\so1pub.h\tipos.h
+
+1479288968 x:\so\pract0\so1pub.h\def_proc.h
+	<so1pub.h\tipos.h>
+	<so1pub.h\const.h>
+	<so1pub.h\fcntl.h>
+	<so1pub.h\def_trm.h>
+	<so1pub.h\def_mem.h>
+	<so1pub.h\scanner.h>
+	<so1pub.h\ptrc2c.h>
+	<so1pub.h\ccb.h>
+
+1458240040 x:\so\pract0\so1pub.h\const.h
+
+1458240040 x:\so\pract0\so1pub.h\fcntl.h
+	<so1pub.h\tipos.h>
+
+1458240040 x:\so\pract0\so1pub.h\def_trm.h
+	<so1pub.h\tipos.h>
+
+1438041354 x:\so\pract0\so1pub.h\def_mem.h
+	<so1pub.h\tipos.h>
+
+1458240040 x:\so\pract0\so1pub.h\scanner.h
+	<so1pub.h\tipos.h>
+
+1458240040 x:\so\pract0\so1pub.h\ptrc2c.h
+	<so1pub.h\c2c.h>
+
+1458240040 x:\so\pract0\so1pub.h\c2c.h
+	<so1pub.h\tipos.h>
+
+1458240040 x:\so\pract0\so1pub.h\ccb.h
+	<so1pub.h\tipos.h>
+
+1458240040 x:\so\pract0\so1pub.h\def_sf.h
+	<so1pub.h\tipos.h>
+
+1438041354 x:\so\pract0\so1pub.h\def_rat.h
+	<so1pub.h\def_pant.h>
+
+1458240040 x:\so\pract0\so1pub.h\def_pant.h
+	<so1pub.h\tipos.h>
+
+1460596170 x:\so\pract0\so1pub.h\ll_s_exc.h
+	<so1pub.h\tipos.h>
+	<so1pub.h\def_proc.h>
+
+1438041354 x:\so\pract0\so1pub.h\escribir.h
+	<so1pub.h\tipos.h>
+

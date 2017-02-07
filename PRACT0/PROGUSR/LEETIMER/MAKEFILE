@@ -1,0 +1,34 @@
+
+PROGRAMA = LEETIMER
+
+# primer fichero objeto (..\so1pub\obj\ajustusr.obj)
+# ultimo fichero objeto (..\so1pub\obj\fincode.obj)
+
+OBJS2LINK =                      \
+..\..\startfin\lib\startlib.lib, \
+..\..\so1pub\obj\ajustusr.obj,   \
+$(PROGRAMA).obj,                 \
+..\..\so1pub\lib\ll_s_so1.lib,   \
+..\..\so1pub\obj\caracter.obj,   \
+..\..\so1pub\obj\printgen.obj,   \
+..\..\so1pub\obj\tipos.obj,      \
+..\..\so1pub\obj\put.obj,        \
+..\..\so1pub\obj\escribir.obj,   \
+..\..\so1pub\obj\scanner.obj,    \
+..\..\so1pub\obj\strings.obj,    \
+..\..\crtl\obj\h_ldiv.obj,       \
+..\..\crtl\obj\h_lursh.obj,      \
+..\..\crtl\obj\h_llsh.obj,       \
+..\..\crtl\obj\f_lxmul.obj,      \
+..\..\crtl\obj\n_lxmul.obj,      \
+..\..\startfin\lib\finlib.lib
+
+#puntero de pila inicial (DATA = 1E3 BSS = 1 total: 1E4 < 4FE)
+
+SPINICIAL = 1FFE
+
+!include "..\..\MKFILE0"
+!include "..\MAKEUSR"
+
+
+
