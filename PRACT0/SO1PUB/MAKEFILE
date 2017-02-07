@@ -1,0 +1,151 @@
+!include "..\MKFILE0"
+
+#.autodepend
+
+#.suffixes: .lib .obj .asm .c .h
+
+.path.lib = LIB
+.path.obj = OBJ
+.path.asm = ASM
+.path.c   = .
+.path.h   = ..\SO1PUB.H
+
+OBJS = ajustusr.obj  biosdata.obj  bios_0.obj    \
+       caracter.obj  c2c.obj       ptrc2c.obj    \
+       ccb.obj       cmos.obj      copia.obj     \
+       pantalla.obj  puertos.obj   colores.obj   \
+       escribir.obj  interpre.obj  msdos.obj     \
+       nop.obj       pic.obj       printgen.obj  \
+       printvid.obj \
+       saludos.obj   scanner.obj   strings.obj   \
+       tipos.obj     put.obj       crthw.obj     \
+       bios_crt.obj  memvideo.obj  debug.obj     \
+       bios_rat.obj  telon.obj     leercmd.obj   \
+       ll_s_exc.lib  ll_s_so1.lib  \
+       stdio.obj    \
+#      startcode.obj startdata.obj startbss.obj  \
+#      fincode.obj   findata.obj   finbss.obj    \
+#      vprinter.obj  \
+#      usrdbg.obj
+
+all: $(OBJS)
+  @echo.
+# @tlib LIB\ll_s_so1.lib - LIB\ll_s_exec.lib > NUL
+# tlib LIB\ll_s_so1.lib + LIB\ll_s_exec.lib
+# @tlib LIB\startlib.lib - OBJ\startcode.obj - OBJ\startdata.obj - OBJ\startbss.obj  > NUL
+# tlib LIB\startlib.lib + OBJ\startcode.obj + OBJ\startdata.obj + OBJ\startbss.obj
+# @tlib LIB\finlib.lib - OBJ\fincode.obj - OBJ\findata.obj - OBJ\finbss.obj  > NUL
+# tlib LIB\finlib.lib + OBJ\fincode.obj + OBJ\findata.obj + OBJ\finbss.obj
+  @(tlib LIB\ll_s_so1.lib - LIB\ll_s_exc.lib) > NUL
+# @(tlib LIB\startlib.lib - OBJ\startcode.obj) > NUL
+# @(tlib LIB\startlib.lib - OBJ\startdata.obj) > NUL
+# @(tlib LIB\startlib.lib - OBJ\startbss.obj ) > NUL
+# @(tlib LIB\finlib.lib   - OBJ\fincode.obj  ) > NUL
+# @(tlib LIB\finlib.lib   - OBJ\findata.obj  ) > NUL
+# @(tlib LIB\finlib.lib   - OBJ\finbss.obj   ) > NUL
+  (tlib LIB\ll_s_so1.lib + LIB\ll_s_exc.lib) | extraer +l 1
+# (tlib LIB\startlib.lib + OBJ\startcode.obj) | extraer +l 1
+# (tlib LIB\startlib.lib + OBJ\startdata.obj) | extraer +l 1
+# (tlib LIB\startlib.lib + OBJ\startbss.obj ) | extraer +l 1
+# (tlib LIB\finlib.lib   + OBJ\fincode.obj  ) | extraer +l 1
+# (tlib LIB\finlib.lib   + OBJ\findata.obj  ) | extraer +l 1
+# (tlib LIB\finlib.lib   + OBJ\finbss.obj   ) | extraer +l 1
+
+.obj.lib:
+  tlib lib\$&.lib + obj\$&.obj > nul
+
+$(OBJS)::
+  #echo $@ $& $.
+  @if not exist $&.c (echo. & echo --- copy _OCULTOS\$. $@ --- & copy _OCULTOS\$. $@)
+
+!if ($(COMPILACIONDIRECTA))
+
+.c.obj:
+  @echo.
+  @copy &&|
+$(CFLAGS_DIR) -ms
+| ops.cmp > nul
+  @if "$(DEBUG)" == "" (echo ------- $(CC) @ops.cmp $&.c -o obj\$&.obj > CON)
+  @if "$(DEBUG)" == "" ($(CC) @ops.cmp -o$&.obj $&.c)
+  @if not "$(DEBUG)" == "" (echo ------- $(CC) @ops.cmp -v $&.c -o obj\$&.obj > CON)
+  @if not "$(DEBUG)" == "" ($(CC) @ops.cmp -v -o$&.obj $&.c)
+  @if exist ops.cmp erase ops.cmp
+  @move $&.obj obj
+  @echo.
+
+!else
+
+.c.asm:
+  @echo.
+  @copy &&|
+$(CFLAGS_AS)
+| ops.cmp > nul
+  @if "$(DEBUG)" == "" (echo ------- $(CC) @ops.cmp $&.c -o $&.asm > CON)
+  @if "$(DEBUG)" == "" ($(CC) @ops.cmp -o$&.asm $&.c)
+  @if not "$(DEBUG)" == "" (echo ------- $(CC) @ops.cmp -v $&.c -o $&.asm > CON)
+  @if not "$(DEBUG)" == "" ($(CC) @ops.cmp -v -o$&.asm $&.c)
+  @if exist ops.cmp erase ops.cmp
+  @move $&.asm asm
+  @echo.
+
+.asm.obj:
+!if $(AS) == TASM32
+  @copy &&|
+$(AFLAGS)
+| ops.ens > nul
+  @copy &&|
+, obj\$&.obj, lst\$&.lst
+| of.ens > nul
+  $(AS) @ops.ens $< @of.ens
+  @if exist ops.ens erase ops.ens
+  @if exist of.ens erase of.ens
+!elif $(AS) == JWASM
+  $(AS) $(AFLAGS) -Fl $<
+  @move $&.obj obj
+  @move $&.lst lst
+!else
+!message
+!error la macro AS tiene un valor distinto de TASM32 y de JWASM
+!message
+!endif
+
+!endif
+
+#.h.c:
+#  touch $@
+
+clean: lib obj asm lst stderr.txt stdout.txt tags tags.idx
+  @if exist *.err del *.err
+  @if exist lib\*.bak del lib\*.bak
+
+show:
+  @if exist SOURCE\*.C move SOURCE\*.C .
+
+hide:
+  @if exist *.C move *.C SOURCE
+  @if exist OBJ\*.OBJ move /Y OBJ\*.OBJ _OCULTOS
+  @if exist LIB\*.LIB move /Y LIB\*.LIB _OCULTOS
+
+delsrc:
+  @if exist SOURCE\*.C del SOURCE\*.C .
+
+stderr.txt stdout.txt tags tags.idx:
+  @if exist $* del $*
+
+lib obj asm lst:
+  @if exist $&\*.$& del $&\*.$&
+
+build: clean all
+
+help:
+# echo off & color 07 & title help & msg * "Hola"
+  @"echo."
+  @"echo    relacion de objetivos disponibles:"
+  @"echo."
+  @"echo    make           genera los ficheros objetos de las bibliotecas (.C)"
+  @"echo    make clean     borra todo salvo los fuentes .C y ficheros MAKEFILE"
+  @"echo    make build     borra todo y genera de nuevo (make clean + make)"
+  @"echo    make show      mueve los ficheros .C de los directorios SOURCE"
+  @"echo    make hide      mueve los ficheros .C a los directorios SOURCE"
+  @"echo                   y guarda los .OBJ en los directorios _OCULTOS"
+  @"echo    make help      muestra esta ayuda sobre los objetivos disponibles"
