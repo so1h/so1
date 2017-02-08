@@ -1,0 +1,107 @@
+!include "..\..\..\PRACT0\MKFILE0"
+
+# Makefile para la obtencion de BPBFAT16.obj y BPBFAT16.bs
+#
+# Si existen BOOTCODE.C y BPBFAT16.C se compila, ensambla y enlaza
+# Si no existen BOOTCODE.C y BPBFAT16.C pero existen
+#   _OCULTOS\BOOTCODE.obj y BPBFAT16.obj se enlaza
+#
+
+.path.obj = .;_OCULTOS
+
+PROGRAMA = BPBFAT16
+
+all: BOOTCODE.obj ..\..\STARTFIN\LIB\startlib.lib $(PROGRAMA).obj $(PROGRAMA).bs
+
+..\..\STARTFIN\LIB\startlib.lib:
+  cd ..\..\STARTFIN
+  make
+  cd ..\_PBRFAT16\_BPBFAT16
+
+.obj.bs:
+  @if not exist BOOTCODE.obj. @copy _OCULTOS\BOOTCODE.obj . > NUL
+  @if not exist $(PROGRAMA).obj. @copy _OCULTOS\$(PROGRAMA).obj . > NUL
+  @echo.
+  @copy &&|
+format dos output raw offset=0x0000 op v, start=_startData, map, quiet, stack = 0x007A disable 1014 \
+order clname DATA segment _DATA clname CODE segment _TEXT clname BSS NOEMIT segment _BSS file \
+..\..\STARTFIN\LIB\startlib.lib, \
+$(PROGRAMA).obj, \
+BOOTCODE.obj \
+name
+| ops.lnk > nul
+  $(LINKER) @ops.lnk $(PROGRAMA).bs
+  @if exist ops.lnk erase ops.lnk
+  @echo.
+  @echo ------- xxd -g 1 -c 16 $(PROGRAMA).bs
+  @echo.
+  @$(UTMP):\PRGTOOLS\BIN\XXD\xxd -g 1 -c 16 $(PROGRAMA).bs
+
+.asm.obj:
+!if $(AS) == TASM32
+  @copy &&|
+$(AFLAGS)
+| ops.ens > nul
+  @copy &&|
+, $&.obj, $&.lst
+| of.ens > nul
+  $(AS) @ops.ens $&.asm @of.ens
+  @if exist ops.ens erase ops.ens
+  @if exist of.ens erase of.ens
+!elif $(AS) == JWASM
+  $(AS) $(AFLAGS) -Fl $&.asm
+!else
+!message
+!error la macro AS tiene un valor distinto de TASM32 y de JWASM
+!message
+!endif
+
+.c.asm:
+  @echo.
+  @copy &&|
+$(CFLAGS) -S
+| ops.cmp > nul
+  $(CC) @ops.cmp $&.c
+  @if exist ops.cmp erase ops.cmp
+  @echo.
+
+clean: bs obj pule
+  @if exist BOOTCODE.obj erase BOOTCODE.obj
+
+pule: asm lst map err
+  @if exist BOOTCODE.obj erase BOOTCODE.obj
+  @if exist of.ens erase of.ens
+  @if exist ops.ens erase ops.ens
+
+bs obj asm lst map err:
+  @if exist $(PROGRAMA).$& erase $(PROGRAMA).$&
+  @if exist BOOTCODE.$& erase BOOTCODE.$&
+
+build: clean all
+
+show:
+  @if exist SOURCE\*.C move SOURCE\*.C .
+
+hide:
+  @if exist *.C move *.C SOURCE
+  @if exist *.OBJ move /Y *.OBJ _OCULTOS
+
+delsrc:
+  @if exist SOURCE\*.C del SOURCE\*.C
+
+help:
+# echo off & color 07 & title help & msg * "Hola"
+  @"echo."
+  @"echo    relacion de objetivos disponibles:"
+  @"echo."
+  @"echo    make            genera BPBFAT16.OBJ para utilzarlo en sectores de arranque"
+  @"echo                    FAT16 que se programen con el BPB en el segmento de datos."
+  @"echo                    Como prueba se genera BPBFAT16.BS con un BOOTCODE vacio."
+  @"echo    make pule       borra todo salvo BPBFAT16.OBJ, fuentes y ficheros MAKEFILE"
+  @"echo    make clean      borra todo salvo los fuentes y ficheros MAKEFILE"
+  @"echo    make build      borra todo y genera de nuevo (make clean + make)"
+  @"echo    make show       mueve los ficheros .C de los directorios SOURCE"
+  @"echo    make hide       mueve los ficheros .C a los directorios SOURCE"
+  @"echo                    y guarda los .OBJ en los directorios _OCULTOS"
+  @"echo    make help       muestra esta ayuda sobre los objetivos disponibles"
+
