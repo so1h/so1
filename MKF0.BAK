@@ -1,0 +1,13 @@
+#
+# MKF0
+# ====
+# establece las letras de unidad de la unidad temporal
+# y de la unidad usb
+#
+
+#UTMP unidad temporal %TMP%\-so-
+#UUSB unidad usb
+
+UUSB=X
+UTMP=Y
+
