@@ -13,7 +13,6 @@ PROGSUSR =   \
   dp/       \
   dr/       \
   ecodf0_1/ \
-  escr_s/   \
   exec/     \
   fork/     \
   hello/    \
@@ -22,9 +21,7 @@ PROGSUSR =   \
   inic/     \
   info/     \
   kill/     \
-  leer_s/   \
   leetimer/ \
-  l_s/      \
   login/    \
   meapila/  \
   mem/      \
@@ -33,10 +30,7 @@ PROGSUSR =   \
   sh/       \
   testsegs/ \
   time/     \
-  tut1_ok/  \
-  v_f/      \
   ver_args/ \
-  ver_fich/ \
             \
 # drivers:
 # -------
