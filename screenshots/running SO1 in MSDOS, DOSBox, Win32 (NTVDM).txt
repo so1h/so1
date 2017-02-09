@@ -1,0 +1,11 @@
+Easy:
+
+  X:\SO1\PRACT0\DISQUETE> SO1.EXE
+
+or first:
+
+  X:\SO1\PRACT0\DISQUETE> copy SO1.BIN SO1.COM
+
+and later:
+
+  X:\SO1\PRACT0\DISQUETE> SO1.COM
