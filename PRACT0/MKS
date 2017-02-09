@@ -16,6 +16,9 @@ $(PROGRAMA).bin $(PROGRAMA).exe \
 obj\matrix_0.obj:
   $(CC) $(CFLAGS_AS) $(UUSB):\so\pract0\so1\matrix.c 
   JWASM $(AFLAGS) -Fl matrix.asm
+  @if not exist ASM mkdir ASM
+  @if not exist OBJ mkdir OBJ
+  @if not exist LST mkdir LST
   @move matrix.asm asm
   @move matrix.obj obj
   @move matrix.lst lst
@@ -32,7 +35,7 @@ debug:
   SPINIC $(PROGRAMA).bin $(SPINICIAL) 
   @echo.
   @if exist ..\DISQUETE\$(PROGRAMA).bin del ..\DISQUETE\$(PROGRAMA).bin 
-  @if not exist DISQUETE mkdir DISQUETE
+  @if not exist ..\DISQUETE mkdir ..\DISQUETE
   copy $(PROGRAMA).bin ..\DISQUETE
   
 ..\DISQUETE\$(PROGRAMA).exe: $(PROGRAMA).exe
@@ -40,7 +43,7 @@ debug:
   SPINIC $(PROGRAMA).exe $(SPINICIAL)
   @echo.
   @if exist $@ del $@ 
-  @if not exist DISQUETE mkdir DISQUETE
+  @if not exist ..\DISQUETE mkdir ..\DISQUETE
   copy $(PROGRAMA).exe ..\DISQUETE
  
 $(PROGRAMA).bin:: $(OBJS2LNK)

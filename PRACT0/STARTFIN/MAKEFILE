@@ -14,6 +14,7 @@ OBJS = startcode.obj startdata.obj startbss.obj  \
        fincode.obj   findata.obj   finbss.obj
 
 all: $(OBJS)
+  @if not exist LIB mkdir LIB
   @echo.
 # @tlib LIB\startlib.lib - OBJ\startcode.obj - OBJ\startdata.obj - OBJ\startbss.obj  > NUL
 # tlib LIB\startlib.lib + OBJ\startcode.obj + OBJ\startdata.obj + OBJ\startbss.obj
@@ -33,6 +34,7 @@ all: $(OBJS)
   (tlib LIB\finlib.lib   + OBJ\finbss.obj   ) | extraer +l 1
 
 .obj.lib:
+  @if not exist LIB mkdir LIB
   tlib lib\$&.lib + obj\$&.obj > nul
 
 $(OBJS)::

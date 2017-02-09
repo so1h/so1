@@ -29,6 +29,7 @@ OBJS = ajustusr.obj  biosdata.obj  bios_0.obj    \
 #      usrdbg.obj
 
 all: $(OBJS)
+  @if not exist LIB mkdir LIB
   @echo.
 # @tlib LIB\ll_s_so1.lib - LIB\ll_s_exec.lib > NUL
 # tlib LIB\ll_s_so1.lib + LIB\ll_s_exec.lib
@@ -52,6 +53,7 @@ all: $(OBJS)
 # (tlib LIB\finlib.lib   + OBJ\finbss.obj   ) | extraer +l 1
 
 .obj.lib:
+  @if not exist LIB mkdir LIB
   tlib lib\$&.lib + obj\$&.obj > nul
 
 $(OBJS)::
