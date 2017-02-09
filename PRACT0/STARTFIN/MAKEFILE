@@ -54,6 +54,7 @@ $(CFLAGS) -ms
   @if not "$(DEBUG)" == "" (echo ------- $(CC) @ops.cmp -v $&.c > CON)
   @if not "$(DEBUG)" == "" ($(CC) @ops.cmp -v $&.c)
   @if exist ops.cmp erase ops.cmp
+  @if not exist OBJ mkdir OBJ
   @move $&.obj obj
   @echo.
 
@@ -69,6 +70,7 @@ $(CFLAGS_AS)
   @if not "$(DEBUG)" == "" (echo ------- $(CC) @ops.cmp -v $&.c > CON)
   @if not "$(DEBUG)" == "" ($(CC) @ops.cmp -v $&.c)
   @if exist ops.cmp erase ops.cmp
+  @if not exist ASM mkdir ASM
   @move $&.asm asm
   @echo.
 
@@ -85,7 +87,9 @@ $(AFLAGS)
   @if exist of.ens erase of.ens
 !elif $(AS) == JWASM
   $(AS) $(AFLAGS) -Fl $<
+  @if not exist OBJ mkdir OBJ
   @move $&.obj obj
+  @if not exist LST mkdir LST
   @move $&.lst lst
 !else
 !message
@@ -106,7 +110,9 @@ show:
   @if exist SOURCE\*.C move SOURCE\*.C .
 
 hide:
+  @if not exist SOURCE mkdir SOURCE
   @if exist *.C move *.C SOURCE
+  @if not exist _OCULTOS mkdir _OCULTOS
   @if exist OBJ\*.OBJ move /Y OBJ\*.OBJ _OCULTOS
   @if exist LIB\*.LIB move /Y LIB\*.LIB _OCULTOS
 

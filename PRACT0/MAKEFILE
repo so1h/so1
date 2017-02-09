@@ -37,6 +37,21 @@ clearDisquete:
   @if exist *.* erase /Q *.*
   @cd ..
 
+pule: crtl.clean so1pub.clean startfin.clean progusr.clean so1.clean
+  cd disquete
+  @if exist stderr.txt erase stderr.txt
+  @if exist stdout.txt erase stdout.txt
+  cd ..
+  cd _MBR
+  @"$(MAKE) pule" | extraer +l 1
+  @cd ..
+  cd _PBRFAT16
+  @"$(MAKE) pule" | extraer +l 1
+  cd _BPBFAT16
+  @"$(MAKE) pule" | extraer +l 1
+  @cd ..
+  @cd ..
+  
 show: $(DIRS.show)
 
 $(DIRS.show):

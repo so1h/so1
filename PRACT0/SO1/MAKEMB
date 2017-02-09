@@ -34,6 +34,7 @@ file obj\mboot32.obj32 name mboot32.bin32
   extraer mboot32.bin32 $(AJMB) 0 mboot32.tmp32
   parchear so1.bin $(AJMB) -f mboot32.tmp32
   parchear so1.exe $(AJMBEXE) -f mboot32.tmp32
+  @if not exist DISQUETE mkdir DISQUETE
   copy so1.bin ..\DISQUETE
   copy so1.exe ..\DISQUETE
 
@@ -44,10 +45,13 @@ obj\mboot32.obj32::
 
 .asm32.obj32:
   tasm32 /la asm\mboot32.asm32, mboot32.obj32, mboot32.lst32
+  @if not exist OBJ mkdir OBJ  
   move mboot32.obj32 obj
+  @if not exist LST mkdir LST  
   move mboot32.lst32 lst
 
 .c.asm32:
   bcc32 -S -o mboot32.asm32 -DAJMB=$(AJMB) mboot32.c
+  @if not exist ASM mkdir ASM  
   move mboot32.asm32 asm
 

@@ -32,6 +32,7 @@ debug:
   SPINIC $(PROGRAMA).bin $(SPINICIAL) 
   @echo.
   @if exist ..\DISQUETE\$(PROGRAMA).bin del ..\DISQUETE\$(PROGRAMA).bin 
+  @if not exist DISQUETE mkdir DISQUETE
   copy $(PROGRAMA).bin ..\DISQUETE
   
 ..\DISQUETE\$(PROGRAMA).exe: $(PROGRAMA).exe
@@ -39,6 +40,7 @@ debug:
   SPINIC $(PROGRAMA).exe $(SPINICIAL)
   @echo.
   @if exist $@ del $@ 
+  @if not exist DISQUETE mkdir DISQUETE
   copy $(PROGRAMA).exe ..\DISQUETE
  
 $(PROGRAMA).bin:: $(OBJS2LNK)
@@ -100,6 +102,7 @@ $(CFLAGS_DIR) -ms
   @echo ------- $(CC) @ops.cmp $&.c -o obj\$&.obj > CON
   @$(CC) @ops.cmp -o$&.obj $&.c
   @if exist ops.cmp erase ops.cmp
+  @if not exist OBJ mkdir OBJ
   @move $&.obj obj
   @echo.
 
@@ -116,6 +119,7 @@ $(CFLAGS_AS)
   @if not "$(DEBUG)" == "" (echo ------- $(CC) @ops.cmp -v $&.c > CON)
   @if not "$(DEBUG)" == "" ($(CC) @ops.cmp -v $&.c)  
   @if exist ops.cmp erase ops.cmp
+  @if not exist ASM mkdir ASM
   @move $&.asm asm
   @echo.
 
@@ -133,7 +137,9 @@ $(AFLAGS)
   @if exist of.ens erase of.ens  
 !elif $(AS) == JWASM
   $(AS) $(AFLAGS) -Fl $<
+  @if not exist OBJ mkdir OBJ
   @move $&.obj obj
+  @if not exist LST mkdir LST
   @move $&.lst lst
 !else
 !message 
@@ -170,7 +176,9 @@ show:
   @if exist SOURCE\*.C move SOURCE\*.C .
 
 hide:
+  @if not exist SOURCE mkdir SOURCE
   @if exist *.C move *.C SOURCE 
+  @if not exist _OCULTOS mkdir _OCULTOS
   @if exist OBJ\*.OBJ move /Y OBJ\*.OBJ _OCULTOS 
   @if exist OBJ\*.OBJ32 move /Y OBJ\*.OBJ32 _OCULTOS 
 

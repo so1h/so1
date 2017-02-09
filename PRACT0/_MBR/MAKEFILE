@@ -97,7 +97,9 @@ show:
   @if exist SOURCE\*.C move SOURCE\*.C .
 
 hide:
+  @if not exist SOURCE mkdir SOURCE
   @if exist *.C move *.C SOURCE
+  @if not exist _OCULTOS mkdir _OCULTOS
   @if exist *.OBJ move /Y *.OBJ _OCULTOS
 
 delsrc:

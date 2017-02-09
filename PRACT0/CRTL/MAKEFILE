@@ -31,7 +31,9 @@ $(AFLAGS)
 !error la macro AS tiene un valor distinto de TASM32 y de JWASM
 !message
 !endif
+  @if not exist OBJ mkdir OBJ
   @move $&.obj obj
+  @if not exist LST mkdir LST
   @move $&.lst lst
 
 clean: obj lst
