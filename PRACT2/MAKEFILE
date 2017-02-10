@@ -1,0 +1,75 @@
+!include "..\PRACT0\MKFILE0"
+
+BOOTS =            \
+  boot/            \
+# boot_org/        \
+# boot_incbin/     \
+# boot_0/          \
+# boot_1/          \
+# boot_2/          \
+# boot_3/          \
+# boot_4/          \
+# boot_5/          \
+# boot_6/          \
+# boot_7/          \
+# boot_7_Solucion/ \
+# boot_8/          \
+  prog/            \
+  hola/            \
+
+DIRS          = $(BOOTS:/=) 		   
+DIRS.pule     = $(BOOTS:/=.pule) 		   
+DIRS.clean    = $(BOOTS:/=.clean) 		   
+DIRS.build    = $(BOOTS:/=.build) 		   
+DIRS.imagen   = $(BOOTS:/=.imagen) 		   
+
+do: $(DIRS) 
+# cd $(UUSB):\SO\PRACT2
+	
+$(DIRS): 
+  cd $* 
+  $(MAKE) 
+  cd ..
+
+build: clean do
+  
+pule: $(DIRS.pule)
+	
+$(DIRS.pule):
+  cd $*
+  @"$(MAKE) pule" | extraer +l 1 
+  @cd ..
+  
+clean: $(DIRS.clean)
+	
+$(DIRS.clean):
+  @if exist *.TR del *.TR
+  @if exist *.TD del *.TD  
+  @if exist PROJECT\*.r$p del /Q PROJECT\*.r$p  
+  @if exist PROJECT\OBJ\*.* del /Q PROJECT\OBJ\*.*    
+  cd $*
+  @"$(MAKE) clean" | extraer +l 1 
+  @cd ..
+
+imagen: $(DIRS.imagen)
+	
+$(DIRS.imagen):
+  cd $*
+  @"$(MAKE) imagen" | extraer +l 1 
+  @cd ..
+
+help: 
+# echo off & color 07 & title help & msg * "Hola"
+  @"echo." 
+  @"echo    relacion de objetivos disponibles:" 
+  @"echo."
+  @"echo    make          genera los ficheros BOOT*.bs"
+  @"echo    make pule     borra todo salvo BOOT*.C, MAKEFILE y BOOT*.bs"
+  @"echo    make clean    borra todo salvo BOOT*.C y MAKEFILE"
+  @"echo    make build    borra todo y genera nuevos ficheros BOOT*.bs"
+  @"echo    make imagen   genera las imagenes de disquete fdBOOT*.img"
+  @"echo    make help     muestra esta ayuda sobre los objetivos disponibles"
+  @"echo."    
+  @"echo     (se ejecuta make con el objetivo, en todos los subdirectorios)"  
+  
+  

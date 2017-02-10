@@ -1,0 +1,86 @@
+!include "..\..\PRACT0\MKFILE0"
+
+PROGRAMA = HOLA
+
+$(PROGRAMA).exe: $(PROGRAMA).c
+  @"echo."  
+  bcc -I$(UTMP):\BC5\INCLUDE -L$(UTMP):\BC5\LIB -B+ -ms -R -ETASM32 -Tla -ls $(PROGRAMA).c 
+  
+cabecera: $(PROGRAMA).exe  
+  $(UTMP):\PRGTOOLS\BIN\EXE2BIN.EXE -C $(PROGRAMA).exe  
+  
+desensambla: $(PROGRAMA).exe
+  ndisasm -b 16 -e 1024 $(PROGRAMA).exe > temporal.tmp 
+  @"echo."  
+  more temporal.tmp
+  @if exist temporal.tmp erase temporal.tmp
+
+llamadasdos: $(PROGRAMA).exe 
+  @"echo."  
+  ndisasm -b 16 -e 1024 $(PROGRAMA).exe > temporal.tmp 
+  @"echo."  
+  grep "int 0x21" temporal.tmp
+  @if exist temporal.tmp erase temporal.tmp
+  
+vuelca: $(PROGRAMA).exe
+  tdump -h $(PROGRAMA).exe > temporal.tmp 
+  @"echo."  
+  more temporal.tmp
+  @if exist temporal.tmp erase temporal.tmp
+  
+vuelcados: $(PROGRAMA).exe 
+  @"echo."  
+  tdump -h $(PROGRAMA).exe > temporal.tmp 
+  @"echo."  
+  grep "CD 21" temporal.tmp
+  @if exist temporal.tmp erase temporal.tmp
+
+clean: pule exe
+
+pule: map obj asm lst err  
+  @if exist *.obj erase *.obj
+  @if exist *.bak erase *.bak
+  @if exist *.tmp erase *.tmp
+  @if exist *.TR erase *.TR
+  @if exist ops.lnk erase ops.lnk
+  @if exist TDCONFIG.TD erase TDCONFIG.TD
+  @if exist autoexec.txt erase autoexec.txt
+  @if exist stdout.txt erase stdout.txt
+  @if exist stderr.txt erase stderr.txt
+  
+obj lst map exe asm err: 
+  @if exist $(PROGRAMA).$& del $(PROGRAMA).$&
+
+help: 
+# echo off & color 07 & title help & msg * "Hola"
+  @"echo." 
+  @"echo    relacion de objetivos disponibles:" 
+  @"echo."
+  @"echo    make             genera el fichero $(PROGRAMA).exe"
+  @"echo    make pule        borra todo salvo $(PROGRAMA).C, MAKEFILE y $(PROGRAMA).exe"
+  @"echo    make clean       borra todo salvo $(PROGRAMA).C y MAKEFILE"
+  @"echo    make build       borra todo y genera un nuevo fichero $(PROGRAMA).exe"
+  @"echo    make cabecera    muestra informacion presente en la cabecera de $(PROGRAMA).exe"
+  @"echo    make desensambla desensambla el fichero $(PROGRAMA).exe saltando la cabecera"
+  @"echo    make llamadasdos muestra todas las llamadas al sistema (MSDOS) en $(PROGRAMA).exe"
+  @"echo    make rundosbox   ejecuta $(PROGRAMA).EXE en el directorio DISQUETE (DOSBox)"
+  @"echo    make vuelca      muestra en hexadecimal el contenido del fichero $(PROGRAMA).exe"
+  @"echo    make vuelcados   muestra las lineas que contienen las llamadas al sistema"
+  @"echo    make help        muestra esta ayuda sobre los objetivos disponibles"
+
+rundosbox: 
+  @echo.
+# start $(UUSB):\Interno\dosbox-0.74\dosbox.exe $(PROGRAMA).EXE -noconsole -exit 
+  start $(UUSB):\Interno\dosbox-0.74\dosbox.exe $(PROGRAMA).EXE -noconsole 
+  exit 
+
+rundosboxdbg: 
+  @echo.
+# start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe $(PROGRAMA).EXE -noconsole -exit 
+  start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe $(PROGRAMA).EXE -noconsole 
+  exit 
+  
+emu8086: 
+# start C:\emu8086\emu8086.exe $(UUSB):$(PROGRAMA).BIN  
+  start C:\emu8086\emu8086.exe $(UUSB):$(PROGRAMA).EXE  
+  

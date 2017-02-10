@@ -1,0 +1,98 @@
+!include "..\..\PRACT0\MKFILE0"
+
+PROGRAMA = PROG
+
+.autodepend
+
+all: $(PROGRAMA).bin $(PROGRAMA).exe
+
+$(PROGRAMA).bin: $(PROGRAMA).obj 
+  @echo.
+  $(LINKER) $(OPCIONES_LR) $(PROGRAMA).obj name $(PROGRAMA).BIN
+# attrib +A -R $(PROGRAMA).bin
+  
+$(PROGRAMA).obj: $(PROGRAMA).c
+  $(CC) $(CFLAGS) $(PROGRAMA).c
+
+ensambla: $(PROGRAMA).asm
+  $(AS) $(AFLAGS) $(PROGRAMA).asm
+  
+$(PROGRAMA).asm: $(PROGRAMA).c
+  $(CC) $(CFLAGS_AS) $(PROGRAMA).c
+
+build: clean $(PROGRAMA).bin
+
+pule: map obj asm lst err  
+  @if exist *.obj erase *.obj
+  @if exist *.bak erase *.bak
+  @if exist *.tmp erase *.tmp
+  @if exist *.TR erase *.TR
+  @if exist ops.lnk erase ops.lnk
+  @if exist TDCONFIG.TD erase TDCONFIG.TD
+  @if exist autoexec.txt erase autoexec.txt
+  @if exist stdout.txt erase stdout.txt
+  @if exist stderr.txt erase stderr.txt
+  
+clean: bin exe bak pule
+
+map bin exe obj asm lst err bak: 
+  @if exist $(PROGRAMA).$* erase $(PROGRAMA).$*
+
+$(PROGRAMA).exe: $(PROGRAMA).obj
+  @echo.
+  $(LINKER) format dos op v, start=_startBin, map, quiet, stack = 0xFFFE disable 1014 file \
+    $(PROGRAMA).obj name $(PROGRAMA).EXE
+
+#$(PROGRAMA).exe: $(PROGRAMA).c
+#  tcc -1 $(PROGRAMA).c
+
+help: 
+  @"echo."
+  @"echo   relacion de objetivos disponibles:"
+  @"echo."
+  @"echo    make           genera los ficheros PROG.BIN y PROG.EXE"
+  @"echo    make pule      borra todo salvo el fuente, MAKEFILE, PROG.BIN y PROG.EXE"
+  @"echo    make clean     borra todo salvo el fuente y el MAKEFILE"
+  @"echo    make build     borra todo y genera nuevos ficheros PROG.BIN y PROG.EXE"
+  @"echo    make ensambla  compila PROG.C y ensambla PROG.ASM, generando PROG.OBJ"
+  @"echo    make rundosbox ejecuta PROG.EXE en el directorio actual (DOSBox)"
+  @"echo    make imagen    genera una imagen de disquete fd$(PROGRAMA).img
+  @"echo    make start     arranca la imagen de disquete fd$(PROGRAMA).img con qemu   
+  @"echo    make help      muestra esta ayuda sobre los objetivos disponibles"
+  
+imagen: ..\BOOT\BOOT.bs $(PROGRAMA).BIN
+  @echo.
+  @if exist $(UTMP):\fd$(PROGRAMA).img erase $(UTMP):\fd$(PROGRAMA).img
+  @copy ..\BOOT\BOOT.bs $(UTMP):\fd$(PROGRAMA).img > NUL
+  EXTENDER $(UTMP):\fd$(PROGRAMA).img 1474560 $(UTMP):\fd$(PROGRAMA).img 
+  @echo.
+  PARCHEAR $(UTMP):\fd$(PROGRAMA).img 16896 -f $(PROGRAMA).BIN
+
+start: $(PROGRAMA).BIN $(UTMP):\fd$(PROGRAMA).img 
+  @start $(UUSB):\Interno\qemu-2.7.0\qemu-system-i386w.exe \
+    -L $(UUSB):\Interno\qemu-2.7.0\Bios \
+	-vga std \
+    -soundhw es1370,sb16,adlib,pcspk \
+    -rtc base=localtime,clock=host \
+    -name "qemu" \
+    -fda $(UTMP):\fd$(PROGRAMA).img \
+    -net nic,model=ne2k_pci -net user \
+    -no-acpi -no-hpet -no-reboot \
+    -m 128 -boot a 
+  
+rundosbox: 
+  @echo.
+# start $(UUSB):\Interno\dosbox-0.74\dosbox.exe $(PROGRAMA).EXE -noconsole -exit 
+  start $(UUSB):\Interno\dosbox-0.74\dosbox.exe $(PROGRAMA).EXE -noconsole  
+  exit 
+
+rundosboxdbg: 
+  @echo.
+# start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe $(PROGRAMA).EXE -noconsole -exit 
+  start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe $(PROGRAMA).EXE -noconsole 
+  exit 
+  
+emu8086: 
+  start C:\emu8086\emu8086.exe $(UUSB):$(PROGRAMA).BIN  
+# start C:\emu8086\emu8086.exe $(UUSB):$(PROGRAMA).EXE  
+  
