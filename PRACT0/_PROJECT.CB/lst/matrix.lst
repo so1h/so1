@@ -1,0 +1,110 @@
+Turbo Assembler	 Version 5.4	    01-30-17 13:05:30	    Page 1
+asm\matrix.asm
+
+
+
+      1					     .286
+      2					     ifndef  ??version
+      3				     ?debug  macro
+      4					     endm
+      5				     publicdll macro name
+      6					     public  name
+      7					     endm
+      8				     $comm   macro   name,dist,size,count
+      9					     comm    dist name:BYTE:count*size
+     10					     endm
+     11					     else
+     12				     $comm   macro   name,dist,size,count
+     13					     comm    dist name[size]:BYTE:count
+     14					     endm
+     15					     endif
+     16					     ?debug  V 301h
+     17					     ?debug  S "..\so1\matrix.c"
+     18					     ?debug  C E9B7AE61490F2E2E5C736F315C6D61747269782E63
+     19					     ?debug  C E94BBE6A491B583A5C534F5C5052414354305C736F312E685C6D61+
+     20					     ?debug  C 747269782E68
+     21	0000			     _TEXT   segment byte public 'CODE'
+     22	0000			     _TEXT   ends
+     23				     DGROUP  group   _DATA,_BSS
+     24					     assume  cs:_TEXT,ds:DGROUP
+     25	0000			     _DATA   segment word public 'DATA'
+     26	0000			     d@	     label   byte
+     27	0000			     d@w     label   word
+     28	0000			     _DATA   ends
+     29	0000			     _BSS    segment word public 'BSS'
+     30	0000			     b@	     label   byte
+     31	0000			     b@w     label   word
+     32	0000			     _BSS    ends
+     33	0000			     _TEXT   segment byte public 'CODE'
+     34					     assume  cs:_TEXT,ds:DGROUP
+     35	0000			     _matrix proc    near
+     36					     ?debug  C E8010F2E2E5C736F315C6D61747269782E63B7AE+
+     37					     ?debug  C 6149
+     38					     ?debug  C E8021B583A5C534F5C5052414354305C736F312E+
+     39					     ?debug  C 685C6D61747269782E684BBE6A49
+     40					     ?debug  C E801
+     41					;
+     42					;    void matrix ( void	)
+     43					;
+     44					;
+     45					;    {
+     46					;	 asm
+     47					;	 {
+     48					;	     dw	NUM_MATRICULA dup(NUM_MATRICULA) ;
+     49					;
+     50	0000  0123*(0123)		     dw	      00123H dup(00123H)
+     51					;
+     52					;	 }
+     53					;    }
+     54					;
+     55	0246  C3			     ret
+     56	0247			     _matrix endp
+     57					     ?debug  C E9
+Turbo Assembler	 Version 5.4	    01-30-17 13:05:30	    Page 2
+asm\matrix.asm
+
+
+
+     58					     ?debug  C FA00000000
+     59	0247			     _TEXT   ends
+     60	0000			     _DATA   segment word public 'DATA'
+     61	0000			     s@	     label   byte
+     62	0000			     _DATA   ends
+     63	0247			     _TEXT   segment byte public 'CODE'
+     64	0247			     _TEXT   ends
+     65					     public  _matrix
+     66					     end
+Turbo Assembler	 Version 5.4	    01-30-17 13:05:30	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name		Type   Value			   Cref	(defined at #)
+
+??date			Text   "01-30-17"
+??filename		Text   "matrix	"
+??time			Text   "13:05:30"
+??version		Number 0504
+@Cpu			Text   0707H			   #1
+@FileName		Text   matrix
+@WordSize		Text   2			   #1  #21  #25	 #29  #33  #60	#63
+@curseg			Text   _TEXT			   #21	#25  #29  #33  #60  #63
+_matrix			Near16 _TEXT:0000		   #35	65
+b@			Byte   _BSS:0000		   #30
+b@w			Word   _BSS:0000		   #31
+d@			Byte   _DATA:0000		   #26
+d@w			Word   _DATA:0000		   #27
+s@			Byte   _DATA:0000		   #61
+
+Macro Name						   Cref	(defined at #)
+
+$comm							   #12
+
+Groups & Segments	Bit Size Align	Combine	Class	   Cref	(defined at #)
+
+DGROUP			Group				   #23	24  34
+  _BSS			16  0000 Word	Public	BSS	   23  #29
+  _DATA			16  0000 Word	Public	DATA	   23  #25  #60
+_TEXT			16  0247 Byte	Public	CODE	   #21	24  #33	 34  #63
+

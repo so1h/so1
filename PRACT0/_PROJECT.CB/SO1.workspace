@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="SO1">
+		<Project filename="../../PRACT2/BOOT/CB/BOOT.cbp" />
+		<Project filename="../_MBR/CB/MBR.cbp" />
+		<Project filename="../_PBRFAT16/CB/PBRFAT16.cbp" />
+		<Project filename="SO1.cbp" />
+		<Project filename="../PROGUSR/INIC/CB/INIC.cbp" />
+		<Project filename="../PROGUSR/SH/CB/SH.cbp" />
+		<Project filename="../PROGUSR/LOGIN/CB/LOGIN.cbp" />
+		<Project filename="../PROGUSR/CONSOLA/CB/CONSOLA.cbp" />
+		<Project filename="../PROGUSR/RATON/CB/RATON.cbp" />
+		<Project filename="../PROGUSR/RELOJ/CB/RELOJ.cbp" />
+		<Project filename="../PROGUSR/RETARDO/CB/RETARDO.cbp" />
+		<Project filename="../PROGUSR/TIMER/CB/TIMER.cbp" />
+		<Project filename="../PROGUSR/ATEXIT/CB/ATEXIT.cbp" />
+		<Project filename="../PROGUSR/AYUDA/CB/AYUDA.cbp" />
+		<Project filename="../PROGUSR/C2C/CB/C2C.cbp" />
+		<Project filename="../PROGUSR/CLOCK/CB/CLOCK.cbp" />
+		<Project filename="../PROGUSR/DATE/CB/DATE.cbp" />
+		<Project filename="../PROGUSR/DFS/CB/DFS.cbp" />
+		<Project filename="../PROGUSR/DMP/CB/DMP.cbp" />
+		<Project filename="../PROGUSR/DP/CB/DP.cbp" />
+		<Project filename="../PROGUSR/DR/CB/DR.cbp" />
+		<Project filename="../PROGUSR/EXEC/CB/EXEC.cbp" />
+		<Project filename="../PROGUSR/FORK/CB/FORK.cbp" />
+		<Project filename="../PROGUSR/HELLO/CB/HELLO.cbp" />
+		<Project filename="../PROGUSR/HELLO2/CB/HELLO2.cbp" />
+		<Project filename="../PROGUSR/HELP/CB/HELP.cbp" />
+		<Project filename="../PROGUSR/INFO/CB/INFO.cbp" />
+		<Project filename="../PROGUSR/KILL/CB/KILL.cbp" />
+		<Project filename="../PROGUSR/LEETIMER/CB/LEETIMER.cbp" />
+		<Project filename="../PROGUSR/MEAPILA/CB/MEAPILA.cbp" />
+		<Project filename="../PROGUSR/MEM/CB/MEM.cbp" />
+		<Project filename="../PROGUSR/MOUSE/CB/MOUSE.cbp" />
+		<Project filename="../PROGUSR/PS/CB/PS.cbp" />
+		<Project filename="../PROGUSR/TESTSEGS/CB/TESTSEGS.cbp" />
+		<Project filename="../PROGUSR/TIME/CB/TIME.cbp" />
+		<Project filename="../PROGUSR/VER_ARGS/CB/VER_ARGS.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

@@ -1,0 +1,873 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="SO1" />
+		<Option platforms="Windows;" />
+		<Option pch_mode="2" />
+		<Option compiler="borland_c_502_so_2016" />
+		<Option virtualFolders="AJUSTES\;CRTL\;FIN\;START\;AJUSTUSR\;ENTRYEXE\;ENTRYBIN\;" />
+		<Option show_notes="0">
+			<notes>
+				<![CDATA[Proyecto: SO1
+=========
+El compilador utiliza dos variables (custom variables) $(compilador) y $(enlazador) cuyo
+valor es por defecto bcc.exe y tlink.exe. Dependiendo del proyecto y del objetivo (target)
+se puede cambiar esa asignación. Por ejemplo se puede añadir un objetivo Ulink, de 
+makera que $(enlazador) se el linker ulink.exe (UNILINK) que es una aplicación de 32
+bits (no como tlink que requiere utilizar el player de Takeda para su ejecución en un
+ordenador de 64 bits). De esa manera el proceso de build es mas rápido.
+
+También se puiede cambiar $(compilador) a bcc501.exe (Borland C++ 5.01) que 
+tiene un ensamblador integrado (BASM) mejor que el del bcc.exe de Borland C++
+5.02, ya que permite la inclusión de cadenas de caracteres: asm DB 'Hola'.
+
+compilador = bcc.exe (o bcc501.exe)
+enlazador = tlink.exe (o ulink.exe)
+]]>
+			</notes>
+		</Option>
+		<Build>
+			<Target title="entrybin">
+				<Option platforms="Windows;" />
+				<Option output="lib/entrybin.lib" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="obj" />
+				<Option type="2" />
+				<Option compiler="borland_c_502_so_2016" />
+			</Target>
+			<Target title="entryexe">
+				<Option platforms="Windows;" />
+				<Option output="lib/entryexe.lib" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="obj" />
+				<Option type="2" />
+				<Option compiler="borland_c_502_so_2016" />
+			</Target>
+			<Target title="startlib">
+				<Option platforms="Windows;" />
+				<Option output="lib/startlib" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj" />
+				<Option type="2" />
+				<Option compiler="borland_c_502_so_2016" />
+				<Option createDefFile="1" />
+			</Target>
+			<Target title="finlib">
+				<Option platforms="Windows;" />
+				<Option output="lib/finlib" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj" />
+				<Option type="2" />
+				<Option compiler="borland_c_502_so_2016" />
+				<Option createDefFile="1" />
+				<Option projectLinkerOptionsRelation="-1" />
+				<MakeCommands>
+					<Build command="" />
+					<CompileFile command="" />
+					<Clean command="" />
+					<DistClean command="" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command=" &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="crtl">
+				<Option platforms="Windows;" />
+				<Option output="lib/crtl" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj" />
+				<Option type="2" />
+				<Option compiler="borland_c_502_so_2016" />
+				<Option createDefFile="1" />
+			</Target>
+			<Target title="ajustes">
+				<Option platforms="Windows;" />
+				<Option output="lib/ajustes" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj" />
+				<Option type="2" />
+				<Option compiler="borland_c_502_so_2016" />
+				<Option createDefFile="1" />
+				<Option projectLinkerOptionsRelation="-1" />
+				<MakeCommands>
+					<Build command="" />
+					<CompileFile command="" />
+					<Clean command="" />
+					<DistClean command="" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command=" &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="ajustusr">
+				<Option platforms="Windows;" />
+				<Option output="lib/ajustusr" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj" />
+				<Option type="2" />
+				<Option compiler="borland_c_502_so_2016" />
+				<Option createDefFile="1" />
+				<Option projectLinkerOptionsRelation="-1" />
+				<MakeCommands>
+					<Build command="" />
+					<CompileFile command="" />
+					<Clean command="" />
+					<DistClean command="" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command=" &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="so1pub">
+				<Option platforms="Windows;" />
+				<Option output="lib/so1pub" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj" />
+				<Option type="2" />
+				<Option compiler="borland_c_502_so_2016" />
+				<Option createDefFile="1" />
+			</Target>
+			<Target title="so1d">
+				<Option platforms="Windows;" />
+				<Option output="bin/so1d" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj" />
+				<Option type="1" />
+				<Option compiler="borland_c_502_so_2016" />
+				<Compiler>
+					<Add option="-v" />
+				</Compiler>
+				<Linker>
+					<Add option="-Tde -m -l -c -k" />
+					<Add option="-v" />
+					<Add option="obj\startfin.asm\start.obj" />
+					<Add option="obj\SO1\ajustes.obj" />
+					<Add library="lib/so1pub.lib" />
+					<Add library="lib/crtl.lib" />
+					<Add library="lib/finlib.lib" />
+					<Add library="lib/entryexe.lib" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="$(UTMP):\bc5\bin\parchear.exe $exe_output 6 00" />
+					<Add after="$(UTMP):\bc5\bin\spinic.exe $exe_output" />
+					<Add after="$(UTMP):\bc5\bin\exe2bin.exe $exe_output $exe_dir\so1d.bin" />
+					<Add after="cmd /C copy $exe_dir\so1d.exe ..\DISQUETE" />
+					<Add after="cmd /C copy $exe_dir\so1d.bin ..\DISQUETE" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+			<Target title="so1">
+				<Option platforms="Windows;" />
+				<Option output="bin/so1" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj" />
+				<Option type="1" />
+				<Option compiler="borland_c_502_so_2016" />
+				<Compiler>
+					<Add option="-v" />
+				</Compiler>
+				<Linker>
+					<Add option="-Tde -m -l -c -k" />
+					<Add option="obj\startfin.asm\start.obj" />
+					<Add option="obj\SO1\ajustes.obj" />
+					<Add library="lib/so1pub.lib" />
+					<Add library="lib/crtl.lib" />
+					<Add library="lib/finlib.lib" />
+					<Add library="lib/entryexe.lib" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="$(UTMP):\bc5\bin\parchear.exe $exe_output 6 00" />
+					<Add after="$(UTMP):\bc5\bin\spinic.exe $exe_output" />
+					<Add after="$(UTMP):\bc5\bin\exe2bin.exe $exe_output $exe_dir\$(project_name).bin" />
+					<Add after="cmd /C copy $exe_dir\$(project_name).exe ..\DISQUETE" />
+					<Add after="cmd /C copy $exe_dir\$(project_name).bin ..\DISQUETE" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+			<Target title="so1u">
+				<Option platforms="Windows;" />
+				<Option output="bin/so1" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj" />
+				<Option type="1" />
+				<Option compiler="borland_c_502_so_2016" />
+				<Compiler>
+					<Add option="-v" />
+				</Compiler>
+				<Linker>
+					<Add option="-Tde -m -c -w-stk -e_startExe" />
+					<Add option="obj\startfin.asm\start.obj" />
+					<Add option="obj\SO1\ajustes.obj" />
+					<Add library="lib/so1pub.lib" />
+					<Add library="lib/crtl.lib" />
+					<Add library="lib/finlib.lib" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="$(UTMP):\bc5\bin\parchear.exe $exe_output 6 00" />
+					<Add after="$(UTMP):\bc5\bin\spinic.exe $exe_output" />
+					<Add after="$(UTMP):\bc5\bin\exe2bin.exe $exe_output $exe_dir\$(project_name).bin" />
+					<Add after="cmd /C copy $exe_dir\$(project_name).exe ..\DISQUETE" />
+					<Add after="cmd /C copy $exe_dir\$(project_name).bin ..\DISQUETE" />
+					<Mode after="always" />
+				</ExtraCommands>
+				<Environment>
+					<Variable name="enlazador" value="ulink.exe" />
+				</Environment>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="entrybin;entryexe;startlib;finlib;crtl;ajustes;ajustusr;so1pub;so1d;so1;so1u;" />
+			<Add alias="Bibliotecas" targets="entrybin;entryexe;startlib;finlib;crtl;ajustes;ajustusr;so1pub;" />
+			<Add alias="Debug" targets="entrybin;entryexe;startlib;finlib;crtl;ajustes;ajustusr;so1pub;so1d;" />
+			<Add alias="Release" targets="entrybin;entryexe;startlib;finlib;crtl;ajustes;ajustusr;so1pub;so1;" />
+			<Add alias="Ulink" targets="entrybin;entryexe;startlib;finlib;crtl;ajustes;ajustusr;so1pub;so1u;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-w" />
+			<Add option="-1" />
+			<Add option="-a1" />
+			<Add option="-k-" />
+			<Add option="-r-" />
+			<Add option="-y-" />
+			<Add option="-g20" />
+			<Add option="-j20" />
+			<Add option="-DIDE=CODEBLOCK" />
+			<Add directory="$$(UUSB):/SO/PRACT0" />
+		</Compiler>
+		<Unit filename="../CRTL/ASM/F_LXMUL.ASM">
+			<Option compilerVar="CC" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="tasm.exe /la /c /ml /zn $file,$object,$objects_output_dir\CRTL\ASM" />
+			<Option target="crtl" />
+		</Unit>
+		<Unit filename="../CRTL/ASM/H_LDIV.ASM">
+			<Option compilerVar="CC" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="tasm.exe /la /c /ml /zn $file,$object,$objects_output_dir\CRTL\ASM" />
+			<Option target="crtl" />
+		</Unit>
+		<Unit filename="../CRTL/ASM/H_LLSH.ASM">
+			<Option compilerVar="CC" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="tasm.exe /la /c /ml /zn $file,$object,$objects_output_dir\CRTL\ASM" />
+			<Option target="crtl" />
+		</Unit>
+		<Unit filename="../CRTL/ASM/H_LURSH.ASM">
+			<Option compilerVar="CC" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="tasm.exe /la /c /ml /zn $file,$object,$objects_output_dir\CRTL\ASM" />
+			<Option target="crtl" />
+		</Unit>
+		<Unit filename="../CRTL/ASM/N_LXMUL.ASM">
+			<Option compilerVar="CC" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="tasm.exe /la /c /ml /zn $file,$object,$objects_output_dir\CRTL\ASM" />
+			<Option target="crtl" />
+		</Unit>
+		<Unit filename="../SO1.H/AJUSTES.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/AJUSTSP.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/BIOS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/BLOCKPR.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/DBGWORD.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/DOKILL.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/EJECUTAR.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/GM.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/GP.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/INICCODE.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/INTERRUP.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/LLAMADAS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/MAIN.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/MBOOT.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/MINIFS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/PLOT.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/PROCESOS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/RECURSOS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/S0.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/SF.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1.H/SO1DBG.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/AJUSTUSR.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/BIOSDATA.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/BIOS_0.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/BIOS_CRT.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/BIOS_RAT.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/C2C.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/CARACTER.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/CARSCTRL.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/CCB.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/CMOS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/COLORES.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/COMUNDRV.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/CONST.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/COPIA.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/CRTHW.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/DEBUG.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/DEF_MEM.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/DEF_PANT.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/DEF_PROC.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/DEF_RAT.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/DEF_SCAN.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/DEF_SF.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/DEF_TECL.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/DEF_TIMER.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/DEF_TRM.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/DEF_TWIN.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/ESCRIBIR.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/FCNTL.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/FINBSS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/FINCODE.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/FINDATA.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/F_ASM.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/INTERPRE.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/LEERCMD.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/LL_S_EXEC.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/LL_S_SO1.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/MEMVIDEO.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/MSDOS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/MULTIBOOT.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/NOP.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/PANTALLA.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/PIC.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/PRINTCON.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/PRINTF.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/PRINTGEN.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/PRINTMEM.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/PRINTVID.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/PTRC2C.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/PUERTOS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/PUT.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/SALUDOS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/SCANNER.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/STARTBSS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/STARTCODE.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/STARTDATA.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/STDARGS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/STDIO.H">
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/STRINGS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/TELON.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/TIPOS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/USRDBG.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB.H/VARARGS.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB/AJUSTUSR.C">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="AJUSTUSR/" />
+			<Option target="ajustusr" />
+		</Unit>
+		<Unit filename="../SO1PUB/BIOSDATA.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/BIOS_0.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/BIOS_CRT.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/BIOS_RAT.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/C2C.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/CARACTER.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/CCB.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/CMOS.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/COLORES.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/COPIA.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/CRTHW.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/DEBUG.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/ESCRIBIR.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/FINBSS.C">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB/FINCODE.C">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB/FINDATA.C">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB/INTERPRE.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/LEERCMD.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/LL_S_EXC.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/LL_S_SO1.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/MEMVIDEO.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/MSDOS.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/NOP.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/PANTALLA.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/PIC.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/PRINTCON.C">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/PRINTGEN.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/PRINTMEM.C">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/PRINTVID.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/PTRC2C.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/PUERTOS.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/PUT.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/SALUDOS.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/SCANNER.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/STARTBSS.C">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB/STARTCODE.C">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB/STARTDATA.C">
+			<Option compilerVar="CC" />
+			<Option link="0" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="../SO1PUB/STDIO.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/STRINGS.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/TELON.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/TIPOS.C">
+			<Option compilerVar="CC" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1PUB/USRDBG.C">
+			<Option compilerVar="CC" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="so1pub" />
+		</Unit>
+		<Unit filename="../SO1/AJUSTES.C">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="AJUSTES/" />
+			<Option target="ajustes" />
+		</Unit>
+		<Unit filename="../SO1/BIOS.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/BLOCKPR.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/DBGWORD.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/DOKILL.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/EJECUTAR.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/GM.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/GP.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/INTERRUP.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/LLAMADAS.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/MANEJ_00.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/MANEJ_01.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/MANEJ_02.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/MANEJ_03.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/MANEJ_04.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/MATRIX.C">
+			<Option compilerVar="CC" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="bcc.exe -1 -k- -r- -c -v- -y- -g20 -j20 -I$(UUSB):\SO\PRACT0 -a1 -S  -oasm\matrix.asm ..\so1\matrix.c\ntasm.exe /la /c /ml /zn asm\matrix.asm, obj\so1\matrix.obj, lst\matrix.lst" />
+			<Option target="so1pub" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/MINIFS.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/PLOT.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/PROCESOS.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/RECURSOS.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/S0.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/SF.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/SO1.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../SO1/SO1DBG.C">
+			<Option compilerVar="CC" />
+			<Option target="so1d" />
+			<Option target="so1" />
+			<Option target="so1u" />
+		</Unit>
+		<Unit filename="../STARTFIN.ASM/ENTRYBIN.ASM">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="ENTRYBIN/" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="tasm.exe /la /c /ml /zn $file, $object, $objects_output_dir\STARTFIN.ASM" />
+			<Option target="entrybin" />
+		</Unit>
+		<Unit filename="../STARTFIN.ASM/ENTRYEXE.ASM">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="ENTRYEXE/" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="tasm.exe /la /c /ml /zn $file, $object, $objects_output_dir\STARTFIN.ASM" />
+			<Option target="entryexe" />
+		</Unit>
+		<Unit filename="../STARTFIN.ASM/FINBSS.ASM">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="FIN/" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="tasm.exe /la /c /ml /zn $file, $object, $objects_output_dir\STARTFIN.ASM" />
+			<Option target="finlib" />
+		</Unit>
+		<Unit filename="../STARTFIN.ASM/FINCODE.ASM">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="FIN/" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="tasm.exe /la /c /ml /zn $file, $object, $objects_output_dir\STARTFIN.ASM" />
+			<Option target="finlib" />
+		</Unit>
+		<Unit filename="../STARTFIN.ASM/FINDATA.ASM">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="FIN/" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="tasm.exe /la /c /ml /zn $file, $object, $objects_output_dir\STARTFIN.ASM" />
+			<Option target="finlib" />
+		</Unit>
+		<Unit filename="../STARTFIN.ASM/START.ASM">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="START/" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="tasm.exe /la /c /ml /zn $file, $object, $objects_output_dir\STARTFIN.ASM" />
+			<Option target="startlib" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
