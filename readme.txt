@@ -8,7 +8,7 @@ to the use of the Takeda Toshiya's MSDOS Player).
 SO1 is simply intended to be a tool for teaching operating 
 systems in the early stages of study of the mattery. The 
 compilation (on Windows) and the running on Windows (NTVDM) 
-or on virtual machines (qemu, bochs, DOSBox, ...) as on a 
+or on virtual machines (qemu, bochs, DOSBox, ...) or on a 
 real machine (a standard PC) natively using a USB pen drive, 
 are tasks that require few minutes, to through a short 
 sequence of simple steps, which makes SO1 an ideal way to 
