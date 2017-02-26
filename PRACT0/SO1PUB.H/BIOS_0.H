@@ -51,7 +51,7 @@ word_t teclaListaBIOS ( void ) ;   /* en WXP y DOSBOX deja int. permitidas */
 #define leerCarBIOS( )                         /* bloqueante en bucle BIOS */\
   ((byte_t)leerTeclaBIOS())
 
-#define leerCarListoBDA() ((char)leerTeclaLista())
+#define leerCarListoBDA() ((char)leerTeclaListaBDA())
 
 word_t leerTeclaListaBDA ( void ) ;
 
@@ -81,6 +81,10 @@ int printLIntBIOS ( long int num, word_t l ) ;
 int printHexBIOS ( word_t num, word_t l ) ;
 
 int printLHexBIOS ( dword_t num, word_t l ) ;
+
+int printBinBIOS ( word_t num, word_t l ) ;
+
+int printLBinBIOS ( dword_t num, word_t l ) ;
 
 int printPtrBIOS ( pointer_t ptr ) ;
 

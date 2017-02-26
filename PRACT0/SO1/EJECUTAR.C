@@ -242,7 +242,7 @@ pindx_t preEjecutar ( const char far * nombre,
     ptr = pointer(s, 0x0000) ;
     posFich = (dword_t)0 ;
     lseekDOS(df, (dword_t *)&posFich, SEEK_SET_MSDOS) ;          /* whence */
-    while ((n = readDOSFar(df, (char far *)ptr, 32*512)) > 0) {
+    while ((n = readDOS(df, (char far *)ptr, 32*512)) > 0) {
       s = s + (32*512)/16 ;
       ptr = pointer(s, 0x0000) ;
     }

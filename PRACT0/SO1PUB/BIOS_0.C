@@ -49,6 +49,7 @@ byte_t tipoTeclado ( void ) {
 }
 
 #if (FALSE)
+	
 byte_t leerTeclaBIOS ( void ) {                /* bloqueante en bucle BIOS */
   char car ;
   asm mov ah,00h ;                    /* Llamada al BIOS: Leer del teclado */
@@ -64,6 +65,7 @@ byte_t leerTeclaExtBIOS ( void ) {        /* bloqueante en bucle BIOS [AT] */
   asm mov car,ah ;                         /* ah = codigo scan introducido */
   return(car) ;
 }
+
 char leerCarBIOS ( void ) {                    /* bloqueante en bucle BIOS */
   char car ;
   asm mov ah,00h                      /* Llamada al BIOS: Leer del teclado */
@@ -71,6 +73,7 @@ char leerCarBIOS ( void ) {                    /* bloqueante en bucle BIOS */
   asm mov car,al                        /* al = caracter ascii introducido */
   return(car) ;     /* al == 0 => a continuacion: caracter ascii extendido */
 }
+
 #endif
 
 /* leerTeclaBIOS parece que deja permitidas las interrupciones             */
@@ -232,19 +235,33 @@ int printIntBIOS ( int num, word_t l ) {
   printGenInt(num, l, printCarBIOS) ;
 }
 
-int printLIntBIOS ( long int num, word_t l ) {
+int printLIntBIOS ( long int num, word_t l ) 
+{
   printGenLInt(num, l, printCarBIOS) ;
 }
 
-int printHexBIOS ( word_t num, word_t l ) {
+int printHexBIOS ( word_t num, word_t l ) 
+{
   printGenHex(num, l, printCarBIOS) ;
 }
 
-int printLHexBIOS ( dword_t num, word_t l ) {
+int printLHexBIOS ( dword_t num, word_t l ) 
+{
   printGenLHex(num, l, printCarBIOS) ;
 }
 
-int printPtrBIOS ( pointer_t ptr ) {
+int printBinBIOS ( word_t num, word_t l ) 
+{
+    printGenBin(num, l, printCarBIOS ) ;
+}
+
+int printLBinBIOS ( dword_t num, word_t l ) 
+{
+    printGenLBin( num, l, printCarBIOS ) ;
+}
+
+int printPtrBIOS ( pointer_t ptr ) 
+{
   printGenPtr(ptr, printCarBIOS) ;
 }
 

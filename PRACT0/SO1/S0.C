@@ -79,7 +79,7 @@ void mirarLoQueHay ( word_t * loQueHay ) {
     assert(FALSE, "\a\n SO1() ERROR: modoSO1() = ");
     printHexBIOS(modoSO1(), 4) ;
     esperarScancode() ;
-    finProgDOS () ;                                             /* int 21h */
+    finProgDOS (1) ;                                            /* int 21h */
     rebootBIOS() ;                                              /* int 19h */
     rebootLegacy() ;                                    /* callf ffff:0000 */
   }
@@ -149,7 +149,7 @@ void mostrarLoQueHay ( word_t loQueHay ) {
 void tirarS0 ( word_t loQueHay ) {
 
   if (loQueHay & hayDOS) {
-    finProgDOS () ;                                             /* int 21h */
+    finProgDOS (0) ;                                            /* int 21h */
     rebootBIOS() ;                                              /* int 19h */
     rebootLegacy() ;                                    /* callf ffff:0000 */
   }

@@ -65,18 +65,6 @@ pindx_t indice ( pid_t pid ) ;
 
 pindx_t far sigProceso ( void ) ;              /* planificador de procesos */
 
-void encolar ( cola_t * cola, int pindx ) ;
-
-void encolarAlt ( cola_t * cola, int pindx ) ;
-
-void encolarFar ( cola_t far * cola, int pindx ) ;
-
-void eliminar ( cola_t * cola, int pindx ) ;
-
-void eliminarAlt ( cola_t * cola, int pindx ) ;
-
-void eliminarFar ( cola_t far * cola, int pindx ) ;
-
 int far activarProceso ( pindx_t pindx ) ;
 
 void registrarEnPOrdenados ( pindx_t pindx ) ;
@@ -100,35 +88,6 @@ int terminarProcIndx ( pindx_t pindx ) ;          /* termina proceso pindx */
 int eliminarProcIndx ( pindx_t pindx ) ;          /* elimina proceso pindx */
 
 int matarProcIndx ( pindx_t pindx ) ;                /* mata proceso pindx */
-
-#define semMax 10
-
-typedef struct {
-  unsigned int valor ;                          /* valor del semaforo */
-  c2c_t cola ;          /* cola de procesos bloqueados en el semáforo */
-} sem_t ;
-
-extern sem_t semaforo[semMax] ;                           /* tabla de semaforos */
-
-void inicSemaforos ( void ) ;
-
-#define Capacidad 2  /* Capacidad de los buzones, puede ser 0, 1, 2, ... */
-#define mboxMax 10                               /* 10 buzones (mailbox) */
-
-typedef struct {
-  c2c_t Remitentes ;
-  c2c_t Destinatarios ;
-#if (Capacidad != 0)                          /* compilación condicional */
-  unsigned char bufer[Capacidad][16] ;
-  unsigned int in ;          /* bufer[in]  es la primera entrada libre   */
-  unsigned int out ;         /* bufer[out] es la primera entrada ocupada */
-  unsigned int numMensajes ;
-#endif                       /*            si numMensajes > 0            */
-} mbox_t ;
-
-extern mbox_t buzon [mboxMax] ;                                      /* buzones */
-
-void inicBuzones ( void ) ;
 
 #endif /* PROCESOS_H */
 

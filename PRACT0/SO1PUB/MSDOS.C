@@ -8,35 +8,92 @@
 #include <so1pub.h\msdos.h>
 #include <so1pub.h\strings.h>
 
-#define nVIntMSDOS 0x21     /* numero del vector del interrupcion de MSDOS */
-
-void finProgDOS ( void ) {
-  asm mov ah,4ch                    /* Llamada a MS-DOS: Terminar Programa */
-  asm mov al,00h
-  asm int 21h
+void finProgDOS ( int exitCode ) {
+  signed char code = (signed char)exitCode ;
+  asm {
+      mov al,code ;
+	  mov ah,4ch ;                  /* Llamada a MS-DOS: Terminar Programa */
+      int 21h ;
+  }
 }
 
 #pragma warn +struct
 
+#if (FALSE)
+
+void mostrarVIMSDOS ( void ) {
+
+  address_t far * ptrVIDos = (address_t far *)(nVIntMSDOS*4) ;
+
+  pointer_t VIDos = *((pointer_t far *)ptrVIDos) ;
+
+  clrScrBIOS() ;
+
+  printStrBIOS("\n ptrVIDos = ") ;
+  printHexBIOS(ptrVIDos, 8) ;
+  printLnBIOS() ;
+
+  printStrBIOS("\n *ptrVIDos = ") ;
+  printHexBIOS(ptrVIDos->segment, 4) ;
+  printCarBIOS(':') ;
+  printHexBIOS(ptrVIDos->offset, 4) ;
+  printLnBIOS() ;
+
+  printStrBIOS("\n VIDos    = ") ;
+  printLHexBIOS(VIDos, 8) ;
+  printLnBIOS() ;
+  printStrBIOS("\n (((dword_t)VIDos) >> 16) = ") ;
+  printLHexBIOS((((dword_t)VIDos) >> 16), 8) ;
+  printLnBIOS() ;
+
+  printStrBIOS("\n *VIDos   = ") ;
+  printHexBIOS(*VIDos, 2) ;
+  printLnBIOS() ;
+  printLnBIOS() ;
+
+}
+
+#endif
+
 bool_t hayMSDOS ( void ) {
-  pointer_t far * ptrDos =
-    (pointer_t far *)(nVIntMSDOS*4) ;
-  return(**ptrDos != 0xCF) ;              /* 0xCF = codigo maquina de IRET */
+
+  address_t far * ptrVIDos = (address_t far *)(nVIntMSDOS*4) ;
+
+  pointer_t VIDos = *((pointer_t far *)ptrVIDos) ;
+
+#if (0)
+  mostrarVIMSDOS() ;
+#endif
+
+  if ((*VIDos) == 0xCF)                   /* 0xCF = codigo maquina de IRET */
+    return (FALSE) ;
+
+  if (((LINEAL(VIDos)) >> 16) == 0xF)     /* el vector apunta al BIOS      */
+                                          /* direccion 0x000Fxxxx          */
+    if (LINEAL(VIDos) > 0x000F14A0)
+      return (FALSE) ;
+                                 /* !!!! DOSBox tiene el vector 0x000F14A0 */
+  return (TRUE) ;
+
 }
 
 word_t versionMSDOS ( void ) {
   word_t version ;
-  asm mov ah,30h
-  asm int 21h
-  asm mov version,ax               /* al = numero mayor, ah = numero menor */
+  asm {
+	  mov ah,30h ;
+      int 21h ;
+      mov version,ax ;             /* al = numero mayor, ah = numero menor */
+  }
   return(version) ;
 }
 
 word_t segPSP ( void ) {
   word_t PSP ;
-  asm mov ah,51h                                                    /* PSP */
-  asm int nVIntMSDOS
-  asm mov PSP,bx
+  asm {
+	  mov ah,51h ;                                                  /* PSP */
+      int 21h ;
+      mov PSP,bx ;
+  }
   return(PSP) ;
 }
 
@@ -51,15 +108,18 @@ pointer_t entornoMSDOS ( void ) {
 pointer_t valorMSDOS ( char * str ) {
   pointer_t ptrEntorno ;
   int i, j ;
+  char car ;
   ptrEntorno = entornoMSDOS() ;
   i = 0 ;
   do {
     j = 0 ;
-    while ((ptrEntorno[i] != (char)0) &&
-           (ptrEntorno[i] != '=') &&
-           (ptrEntorno[i] == str[j])) {
+    car = ptrEntorno[i] ;
+    while ((car != (char)0) &&
+           (car != '=') &&
+           (car == str[j])) {
       i++ ;
       j++ ;
+      car = ptrEntorno[i] ;
     }
     if ((ptrEntorno[i++] == '=') && (str[j] == (char)0))
       break ;
@@ -89,6 +149,19 @@ int argcMSDOS ( void ) {
   return(argc) ;
 }
 
+bool_t hayDOSBox ( void ) {
+
+  address_t far * ptrVIDos = (address_t far *)(nVIntMSDOS*4) ;
+
+  pointer_t VIDos = *((pointer_t far *)ptrVIDos) ;
+
+  if (LINEAL(VIDos) == 0x000F14A0)
+      return (TRUE) ;            /* !!!! DOSBox tiene el vector 0x000F14A0 */
+  if (!hayMSDOS()) return(FALSE) ;
+  return (iguales((char far *)valorMSDOS("DOSBOX"), "DOSBOX")) ;
+
+}
+
 bool_t argvMSDOS ( word_t n, char * str ) {
 
   word_t segEntorno ;
@@ -102,20 +175,20 @@ bool_t argvMSDOS ( word_t n, char * str ) {
   tamCmdLine = (word_t)*pointer(segPSP(), 0x0080) ;
   ptrCmdLine = pointer(segPSP(), 0x0081) ;
 
-  if (n == 1) {
+  if (n == 0) {
     i = 0 ;
     do {
       while (ptrEntorno[i] != (char)0) i++ ;
     } while (ptrEntorno[++i] != (char)0) ;
     i++ ;
-     i = i + 2 ;
+    i = i + 2 ;
     j = 0 ;
     while ((str[j++] = ptrEntorno[i++]) != (char)0) ;
     return(TRUE) ;
   }
   else {
-    i = 0 ;
-    j = 1 ;
+    i = 0 ;                           /* indice del caracter en ptrCmdLine */
+    j = 0 ;                                 /* índice del argumento actual */
     while ((i < tamCmdLine) && (j < n)) {
       while ((i < tamCmdLine) && (ptrCmdLine[i] == ' ')) i++ ;
       if ((i < tamCmdLine) && (ptrCmdLine[i] != ' ')) j++ ;
@@ -123,17 +196,16 @@ bool_t argvMSDOS ( word_t n, char * str ) {
         k = 0 ;
         while ((i < tamCmdLine) && (ptrCmdLine[i] != ' '))
           str[k++] = ptrCmdLine[i++] ;
-         str[k] = (char)0 ;
+        str[k] = (char)0 ;
         return(TRUE) ;
+      }
+      else {
+        i++ ;
+        while ((i < tamCmdLine) && (ptrCmdLine[i] != ' ')) i++ ;
       }
     }
     return(FALSE) ;
   }
-}
-
-bool_t hayDOSBox ( void ) {
-  if (!hayMSDOS()) return(FALSE) ;
-  return (iguales((char far *)valorMSDOS("DOSBOX"), "DOSBOX")) ;
 }
 
 bool_t hayWindowsNT ( void ) {
@@ -162,14 +234,16 @@ bool_t hayWindowsNT ( void ) {
 
 int openDOS ( pointer_t nombre, byte_t modo ) {
   int df ;
-  asm push ds
-  asm mov al,modo                                  /* 0 = R, 1 = W, 2 = RW */
-  asm lds dx,nombre
-  asm mov ah,3dh
-  asm int nVIntMSDOS
-  asm pop ds
-  asm mov df,ax
-  asm jc openFailed
+  asm {
+	  push ds ;
+      mov al,modo ;                                /* 0 = R, 1 = W, 2 = RW */
+      lds dx,nombre ;
+      mov ah,3dh ;
+      int 21h ;
+      pop ds ;
+      mov df,ax ;
+      jc openFailed ;
+  }
   return(df) ;
 openFailed:
   return(-1) ;
@@ -185,18 +259,20 @@ int extendedOpenDOS ( pointer_t    nombre,                   /* MSDOS 4.0+ */
   int df ;
   word_t fci = *accion ;               /* fci = function control indicator */
   word_t res ;
-  asm push ds
-  asm mov bx,modo                                  /* 0 = R, 1 = W, 2 = RW */
-  asm mov cx,atr
-  asm mov dx,fci
-  asm lds si,nombre
-  asm mov al,00h
-  asm mov ah,6ch
-  asm int nVIntMSDOS
-  asm pop ds
-  asm mov res,ax
-  asm mov fci,cx
-  asm jc eopenFailed
+  asm {
+	  push ds ;
+      mov bx,modo ;                                /* 0 = R, 1 = W, 2 = RW */
+      mov cx,atr ;
+      mov dx,fci ;
+      lds si,nombre
+      mov al,00h ;
+      mov ah,6ch ;
+      int 21h ;
+      pop ds ;
+      mov res,ax ;
+      mov fci,cx ;
+      jc eopenFailed ;
+  }
   *accion = fci ;
   *error = 0 ;
   df = res ;
@@ -208,11 +284,13 @@ eopenFailed:
 
 int closeDOS ( int df ) {
   int err ;
-  asm mov bx,df
-  asm mov ah,3eh
-  asm int nVIntMSDOS
-  asm mov err,ax
-  asm jc closeFailed
+  asm {
+	  mov bx,df ;
+      mov ah,3eh ;
+      int 21h ;
+      mov err,ax ;
+      jc closeFailed ;
+  }
   return(err) ;
 closeFailed:
   return(-1) ;
@@ -220,90 +298,70 @@ closeFailed:
 
 int commitFileDOS ( int df ) {
   int err ;
-  asm mov bx,df
-  asm mov ah,68h
-  asm int nVIntMSDOS
-  asm mov err,ax
-  asm jc commitFailed
+  asm {
+	  mov bx,df ;
+      mov ah,68h ;
+      int 21h ;
+      mov err,ax ;
+      jc commitFailed ;
+  }
   return(err) ;
 commitFailed:
   return(-1) ;
 }
 
-int createDOS ( pointer_t nombre, word_t atributo ) {    /* FA_RDONLY, ... */
+int createDOS ( pointer_t nombre, word_t atributo ) {      /* FA_ARCH, ... */
   int df ;
-  asm mov cx,atributo                                          /* 00AD0SHR */
-  asm lds dx,nombre
-  asm mov ah,3ch
-  asm int nVIntMSDOS
-  asm mov df,ax
-  asm jc creatFailed
+  asm {
+	  push ds ;
+      mov cx,atributo ;                                        /* 00AD0SHR */
+      lds dx,nombre ;
+      mov ah,3ch ;
+      int 21h ;
+	  pop ds ;
+      mov df,ax ;
+      jc creatFailed ;
+  }
   return(df) ;
 creatFailed:
   return(-1) ;
 }
 
-int readDOS ( int df, char * buf, int n ) {
+int readDOS ( int df, char far * buf, int n ) {
   int leidos ;
-  asm mov bx,df
-  asm mov dx,buf
-  asm mov cx,n
-  asm mov ah,3fh
-  asm int nVIntMSDOS
-  asm mov leidos,ax
-  asm jc readFailed
+  asm {
+      mov bx,df ;
+	  les dx,buf ;
+      mov cx,n ;
+      mov ah,3fh ;
+      push ds ;
+      push es ;
+      pop ds ;
+      int 21h ;
+      pop ds ;
+      mov leidos,ax ;
+      jc readFailed ;
+  }
   return(leidos) ;
 readFailed:
   return(-1) ;
 }
 
-int readDOSFar ( int df, char far * buf, int n ) {
-  int leidos ;
-  asm les bx,buf
-  asm mov dx,bx
-  asm mov bx,df
-  asm mov cx,n
-  asm mov ah,3fh
-  asm push ds
-  asm push es
-  asm pop ds
-  asm int nVIntMSDOS
-  asm pop ds
-  asm mov leidos,ax
-  asm jc readFailed
-  return(leidos) ;
-readFailed:
-  return(-1) ;
-}
-
-int writeDOS ( int df, char * buf, int n ) {
+int writeDOS ( int df, char far * buf, int n ) {
   int escritos ;
-  asm mov bx,df
-  asm mov dx,buf
-  asm mov cx,n                  /* DOS 3.0+ n = 0 trunca (o rellena) hasta */
-  asm mov ah,40h                 /* la posicion actual del fichero (lseek) */
-  asm int nVIntMSDOS
-  asm mov escritos,ax
-  asm jc writeFailed
-  return(escritos) ;
-writeFailed:
-  return(-1) ;
-}
-
-int writeDOSFar ( int df, char far * buf, int n ) {
-  int escritos ;
-  asm les bx,buf
-  asm mov dx,bx
-  asm mov bx,df
-  asm mov cx,n
-  asm mov ah,40h
-  asm push ds
-  asm push es
-  asm pop ds
-  asm int nVIntMSDOS
-  asm pop ds
-  asm mov escritos,ax
-  asm jc writeFailed
+  asm {
+      mov bx,df ;
+	  les dx,buf ;
+      mov cx,n ;                /* DOS 3.0+ n = 0 trunca (o rellena) hasta */
+      mov ah,40h ;               /* la posicion actual del fichero (lseek) */
+      push ds ;
+      push es ;
+      pop ds ;
+      int 21h ;
+      pop ds ;
+      mov escritos,ax ;
+      jc writeFailed ;
+  }
   return(escritos) ;
 writeFailed:
   return(-1) ;
@@ -313,15 +371,17 @@ int lseekDOS ( int df, dword_t * pos, int whence ) {
   word_t posL = *((word_t *)pos) ;
   word_t posH = (word_t)((*((dword_t *)pos)) >> 16) ;
   byte_t whenceByte = whence ;
-  asm mov bx,df
-  asm mov dx,posL
-  asm mov cx,posH
-  asm mov al,whenceByte
-  asm mov ah,42h
-  asm int nVIntMSDOS
-  asm jc lseekFailed
-  asm mov posL,ax
-  asm mov posH,dx
+  asm {
+	  mov bx,df ;
+      mov dx,posL ;
+      mov cx,posH ;
+      mov al,whenceByte ;
+      mov ah,42h ;
+      int 21h ;
+      jc lseekFailed ;
+      mov posL,ax ;
+      mov posH,dx ;
+  }	  
   *pos = (((dword_t)posH) << 16) + (dword_t)posL ;
   return(0) ;
 lseekFailed:
@@ -330,128 +390,126 @@ lseekFailed:
 
 int getdiskDOS ( void ) {
   unsigned char drive ;
-  asm mov ah,19h
-  asm int 21h
-  asm mov drive,al
+  asm {
+	  mov ah,19h ;
+      int 21h ;
+      mov drive,al ;
+  }
   return((int)drive) ;
 }
 
 int setdiskDOS ( int drive ) {
   unsigned char ndrives ;
-  asm mov dx,drive
-  asm mov ah,0eh
-  asm int 21h
-  asm mov ndrives,al
+  asm {
+	  mov dx,drive ;
+      mov ah,0eh ;
+      int 21h ;
+      mov ndrives,al ;
+  }
   return((int)ndrives) ;
 }
 
-int getcurdirDOS ( int drive, char * direc ) {
-
-  char far * directorio = (char far *)direc ;
-
+int getcurdirDOS ( int drive, char far * directorio ) {
   drive++ ;
-  asm push ds
-  asm mov ah,47h
-  asm mov dx,drive
-  asm lds si,directorio
-  asm int 21h
-  asm pop ds
-  asm jc getcurdirFailed
+  asm {
+	  push ds ;
+      mov ah,47h ;
+      mov dx,drive ;
+      lds si,directorio ;
+      int 21h ;
+      pop ds ;
+      jc getcurdirFailed ;
+  }
   return(0) ;
 getcurdirFailed:
   return(-1) ;
 }
 
-int chdirDOS ( const char * path ) {
-
-  char far * ptrFar = (char far *)path ;
-
-  asm push ds
-  asm mov ah,3bh
-  asm lds dx,ptrFar
-  asm int 021h
-  asm pop ds
-  asm jc chdirFailed
+int chdirDOS ( const char far * path ) {
+  asm {
+	  push ds ;
+      mov ah,3bh ;
+      lds dx,path ;
+      int 021h ;
+      pop ds ;
+      jc chdirFailed ;
+  }
   return(0);
 chdirFailed:
   return(-1) ;
 }
 
-int findfirstDOS ( const char * pathname,
-                   struct ffblk * ffblk,
+int findfirstDOS ( const char far * pathname,
+                   struct ffblk far * ffblk,
                    int attrib ) {
+  asm {
+	  push ds ;
 
-  char far * pathname1 = (char far *)pathname ;
+      mov ah,2fh ;                                   /* get (and save) DTA */
+      int 21h ;
+      push es ;
+      push bx ;
 
-  struct ffblk far * ffblk1 = (struct ffblk far *)ffblk ;
+      mov ah,01Ah ;
+      lds dx,ffblk ;
+      int 021h ;                          /* Set the disk transfer address */
 
-  asm push ds
+      mov ah,04Eh ;
+      mov cx,attrib ;
+      lds dx,pathname ;
+      int 021h ;                               /* Find first matching file */
 
-  asm mov ah,2fh                                     /* get (and save) DTA */
-  asm int 21h
-  asm push es
-  asm push bx
+      pushf ;                                  /* save state of carry flag */
+      pop cx ;
+      xchg ax,bx ;                                     /* save return code */
 
-  asm mov ah,01Ah
-  asm lds dx,ffblk1
-  asm int 021h                            /* Set the disk transfer address */
+      mov ah,01Ah ;                                         /* restore DTA */
+      pop dx ;
+      pop ds ;
+      int 21h ;
 
-  asm mov ah,04Eh
-  asm mov cx,attrib
-  asm lds dx,pathname1
-  asm int 021h                                 /* Find first matching file */
+      push cx ;
+      popf ;
+      pop ds ;
 
-  asm pushf                                    /* save state of carry flag */
-  asm pop cx
-  asm xchg ax,bx                                       /* save return code */
-
-  asm mov ah,01Ah                                           /* restore DTA */
-  asm pop dx
-  asm pop ds
-  asm int 21h
-
-  asm push cx
-  asm popf
-  asm pop ds
-
-  asm jc findfirstFailed
+      jc findfirstFailed ;
+  }
   return(0) ;
 findfirstFailed:
   return(-1) ;
 }
 
-int findnextDOS ( struct ffblk * ffblk ) {
+int findnextDOS ( struct ffblk far * ffblk ) {
+  asm {
+	  push ds ;
 
-  struct ffblk far * ffblk1 = (struct ffblk far *) ffblk ;
+      mov ah,2fh ;                                   /* get (and save) DTA */
+      int 21h ;
+      push es ;
+      push bx ;
 
-  asm push ds
+      mov ah,01Ah ;
+      lds dx,ffblk ;
+      int 021h ;                          /* Set the disk transfer address */
 
-  asm mov ah,2fh                                     /* get (and save) DTA */
-  asm int 21h
-  asm push es
-  asm push bx
+      mov ah,04Fh ;
+      int 021h ;                                /* Find next matching file */
 
-  asm mov ah,01Ah
-  asm lds dx,ffblk1
-  asm int 021h                            /* Set the disk transfer address */
+      pushf ;                                  /* save state of carry flag */
+      pop cx ;
+      xchg ax,bx ;                                     /* save return code */
 
-  asm mov ah,04Fh
-  asm int 021h                                  /* Find next matching file */
+      mov ah,01Ah ;                                         /* restore DTA */
+      pop dx ;
+      pop ds ;
+      int 21h ;
 
-  asm pushf                                    /* save state of carry flag */
-  asm pop cx
-  asm xchg ax,bx                                       /* save return code */
+      push cx ;
+      popf ;
+      pop ds ;
 
-  asm mov ah,01Ah                                           /* restore DTA */
-  asm pop dx
-  asm pop ds
-  asm int 21h
-
-  asm push cx
-  asm popf
-  asm pop ds
-
-  asm jc findnextFailed
+      jc findnextFailed ;
+  }
   return(0) ;
 findnextFailed:
   return(-1) ;

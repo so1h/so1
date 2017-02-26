@@ -42,4 +42,4 @@ typedef word_t modoAp_t ;
 #define F_SETLKW         7
 
 
-#endif FCNTL_H
+#endif /* FCNTL_H */

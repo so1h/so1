@@ -24,8 +24,8 @@
 #define CONRAT  FALSE      /*    FALSE     */
 #define RETARDO TRUE       /*    TRUE      */ /* falla con msdos de Takeda */
 #define RELOJ   TRUE       /*    TRUE      */ /* falla con msdos de Takeda */
-//#define RATON   TRUE       /*    TRUE      */ /* falla con msdos de Takeda */
-#define RATON   FALSE    /*    FALSE     */ /* falla con msdos de Takeda */
+#define RATON   TRUE       /*    TRUE      */ /* falla con msdos de Takeda */
+//#define RATON   FALSE    /*    FALSE     */ /* falla con msdos de Takeda */
 
 //#define numConsolas 1 //antes estaba a 6
 #define numConsolas 6 //antes estaba a 6
@@ -194,8 +194,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
 
     printStrBIOS("\n\n comandos: ") ;
     copiarStr("CONX", nombre) ;
-//  for ( i = 1 ; i <= numConsolas/2 ; i++ )
-    for ( i = 1 ; i <= 1 /* numConsolas/2 */ ; i++ )
+    for ( i = 1 ; i <= numConsolas/2 ; i++ )
     {
             nombre[3] = '0' + i ;
             close(STDIN) ;

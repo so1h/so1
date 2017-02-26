@@ -100,6 +100,8 @@ void incPtr ( pointer_t far * p, word_t i ) ;
 
 #define OFF(p) ((word_t)(p))
 
+#define LINEAL(p) ((((dword_t)SEG(p)) << 4) + (dword_t)OFF(p))
+
 
 #define FP_OFF(fp)      ((word_t)(fp))              /* fp variable puntero */
 

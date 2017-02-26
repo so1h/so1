@@ -66,27 +66,27 @@ static victimaASustituir = 0 ;          /* para la politica de sustitucion */
 word_t segBuferSeguro ( void )                        /* seguro con el DMA */
 {
     word_t segB ;
-    word_t segBufer ;                       /* 512 bytes = 512/16 paragrafos */
+    word_t segBufer ;                     /* 512 bytes = 512/16 paragrafos */
 //segB = ll_buscarBloque(512/16) ;         /* primer segmento tras la pila */
-    segB = k_buscarBloque(512/16) ;          /* primer segmento tras la pila */
+    segB = k_buscarBloque(512/16) ;        /* primer segmento tras la pila */
     segBufer = segB ;
 #if (FALSE)
-    if ((segB & 0xF000) != ((segB + 512/16 -1) & 0xF000))  /* atraviesa 64 K */
+    if ((segB & 0xF000) != ((segB + 512/16 -1) & 0xF000))/* atraviesa 64 K */
     {
         segBufer = (segB + 512/16) & 0xF000 ;
 //  ll_devolverBloque(segB, 512/16) ;                                /* GM */
-        k_devolverBloque(segB, 512/16) ;                                 /* GM */
+        k_devolverBloque(segB, 512/16) ;                             /* GM */
 //  ll_buscarBloque(segBufer + 512/16 - segB) ;                      /* GM */
-        k_buscarBloque(segBufer + 512/16 - segB) ;                       /* GM */
+        k_buscarBloque(segBufer + 512/16 - segB) ;                   /* GM */
     }
 #endif
-    if ((segB % (512/16)) != 0)                      /* multiplo de (512/16) */
+    if ((segB % (512/16)) != 0)                    /* multiplo de (512/16) */
     {
         segBufer = ((segB & 0xFFE0) + 512/16) ;
 //  ll_devolverBloque(segB, 512/16) ;                                /* GM */
-        k_devolverBloque(segB, 512/16) ;                                 /* GM */
+        k_devolverBloque(segB, 512/16) ;                             /* GM */
 //  ll_buscarBloque(segBufer + 512/16 - segB) ;                      /* GM */
-        k_buscarBloque(segBufer + 512/16 - segB) ;                       /* GM */
+        k_buscarBloque(segBufer + 512/16 - segB) ;                   /* GM */
     }
     return(segBufer) ;
 }
@@ -163,7 +163,7 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
 {
 
     word_t segmento ;
-    byte_t tipo ;                             /* tipo de la particion activa */
+    byte_t tipo ;                           /* tipo de la particion activa */
     mbr_t far * mbr ;
     boot_t far * boot ;
     CSH_t CSH ;
@@ -172,10 +172,10 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
     int error ;
     int i ;
 
-    /* Se necesita un bufer de 512 bytes para la lectura segura de sectores  */
-    /* mediante la INT13 (DMA).                                              */
+    /* Se necesita un bufer de 512 bytes para la lectura segura de los     */ 
+	/* sectores mediante la INT13 (DMA).                                   */
 
-    segBuferSO1 = segBuferSeguro() ;                                   /* GM */
+    segBuferSO1 = segBuferSeguro() ;                                 /* GM */
     ptrBuferSO1 = MK_FP(segBuferSO1, 0x0000) ;
     printStrBIOS("\n ptrBuferSO1 = 0x") ;
     printPtrBIOS(ptrBuferSO1) ;
@@ -183,7 +183,7 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
     mbr = (mbr_t far *)ptrBuferSO1 ;
     boot = (boot_t far *)ptrBuferSO1 ;
 
-    for ( ufindx = 0 ; ufindx < maxUF ; ufindx++ )       /* descUnidadFisica */
+    for ( ufindx = 0 ; ufindx < maxUF ; ufindx++ )     /* descUnidadFisica */
     {
         descUnidadFisica[ufindx].unidadBIOS = -1 ;
         descUnidadFisica[ufindx].contUL = 0 ;
@@ -193,20 +193,20 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
             descUnidadFisica[ufindx].ulindx[i] = -1 ;
         }
     }
-    for ( ulindx = 0 ; ulindx < maxUL ; ulindx++ )       /* descUnidadLogica */
+    for ( ulindx = 0 ; ulindx < maxUL ; ulindx++ )     /* descUnidadLogica */
     {
         descUnidadLogica[ulindx].ufindx = -1 ;
         descUnidadLogica[ulindx].indParticion = -1 ;
         descUnidadLogica[ulindx].letra = '$' ;
     }
-    if (unidadBIOS >= 0x80)                                    /* Disco duro */
+    if (unidadBIOS >= 0x80)                                  /* Disco duro */
     {
         unidadFisicaActual = 2 + (unidadBIOS - 0x80) ;
         unidadLogicaActual = unidadFisicaActual ;
         descUnidadLogica[unidadLogicaActual].letra = 'C' + unidadFisicaActual ;
-        descUnidadFisica[unidadFisicaActual].contUL = 1 ;         /* de momento */
+        descUnidadFisica[unidadFisicaActual].contUL = 1 ;    /* de momento */
     }
-    else                                                          /* Disquete */
+    else                                                       /* Disquete */
     {
         unidadFisicaActual = unidadBIOS  ;
         unidadLogicaActual = unidadFisicaActual ;
@@ -218,14 +218,14 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
     descUnidadLogica[unidadLogicaActual].ufindx = unidadFisicaActual ;
     /* sector logico 0 => sector fisico 1 */
     CSH.h = 0 ;
-    CSH.cs = 0x0001 ;                     /* C = 0, S = 1 y H = 0 */
+    CSH.cs = 0x0001 ;                              /* C = 0, S = 1 y H = 0 */
 //  printStrBIOS("\n CSH.h = ") ;
 //  printHexBIOS(CSH.h, 2) ;
 //  printStrBIOS("\n CSH.cs = ") ;
 //  printHexBIOS(CSH.cs, 4) ;
 //  asm { @: jmp @ ; }
 
-    error = leerSectorCSH((CSH_t *)&CSH, unidadBIOS, (pointer_t)boot) ;   /* BR */
+    error = leerSectorCSH((CSH_t *)&CSH, unidadBIOS, (pointer_t)boot) ;  /* BR */
     if (error)
     {
         printStrBIOS("\n error al leer el sector logico 0: error = ") ;
@@ -246,9 +246,9 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
         rebootBIOS() ;
     } ;
     if ((boot->instJMP[0] != 0xEB) || (boot->instJMP[1] < 0x3C) || (boot->instNOP != 0x90) ||
-            (boot->signaturaExt != 0x29))             /* debe tratarse de un MBR */
+            (boot->signaturaExt != 0x29))       /* debe tratarse de un MBR */
     {
-        copia(                             /* copiamos la tabla de particiones */
+        copia(                         /* copiamos la tabla de particiones */
             (pointer_t)&mbr->descParticion,
             (pointer_t)&descUnidadFisica[unidadFisicaActual].descParticion,
             4*sizeof(descParticion_t)
@@ -310,7 +310,7 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
             rebootBIOS() ;
         }
     }
-    else      /* en el sector 0 de la unidad fisica hay un BPB en vez de MBR */
+    else    /* en el sector 0 de la unidad fisica hay un BPB en vez de MBR */
     {
         descUnidadFisica[unidadFisicaActual].descParticion[i].activa = 0x80 ;
         descUnidadFisica[unidadFisicaActual].descParticion[i].primerSector = 0 ;
@@ -334,7 +334,7 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
         leerTeclaBIOS() ;
         rebootBIOS() ;
     }
-    copia(                               /* copiamos la tabla de particiones */
+    copia(                             /* copiamos la tabla de particiones */
         (pointer_t)&boot->BPB,
         (pointer_t)&descUnidadLogica[unidadLogicaActual].BPB,
         sizeof(BPB_t)
@@ -388,9 +388,9 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
         * (dword_t)bytesPorSector ;
 
     if (tipo == 0x01)
-        entradasFAT = (tamFAT*2)/3 ;                                  /* FAT12 */
+        entradasFAT = (tamFAT*2)/3 ;                              /* FAT12 */
     else /* tipo == 0x04 */
-        entradasFAT = tamFAT/2 ;                                      /* FAT16 */
+        entradasFAT = tamFAT/2 ;                                  /* FAT16 */
 
     clusteres =
         descUnidadLogica[unidadLogicaActual].BPB.sectores16
@@ -398,7 +398,7 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
         - (descUnidadLogica[unidadLogicaActual].BPB.sectoresPorFAT
            * descUnidadLogica[unidadLogicaActual].BPB.numeroDeFATs)
         - (entradasDirRaiz/entradasPorSector)
-        + 2 ;   /* clusteres 0 y 1 ya que el primer cluster de datos es el 2 */
+        + 2 ; /* clusteres 0 y 1 ya que el primer cluster de datos es el 2 */
 
     /* reservamos memoria para la tabla FAT desempaquetada */
 
@@ -407,7 +407,7 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
 //printStrBIOS(" entradasFAT = ") ;
 //printLDecBIOS(entradasFAT, 1) ;
 
-    segmento =  k_buscarBloque((word_t)(((2*entradasFAT)+15)/16)) ;              /* GM */
+    segmento =  k_buscarBloque((word_t)(((2*entradasFAT)+15)/16)) ;  /* GM */
     FAT = (word_t far *)MK_FP(segmento, 0x0000) ;
 
     printStrBIOS(" FAT = ") ;
@@ -527,15 +527,15 @@ void desempaquetarFAT12 ( pointer_t bufer, word_t numeroDeEntradas, word_t far *
 
 int cargaFAT12_Ok ( byte_t unidadLogica )
 {
-    pointer_t bytesFAT ;         /* bufer de lectura de la FAT12 empaquetada */
+    pointer_t bytesFAT ;       /* bufer de lectura de la FAT12 empaquetada */
     word_t segmento ;
-    segmento =  k_buscarBloque((word_t)((tamFAT+15)/16)) ;                       /* GM */
+    segmento =  k_buscarBloque((word_t)((tamFAT+15)/16)) ;           /* GM */
     bytesFAT = (pointer_t)MK_FP(segmento, 0x0000) ;
     cargarSectoresFAT(unidadLogica, bytesFAT) ; /* lectura FAT12 empaquetada */
     if ((bytesFAT[0] != descUnidadLogica[unidadLogica].BPB.tipoDeMedio) ||
             (bytesFAT[1] != 0xFF) ||
             (bytesFAT[2] != 0xFF))
-        return(-1) ;                                  /* signatura de la FAT12 */
+        return(-1) ;                              /* signatura de la FAT12 */
     desempaquetarFAT12(bytesFAT, (word_t)entradasFAT, FAT) ;
     k_devolverBloque(segmento, (word_t)((tamFAT+15)/16)) ;
     return(0) ;
@@ -546,7 +546,7 @@ int cargaFAT16_Ok ( byte_t unidadLogica )
     cargarSectoresFAT(unidadLogica, (pointer_t)FAT) ; /* lectura de la FAT16 */
     if ((FAT[0] != (0x0FF00 + descUnidadLogica[unidadLogica].BPB.tipoDeMedio)) ||
             (FAT[1] != 0xFFFF))
-        return(-1) ;                                  /* signatura de la FAT16 */
+        return(-1) ;                              /* signatura de la FAT16 */
     return(0) ;
 }
 
@@ -558,14 +558,14 @@ dword_t numSectores ( dword_t tam )
 int findFirstSo1 ( int unidadLogica, ffblk_t far * ffblk )
 {
     ffblk->unidadLogica = unidadLogica ;
-    ffblk->eindx = 0 ;           /* siguiente entrada del directorio, a leer */
+    ffblk->eindx = 0 ;         /* siguiente entrada del directorio, a leer */
     return(findNextSo1(ffblk)) ;
 }
 
 int findNextSo1 ( ffblk_t far * ffblk )     /* obtiene el siguiente sector */
 {
     /* del directorio raiz */
-    entrada_t far * entrada ;                             /* nEntrsPorSector */
+    entrada_t far * entrada ;                           /* nEntrsPorSector */
     dword_t sectorLogico ;
     word_t i ;
     byte_t unidadLogica = ffblk->unidadLogica ;
@@ -609,7 +609,7 @@ bool_t formatearNombre ( const char far * nombre, char * formateado )
             posPto = i ;
             numPtos++ ;
         }
-        else return(FALSE) ;                  /* caracter extra¤o en el nombre */
+        else return(FALSE) ;              /* caracter extra¤o en el nombre */
         i++ ;
     }
     if ((i == 0) ||
@@ -631,7 +631,7 @@ bool_t formatearNombre ( const char far * nombre, char * formateado )
             formateado[7+(k-posPto)] = nombre[k] ;
         return(TRUE) ;
     }
-    return(FALSE) ;      /* varios ptos, tam nombre > 11 o tam extension > 3 */
+    return(FALSE) ;    /* varios ptos, tam nombre > 11 o tam extension > 3 */
 }
 
 long tamFichero ( int df )
@@ -673,8 +673,8 @@ int abrirFichero ( const char far * nombre, byte_t unidadLogica )
         for ( j = 0 ; j < entradasPorSector ; j++ )
             if ((entrada[j].nombre[0] != 0x00) &&
                     (entrada[j].nombre[0] != 0xE5) &&
-                    ((entrada[j].atr & 0x08) == 0x00) &&       /* no etiqueta de volumen */
-                    ((entrada[j].atr & 0x10) != 0x10) &&                      /* fichero */
+                    ((entrada[j].atr & 0x08) == 0x00) &&   /* no etiqueta de volumen */
+                    ((entrada[j].atr & 0x10) != 0x10) &&                  /* fichero */
                     (igualesSalvoMayusculasHasta((char far *)entrada[j].nombre,
                                                  (char far *)&nombreFormateado, 11)))
             {
@@ -711,8 +711,8 @@ int cerrarFichero ( int df )
     return(-1) ;
 }
 
-/* tamProceso: calcula el tamaño del proceso expresado en paragrafos a       */
-/* partir de la informacion presente en la cabecera del fichero ejecutable   */
+/* tamProceso: calcula el tamaño del proceso expresado en paragrafos a     */
+/* partir de la informacion presente en la cabecera del fichero ejecutable */
 
 word_t tamProceso ( int df )
 {
@@ -768,22 +768,22 @@ word_t tamProceso ( int df )
 
     cabecera = (cabecera_t far *)&entrada ;
     if (!igualesHasta((char far *)cabecera->magicbyte,
-                      (char far *)ptrMagicByteUsr, 3))   /* AJUSTES */
+                      (char far *)ptrMagicByteUsr, 3))          /* AJUSTES */
     {
         if (!igualesHasta((char far *)cabecera->magicbyte,
                           (char far *)ptrMagicByteSO1, 3))
-            return(0x0000) ;                              /* cabecera incorrecta */
+            return(0x0000) ;                        /* cabecera incorrecta */
         cabecera = (cabecera_t far *)((pointer_t)&entrada + desplCab()) ;
     }
     if ((cabecera->magicbyte[ 5] != ptrMagicByteUsr[ 5]) ||   /* ver AJUSTES.H */
             (cabecera->magicbyte[ 8] != ptrMagicByteUsr[ 8]) ||
             (cabecera->magicbyte[11] != ptrMagicByteUsr[11]))
-        return(0x0000) ;                                /* cabecera incorrecta */
+        return(0x0000) ;                            /* cabecera incorrecta */
 
     despl = (16*cabecera->segDatosSR) + cabecera->startData ;
-    if (despl & 0x0001) despl++ ;                     /* alineamos a palabra */
+    if (despl & 0x0001) despl++ ;                   /* alineamos a palabra */
 
-    tamCodigo = (despl >> 4) ;                              /* en paragrafos */
+    tamCodigo = (despl >> 4) ;                            /* en paragrafos */
     if (cabecera->SP0 <= 0xFFF0)
         tamPila = (cabecera->SP0+15)/16 ;
     else

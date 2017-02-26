@@ -4,9 +4,6 @@
 /*                                                                         */
 /* ----------------------------------------------------------------------- */
 
-#ifndef PRINTVID_H
-#define PRINTVID_H
-
 #include <so1pub.h\tipos.h>
 #include <so1pub.h\memvideo.h>                         /* printCarVideo */
 #include <so1pub.h\printgen.h>  /* printGen(Ln|Str|StrHasta|Dec|Int|..) */
@@ -51,4 +48,3 @@ int printPtrVideo ( pointer_t ptr ) {
   return(printGenPtr(ptr, printCarVideo)) ;
 }
 
-#endif /* PRINTVID_H */

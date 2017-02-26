@@ -44,14 +44,14 @@
 
 #define pSB(x) printStrBIOS(x)                                    /* macro */
 //#define E(x) x
-#define E(x) { pSB("\n ") ; pSB(#x) ; x ; pSB(" ... ") ; }
+#define E(x) { pSB("\n ") ; pSB(#x) ; pSB(" ... ") ; x ; }        /* macro */
 
 void tirarSistema ( word_t loQueHay, int timeout ) ;
 
-/* main es llamado desde la funcion startCabecera en ajustes.c */
+//          /* main es llamado desde la funcion startCabecera en ajustes.c */
 
-/* en un primer momento solo podemos hacer llamadas al BIOS, ya que no */
-/* tiene por que haber MSDOS o WINDOWS y SO1 no esta instalado todavia */
+//  /* en un primer momento solo podemos hacer llamadas al BIOS, ya que no */
+//  /* tiene por que haber MSDOS o WINDOWS y SO1 no esta instalado todavia */
 
 void main ( void )                             /* interrupciones inhibidas */
 {
@@ -100,9 +100,6 @@ void main ( void )                             /* interrupciones inhibidas */
 
     E(inicRecursos()) ;
     E(inicProcesos()) ; /* SO1 y proc. 0 mismo espacio de direccionamiento */
-
-    E(inicSemaforos()) ;
-    E(inicBuzones()) ;
 
     descProceso[indProcesoActual].uid = 0 ;                        /* root */
     descProceso[indProcesoActual].gid = 0 ;                        /* root */

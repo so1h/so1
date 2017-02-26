@@ -77,7 +77,9 @@
   /* macro para habilitar una pila provisional en una zona segura despues  */
   /* del codigo, los datos y el bss                                        */
 
-#define habilitarPilaProvisional0( ) \
+#if (FALSE)  
+  
+#define habilitarPilaProvisional( ) \
   asm { \
     mov cx,0x0100 ;            /* por si hay cabecera EXE (max 4096 bytes) */\
     mov ax,finCode ; \
@@ -94,6 +96,8 @@
     mov ss,ax ;  /* SS = ((finCode + (finCode % 2) + finBSS + 1000h) >> 4) */\
     mov sp,SPInicialProvisional ;        /* SS:SP pila inicial provisional */\
 }
+
+#endif
 
 #define habilitarPilaProvisional( ) \
   asm { \

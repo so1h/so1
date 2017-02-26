@@ -4,8 +4,8 @@
 /*                     colas de funciones de call back                     */
 /* ----------------------------------------------------------------------- */
 
-#ifndef TAREAS_H
-#define TAREAS_H
+#ifndef CCB_H
+#define CCB_H
 
 #include <so1pub.h\tipos.h>
 
@@ -42,5 +42,5 @@ int vaciarCcb ( ccb_t ccb ) ;
 
 int atenderCcb ( ccb_t ccb ) ;
 
-#endif /* TAREAS_H */
+#endif /* CCB_H */
 

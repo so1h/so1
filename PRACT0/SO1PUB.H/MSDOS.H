@@ -9,7 +9,21 @@
 
 #include <so1pub.h\tipos.h>
 
-void finProgDOS ( void ) ;
+#define nVIntMSDOS 0x21     /* numero del vector del interrupcion de MSDOS */
+
+void finProgDOS ( int exitCode ) ;
+
+#define MAXPATH   80
+#define MAXDRIVE   3
+#define MAXDIR    66
+#define MAXFILE    9
+#define MAXEXT     5
+
+#define WILDCARDS 0x01
+#define EXTENSION 0x02
+#define FILENAME  0x04
+#define DIRECTORY 0x08
+#define DRIVE     0x10
 
 struct ffblk {
   char     ff_reserved [21] ;
@@ -19,18 +33,6 @@ struct ffblk {
   long     ff_fsize ;
   char     ff_name [13] ;
 } ;
-
-#define WILDCARDS 0x01
-#define EXTENSION 0x02
-#define FILENAME  0x04
-#define DIRECTORY 0x08
-#define DRIVE     0x10
-
-#define MAXPATH   80
-#define MAXDRIVE   3
-#define MAXDIR    66
-#define MAXFILE    9
-#define MAXEXT     5
 
 #define FA_RDONLY       0x01                        /* Read only attribute */
 #define FA_HIDDEN       0x02                        /* Hidden file         */
@@ -88,13 +90,9 @@ int commitFileDOS ( int df ) ;
 
 int createDOS ( pointer_t nombre, word_t atributo ) ;    /* FA_RDONLY, ... */
 
-int readDOS ( int df, char * buf, int n ) ;
+int readDOS ( int df, char far * buf, int n ) ;
 
-int readDOSFar ( int df, char far * buf, int n ) ;
-
-int writeDOS ( int df, char * buf, int n ) ;
-
-int writeDOSFar ( int df, char far * buf, int n ) ;
+int writeDOS ( int df, char far * buf, int n ) ;
 
 int lseekDOS ( int df, dword_t * pos, int whence ) ;
 
@@ -103,15 +101,15 @@ int getdiskDOS ( void ) ;
 
 int setdiskDOS ( int drive ) ;
 
-int getcurdirDOS ( int drive, char * direc ) ;
+int getcurdirDOS ( int drive, char far * directorio ) ;
 
-int chdirDOS ( const char * path ) ;
+int chdirDOS ( const char far * path ) ;
 
-int findfirstDOS ( const char * pathname,
-                   struct ffblk * ffblk,
+int findfirstDOS ( const char far * pathname,
+                   struct ffblk far * ffblk,
                    int attrib ) ;
 
-int findnextDOS ( struct ffblk * ffblk ) ;
+int findnextDOS ( struct ffblk far * ffblk ) ;
 
 #endif /* MSDOS_H */
 

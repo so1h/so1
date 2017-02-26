@@ -12,7 +12,7 @@
 #include <so1pub.h\fcntl.h>
 #include <so1pub.h\def_trm.h>                                   /* trama_t */
 #include <so1pub.h\def_mem.h>
-#include <so1pub.h\scanner.h>
+#include <so1pub.h\scanner.h>                                /* tamComando */
 #include <so1pub.h\ptrc2c.h>
 #include <so1pub.h\ccb.h>
 
@@ -20,9 +20,9 @@
 #define STDOUT 1                                       /* salida estandar  */
 #define STDERR 2                                       /* error estandar   */
 
-#define SEEK_SET   0        /* lseek se posiciona desde el principio       */
-#define SEEK_CUR   1        /* lseek se posiciona desde la posision actual */
-#define SEEK_END   2        /* lseek se posiciona desde el final           */
+#define SEEK_SET   0           /* lseek posiciona desde el principio       */
+#define SEEK_CUR   1           /* lseek posiciona desde la posicion actual */
+#define SEEK_END   2           /* lseek posiciona desde el final           */
 
 
 typedef enum {
@@ -32,7 +32,7 @@ typedef enum {
 typedef struct {
   modoAp_t modoAp ;                                    /* modo de apertura */
   dfs_t    dfs ;                      /* descriptor de fichero del sistema */
-  dword_t  pos ;                                               /* posision */
+  dword_t  pos ;                                               /* posicion */
 } dfa_t ;                  /* descriptor de fichero abierto por un proceso */
 
 #define camposPublicos        /* campos publicos del descriptor de proceso */\
@@ -135,8 +135,6 @@ typedef struct {
 #define rec_hijo            (rindx_t)(- 1)       /* terminacion de un hijo */
 #define rec_zombie          (rindx_t)(- 2)
 #define rec_desinstalacion  (rindx_t)(- 3)
-#define rec_semaforo        (rindx_t)(- 4)
-#define rec_buzon           (rindx_t)(- 5)
 
 typedef struct {                                    /* informacion variada */
   /* word_t ticsPorRodaja ; */

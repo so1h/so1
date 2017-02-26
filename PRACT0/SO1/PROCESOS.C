@@ -293,7 +293,7 @@ pindx_t crearProceso (       word_t     segmento,
   int dfs ;
   modoAp_t modoAp ;
 
-           /* createProceso (pindx = -1) o exec (pindx = indProcesoActual) */
+           /* createProcess (pindx = -1) o exec (pindx = indProcesoActual) */
 
   if ((pindx < 0) && (c2cPFR[DPOcupados].numElem == maxProcesos)) return(-1) ;
   cabecera = (cabecera_t far *)pointer(segmento, 0x0000) ;
@@ -615,44 +615,6 @@ int matarProcIndx ( pindx_t pindx ) {                /* mata proceso pindx */
 
   return(err) ;
 }
-
-sem_t semaforo[semMax] ;                           /* tabla de semaforos */
-
-dobleEnlace_t e2Semaforos [ maxProcesos + semMax ] ;
-
-void inicSemaforos ( void ) {
-    int i ;
-    for ( i = 0 ; i < semMax ; i++ ) {
-        semaforo[i].valor = 0 ;
-        inicPC2c(&semaforo[i].cola, &e2Semaforos, maxProcesos+i, TRUE) ;
-    }
-}
-
-mbox_t buzon [mboxMax] ;                                     /* buzones */
-
-dobleEnlace_t e2Buzones [ maxProcesos + mboxMax ] ;
-
-void inicBuzones ( void ) {
-    int i, j, k ;
-    for ( i = 0 ; i < mboxMax ; i++ ) {
-        inicPC2c(&buzon[i].Remitentes, &e2Buzones, maxProcesos+i, TRUE) ;
-        inicPC2c(&buzon[i].Destinatarios, &e2Buzones, maxProcesos+i, TRUE) ;
-#if (Capacidad != 0)                            /* compilación condicional */
-        for ( j = 0 ; j < Capacidad ; j++ )
-             for ( k = 0 ; k < 16 ; k++ )
-                   buzon[i].bufer[j][k] = '\0' ;
-        buzon[i].in = 0 ;
-        buzon[i].out = 0 ;
-        buzon[i].numMensajes = 0 ;
-#endif
-    }
-}
-
-
-
-
-
-
 
 
 
