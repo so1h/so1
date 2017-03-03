@@ -49,7 +49,7 @@ byte_t tipoTeclado ( void ) {
 }
 
 #if (FALSE)
-	
+
 byte_t leerTeclaBIOS ( void ) {                /* bloqueante en bucle BIOS */
   char car ;
   asm mov ah,00h ;                    /* Llamada al BIOS: Leer del teclado */
@@ -215,11 +215,11 @@ int printLnBIOS () {
   printCarBIOS(LF) ;
 }
 
-int printStrBIOS ( char far * str ) {
+int printStrBIOS ( const char far * str ) {
   printGenStr(str, printCarBIOS) ;
 }
 
-int printStrHastaBIOS ( char far * str, word_t n, bool_t lleno ) {
+int printStrHastaBIOS ( const char far * str, word_t n, bool_t lleno ) {
   printGenStrHasta(str, n, lleno, printCarBIOS) ;
 }
 
@@ -235,32 +235,32 @@ int printIntBIOS ( int num, word_t l ) {
   printGenInt(num, l, printCarBIOS) ;
 }
 
-int printLIntBIOS ( long int num, word_t l ) 
+int printLIntBIOS ( long int num, word_t l )
 {
   printGenLInt(num, l, printCarBIOS) ;
 }
 
-int printHexBIOS ( word_t num, word_t l ) 
+int printHexBIOS ( word_t num, word_t l )
 {
   printGenHex(num, l, printCarBIOS) ;
 }
 
-int printLHexBIOS ( dword_t num, word_t l ) 
+int printLHexBIOS ( dword_t num, word_t l )
 {
   printGenLHex(num, l, printCarBIOS) ;
 }
 
-int printBinBIOS ( word_t num, word_t l ) 
+int printBinBIOS ( word_t num, word_t l )
 {
     printGenBin(num, l, printCarBIOS ) ;
 }
 
-int printLBinBIOS ( dword_t num, word_t l ) 
+int printLBinBIOS ( dword_t num, word_t l )
 {
     printGenLBin( num, l, printCarBIOS ) ;
 }
 
-int printPtrBIOS ( pointer_t ptr ) 
+int printPtrBIOS ( pointer_t ptr )
 {
   printGenPtr(ptr, printCarBIOS) ;
 }
@@ -276,7 +276,7 @@ int printWordBIOS ( word_t w ) {
 
 #pragma warn +par
 
-int printCadBIOS ( char far * cad ) {
+int printCadBIOS ( const char far * cad ) {
   word_t i = 0 ;
   while (cad[i] != (char)0) {
     if (cad[i] == '\n') printCarBIOS('\r') ;
@@ -504,19 +504,8 @@ void readXYBIOS ( byte_t far * fila,
 /* Memoria (int 12h) */
                                          /* tambien en BIOS AREA 0000:0413 */
 word_t memBIOS ( void ) {  /* memoria reportada por el BIOS (en Kilobytes) */
-  word_t numKBytes ;                            /* 1 Kilobyte = 1024 bytes */
-  asm int 12h                                       /* BIOS: memoria total */
-  asm jc errMemBIOS
-  asm test ax,ax
-  asm jz errMemBIOS
-  asm mov numKBytes,ax
-  asm jmp finMemBIOS
-errMemBIOS:
-  printStrBIOS("\n error BIOS int 12h ") ;
-  asm cli
-  asm hlt
-finMemBIOS:
-  return(numKBytes) ;
+  asm int 12h ;
+  return(_AX) ;
 }
 
 /* Puerto serie COM1 (int 14h) */

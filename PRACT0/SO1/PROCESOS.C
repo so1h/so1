@@ -363,7 +363,7 @@ pindx_t crearProceso (       word_t     segmento,
                  (carCmd != '>') && (carCmd != '<') &&     /* redirecciones */
                  (carCmd != '|')                                   /* pipes */
         ; j++ )
-  descProceso[i].comando[j] = carCmd ;
+    descProceso[i].comando[j] = carCmd ;
   descProceso[i].comando[j] = (char)0 ;
   descProceso[i].comando[j+1] = carCmd ; /* truco para saber si &, >, < o | */
 

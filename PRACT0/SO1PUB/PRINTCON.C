@@ -32,12 +32,12 @@ int printLnConsola ( byte_t con ) {
   return(printGenLn(pCon)) ;
 }
 
-int printStrConsola ( byte_t con, char * str ) {
+int printStrConsola ( byte_t con, const char * str ) {
   congen = con ;
   return(printGenStr(str, pCon)) ;
 }
 
-int printStrHastaConsola ( byte_t con, char * str, word_t n, bool_t lleno ) {
+int printStrHastaConsola ( byte_t con, const char * str, word_t n, bool_t lleno ) {
   congen = con ;
   return(printGenStrHasta(str, n, lleno, pCon)) ;
 }
@@ -70,6 +70,16 @@ int printHexConsola ( byte_t con, word_t num, word_t l ) {
 int printLHexConsola ( byte_t con, dword_t num, word_t l ) {
   congen = con ;
   return(printGenLHex(num, l, pCon)) ;
+}
+
+int printBinConsola ( word_t num, word_t l ) {
+  congen = con ;
+  return(printGenBin(num, l, pCon)) ;
+}
+
+int printLBinConsola ( dword_t num, word_t l ) {
+  congen = con ;
+  return(printGenLBin(num, l, pCon)) ;
 }
 
 int printPtrConsola ( byte_t con, pointer_t ptr ) {

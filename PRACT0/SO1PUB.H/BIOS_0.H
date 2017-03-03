@@ -66,9 +66,9 @@ int printCarAtrPagBIOS ( char car, byte_t atr, byte_t pag ) ;
 
 int printLnBIOS ( void ) ;
 
-int printStrBIOS ( char far * str ) ;
+int printStrBIOS ( const char far * str ) ;
 
-int printStrHastaBIOS ( char far * str, word_t n, bool_t lleno ) ;
+int printStrHastaBIOS ( const char far * str, word_t n, bool_t lleno ) ;
 
 int printDecBIOS ( word_t num, word_t l ) ;
 
@@ -90,7 +90,7 @@ int printPtrBIOS ( pointer_t ptr ) ;
 
 int printWordBIOS ( word_t w ) ;
 
-int printCadBIOS ( char far * cad ) ;
+int printCadBIOS ( const char far * cad ) ;
 
 /* Timer */
 

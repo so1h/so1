@@ -24,7 +24,7 @@ word_t SP_Tarea ;
 
 int nivelActivacionSO1 = 0 ;                   /* 0 => proceso, 1 => tarea */
 
-extern bool_t enHalt = FALSE ;   /* se interrumpio en el hlt de SigProceso */
+bool_t enHalt = FALSE ;          /* se interrumpio en el hlt de SigProceso */
 
 bool_t activarAlEpilogo1 = FALSE ;
 

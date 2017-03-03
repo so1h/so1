@@ -49,5 +49,5 @@
   *manejador = finish ;                                                      \
 }
 
-#endif /* AJUSTES_H */
+#endif /* AJUSTUSR_H */
 
