@@ -50,10 +50,6 @@ int contTicsRodaja ;                     /* contador de tics de una rodaja */
 
 word_t contadorTimer00 ;  /* valor de contadorTimer0() al pasar a ej. p.a. */
 
-c2c_t bloqueadosRaton ;
-
-dobleEnlace_t e2BloqueadosRaton [ maxProcesos + 1 ] ;
-
 trama_t far * tramaProceso ;
 
 trama_t far * tramaTarea ;

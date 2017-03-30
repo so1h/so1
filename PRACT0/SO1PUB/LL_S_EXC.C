@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------- */
-/*                               ll_s_exec.c                               */
+/*                                ll_s_exc.c                               */
 /* ----------------------------------------------------------------------- */
 /* Subconjunto de rutinas de interfaz de las llamadas al sistema que se    */
 /* utilizan desde SO1 al ser necesarias para la creación del proceso       */
@@ -13,7 +13,7 @@
 
 #include <so1pub.h\tipos.h>
 #include <so1pub.h\def_proc.h>
-#include <so1pub.h\ll_s_so1.h>
+#include <so1pub.h\ll_s_exc.h>                                 /* nVIntSO1 */
 
 /* ----------------------------------------------------------------------- */
 /* exec(nombre, comando)                                                   */

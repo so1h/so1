@@ -117,7 +117,7 @@ void main ( void )                             /* interrupciones inhibidas */
     else
         assert(inicMinisfMSDOS() == 0, "\a\n so1(): ERROR minisfMSDOS") ;
 
-    E(inicTVI()) ;     /* inicilizamos la tabla de vectores de interrucion */
+    E(inicTVI()) ;    /* inicializamos la tabla de vectores de interrucion */
 
     IMRInicial = valorIMR() ;          /* tomamos nota del IMR (pic 8259A) */
 

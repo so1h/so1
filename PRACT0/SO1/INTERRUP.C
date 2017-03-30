@@ -74,7 +74,7 @@ void far rti_00 ( void ) {
 
 void tratamientoComun ( void ) {                    /* opcion -r- (SI, DI) */
 
-  prologo_rti_sin_PUSHA() ;                                 /* nVInt en BL */
+  prologo_rti_sin_PUSHA() ;                                    /* AH en BL */
 
   isr[_BL]() ;       /* llamada a la rutina de servicio de la interrupcion */
                                        /* (se apila la dir. de ret. CS:IP) */
