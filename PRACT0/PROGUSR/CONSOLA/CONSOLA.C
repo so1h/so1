@@ -896,14 +896,23 @@ void establecerTablaDeConversion ( void )
     case 99 : /* hayQemu   = TRUE ; */
         break ;                 /* "06/23/99" */
     case 11 : /* hayBochs  = TRUE ; */
-        break ;                 /* "02/10/11" */
+        break ;                 /* "02/10/11" */            /* Bochs 2.6.7 */ 
     case 14 : /* hayBochs  = TRUE ; */
-        break ;                 /* "12/26/14" */
+        break ;                 /* "12/26/14" */            /* Bochs 2.6.8 */ 
+    case 17 : /* hayBochs  = TRUE ; */
+        break ;                 /* "02/16/17" */            /* Bochs 2.6.9 */ 
     case 92 : /* hayDBox   = TRUE ;                          /* "01/01/92" */
-        tablaDeConversion = (char *)&tablaNula ;
-        break ;                 /* US */
+        tablaDeConversion = (char *)&tablaNula ;                     /* US */
+        break ;                 
     case 95 : /* hayNTVDM  = TRUE ; */
         break ;                 /* "07/03/95" */
+		
+    case 12 : /* hayFake86 = TRUE ; */
+        break ;                 /* "05/02/12" */
+//  case 99 : /* hayVDos   = TRUE ; */
+//      break ;                 /* "01/01/99" */
+    case 06 : /* hayMsdos  = TRUE ; */
+        break ;                 /* "02/22/06" */
     default  :
         tablaDeConversion = (char *)&tablaNula ;                     /* US */
     }
@@ -924,7 +933,7 @@ int integrarConsola ( byte_t numConsolas, bool_t conMensajes )
 
     inicCrtHw() ;
 
-	if (*((word_t far *)0xF000FFFB) == 0x3630)    /* anio fecha BIOS msdos */
+	if (*((word_t far *)0xF000FFFB) == 0x3630)    /* anio fecha BIOS msdos */ /* Takeda */
         inicBiosCrt(24, 80, TRUE) ;           /* se fuerza redimensionable */
     else 
 		inicBiosCrt(50, 80, FALSE) ;       /* no se fuerza redimensionable */
