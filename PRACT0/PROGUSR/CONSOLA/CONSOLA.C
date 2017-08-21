@@ -341,7 +341,11 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
     word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     int res ;
     word_t nuevaConsola ;
-
+	byte_t con ;
+    byte_t cursorFAux ;
+    pantalla_t far * pantallaAux ;
+    int numFilasAnt ;
+	
     asm push ds
     asm mov ds,DS_Consola
 
@@ -363,7 +367,48 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
 //  printStrBIOS("\n res = ") ;
 //  printDecBIOS(res, 1) ;
     }
-
+    else if (request == 0x0003) /* cambiar numero de lineas de la pantalla */
+    {
+		numFilasAnt = numFilas ;
+        numFilas = arg ;
+		
+//  printStrBIOS("\n numFilas = ") ;
+//  printDecBIOS(numFilas, 1) ;
+        if (numFilas != numFilasAnt)
+        {
+//printStrBIOS(" numFilasAnt = ") ;
+//printDecBIOS(numFilasAnt, 1) ;
+//printStrBIOS(" cursorF = ") ;
+//printDecBIOS(cursorF, 1) ;
+            if (cursorF >= numFilas)
+            {
+                copiarCPantalla((pantalla_t far *)&ptrPant->t[cursorF-numFilas+1][0], ptrPant, numFilas) ;
+//              copiarPantalla((pantalla_t far *)&ptrPant->t[cursorF-numFilas+1][0], ptrPant, numFilas) ;
+//**/           borrarCPantalla((pantalla_t far *)&ptrPant->t[numFilas][0], numFilasAnt) ;
+                cursorF = numFilas-1 ;
+            }
+            salvarConsolaDeSuperficie() ;
+            redimensionar(numFilas, 80) ;
+            numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
+            establecerConsolaDeSuperficie() ;
+            for ( con = 0 ; con < maxConsolas ; con ++ )
+            {
+                if (con != consolaDeSuperficie)
+                {
+                    cursorFAux = descConsola[con].F ;
+                    if (cursorFAux >= numFilas)
+                    {
+                        pantallaAux = (pantalla_t far *)&descConsola[con].pantalla ;
+                        copiarCPantalla((pantalla_t far *)&pantallaAux->t[cursorFAux-numFilas+1][0], pantallaAux, numFilas) ;
+//                      copiarPantalla((pantalla_t far *)&pantallaAux->t[cursorFAux-numFilas+1][0], pantallaAux, numFilas) ; */
+//**/                   borrarCPantalla((pantalla_t far *)&pantallaAux->t[numFilas][0], numFilasAnt) ;
+                        descConsola[con].F = numFilas-1 ;
+                    }
+                }
+            }
+        }
+		
+    }
     asm pop ds
     return(res) ;
 #endif
@@ -795,7 +840,7 @@ void mostrarFormato ( void )
     escribirStr(
         "\n"
         "\n"
-        " formato: CONSOLA [ [ -i | -q | -c ] [ num ] | -N | -n | -u | -h ] \n"
+        " formato: CONSOLA [ [ -i | -q | -c | -l ] [ num ] | -N | -n | -u | -h ] \n"
     ) ;
 }
 
@@ -810,18 +855,19 @@ void help ( void )
     mostrarFormato() ;
     escribirStr(
         "\n"
-        " instala/desinstala el driver de la consola     \n"
+        " instala/desinstala el driver de la consola    \n"
         "\n"
-        " opciones: (por defecto -i y num = 6)           \n"
+        " opciones: (por defecto -i y num = 6)          \n"
         "\n"
-        "      -i : instala el driver (usar &)           \n"
-        "      -q : instala sin mensajes de salida (&)   \n"
-        "      -c : cambia la consola actual a la num    \n"
-        "      -n : status = numero de consola actual    \n"
-        "      -N : como -n y muestra un mensaje         \n"
-        "     num : numero de consolas (o nueva c.)      \n"
-        "      -u : desintala el driver                  \n"
-        "      -h : muestra este help                    \n"
+        "      -i : instala el driver (usar &)          \n"
+        "      -q : instala sin mensajes de salida (&)  \n"
+        "      -c : cambia la consola actual a la num   \n"
+        "      -l : establece en numero de lineas a num \n"
+        "      -n : status = numero de consola actual   \n"
+        "      -N : como -n y muestra un mensaje        \n"
+        "     num : numero de consolas (o nueva c.)     \n"
+        "      -u : desintala el driver                 \n"
+        "      -h : muestra este help                   \n"
     ) ;
     exit(0) ;
 }
@@ -877,7 +923,12 @@ int integrarConsola ( byte_t numConsolas, bool_t conMensajes )
 //  obtenInfoINFO((info_t far *)&info) ;                     /* depuracion */
 
     inicCrtHw() ;
-    inicBiosCrt() ;
+
+	if (*((word_t far *)0xF000FFFB) == 0x3630)    /* anio fecha BIOS msdos */
+        inicBiosCrt(24, 80, TRUE) ;           /* se fuerza redimensionable */
+    else 
+		inicBiosCrt(50, 80, FALSE) ;       /* no se fuerza redimensionable */
+
     establecerTablaDeConversion() ;                       /* teclado US/SP */
 
     maxConsolas = numConsolas + 1 ;
@@ -1168,7 +1219,7 @@ void main ( int argc, char * argv [ ] )
                     escribirStr(" no se puede abrir CON0") ;
                     exit(-1) ;
                 }
-                else if (ioctl(dfCon, 0x0001, num) != 0)
+                if (ioctl(dfCon, 0x0001, num) != 0)
                 {
                     escribirStr(" numero de consola erroneo (") ;
                     escribirDec(num, 1) ;
@@ -1178,6 +1229,32 @@ void main ( int argc, char * argv [ ] )
                 exit(0) ;
             }
         }
+        else if (iguales(argv[1], "-l") || iguales(argv[1], "-L"))
+        {
+            copiarStr(argv[argc-1], comando[0]) ;
+            inicScanner() ;
+            obtenSimb() ;
+            if (simb == s_numero)
+            {
+                if ((num != 25) && (num != 28) && (num != 50)) {
+					escribirStr(" el numero de lineas debe ser 25, 28 o 50") ;
+                    exit(-1) ;
+				}	
+				if ((dfCon = open("CON0", O_RDONLY)) < 0)
+                {
+                    escribirStr(" no se puede abrir CON0") ;
+                    exit(-1) ;
+                }
+                if (ioctl(dfCon, 0x0003, num) != 0)
+                {
+                    escribirStr(" numero de consola erroneo (") ;
+                    escribirDec(num, 1) ;
+                    escribirCar(')') ;
+                    exit(-1) ;
+                }
+                exit(0) ;
+            }
+        }		
     formato() ;
 }
 
