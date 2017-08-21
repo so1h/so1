@@ -55,6 +55,8 @@ void mostrarVIMSDOS ( void ) {
 
 #endif
 
+word_t versionMSDOS ( void ) ;                                  /* forward */
+
 bool_t hayMSDOS ( void ) {
 
   address_t far * ptrVIDos = (address_t far *)(nVIntMSDOS*4) ;
@@ -65,8 +67,15 @@ bool_t hayMSDOS ( void ) {
   mostrarVIMSDOS() ;
 #endif
 
-  if ((*VIDos) == 0xCF)                   /* 0xCF = codigo maquina de IRET */
-    return (FALSE) ;
+  if ((*VIDos) == 0xCF) {                 /* 0xCF = codigo maquina de IRET */
+    /* el MSDOS Player de Takeda Toshiya tiene MSDOS pero sin embargo el   */
+	/* vector de interrupción apunta a un IRET ya que la máquina virtual   */
+	/* es la que captura el trap: int 21H. Por tanto para saber si hay     */
+	/* MSDOS (emulado) vamos a llamar a versionMSDOS. Si versionMSDOS      */
+    /* modifica AX eso significa que efectivamente hay MSDOS.              */	
+	asm mov ax,0x0000 ;        /* versionMSDOS pone inicialmente AH a 0x30 */ 
+	return(versionMSDOS() != 0x3000) ; 
+  }
 
   if (((LINEAL(VIDos)) >> 16) == 0xF)     /* el vector apunta al BIOS      */
                                           /* direccion 0x000Fxxxx          */

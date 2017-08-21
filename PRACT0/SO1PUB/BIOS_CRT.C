@@ -43,7 +43,7 @@ static word_t VIDEO_pageoff ;
 
 static word_t segMemVideo ;           /* 0xB000 (mono) o 0xB800 (en color) */
 
-void inicBiosCrt ( void ) {
+void inicBiosCrt ( int filas, int columnas, bool_t redim ) {
 
   numFilasOriginal = ptrBiosArea->VIDEO_lastrow + 1 ;
   numColumnasOriginal = ptrBiosArea->VIDEO_width ;
@@ -58,7 +58,9 @@ void inicBiosCrt ( void ) {
 
   redimensionable = TRUE ;               /* ¡deberia ser TRUE y no lo era! */
 
-  redimensionar(50, 80) ;
+  redimensionar(filas, columnas) ;
+//redimensionar(50, 80) ;
+//redimensionar(25, 80) ;
   /* redimensionar(25, 80) ; */ /* setFontSize(_FONT16) ; */
   /* redimensionar(28, 80) ; */ /* setFontSize(_FONT15) ; */
   /* redimensionar(50, 80) ; */ /* setFontSize(_FONT08) ; */
@@ -67,7 +69,7 @@ void inicBiosCrt ( void ) {
   numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
   numColumnas = (byte_t)ptrBiosArea->VIDEO_width ;
 
-  redimensionable = (numFilas == 50) ;
+  redimensionable = (numFilas > 25) || redim ;
 
   VIDEO_mode = ptrBiosArea->VIDEO_mode ;
   VIDEO_pagesize = ptrBiosArea->VIDEO_pagesize ;
