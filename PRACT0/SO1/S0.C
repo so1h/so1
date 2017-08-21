@@ -27,7 +27,7 @@
 #include <so1.h\so1dbg.h>    /* inicTeclado, leerScancode, esperarScancode */
 #include <so1.h\s0.h>                    /* mirarLoQueHay, MostrarLoQueHay */
          /* hayDOS, hayNT, hayQemu, hayBochs, hayDBox, hayNTVDM, hayFake86 */
-
+                                                               /* hayMsdos */
 #define CON_PROCESO_INICIAL TRUE
 
 #if (!CON_PROCESO_INICIAL)
@@ -86,12 +86,14 @@ void mirarLoQueHay ( word_t * loQueHay ) {
 
   switch (fechaCompactada(ptrFechaBios)) {
   case 50903L : *loQueHay |= hayQemu   ; break ;             /* "06/23/99" */
-  case  5706L : ;                                            /* "02/10/11" */
-  case  7578L : *loQueHay |= hayBochs  ; break ;             /* "12/26/14" */
+  case  5706L :                                              /* "02/10/11" */ /* Bochs 2.6.7 */ 
+  case  7578L :                                              /* "12/26/14" */ /* Bochs 2.6.8 */
+  case  8784L : *loQueHay |= hayBochs  ; break ;             /* "02/16/17" */ /* Bochs 2.6.9 */ 
   case 47137L : *loQueHay |= hayDBox   ; break ;             /* "01/01/92" */
   case 48867L : *loQueHay |= hayNTVDM  ; break ;             /* "07/03/95" */
   case  6306L : *loQueHay |= hayFake86 ; break ;             /* "05/02/12" */
   case 50721L : *loQueHay |= hayVDos   ; break ;             /* "01/01/99" */
+  case  3158L : *loQueHay |= hayMsdos  ; break ;             /* "02/22/06" */        
   default  : ;
 #if (FALSE)
 //#if (TRUE)
@@ -140,7 +142,8 @@ void mostrarLoQueHay ( word_t loQueHay ) {
     case hayNTVDM  : ponerMuescaX("NTVDM" , TRUE) ; break ;
     case hayFake86 : ponerMuescaX("Fake86", TRUE) ; break ;
     case hayVDos   : ponerMuescaX("VDos"  , TRUE) ; break ;
-    default :
+    case hayMsdos  : ponerMuescaX("msdos" , TRUE) ; break ;    
+	default :
       printStrBIOS("\aMaquina (virtual) inexplorada ") ;
   }
   printLnBIOS() ;

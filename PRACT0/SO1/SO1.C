@@ -19,7 +19,7 @@
 //#include <so1.h\gp.h>                                        /* k_inicGP */
 #include <so1.h\recursos.h>                   /* inicRecursos, destruirRec */
 #include <so1.h\procesos.h>      /* descProceso, descRecurso, inicProcesos */ /* c2cPFR */
-#include <so1.h\main.h>     /* miraLoQueHay, mostrarLoQueHay, tirarSistema */
+//#include <so1.h\main.h>                                          /* main */
 #include <so1.h\minifs.h>              /* inicMinisfMSDOS, inicMinisfFAT12 */
 #include <so1.h\sf.h>        /* inicSF, inicTablaFichAbiertos, segBuferSO1 */
 #include <so1.h\plot.h>                                         /* finPlot */
