@@ -9,14 +9,15 @@
 
 #include <so1pub.h\tipos.h>                                      /* word_t */
 
-#define hayDOS    0x01
-#define hayNT     0x02
-#define hayQemu   0x04
-#define hayBochs  0x08
-#define hayDBox   0x10
-#define hayNTVDM  0x20
-#define hayFake86 0x40
-#define hayVDos   0x80
+#define hayDOS    0x0001
+#define hayNT     0x0002
+#define hayQemu   0x0004
+#define hayBochs  0x0008
+#define hayDBox   0x0010
+#define hayNTVDM  0x0020
+#define hayFake86 0x0040
+#define hayVDos   0x0080
+#define hayMsdos  0x0100                 /* msdos player de Takeda Toshiya */
 
 void mirarLoQueHay ( word_t * loQueHay ) ;
 
