@@ -39,7 +39,7 @@ extern byte_t fontSize ;
 
 extern byte_t visibilidad ;        /* 0 invisible, 1 por defecto, 2 grande */
 
-void inicBiosCrt ( void ) ;
+void inicBiosCrt ( int filas, int columnas, bool_t redim ) ;
 
 void finBiosCrt ( void ) ;
 
