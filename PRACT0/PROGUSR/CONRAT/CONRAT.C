@@ -1774,7 +1774,11 @@ static int integrarConsola ( byte_t numConsolas ) {
   obtenInfoINFO((info_t far *)&info) ;                       /* depuracion *//**************/
 
   inicCrtHw() ;
-  inicBiosCrt() ;
+  
+  if (*((word_t far *)0xF000FFFB) == 0x3630)      /* anio fecha BIOS msdos */
+     inicBiosCrt(24, 80, TRUE) ;              /* se fuerza redimensionable */
+  else 
+	 inicBiosCrt(50, 80, FALSE) ;          /* no se fuerza redimensionable */
 
   maxConsolas = numConsolas + 1 ;
 
