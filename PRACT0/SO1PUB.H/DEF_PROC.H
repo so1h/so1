@@ -7,14 +7,14 @@
 #ifndef DEF_PROC_H
 #define DEF_PROC_H
 
-#include <so1pub.h\tipos.h>
+#include <so1pub.h\tipos.h>     /* word_t, dword_t, bool_t, pid_t, pindx_t */ 
+//                                  /* isr_t, dfs_t, rindx_t, uid_t, gid_t */
 #include <so1pub.h\const.h>             /* maxProcesos, dfMax, maxRecursos */
-#include <so1pub.h\fcntl.h>
+#include <so1pub.h\fcntl.h>                                    /* modoAp_t */
 #include <so1pub.h\def_trm.h>                                   /* trama_t */
-#include <so1pub.h\def_mem.h>
 #include <so1pub.h\scanner.h>                                /* tamComando */
-#include <so1pub.h\ptrc2c.h>
-#include <so1pub.h\ccb.h>
+#include <so1pub.h\c2c.h>                                         /* c2c_t */
+#include <so1pub.h\ccb.h>                                         /* ccb_t */
 
 #define STDIN  0                                       /* entrada estandar */
 #define STDOUT 1                                       /* salida estandar  */
@@ -113,8 +113,8 @@ typedef struct {
   c2c_t         c2cFichRec ;    /* cola de ficheros que dan paso al driver */
   byte_t        numVI ;             /* numero de vectores de int. 0, 1 o 2 */
   byte_t        nVInt[2] ;           /* tabla de numeros de vector de int. */
-  byte_t        irq[2] ;   /* tabla irqs. 0<= irq[i] < 16 => int. hardware */
-  isr_t         isr[2] ;   /* tabla de rutinas de servicio de interrupcion */
+  byte_t        irq[2] ;  /* tabla irqs. 0 <= irq[i] < 16 => int. hardware */
+  isr_t         isr[2] ;  /* tabla de rutinas de servicio de interrupcion  */
 
   open_t        open ;
   release_t     release ;
@@ -133,8 +133,8 @@ typedef struct {
 /* recursos (simples) por los que se espera bloqueado */
 
 #define rec_hijo            (rindx_t)(- 1)       /* terminacion de un hijo */
-#define rec_zombie          (rindx_t)(- 2)
-#define rec_desinstalacion  (rindx_t)(- 3)
+#define rec_zombie          (rindx_t)(- 2)          /* para proceso zombie */
+#define rec_desinstalacion  (rindx_t)(- 3)          /* para proceso driver */ 
 
 typedef struct {                                    /* informacion variada */
   /* word_t ticsPorRodaja ; */

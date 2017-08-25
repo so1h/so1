@@ -26,9 +26,9 @@ typedef byte_t far * pointer_t ;                      /* puntero (32 bits) */
 
 typedef void (* manejador_t) ( void ) ; /* manejador de llamada al sistema */
 
-typedef void interrupt (far * rti_t) ( void ) ;  /* rutina de trat. de int */
+typedef void interrupt ( far * rti_t) ( void ) ; /* rutina de trat. de int */
 
-typedef void far (far * isr_t ) ( void ) ;   /* rutina de servicio de int. */
+typedef void far ( far * isr_t ) ( void ) ;  /* rutina de servicio de int. */
 
 typedef void far ( far * handler_t ) ( void ) ;                 /* handler */
 

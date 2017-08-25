@@ -1,0 +1,97 @@
+DOSBox version SVN-Daum
+Copyright 2002-2015 DOSBox Team, published under GNU GPL.
+---
+GUI: Press Ctrl-F10 to capture/release mouse.
+     Save your configuration and restart DOSBox if your settings do not take effect.
+CONFIG:Loading primary settings from config file C:\Users\Boss\AppData\Local\DOSBox\dosbox-SVN-Daum.conf
+A20: fast remapping (64KB+1MB) DOSBox style
+ROM BIOS range: 0xe0000-0xFFFFF
+ROM BIOS range, final: 0xe0000-0xFFFFF
+ROMBIOS_GetMemory(0x01ff0 bytes,"BIOS with fixed layout",align=1,mustbe=0xfe000) = 0xfe000
+ROMBIOS_GetMemory(0x01600 bytes,"DOSBox callbacks region",align=1,mustbe=0xf1000) = 0xf1000
+ROMBIOS_GetMemory(0x0000e bytes,"DOSBox vm86 hack",align=1,mustbe=0xf0700) = 0xf0700
+Callback area starts at f000:1000
+APM BIOS allow: real=1 pm16=1 pm32=1
+voodoo: ogl=0
+MIDI:Opened device:win32
+Registered ISA PnP read port at 0x20b
+ROMBIOS_GetMemory(0x00010 bytes,"BIOS configuration (INT 15h AH=0xC0)",align=16,mustbe=0x00000) = 0xfdff0
+Glide:LFB access: read-write
+kernel allocation in umb option incompatible with other settings, disabling.
+UMB ending segment 0xe000 conflicts with BIOS at 0xe000, asking BIOS to move aside
+UMB ending segment 0xe000 conflicts with BIOS at 0xe000, truncating region
+DOS keyboard layout loaded with main language code SP for layout sp
+WinPcap has to be installed for the NE2000 to work.
+SHELL: psp_seg 0x0118
+SHELL: env_seg 0x012b
+DOS_AllocateMemory(blocks=0x000b) = 0x0171-0x017b
+DOS_AllocateMemory(blocks=0x9e82) = 0x017d-0x9ffe
+DOS_AllocateMemory(blocks=0x000b) = 0x0171-0x017b
+DOS_AllocateMemory(blocks=0x9e82) = 0x017d-0x9ffe
+DOS_AllocateMemory(blocks=0x000b) = 0x0171-0x017b
+DOS_AllocateMemory(blocks=0x9e82) = 0x017d-0x9ffe
+DOS_AllocateMemory(blocks=0x0c3a) = 0x0238-0x0e71
+DOSBox switched to max cycles, because of the setting: cycles=auto. If the game runs too fast try a fixed cycles amount in DOSBox's options.
+DOS_AllocateMemory(blocks=0x000b) = 0x03f9-0x0403
+DOS_AllocateMemory(blocks=0x9bfa) = 0x0405-0x9ffe
+DOS_AllocateMemory(blocks=0x0281) = 0x9d7e-0x9ffe
+DOS_AllocateMemory(blocks=0x021d) = 0xd001-0xd21d
+DOS_AllocateMemory(blocks=0x882d) = 0x05b0-0x8ddc
+DOS_AllocateMemory(blocks=0x0020) = 0x07ec-0x080b
+DOS_AllocateMemory(blocks=0x85f2) = 0x080d-0x8dfe
+DOS_FreeMemory(seg=0x080d)
+DOS_AllocateMemory(blocks=0x0020) = 0x080d-0x082c
+DOS_AllocateMemory(blocks=0x85f2) = 0x082e-0x8e1f
+DOS_FreeMemory(seg=0x082e)
+DOS_AllocateMemory(blocks=0x0020) = 0x082e-0x084d
+DOS_AllocateMemory(blocks=0x85f2) = 0x084f-0x8e40
+DOS_FreeMemory(seg=0x084f)
+DOS_AllocateMemory(blocks=0x1000) = 0x084f-0x184e
+DOS_FreeMemory(seg=0x084f)
+DOS_AllocateMemory(blocks=0x85f2) = 0x084f-0x8e40
+DOS_FreeMemory(seg=0x084f)
+DOS_AllocateMemory(blocks=0x000b) = 0x084f-0x0859
+DOS_AllocateMemory(blocks=0x9522) = 0x085b-0x9d7c
+DOS_FreeMemory(seg=0x084f)
+DOS_FreeMemory(seg=0x085b)
+DOS_AllocateMemory(blocks=0x85f2) = 0x084f-0x8e40
+DOS_FreeMemory(seg=0x07ec)
+DOS_FreeMemory(seg=0x080d)
+DOS_FreeMemory(seg=0x082e)
+DOS_FreeMemory(seg=0x084f)
+DOS_FreeMemory(seg=0x05b0)
+DOS_AllocateMemory(blocks=0x000b) = 0x0171-0x017b
+DOS_AllocateMemory(blocks=0x9e82) = 0x017d-0x9ffe
+DOS_AllocateMemory(blocks=0x0c3a) = 0x0238-0x0e71
+DOS_AllocateMemory(blocks=0x000b) = 0x03f9-0x0403
+DOS_AllocateMemory(blocks=0x9bfa) = 0x0405-0x9ffe
+DOS_AllocateMemory(blocks=0x0281) = 0x9d7e-0x9ffe
+DOS_AllocateMemory(blocks=0x021d) = 0xd001-0xd21d
+DOS_AllocateMemory(blocks=0x882d) = 0x05b0-0x8ddc
+DOS_AllocateMemory(blocks=0x0020) = 0x07ec-0x080b
+DOS_AllocateMemory(blocks=0x85f2) = 0x080d-0x8dfe
+DOS_FreeMemory(seg=0x080d)
+DOS_AllocateMemory(blocks=0x0020) = 0x080d-0x082c
+DOS_AllocateMemory(blocks=0x85f2) = 0x082e-0x8e1f
+DOS_FreeMemory(seg=0x082e)
+DOS_AllocateMemory(blocks=0x0020) = 0x082e-0x084d
+DOS_AllocateMemory(blocks=0x85f2) = 0x084f-0x8e40
+DOS_FreeMemory(seg=0x084f)
+DOS_AllocateMemory(blocks=0x1000) = 0x084f-0x184e
+DOS_FreeMemory(seg=0x084f)
+DOS_AllocateMemory(blocks=0x85f2) = 0x084f-0x8e40
+DOS_FreeMemory(seg=0x084f)
+DOS_AllocateMemory(blocks=0x000b) = 0x084f-0x0859
+DOS_AllocateMemory(blocks=0x9522) = 0x085b-0x9d7c
+INT 15h mouse initialized to 3-byte protocol
+INT 15h mouse initialized to 3-byte protocol
+ROMBIOS memory dump:
+     0x000e0000-0x000f06ff free=1 
+     0x000f0700-0x000f070d free=0 DOSBox vm86 hack
+     0x000f070e-0x000f0fff free=1 
+     0x000f1000-0x000f25ff free=0 DOSBox callbacks region
+     0x000f2600-0x000fdfef free=1 
+     0x000fdff0-0x000fdfff free=0 BIOS configuration (INT 15h AH=0xC0)
+     0x000fe000-0x000fffef free=0 BIOS with fixed layout
+[end dump]
+TIMER: 1 leftover handlers (clean up!).

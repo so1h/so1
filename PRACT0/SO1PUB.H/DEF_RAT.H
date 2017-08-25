@@ -7,7 +7,8 @@
 #ifndef DEF_RAT_H
 #define DEF_RAT_H
 
-#include <so1pub.h\def_pant.h>
+#include <so1pub.h\tipos.h>                              /* byte_t, bool_t */ 
+#include <so1pub.h\def_pant.h>                    /* maxColumnas, maxFilas */
 
 #define maxX 8*maxColumnas                                   /* 8*80 = 640 */
 

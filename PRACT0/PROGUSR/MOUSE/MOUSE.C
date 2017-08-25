@@ -1,35 +1,48 @@
 /* ----------------------------------------------------------------------- */
 /*                                  mouse.c                                */
 /* ----------------------------------------------------------------------- */
-/*                       Un primer sistema operativo                       */
+/*             programa para monitorizar la actividad del raton            */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>
-#include <so1pub.h\carsctrl.h>                                       /* CR */
 
 #include <so1pub.h\scanner.h>
 #include <so1pub.h\strings.h>
 #include <so1pub.h\caracter.h>                                /* mayuscula */
 #include <so1pub.h\def_scan.h>                                      /* Esc */
 
+void mostrarFormato ( void )
+{
+    escribirStr(
+        "\n"
+        "\n"
+        " formato: MOUSE [ -h | -p | -b ] \n"
+    ) ;
+}
+
 void formato ( void )
 {
-    escribirStr(" formato: MOUSE [ -h | -p | -b ] ") ;
+    mostrarFormato() ;
+    exit(-1) ;
 }
 
 void help ( void )
 {
-    escribirLn() ;
-    escribirLn() ;
-    escribirStr(" formato : MOUSE [ -h | -p | -b ]               \n") ;
-    escribirStr(" monitoriza la actividad del raton              \n") ;
-    escribirStr(" opciones : (por defecto b)                     \n") ;
-    escribirStr("      h : muestra este help                     \n") ;
-    escribirStr("      p : polling mediante leerRatonListo       \n") ;
-    escribirStr("      b : bloqueo mediante leerRaton            \n") ;
+	mostrarFormato() ;
+    escribirStr(
+        "\n"
+        " monitoriza la actividad del raton         \n"
+        "\n"
+        " opciones: (por defecto -b)                \n"
+        "\n"
+        "      -h : muestra este help               \n"
+        "      -p : polling mediante leerRatonListo \n"
+        "      -b : bloqueo mediante leerRaton      \n"		
+    ) ;
+    exit(0) ;
 }
-
+	
 void mostrarEstado ( char opcion, word_t modo )
 {
 
@@ -44,7 +57,7 @@ void mostrarEstado ( char opcion, word_t modo )
 
     if (dfRaton < 0)
     {
-        escribirStr("\n\n recurso RATOB no disponible \n") ;
+        escribirStr("\n\n recurso RATON no disponible \n") ;
         return ;
     }
 
@@ -101,8 +114,8 @@ void mostrarEstado ( char opcion, word_t modo )
         if ((nuevoEstado) || (opcion == 'F'))
         {
 
-            escribirCar(CR) ;
-//          escribirCar(LF) ;
+            escribirCar('\r') ;
+//          escribirCar('\n') ;
 
             escribirStr(" [") ;
             escribirHex(est.B0, 2) ;
@@ -192,20 +205,20 @@ void main ( int argc, char * argv [ ] )
     else if (argc == 2)
         if (iguales(argv[1], "-h")) help() ;
         else if ((argv[1][0] == '-') &&
-                 (((argv[1][2] == (char)0)) || (argv[1][3] == (char)0)))
+                 (((argv[1][2] == (char)0)) || (argv[1][3] == (char)0)))          
         {
             opcion = mayuscula(argv[1][1]) ;
-            switch (opcion)
+            switch (opcion)                                    /* -px, -bx */
             {
             case 'P' :
                 ;
             case 'B' :
                 switch (mayuscula(argv[1][2]))
                 {
-                case 'L' :
+                case 'L' :                                     /* -pl, -bl */
                     modo = 1 ;
                     break ;
-                case 'S' :
+                case 'S' :                                     /* -ps, -ps */
                     modo = 0 ;
                     break ;
                 default  :

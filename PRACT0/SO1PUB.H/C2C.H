@@ -7,7 +7,7 @@
 #ifndef C2C_H
 #define C2C_H
 
-#include <so1pub.h\tipos.h>
+#include <so1pub.h\tipos.h>                                      /* bool_t */
 
 #define NULO ((int)-1)
 

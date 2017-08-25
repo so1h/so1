@@ -7,7 +7,14 @@
 #ifndef PROCESOS_H
 #define PROCESOS_H
 
-#include <so1pub.h\def_proc.h>
+#include <so1pub.h\tipos.h>                             /* word_t, dword_t */
+#include <so1pub.h\const.h>            /* maxProcesos, dfsMax, maxRecursos */
+#include <so1pub.h\c2c.h>                                         /* c2c_t */
+#include <so1pub.h\ccb.h>                                         /* ccb_t */
+#include <so1pub.h\def_trm.h>                                   /* trama_t */
+#include <so1pub.h\def_proc.h>           /* pid_t, pindx_t, camposPublicos */ 
+//                                        /* descFichero_t, descRecurso_t, */
+//                                 /* numColasPFR, e2PFR_t, pid_t, pindx_t */
 
 typedef struct {
 
@@ -71,10 +78,7 @@ pindx_t crearProceso (       word_t     segmento,
                        const char far * programa,
                        const char far * comando,
                              pindx_t    pindx ) ;
-
-#define crearProcesoMacro(segmento, tam, tamFich, programa, comando, pindx)  \
-  crearProceso(segmento, tam, tamFich, programa, comando, pindx)
-
+							 
 void inicProcesos ( void ) ;
 
 void resetPids ( void ) ;
@@ -86,6 +90,7 @@ int eliminarProcIndx ( pindx_t pindx ) ;          /* elimina proceso pindx */
 int matarProcIndx ( pindx_t pindx ) ;                /* mata proceso pindx */
 
 #endif /* PROCESOS_H */
+
 
 
 

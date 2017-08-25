@@ -21,8 +21,8 @@ int printCarMem ( pointer_t ptr, char car ) {
 }
 
 int printLnMem ( pointer_t ptr ) {
-  ptr[0] = CR ;
-  ptr[1] = LF ;
+  ptr[0] = '\r' ;
+  ptr[1] = '\n' ;
   return(2) ;
 }
 

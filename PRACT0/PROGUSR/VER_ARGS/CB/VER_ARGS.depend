@@ -3,7 +3,7 @@
 	<so1pub.h\ll_s_so1.h>
 	<so1pub.h\escribir.h>
 
-1479309572 x:\so\pract0\so1pub.h\ll_s_so1.h
+1486508749 x:\so\pract0\so1pub.h\ll_s_so1.h
 	<so1pub.h\tipos.h>
 	<so1pub.h\def_proc.h>
 	<so1pub.h\def_mem.h>
@@ -12,9 +12,9 @@
 	<so1pub.h\fcntl.h>
 	<so1pub.h\ll_s_exc.h>
 
-1478714505 x:\so\pract0\so1pub.h\tipos.h
+1487098093 x:\so\pract0\so1pub.h\tipos.h
 
-1479288968 x:\so\pract0\so1pub.h\def_proc.h
+1488146793 x:\so\pract0\so1pub.h\def_proc.h
 	<so1pub.h\tipos.h>
 	<so1pub.h\const.h>
 	<so1pub.h\fcntl.h>
@@ -24,9 +24,9 @@
 	<so1pub.h\ptrc2c.h>
 	<so1pub.h\ccb.h>
 
-1458240040 x:\so\pract0\so1pub.h\const.h
+1486508592 x:\so\pract0\so1pub.h\const.h
 
-1458240040 x:\so\pract0\so1pub.h\fcntl.h
+1488145854 x:\so\pract0\so1pub.h\fcntl.h
 	<so1pub.h\tipos.h>
 
 1458240040 x:\so\pract0\so1pub.h\def_trm.h
@@ -44,7 +44,7 @@
 1458240040 x:\so\pract0\so1pub.h\c2c.h
 	<so1pub.h\tipos.h>
 
-1458240040 x:\so\pract0\so1pub.h\ccb.h
+1488147387 x:\so\pract0\so1pub.h\ccb.h
 	<so1pub.h\tipos.h>
 
 1458240040 x:\so\pract0\so1pub.h\def_sf.h

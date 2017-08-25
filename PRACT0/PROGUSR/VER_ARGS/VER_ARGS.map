@@ -1,0 +1,301 @@
+JWlink Version 1.9beta 13
+Portions Copyright (c) 1985-2002 Sybase, Inc. All Rights Reserved.
+Created on:       17/08/24 20:50:45
+Executable Image: VER_ARGS.BIN
+creating a DOS executable
+
+
+                        +------------+
+                        |   Groups   |
+                        +------------+
+
+Group                           Address              Size
+=====                           =======              ====
+
+DGROUP                          01cb:000c            0000012a
+
+
+
+                        +--------------+
+                        |   Segments   |
+                        +--------------+
+
+Segment                Class          Group          Address         Size
+=======                =====          =====          =======         ====
+
+_TEXT                  CODE           AUTO           0000:0000       00001cbc
+_DATA                  DATA           DGROUP         01cb:000c       0000011c
+_BSS                   BSS            DGROUP         01dd:0008       0000000e
+
+
+                        +----------------+
+                        |   Memory Map   |
+                        +----------------+
+
+* = unreferenced symbol
++ = symbol only referenced locally
+
+Address        Symbol
+=======        ======
+
+Module: ..\..\startfin\lib\startlib.lib(ASM\startcode.asm)
+0000:0000*     _startCode
+Module: ..\..\startfin\lib\startlib.lib(ASM\startdata.asm)
+01cb:000c      _startData
+Module: ..\..\startfin\lib\startlib.lib(ASM\startbss.asm)
+01cb:0128*     _startBSS
+Module: ..\..\so1pub\obj\ajustusr.obj(ajustusr.c)
+01cb:005e*     _argv
+0000:0000      _startBin
+0000:002f      __setargv__
+Module: VER_ARGS.obj(ver_args.c)
+0000:0030      _main
+Module: ..\..\so1pub\lib\ll_s_so1.lib(ll_s_so1.c)
+0000:0095*     _fork
+0000:00a6*     _getpid
+0000:00b7*     _getpindx
+0000:00c8*     _getppid
+0000:00d9*     _getuid
+0000:00ea*     _getgid
+0000:00fb*     _read
+0000:0115*     _aio_read
+0000:012f*     _aio_write
+0000:0149*     _lseek
+0000:0205*     _fcntl
+0000:021f*     _ioctl
+0000:0239*     _obtenInfoSO1
+0000:0246*     _crearRecurso
+0000:025a*     _crearFichero
+0000:027b*     _esperarDesinstalacion
+0000:028c*     _destruirRecurso
+0000:02a0*     _encolarCcbRecurso
+0000:02b9*     _eliminarCcbRecurso
+0000:02d2*     _obtenInfoPS
+0000:030d*     _obtenInfoMEM
+0000:0369*     _obtenInfoPFR
+0000:03bc*     _obtenInfoFAB
+0000:03c9*     _obtenInfoINFO
+0000:03d6*     _getdisk
+0000:050d*     _findFirst
+0000:0531*     _findNext
+0000:0177*     _leer
+0000:019d*     _leerListo
+0000:01c3*     _leerAsciiListo
+0000:05c9*     _activarTraza
+0000:05d9*     _analizarProcesos
+0000:05e8*     _ll_buscarBloque
+0000:0620*     _ll_devolverBloque
+0000:0667*     _ll_tamBloqueMax
+0000:0699*     _retardoActivo
+0000:077a*     _sem_inic
+0000:0797*     _sem_bajar
+0000:07b1*     _sem_subir
+0000:07cb*     _mbox_send
+0000:07e8*     _mbox_receive
+0000:03e7*     _procesarEntrada
+Module: ..\..\so1pub\lib\ll_s_so1.lib(ll_s_exc.c)
+0000:0805*     _createProcess
+0000:081e*     _exec
+0000:0837*     _waitpid
+0000:08b8*     _kill
+0000:088d      _exit
+0000:089a*     _setuid
+0000:08a9*     _setgid
+0000:08cc      _open
+0000:08e3      _close
+0000:08f7      _write
+Module: ..\..\so1pub\obj\caracter.obj(caracter.c)
+01cb:00fa      _dig
+0000:0911      _mayuscula
+0000:0939*     _minuscula
+Module: ..\..\so1pub\obj\printgen.obj(printgen.c)
+0000:0961      _printGenLn
+0000:0975      _printGenStr
+0000:09af      _printGenStrHasta
+0000:0a07      _printGenDec
+0000:0acf      _printGenLDec
+0000:0baa      _printGenInt
+0000:0cab      _printGenLInt
+0000:0ddc      _printGenHex
+0000:0e9a      _printGenLHex
+0000:0f83      _printGenBin
+0000:102f      _printGenLBin
+0000:10ec      _printGenPtr
+0000:112a*     _printfGen
+Module: ..\..\so1pub\obj\tipos.obj(tipos.c)
+0000:112d      _pointer
+0000:1145      _seg
+0000:115a      _off
+0000:116f*     _incPtr
+Module: ..\..\so1pub\obj\put.obj(put.c)
+0000:11c2      _putCar
+0000:11d5*     _putLn
+0000:11e7*     _putStr
+0000:11ff*     _putStrHasta
+0000:121d*     _putDec
+0000:1237*     _putLDec
+0000:1254*     _putInt
+0000:126e*     _putLInt
+0000:128b*     _putHex
+0000:12a5*     _putLHex
+0000:12c2*     _putBin
+0000:12dc*     _putLBin
+0000:12f9*     _putPtr
+Module: ..\..\so1pub\obj\escribir.obj(escribir.c)
+0000:1313*     _escribirCar
+0000:1324      _escribirLn
+0000:132c      _escribirStr
+0000:133e*     _escribirStrHasta
+0000:1356      _escribirDec
+0000:136a*     _escribirLDec
+0000:1381      _escribirInt
+0000:1395*     _escribirLInt
+0000:13ac*     _escribirHex
+0000:13c0*     _escribirLHex
+0000:13d7*     _escribirBin
+0000:13eb*     _escribirLBin
+0000:1402*     _escribirPtr
+Module: ..\..\so1pub\obj\strings.obj(strings.c)
+0000:1416*     _copiarStr
+0000:143f*     _copiarStrHasta
+0000:1479      _iguales
+0000:14b2*     _igualesHasta
+0000:14f6*     _igualesSalvoMayusculasHasta
+Module: ..\..\so1pub\obj\msdos.obj(msdos.c)
+0000:1548*     _finProgDOS
+0000:155b*     _hayMSDOS
+0000:1758*     _hayDOSBox
+0000:1929*     _hayWindowsNT
+0000:15e6*     _segPSP
+0000:15d6*     _versionMSDOS
+0000:15f6*     _entornoMSDOS
+0000:1629*     _valorMSDOS
+0000:16c6*     _argcMSDOS
+0000:17b5*     _argvMSDOS
+0000:1981*     _openDOS
+0000:19a0*     _extendedOpenDOS
+0000:19f7*     _closeDOS
+0000:1a11*     _commitFileDOS
+0000:1a2b*     _createDOS
+0000:1a4a*     _readDOS
+0000:1a6e*     _writeDOS
+0000:1a92*     _lseekDOS
+0000:1ae1*     _getdiskDOS
+0000:1af3*     _setdiskDOS
+0000:1b08*     _getcurdirDOS
+0000:1b29*     _chdirDOS
+0000:1b40*     _findfirstDOS
+0000:1b72*     _findnextDOS
+Module: ..\..\crtl\obj\h_ldiv.obj(ASM\H_LDIV.ASM)
+0000:1ba1*     LDIV@
+0000:1ba1*     F_LDIV@
+0000:1b9e      N_LDIV@
+0000:1ba8*     LUDIV@
+0000:1ba8*     F_LUDIV@
+0000:1ba5      N_LUDIV@
+0000:1bb0*     LMOD@
+0000:1bb0*     F_LMOD@
+0000:1bad      N_LMOD@
+0000:1bb8*     LUMOD@
+0000:1bb8*     F_LUMOD@
+0000:1bb5      N_LUMOD@
+Module: ..\..\crtl\obj\h_lursh.obj(ASM\H_LURSH.ASM)
+0000:1c4f*     LXURSH@
+0000:1c4f*     F_LXURSH@
+0000:1c4c*     N_LXURSH@
+Module: ..\..\crtl\obj\h_llsh.obj(ASM\H_LLSH.ASM)
+0000:1c70*     LXLSH@
+0000:1c70*     F_LXLSH@
+0000:1c6d      N_LXLSH@
+Module: ..\..\crtl\obj\f_lxmul.obj(ASM\F_LXMUL.ASM)
+0000:1c8e*     LXMUL@
+0000:1c8e*     F_LXMUL@
+Module: ..\..\crtl\obj\n_lxmul.obj(ASM\N_LXMUL.ASM)
+0000:1ca5*     N_LXMUL@
+Module: ..\..\startfin\lib\finlib.lib(ASM\fincode.asm)
+0000:1cbc*     _finCode
+Module: ..\..\startfin\lib\finlib.lib(ASM\findata.asm)
+01cb:0128      _finData
+Module: ..\..\startfin\lib\finlib.lib(ASM\finbss.asm)
+01cb:0136      _finBSS
+
+
+                        +---------------------+
+                        |   Module Segments   |
+                        +---------------------+
+
+! = 32-bit segment
+c = initialized communal data
+
+Module          Segment               Class           Address         Size
+======          =======               =====           =======         ====
+
+ASM\startcode.asm
+                _TEXT                 CODE           0000:0000        00000000
+                _DATA                 DATA           01cb:000c        00000000
+                _BSS                  BSS            01dd:0008        00000000
+ASM\startdata.asm
+                _TEXT                 CODE           0000:0000        00000000
+                _DATA                 DATA           01cb:000c        00000000
+                _BSS                  BSS            01dd:0008        00000000
+ASM\startbss.asm
+                _TEXT                 CODE           0000:0000        00000000
+                _DATA                 DATA           01cb:000c        00000000
+                _BSS                  BSS            01dd:0008        00000000
+ajustusr.c      _TEXT                 CODE           0000:0000        00000030
+                _DATA                 DATA           01cb:000c        0000007b
+                _BSS                  BSS            01dd:0008        00000000
+ver_args.c      _TEXT                 CODE           0000:0030        00000065
+                _DATA                 DATA           01cb:0088        00000057
+                _BSS                  BSS            01dd:0008        00000000
+ll_s_so1.c      _TEXT                 CODE           0000:0095        00000770
+                _DATA                 DATA           01cb:00e0        00000019
+                _BSS                  BSS            01dd:0008        00000000
+ll_s_exc.c      _TEXT                 CODE           0000:0805        0000010c
+                _DATA                 DATA           01cb:00fa        00000000
+                _BSS                  BSS            01dd:0008        00000000
+caracter.c      _TEXT                 CODE           0000:0911        00000050
+                _DATA                 DATA           01cb:00fa        00000011
+                _BSS                  BSS            01dd:0008        00000000
+printgen.c      _TEXT                 CODE           0000:0961        000007cc
+                _DATA                 DATA           01cb:010c        00000000
+                _BSS                  BSS            01dd:0008        0000000b
+tipos.c         _TEXT                 CODE           0000:112d        0000006b
+                _DATA                 DATA           01cb:010c        00000000
+                _BSS                  BSS            01dd:0014        00000000
+put.c           _TEXT                 CODE           0000:1198        0000017b
+                _DATA                 DATA           01cb:010c        00000000
+                _BSS                  BSS            01dd:0014        00000002
+escribir.c      _TEXT                 CODE           0000:1313        00000103
+                _DATA                 DATA           01cb:010c        00000000
+                _BSS                  BSS            01dd:0016        00000000
+strings.c       _TEXT                 CODE           0000:1416        00000132
+                _DATA                 DATA           01cb:010c        00000000
+                _BSS                  BSS            01dd:0016        00000000
+msdos.c         _TEXT                 CODE           0000:1548        00000656
+                _DATA                 DATA           01cb:010c        0000001c
+                _BSS                  BSS            01dd:0016        00000000
+ASM\H_LDIV.ASM  _TEXT                 CODE           0000:1b9e        000000ae
+ASM\H_LURSH.ASM _TEXT                 CODE           0000:1c4c        00000021
+ASM\H_LLSH.ASM  _TEXT                 CODE           0000:1c6d        00000021
+ASM\F_LXMUL.ASM _TEXT                 CODE           0000:1c8e        00000017
+ASM\N_LXMUL.ASM _TEXT                 CODE           0000:1ca5        00000017
+ASM\fincode.asm _TEXT                 CODE           0000:1cbc        00000000
+                _DATA                 DATA           01cb:0128        00000000
+                _BSS                  BSS            01dd:0016        00000000
+ASM\findata.asm _TEXT                 CODE           0000:1cbc        00000000
+                _DATA                 DATA           01cb:0128        00000000
+                _BSS                  BSS            01dd:0016        00000000
+ASM\finbss.asm  _TEXT                 CODE           0000:1cbc        00000000
+                _DATA                 DATA           01cb:0128        00000000
+                _BSS                  BSS            01dd:0016        00000000
+
+
+                        +-----------------------+
+                        |   Linker Statistics   |
+                        +-----------------------+
+
+Stack size:  fffe (65534.)
+Memory size:  1de6 (7654.)
+Entry point address: 0000:0000
+Link time: 00:00.15

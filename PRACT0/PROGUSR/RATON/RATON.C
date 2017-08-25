@@ -8,21 +8,21 @@
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>
 
-#include <so1pub.h\carsctrl.h>                               /* CR, LF, FF */
-#include <so1pub.h\caracter.h>                           /* dig, mayuscula */
+#include <so1pub.h\tipos.h>          /* byte_t, word_t, pointer_t, rindx_t */ /* TRUE, FALSE */
+#include <so1pub.h\c2c.h>                          /* c2c_t, dobleEnlace_t */
 #include <so1pub.h\strings.h>                                   /* iguales */
 #include <so1pub.h\scanner.h>
-#include <so1pub.h\biosdata.h>                              /* ptrBiosArea */
+#include <so1pub.h\biosdata.h>               /* ptrBiosArea, VIDEO_lastrow */
 #include <so1pub.h\bios_0.h>
 #include <so1pub.h\copia.h>                                       /* copia */
 #include <so1pub.h\pantalla.h>                    /* maxFilas, maxColumnas */
-#include <so1pub.h\crthw.h>
 #include <so1pub.h\memvideo.h>                             /* printCarBIOS */
 #include <so1pub.h\def_tecl.h>                                /* teclado_t */
 #include <so1pub.h\pic.h>                                        /* ptrTVI */
 #include <so1pub.h\def_timer.h>                            /* argCbTimer_t */
 #include <so1pub.h\printgen.h>
 #include <so1pub.h\msdos.h>
+#include <so1pub.h\def_rat.h>                       /* maxX, estadoRaton_t */
 #include <so1pub.h\bios_rat.h>
 
 #include <so1.h\plot.h>
@@ -58,7 +58,8 @@ pointer_t dirProceso [ maxProcesos ] ;     /* tabla de direcciones destino */
 /* ----------------------------------------------------------------------- */
 
 int inB = 0 ;                              /* indice de entrada al bufer B */
-byte_t B[3] = { 0x00, 0x00, 0x00 } ;
+
+byte_t B [ 3 ] = { 0x00, 0x00, 0x00 } ;
 
 /* no cambiar el orden en las siguientes lineas (ver leerEstadoRaton)      */
 
@@ -320,52 +321,57 @@ word_t far * ptrWordAux ;                          /* para depurar la pila */
 
 void far rti_raton_BIOS ( void )
 {
-    asm sub sp,10                               /* Flags, CS, IP (Proceso) */
-    /* segment_rti_nVIntRaton */
-    /* offset_rti_nVIntRaton */
-    asm push ds                                            /* DS (Proceso) */
+    asm {
+		
+		sub sp,10 ;                             /* Flags, CS, IP (Proceso) */
+//                                               /* segment_rti_nVIntRaton */
+//                                                /* offset_rti_nVIntRaton */
+        push ds ;                                          /* DS (Proceso) */
 
-    asm mov ds,word ptr cs:[segDatos]        /* segmento de datos DS_Raton */
+        mov ds,word ptr cs:[segDatos] ;      /* segmento de datos DS_Raton */
 
-    asm push ax
-    asm push bp
+        push ax ;
+        push bp ;
 
-    asm mov bp,sp
-    asm mov ax,rH_CS
-    asm mov ss:[bp+12],ax
-    asm mov ax,rH_IP
-    asm mov ss:[bp+10],ax
-    asm mov ax,segment_rti_nVIntRaton
-    asm mov ss:[bp+8],ax
-    asm mov ax,offset_rti_nVIntRaton
-    asm mov ss:[bp+6],ax
-    /*
-    printStrBIOS("\n isr_raton_BIOS") ;
-      ptrWordAux = (word_t far  *)pointer(_SS,_SP) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[0], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[1], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[2], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[3], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[4], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[5], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[6], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[7], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[8], 4) ;
-    printStrBIOS("\n ") ;
-    */
-    asm pop bp
-    asm pop ax
-    asm pop ds
-    /* retorno lejano a rti_nVIntRaton */
+        mov bp,sp ;
+        mov ax,rH_CS ;                                     /* CS (Proceso) */  
+        mov ss:[bp+12],ax ;   
+        mov ax,rH_IP ;
+        mov ss:[bp+10],ax ;                                /* IP (Proceso) */
+        mov ax,segment_rti_nVIntRaton ;
+        mov ss:[bp+8],ax ;                       /* segment_rti_nVIntRaton */      
+        mov ax,offset_rti_nVIntRaton ;
+        mov ss:[bp+6],ax ;                        /* offset_rti_nVIntRaton */
+	}
+/*
+        printStrBIOS("\n isr_raton_BIOS") ;
+        ptrWordAux = (word_t far  *)pointer(_SS,_SP) ;
+        printStrBIOS("\n ") ;
+        printHexBIOS(ptrWordAux[0], 4) ;
+        printStrBIOS("\n ") ;
+        printHexBIOS(ptrWordAux[1], 4) ;
+        printStrBIOS("\n ") ;
+        printHexBIOS(ptrWordAux[2], 4) ;
+        printStrBIOS("\n ") ;
+        printHexBIOS(ptrWordAux[3], 4) ;
+        printStrBIOS("\n ") ;
+        printHexBIOS(ptrWordAux[4], 4) ;
+        printStrBIOS("\n ") ;
+        printHexBIOS(ptrWordAux[5], 4) ;
+        printStrBIOS("\n ") ;
+        printHexBIOS(ptrWordAux[6], 4) ;
+        printStrBIOS("\n ") ;
+        printHexBIOS(ptrWordAux[7], 4) ;
+        printStrBIOS("\n ") ;
+        printHexBIOS(ptrWordAux[8], 4) ;
+        printStrBIOS("\n ") ;
+*/
+    asm {
+        pop bp ;
+        pop ax ;
+        pop ds ;                                           
+        /* retorno lejano a rti_nVIntRaton */
+	}
 }
 
 void far ratonHandler ( void )
@@ -734,7 +740,8 @@ void far handlerRaton ( dword_t y, word_t x, word_t s )
     static int incX = 0, incY = 0 ; /* .. X,Y iniciales que son basura */
     int X1 ;
     int Y1 ;
-    int numFilas ;
+    int numFilasAct ;
+	int maxYAct ;
 
     asm cli
     asm mov ds,word ptr cs:[segDatos]
@@ -756,18 +763,16 @@ void far handlerRaton ( dword_t y, word_t x, word_t s )
     if (X1 < 0) er.X = 0 ;
     else if (X1 >= maxX) er.X = maxX-1 ;
     else er.X = X1 ;
-    /*
-      if (Y1 < 0) er.Y = 0 ;
-      else if (Y1 >= maxY) er.Y = maxY-1 ;
-      else er.Y = Y1 ;
-    */
+
     if (Y1 < 0) er.Y = 0 ;
     else
     {
-        numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
-        if (Y1 >= numFilas) er.Y = numFilas-1 ;
+        numFilasAct = ptrBiosArea->VIDEO_lastrow + 1 ;
+		maxYAct = (numFilasAct << 3) ;
+        if (Y1 >= maxYAct) er.Y = maxYAct-1 ;
         else er.Y = Y1 ;
     }
+
 }
 
 /* ----------------------------------------------------------------------- */

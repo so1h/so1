@@ -6,8 +6,9 @@
 
 #include <so1pub.h\caracter.h>
 #include <so1pub.h\strings.h>
-#include <so1pub.h\pic.h>                                     /* ptrTVI */
-#include <so1pub.h\fcntl.h>                                /* O_DENYALL */
+#include <so1pub.h\pic.h>                                        /* ptrTVI */
+#include <so1pub.h\fcntl.h>                                   /* O_DENYALL */
+#include <so1pub.h\ptrc2c.h>            /* ptrC2c_t, inicPC2c, encolarPC2c */ /* apilarPC2c, desapilarPC2c, eliminarPC2c */
 #include <so1.h\recursos.h>
 #include <so1.h\ajustes.h>
 #include <so1.h\procesos.h>

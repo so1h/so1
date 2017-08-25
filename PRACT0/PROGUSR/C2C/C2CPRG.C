@@ -10,6 +10,8 @@
 #include <so1pub.h\strings.h>                                   /* iguales */
 #include <so1pub.h\scanner.h>
 
+#include <so1pub.h\ptrc2c.h>                                   /* ptrC2c_t */
+
 #define eS(str)                                                              \
   escribirStr(str)
 

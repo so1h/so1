@@ -11,6 +11,8 @@
 #include <so1pub.h\scanner.h>
 #include <so1pub.h\carsctrl.h>                                      /* BEL */
 
+#include <so1pub.h\ptrc2c.h>                                   /* ptrC2c_t */
+
 #define eS(str)                                                              \
   escribirStr(str)
 

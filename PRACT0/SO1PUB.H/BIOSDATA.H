@@ -236,7 +236,7 @@ typedef struct {
   byte_t COM_timeout [4] ;      /* 47C: serial device timeout counters */
 
   word_t KBD_start ;            /* 480: keyboard buffer start offsets in 40:0 */
-  word_t KBD_end1 ;             /* 481: keyboard buffer end+1 offsets in 40:0 */
+  word_t KBD_end1 ;             /* 482: keyboard buffer end+1 offsets in 40:0 */
 
   byte_t VIDEO_lastrow ;        /* 484: last text row on screen (count from 0) */
   word_t VIDEO_hchar ;          /* 485: character height in scan lines/bytes */

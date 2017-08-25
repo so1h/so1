@@ -22,13 +22,12 @@
 #define TIMER   TRUE       /*    TRUE      */
 //#define TIMER   FALSE    /*    FALSE     */
 #define CONRAT  FALSE      /*    FALSE     */
-#define RETARDO TRUE       /*    TRUE      */ /* falla con msdos de Takeda */
-#define RELOJ   TRUE       /*    TRUE      */ /* falla con msdos de Takeda */
-#define RATON   TRUE       /*    TRUE      */ /* falla con msdos de Takeda */
-//#define RATON   FALSE    /*    FALSE     */ /* falla con msdos de Takeda */
+#define RETARDO TRUE       /*    TRUE      */ 
+#define RELOJ   TRUE       /*    TRUE      */ 
+#define RATON   TRUE       /*    TRUE      */ 
+//#define RATON   FALSE    /*    FALSE     */ 
 
-//#define numConsolas 1 //antes estaba a 6
-#define numConsolas 6 //antes estaba a 6
+#define numConsolas 6
 
 #define ticsPorRodaja 18
 
@@ -196,24 +195,24 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     copiarStr("CONX", nombre) ;
     for ( i = 1 ; i <= numConsolas/2 ; i++ )
     {
-            nombre[3] = '0' + i ;
-            close(STDIN) ;
-            close(STDOUT) ;
-            close(STDERR) ;
-            open(nombre, O_RDONLY) ;
-            open(nombre, O_WRONLY) ;
-            open(nombre, O_WRONLY) ;
-            if ((pid = createProcess("LOGIN", "LOGIN")) < 0)                 /* GP */
-            {
-                printStrBIOS("\a\n fallo al arrancar LOGIN en ") ;
-                printStrBIOS(nombre) ;
-                printStrBIOS("\n (pid = ") ;
-                printIntBIOS(pid, 1) ;
-                printCarBIOS(')') ;
-            }
-            printStrBIOS("LOGIN") ;
-            if (i < numConsolas/2) printStrBIOS("&, ") ;
-            else printStrBIOS("&") ;
+        nombre[3] = '0' + i ;
+        close(STDIN) ;
+        close(STDOUT) ;
+        close(STDERR) ;
+        open(nombre, O_RDONLY) ;
+        open(nombre, O_WRONLY) ;
+        open(nombre, O_WRONLY) ;
+        if ((pid = createProcess("LOGIN", "LOGIN")) < 0)                 /* GP */
+        {
+            printStrBIOS("\a\n fallo al arrancar LOGIN en ") ;
+            printStrBIOS(nombre) ;
+            printStrBIOS("\n (pid = ") ;
+            printIntBIOS(pid, 1) ;
+            printCarBIOS(')') ;
+        }
+        printStrBIOS("LOGIN") ;
+        if (i < numConsolas/2) printStrBIOS("&, ") ;
+        else printStrBIOS("&") ;
     }
 
     /* aqui, ya tenemos interpretes de comandos (SH.BIN) en CON1, CON2, CON3 */
@@ -238,9 +237,6 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     printStrBIOS(", RELOJ&") ;
 #endif
 
-/* Para que INIC no cree el driver de raton lo que podemos hacer es al principio cuando se declara
-** la variable global RATON ponerla a FALSE ya que se trata de una variable booleana; como consecuencia
-** no entrará en esta condición y no creará el driver de RATON*/
 #if (RATON)
     if (!igualesHasta(
                 (char far *)ptrFechaBios,

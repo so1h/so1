@@ -7,7 +7,7 @@
 #ifndef CCB_H
 #define CCB_H
 
-#include <so1pub.h\tipos.h>
+#include <so1pub.h\tipos.h>                                      /* word_t */
 
 typedef int far ( far * callBack_t ) ( void far * arg ) ;     /* call back */
 

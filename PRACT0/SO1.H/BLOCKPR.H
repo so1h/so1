@@ -7,10 +7,13 @@
 #ifndef BLOCKPR_H
 #define BLOCKPR_H
 
-#include <so1pub.h\tipos.h>
-#include <so1pub.h\def_proc.h>
+#include <so1pub.h\tipos.h>              /* word_t, bool_t, FALSE, rindx_t */
+#include <so1pub.h\def_proc.h>                        /* c2cPFR, PUrgentes */
+#include <so1pub.h\ptrc2c.h>                                   /* ptrC2c_t */
+#include <so1pub.h\ccb.h>                                    /* atenderCcb */
 
-#include <so1.h\ajustes.h>
+#include <so1.h\ajustes.h>                              /* DS_SO1, SP0_SO1 */
+#include <so1.h\procesos.h>    /* activarProceso, sigProceso, ccbAlEpilogo */
 
 extern word_t SS_Proceso ;    /* pila proceso que hace una llamada al s.o. */
 
@@ -53,7 +56,7 @@ extern bool_t hayTic ;             /* se acaba de producir un tic de reloj */
                                                                              \
   asm pusha ;          /* apilamos todos los registros del proceso (80286) */\
                                          /* ax, cx, dx, bx, sp, bp, si, di */\
-  prologo_rti_sin_PUSHA() ;
+  prologo_rti_sin_PUSHA() ;                                                  \
                                                               /* fin macro */
 
 #define epilogo_rti()                                             /* macro */\

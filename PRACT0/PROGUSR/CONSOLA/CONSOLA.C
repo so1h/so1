@@ -911,8 +911,8 @@ void establecerTablaDeConversion ( void )
         break ;                 /* "05/02/12" */
 //  case 99 : /* hayVDos   = TRUE ; */
 //      break ;                 /* "01/01/99" */
-    case 06 : /* hayMsdos  = TRUE ; */
-        break ;                 /* "02/22/06" */
+    case 06 : /* hayMsdos  = TRUE ; */                           /* Takeda */
+        tablaDeConversion = (char *)&tablaNula ;                     /* US */
     default  :
         tablaDeConversion = (char *)&tablaNula ;                     /* US */
     }

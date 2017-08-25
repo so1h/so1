@@ -27,7 +27,7 @@
 #include <so1.h\recursos.h>
 #include <so1.h\gm.h>
 
-void cargarDescSO1( descSO1_t far * descSO1 ) {
+void cargarDescSO1 ( descSO1_t far * descSO1 ) {
 
   descSO1->ptrIndProcesoActual      = (pindx_t far *)&indProcesoActual ;
   descSO1->ptrTramaProceso          = (trama_t far * far *)&tramaProceso ;

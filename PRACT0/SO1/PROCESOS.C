@@ -4,22 +4,42 @@
 /*                          Gestion de procesos                            */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\caracter.h>
-#include <so1pub.h\puertos.h>
-#include <so1pub.h\copia.h>
-#include <so1pub.h\strings.h>
-#include <so1pub.h\fcntl.h>
-#include <so1pub.h\startbss.h>
-#include <so1pub.h\finbss.h>
-#include <so1.h\ajustes.h>
-#include <so1.h\blockpr.h>
-#include <so1.h\gm.h>
-#include <so1.h\procesos.h>
-#include <so1.h\plot.h>
-
+#include <so1pub.h\tipos.h>  /* word_t, dword_t, bool_t, NULL, FALSE, TRUE */
+                                                               /* seg, off */
+//                                            /* pointer_t, pointer, MK_FP */
+#include <so1pub.h\const.h>     /* maxProcesos, dfsMax, maxRecursos, dfMax */
+#include <so1pub.h\c2c.h>                          /* c2c_t, dobleEnlace_t */
+#include <so1pub.h\ccb.h>                                 /* ccb_t, cbNulo */
+#include <so1pub.h\def_trm.h>                                   /* trama_t */
+#include <so1pub.h\def_proc.h>                           /* pid_t, pindx_t */ 
+//                                        /* descFichero_t, descRecurso_t, */
+//                                 /* numColasPFR, e2PFR_t, pid_t, pindx_t */
+//             /* PPreparados, POrdenados, PDormidos, DPLibres, DPOcupados */
+//                            /* libre, preparado, ejecutandose, bloqueado */ 
+//                                    /* cabecera_t, STDIN, STDERR, flibre */
+//                                                           /* rec_zombie */
+#include <so1pub.h\ptrc2c.h>      /* ptrC2c_t, encolarPC2c, desencolarPC2c */
+//                                     /* eliminarPC2c, inicPC2c, estaPC2c */
+#include <so1pub.h\scanner.h>                                /* tamComando */
+#include <so1pub.h\fcntl.h>                /* modoAp_t, O_RDONLY, O_WRONLY */
+#include <so1pub.h\puertos.h>                            /* contadorTimer0 */
+#include <so1pub.h\strings.h>                   /* copiarStr, igualesHasta */
+#include <so1pub.h\copia.h>                           /* copia, copiaLarga */
+#include <so1pub.h\startbss.h>                                 /* startBSS */
+#include <so1pub.h\finbss.h>                                     /* finBSS */
+#include <so1pub.h\caracter.h>                                      /* dig */
 #include <so1pub.h\bios_0.h>                           /* printStrBIOS ... */
-#include <so1.h\dbgword.h>                                    /* debugWord *//********************/
 
+#include <so1.h\procesos.h>                            /* descProcesoExt_t */
+
+#include <so1.h\blockpr.h>       /* enHalt, hayTic, SS_Proceso, SP_Proceso */
+//                               /* SS_Tarea, SP_Tarea, nivelActivacionSO1 */
+#include <so1.h\ajustes.h>    /* ptrMagicByteSO1, ptrMagicByteUsr, modoSO1 */
+//                                /* modoSO1_Bin, modoSO1_Com, modoSO1_Exe */
+//                                                       /* CS_SO1, DS_SO1 */
+#include <so1.h\gm.h>                                  /* k_devolverBloque */
+#include <so1.h\plot.h>                                            /* plot */
+#include <so1.h\dbgword.h>                                    /* debugWord */ /***************/
 
 descProcesoExt_t descProceso [ maxProcesos ] ;        /* tabla de procesos */
 
@@ -84,9 +104,11 @@ pindx_t far sigProceso ( void ) {              /* planificador (scheduler) */
       plot('e', 0, contadorTimer0()) ;
     indProcesoActual = -1 ;                  /* printStrWin(win_so, "h") ; */
     enHalt = TRUE ;
-    asm sti
-    asm hlt                                     /* detenemos el procesador */
-    asm cli
+    asm { 
+	  sti ;
+      hlt ;                                     /* detenemos el procesador */
+      cli ;
+	}
   }
 
   pindx = desencolarPC2c((ptrC2c_t)&c2cPFR[PPreparados]) ;
@@ -170,17 +192,19 @@ if (debugWord == 0x0001) {
 
   nivelActivacionSO1 = 0 ;                 /* esta ejecutandose un proceso */
 
-  asm mov ss,SS_Proceso ;              /* establecemos la pila del proceso */
-  asm mov sp,SP_Proceso ;
+  asm {
+	mov ss,SS_Proceso ;                /* establecemos la pila del proceso */
+    mov sp,SP_Proceso ;
 
-  asm pop ds              /* establecemos el segmento de datos del proceso */
-  asm pop es
+    pop ds ;              /* establecemos el segmento de datos del proceso */
+    pop es ;
 
-  asm popa                        /* restauramos los registros del proceso */
+    popa ;                        /* restauramos los registros del proceso */
 
-  asm iret                                   /* restauramos IP, CS y Flags */
-
-  return(0) ;
+    iret ;                                   /* restauramos IP, CS y Flags */
+  }
+  
+  return(0) ;   /* nunca se retorna por aqui (puesto para evitar warnings) */ 
 
 }
 

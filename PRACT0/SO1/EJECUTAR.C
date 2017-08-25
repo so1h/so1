@@ -4,14 +4,15 @@
 /*            busqueda, carga y ejecucion de comandos externos             */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\caracter.h>
+#include <so1pub.h\caracter.h>                                 
 #include <so1pub.h\def_proc.h>
 #include <so1pub.h\scanner.h>                                /* tamComando */
 #include <so1pub.h\msdos.h>                  /* lssekMSDOS, SEEK_SET_MSDOS */
 #include <so1pub.h\strings.h>
 #include <so1pub.h\bios_0.h>
 #include <so1pub.h\copia.h>                                  /* copiaLarga */
-#include <so1.h\ejecutar.h>
+#include <so1pub.h\ptrc2c.h>         /* ptrC2c_t, desencolarPC2c, inicPC2c */ /* encolarPC2c */
+#include <so1.h\ejecutar.h>                                /* crearProceso */
 #include <so1.h\gm.h>                  /* k_buscarBloque, k_devolverBloque */
 #include <so1.h\procesos.h>
 #include <so1.h\ajustes.h>
@@ -160,11 +161,15 @@ pindx_t preEjecutar ( const char far * nombre,
   }
   else {                                     /* openDOS(nombreCompleto, 0) */
     unidad = getdiskDOS() ;
+//  mostrarFlags() ;    /* comprobar que no se permiten las interrupciones */
     if (('A' < nombreCompleto[0]) && (nombreCompleto[0] <= 'Z') && (nombreCompleto[1] == ':')) {
       unidad0 = nombreCompleto[0]-'A' ;
       setdiskDOS(unidad0) ;
+//    mostrarFlags() ;  /* comprobar que no se permiten las interrupciones */ 
       unidad1 = getdiskDOS() ;
+//    mostrarFlags() ;  /* comprobar que no se permiten las interrupciones */ 
       setdiskDOS(unidad) ;
+//    mostrarFlags() ;  /* comprobar que no se permiten las interrupciones */ 
       if (unidad1 != unidad0) {
         return(-4) ;
       }
@@ -172,6 +177,7 @@ pindx_t preEjecutar ( const char far * nombre,
     accion = 1 ;
     if ((df = extendedOpenDOS((pointer_t)nombreCompleto, 0x2000, 0, &accion, &error)) == -1)
       return(-5) ;
+//  mostrarFlags() ;    /* comprobar que no se permiten las interrupciones */ 
   }
 
   if (unidadLogicaActual >= 0)
@@ -179,9 +185,11 @@ pindx_t preEjecutar ( const char far * nombre,
   else {
     posFich = (dword_t)0 ;
     lseekDOS(df, (dword_t *)&posFich, SEEK_END_MSDOS) ;
+//  mostrarFlags() ;    /* comprobar que no se permiten las interrupciones */ 
     tamFich = posFich ;
     posFich = (dword_t)0 ;
     lseekDOS(df, (dword_t *)&posFich, SEEK_SET_MSDOS) ;    /* volvemos a 0 */
+//  mostrarFlags() ;    /* comprobar que no se permiten las interrupciones */ 
   }
 
 #if (FALSE)
@@ -219,6 +227,7 @@ pindx_t preEjecutar ( const char far * nombre,
       cerrarFichero(df) ;
     else
       closeDOS(df) ;
+//  mostrarFlags() ;    /* comprobar que no se permiten las interrupciones */ 
     return(-6) ;
   }
 
@@ -261,14 +270,14 @@ if (pindx != -1) {                                                 /* exec */
 }
 #endif
 
-  if ((pindxAux = crearProcesoMacro(
+  if ((pindxAux = crearProceso(
                     segmento, tam, tamFich, nombreBackup, comandoBackup, pindx)) < 0) {
     k_devolverBloque(segmento, tam) ;
     return(-10) ;
   }
 
 #if (FALSE)
-  printStrBIOS("\n despues de crearProceso") ;
+  printStrBIOS("\n despues del if de crearProceso") ;
 #endif
 
   if ((pindx >= 0) && (pindxAux != pindx)) return(-11) ;

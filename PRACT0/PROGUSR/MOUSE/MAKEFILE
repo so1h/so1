@@ -25,7 +25,8 @@ $(PROGRAMA).obj,                 \
 
 #puntero de pila inicial (DATA = 2C7 BSS = 10B1 total: 1378 < 17FE)
 
-SPINICIAL = 03FE
+#SPINICIAL = 03FE
+SPINICIAL = 07FE
 
 !include "..\..\MKFILE0"
 !include "..\MAKEUSR"

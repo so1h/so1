@@ -1,0 +1,94 @@
+JWasm v2.12pre, Nov 27 2013
+matrix.asm
+                                	.286
+                                	ifndef	??version
+                                	else
+                                $comm	macro	name,dist,size,count
+ >                              	comm	dist name[size]:BYTE:count
+ >                              	endm
+                                	endif
+00000000                        _TEXT	segment byte public 'CODE'
+                                _TEXT	ends
+                                DGROUP	group	_DATA,_BSS
+                                	assume	cs:_TEXT,ds:DGROUP
+00000000                        _DATA	segment word public 'DATA'
+00000000                        d@	label	byte
+00000000                        d@w	label	word
+00000000                        _DATA	ends
+00000000                        _BSS	segment word public 'BSS'
+00000000                        b@	label	byte
+00000000                        b@w	label	word
+00000000                        _BSS	ends
+00000000                        _TEXT	segment byte public 'CODE'
+                                	assume	cs:_TEXT,ds:DGROUP
+00000000                        _matrix	proc	near
+                                   ;	
+                                   ;	void matrix ( void )
+                                   ;	
+                                   ;	
+                                   ;	{
+                                   ;	    asm
+                                   ;	    {
+                                   ;	        dw NUM_MATRICULA dup(NUM_MATRICULA) ;
+                                   ;	
+00000000  230123012301230123    	dw	 00123H dup(00123H) 
+                                   ;	
+                                   ;	    }
+                                   ;	}
+                                   ;	
+00000246                        	ret	
+00000247                        _matrix	endp
+00000247                        _TEXT	ends
+00000000                        _DATA	segment word public 'DATA'
+00000000                        s@	label	byte
+00000000                        _DATA	ends
+00000247                        _TEXT	segment byte public 'CODE'
+00000247                        _TEXT	ends
+                                	public	_matrix
+                                	end
+
+
+Macros:
+
+                N a m e                 Type
+
+$comm  . . . . . . . . . . . . .        Proc
+@CatStr  . . . . . . . . . . . .        Func
+@Environ . . . . . . . . . . . .        Func
+@InStr . . . . . . . . . . . . .        Func
+@SizeStr . . . . . . . . . . . .        Func
+@SubStr  . . . . . . . . . . . .        Func
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+$$SYMBOLS  . . . . . . . . . . .        32 Bit   0000007F Byte    Private 'DEBSYM'
+$$TYPES  . . . . . . . . . . . .        32 Bit   00000004 Byte    Private 'DEBTYP'
+_TEXT  . . . . . . . . . . . . .        16 Bit   0247     Byte    Public  'CODE'
+DGROUP . . . . . . . . . . . . .        GROUP
+_DATA  . . . . . . . . . . . . .        16 Bit   0000     Word    Public  'DATA'
+_BSS . . . . . . . . . . . . . .        16 Bit   0000     Word    Public  'BSS'
+
+
+Procedures, parameters and locals:
+
+                N a m e                 Type     Value    Segment  Length
+
+_matrix  . . . . . . . . . . . .        P Near   0000     _TEXT    0247 Public   
+
+
+Symbols:
+
+                N a m e                 Type       Value     Attr
+
+??version  . . . . . . . . . . .        Text   0504
+?debug . . . . . . . . . . . . .        Text   ;
+b@ . . . . . . . . . . . . . . .        Byte               0h _BSS 
+b@w  . . . . . . . . . . . . . .        Word               0h _BSS 
+d@ . . . . . . . . . . . . . . .        Byte               0h _DATA 
+d@w  . . . . . . . . . . . . . .        Word               0h _DATA 
+s@ . . . . . . . . . . . . . . .        Byte               0h _DATA 
+
+matrix.asm: 67 lines, 2 passes, 0 ms, 0 warnings, 0 errors
