@@ -10,7 +10,7 @@
 #include <so1pub.h\saludos.h>                       /* mostrarSaludoGrande */
 #include <so1pub.h\strings.h>                                 /* copiarStr */
 #include <so1pub.h\carsctrl.h>                                      /* ESC */
-#include <so1pub.h\pantalla.h>                               /* pantallazo */
+//#include <so1pub.h\pantalla.h>                             /* pantallazo */
 #include <so1pub.h\debug.h>            /* assert, valorFlags, mostrarFlags */
 #include <so1pub.h\bios_0.h>            /* printStrBIOS, printDecBIOS, ... */
 #include <so1pub.h\biosdata.h>                             /* ptrFechaBios */
@@ -277,7 +277,9 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     {
         for ( i = 20 ; i < 60 ; i++ )
         {
-            pantallazo(ptrPant, 50, (char)254, atrNormal, 21, 20, 21, i) ;
+     		lseek(STDOUT, 21*80+i, SEEK_SET) ;              	
+			escribirCar(0xFE) ;                             /* cuadrado pequenio */
+//          pantallazo(ptrPant, 50, (char)254, atrNormal, 21, 20, 21, i) ;
 #if (TRUE)                 /* FALSE para que funcione no se cuelgue Takeda */
             leer(df) ;     /* permite las interrupciones mientras esta bloqueado */
             car = leerListo(STDIN);

@@ -1,54 +1,55 @@
 
  Start  Stop   Length Name               Class
 
- 00000H 01FD4H 01FD5H _TEXT              CODE
- 01FD6H 0292BH 00956H _DATA              DATA
- 0292CH 0442BH 01B00H _BSS               BSS
+ 00000H 02046H 02047H _TEXT              CODE
+ 02048H 0299DH 00956H _DATA              DATA
+ 0299EH 0449DH 01B00H _BSS               BSS
 
   Address         Publics by Name
 
- 0000:1EF2       F_LDIV@
- 0000:1F01       F_LMOD@
- 0000:1EF9       F_LUDIV@
- 0000:1F09       F_LUMOD@
- 0000:1FA0       F_LXLSH@
- 0000:1EF2       LDIV@
- 0000:1F01       LMOD@
- 0000:1EF9       LUDIV@
- 0000:1F09       LUMOD@
- 0000:1FA0       LXLSH@
- 0000:1EEF       N_LDIV@
- 0000:1EFE       N_LMOD@
- 0000:1EF6       N_LUDIV@
- 0000:1F06       N_LUMOD@
- 0000:1F9D       N_LXLSH@
- 0000:1FBE       N_LXMUL@
- 0000:0DD6       _activarTraza
- 0000:0922       _aio_read
- 0000:093C       _aio_write
- 0000:0DE6       _analizarProcesos
- 01FD:0058       _argv
- 01FD:2042       _c2cPFR
- 01FD:2400       _car
- 0000:0874       _close
+ 0000:1F64       F_LDIV@
+ 0000:1F73       F_LMOD@
+ 0000:1F6B       F_LUDIV@
+ 0000:1F7B       F_LUMOD@
+ 0000:2012       F_LXLSH@
+ 0000:1F64       LDIV@
+ 0000:1F73       LMOD@
+ 0000:1F6B       LUDIV@
+ 0000:1F7B       LUMOD@
+ 0000:2012       LXLSH@
+ 0000:1F61       N_LDIV@
+ 0000:1F70       N_LMOD@
+ 0000:1F68       N_LUDIV@
+ 0000:1F78       N_LUMOD@
+ 0000:200F       N_LXLSH@
+ 0000:2030       N_LXMUL@
+ 0000:0E48       _activarTraza
+ 0000:09DC       _aio_read
+ 0000:09F6       _aio_write
+ 0000:0E58       _analizarProcesos
+ 0204:005A       _argv
+ 0204:2044       _c2cPFR
+ 0204:2402       _car
+ 0000:08E6       _close
  0000:00EB       _colas
- 01FD:20E0       _comando
- 0000:1D52       _copiarStr
- 0000:1D7B       _copiarStrHasta
- 0000:0A67       _crearFichero
- 0000:0A53       _crearRecurso
- 0000:0796       _createProcess
- 01FD:171C       _descFichero
- 01FD:095C       _descProceso
- 01FD:18C0       _descRecurso
- 0000:0A99       _destruirRecurso
- 01FD:0830       _dig
- 01FD:1D4A       _e2PFR
- 0000:0AC6       _eliminarCcbRecurso
- 0000:0AAD       _encolarCcbRecurso
+ 0204:20E2       _comando
+ 0000:1DC4       _copiarStr
+ 0000:1DED       _copiarStrHasta
+ 0000:0AD9       _crearFichero
+ 0000:0AC5       _crearRecurso
+ 0000:0808       _createProcess
+ 0204:171E       _descFichero
+ 0204:095E       _descProceso
+ 0204:18C2       _descRecurso
+ 0000:0B0B       _destruirRecurso
+ 0204:0832       _dig
+ 0204:1D4C       _e2PFR
+ 0000:0B38       _eliminarCcbRecurso
+ 0000:0B1F       _encolarCcbRecurso
  0000:0030       _ePC2c
  0000:0757       _escribirBin
  0000:0693       _escribirCar
+ 0000:0796       _escribirCursor
  0000:06D6       _escribirDec
  0000:072C       _escribirHex
  0000:0701       _escribirInt
@@ -60,111 +61,113 @@
  0000:0782       _escribirPtr
  0000:06AC       _escribirStr
  0000:06BE       _escribirStrHasta
- 0000:0A88       _esperarDesinstalacion
- 0000:07AF       _exec
- 0000:081E       _exit
- 0000:0A12       _fcntl
- 01FD:245C       _finBSS
- 01FD:095C       _finData
- 0000:0D1A       _findFirst
- 0000:0D3E       _findNext
- 0000:08A2       _fork
+ 0000:0AFA       _esperarDesinstalacion
+ 0000:07F6       _establecerLineas
+ 0000:0821       _exec
+ 0000:0890       _exit
+ 0000:0A9E       _fcntl
+ 0204:245E       _finBSS
+ 0204:095E       _finData
+ 0000:0D8C       _findFirst
+ 0000:0DB0       _findNext
+ 0000:095C       _fork
  0000:00DB       _formato
- 0000:0BE3       _getdisk
- 0000:08F7       _getgid
- 0000:08B3       _getpid
- 0000:08C4       _getpindx
- 0000:08D5       _getppid
- 0000:08E6       _getuid
+ 0000:0C55       _getdisk
+ 0000:09B1       _getgid
+ 0000:096D       _getpid
+ 0000:097E       _getpindx
+ 0000:098F       _getppid
+ 0000:09A0       _getuid
  0000:00E3       _help
- 0000:1B63       _identificador
- 0000:1DB5       _iguales
- 0000:1DEE       _igualesHasta
- 0000:1E32       _igualesSalvoMayusculasHasta
- 01FD:085C       _inCmd
- 0000:1EC6       _incPtr
- 0000:1959       _inicScanner
- 0000:0A2C       _ioctl
- 0000:0849       _kill
- 0000:0984       _leer
- 0000:09D0       _leerAsciiListo
- 0000:09AA       _leerListo
- 0000:0DF5       _ll_buscarBloque
- 0000:0E2D       _ll_devolverBloque
- 0000:0E74       _ll_tamBloqueMax
- 0000:0956       _lseek
+ 0000:1BD5       _identificador
+ 0000:1E27       _iguales
+ 0000:1E60       _igualesHasta
+ 0000:1EA4       _igualesSalvoMayusculasHasta
+ 0204:085E       _inCmd
+ 0000:1F38       _incPtr
+ 0000:19CB       _inicScanner
+ 0000:0942       _ioctl
+ 0000:08BB       _kill
+ 0000:0A10       _leer
+ 0000:0A5C       _leerAsciiListo
+ 0000:07B7       _leerCursor
+ 0000:0A36       _leerListo
+ 0000:0E67       _ll_buscarBloque
+ 0000:0E9F       _ll_devolverBloque
+ 0000:0EE6       _ll_tamBloqueMax
+ 0000:0914       _lseek
  0000:048E       _main
  0000:0643       _mayuscula
- 0000:0FF5       _mbox_receive
- 0000:0FD8       _mbox_send
+ 0000:1067       _mbox_receive
+ 0000:104A       _mbox_send
  0000:066B       _minuscula
- 01FD:0860       _nComandos
- 01FD:2406       _num
- 01FD:095A       _numCmds
- 0000:19A4       _numDec
- 0000:1A77       _numHex
- 01FD:2408       _numLargo
- 0000:1965       _obtenCar
- 0000:0BC9       _obtenInfoFAB
- 0000:0BD6       _obtenInfoINFO
- 0000:0B1A       _obtenInfoMEM
- 0000:0B76       _obtenInfoPFR
- 0000:0ADF       _obtenInfoPS
- 0000:0A46       _obtenInfoSO1
- 0000:1C8D       _obtenSimb
- 0000:1D1E       _obtenStr
- 0000:1EB1       _off
- 0000:085D       _open
- 01FD:085E       _outCmd
- 0000:1E84       _pointer
- 01FD:2402       _pos
- 0000:17DB       _printfGen
- 0000:1634       _printGenBin
- 0000:10B8       _printGenDec
- 0000:148D       _printGenHex
- 0000:125B       _printGenInt
- 0000:16E0       _printGenLBin
- 0000:1180       _printGenLDec
- 0000:154B       _printGenLHex
- 0000:135C       _printGenLInt
- 0000:1012       _printGenLn
- 0000:179D       _printGenPtr
- 0000:1026       _printGenStr
- 0000:1060       _printGenStrHasta
- 0000:0BF4       _procesarEntrada
- 01FD:20A6       _ptrC2c
- 0000:1908       _putBin
- 0000:1808       _putCar
- 0000:1863       _putDec
- 0000:18D1       _putHex
- 0000:189A       _putInt
- 0000:1922       _putLBin
- 0000:187D       _putLDec
- 0000:18EB       _putLHex
- 0000:18B4       _putLInt
- 0000:181B       _putLn
- 0000:193F       _putPtr
- 0000:182D       _putStr
- 0000:1845       _putStrHasta
- 0000:0908       _read
- 0000:0EA6       _retardoActivo
- 0000:1997       _saltarBlancos
- 0000:1E9C       _seg
- 0000:0FA4       _sem_bajar
- 0000:0F87       _sem_inic
- 0000:0FBE       _sem_subir
- 0000:083A       _setgid
- 0000:082B       _setuid
- 01FD:2404       _simb
- 01FD:0862       _simbCmd
+ 0204:0862       _nComandos
+ 0204:2408       _num
+ 0204:095C       _numCmds
+ 0000:1A16       _numDec
+ 0000:1AE9       _numHex
+ 0204:240A       _numLargo
+ 0000:19D7       _obtenCar
+ 0000:0C3B       _obtenInfoFAB
+ 0000:0C48       _obtenInfoINFO
+ 0000:0B8C       _obtenInfoMEM
+ 0000:0BE8       _obtenInfoPFR
+ 0000:0B51       _obtenInfoPS
+ 0000:0AB8       _obtenInfoSO1
+ 0000:1CFF       _obtenSimb
+ 0000:1D90       _obtenStr
+ 0000:1F23       _off
+ 0000:08CF       _open
+ 0204:0860       _outCmd
+ 0000:1EF6       _pointer
+ 0204:2404       _pos
+ 0000:184D       _printfGen
+ 0000:16A6       _printGenBin
+ 0000:112A       _printGenDec
+ 0000:14FF       _printGenHex
+ 0000:12CD       _printGenInt
+ 0000:1752       _printGenLBin
+ 0000:11F2       _printGenLDec
+ 0000:15BD       _printGenLHex
+ 0000:13CE       _printGenLInt
+ 0000:1084       _printGenLn
+ 0000:180F       _printGenPtr
+ 0000:1098       _printGenStr
+ 0000:10D2       _printGenStrHasta
+ 0000:0C66       _procesarEntrada
+ 0204:20A8       _ptrC2c
+ 0000:197A       _putBin
+ 0000:187A       _putCar
+ 0000:18D5       _putDec
+ 0000:1943       _putHex
+ 0000:190C       _putInt
+ 0000:1994       _putLBin
+ 0000:18EF       _putLDec
+ 0000:195D       _putLHex
+ 0000:1926       _putLInt
+ 0000:188D       _putLn
+ 0000:19B1       _putPtr
+ 0000:189F       _putStr
+ 0000:18B7       _putStrHasta
+ 0000:09C2       _read
+ 0000:0F18       _retardoActivo
+ 0000:1A09       _saltarBlancos
+ 0000:1F0E       _seg
+ 0000:1016       _sem_bajar
+ 0000:0FF9       _sem_inic
+ 0000:1030       _sem_subir
+ 0000:08AC       _setgid
+ 0000:089D       _setuid
+ 0204:2406       _simb
+ 0204:0864       _simbCmd
  0000:0000       _startBin
- 01FD:095C       _startBSS
+ 0204:095E       _startBSS
  0000:0000       _startCode
- 01FD:0006       _startData
- 01FD:240C       _str
- 01FD:0082       _strCola
- 0000:07C8       _waitpid
- 0000:0888       _write
+ 0204:0008       _startData
+ 0204:240E       _str
+ 0204:0084       _strCola
+ 0000:083A       _waitpid
+ 0000:08FA       _write
  0000:002F       __setargv__
 
   Address         Publics by Value
@@ -192,183 +195,186 @@
  0000:0757       _escribirBin
  0000:076B       _escribirLBin
  0000:0782       _escribirPtr
- 0000:0796       _createProcess
- 0000:07AF       _exec
- 0000:07C8       _waitpid
- 0000:081E       _exit
- 0000:082B       _setuid
- 0000:083A       _setgid
- 0000:0849       _kill
- 0000:085D       _open
- 0000:0874       _close
- 0000:0888       _write
- 0000:08A2       _fork
- 0000:08B3       _getpid
- 0000:08C4       _getpindx
- 0000:08D5       _getppid
- 0000:08E6       _getuid
- 0000:08F7       _getgid
- 0000:0908       _read
- 0000:0922       _aio_read
- 0000:093C       _aio_write
- 0000:0956       _lseek
- 0000:0984       _leer
- 0000:09AA       _leerListo
- 0000:09D0       _leerAsciiListo
- 0000:0A12       _fcntl
- 0000:0A2C       _ioctl
- 0000:0A46       _obtenInfoSO1
- 0000:0A53       _crearRecurso
- 0000:0A67       _crearFichero
- 0000:0A88       _esperarDesinstalacion
- 0000:0A99       _destruirRecurso
- 0000:0AAD       _encolarCcbRecurso
- 0000:0AC6       _eliminarCcbRecurso
- 0000:0ADF       _obtenInfoPS
- 0000:0B1A       _obtenInfoMEM
- 0000:0B76       _obtenInfoPFR
- 0000:0BC9       _obtenInfoFAB
- 0000:0BD6       _obtenInfoINFO
- 0000:0BE3       _getdisk
- 0000:0BF4       _procesarEntrada
- 0000:0D1A       _findFirst
- 0000:0D3E       _findNext
- 0000:0DD6       _activarTraza
- 0000:0DE6       _analizarProcesos
- 0000:0DF5       _ll_buscarBloque
- 0000:0E2D       _ll_devolverBloque
- 0000:0E74       _ll_tamBloqueMax
- 0000:0EA6       _retardoActivo
- 0000:0F87       _sem_inic
- 0000:0FA4       _sem_bajar
- 0000:0FBE       _sem_subir
- 0000:0FD8       _mbox_send
- 0000:0FF5       _mbox_receive
- 0000:1012       _printGenLn
- 0000:1026       _printGenStr
- 0000:1060       _printGenStrHasta
- 0000:10B8       _printGenDec
- 0000:1180       _printGenLDec
- 0000:125B       _printGenInt
- 0000:135C       _printGenLInt
- 0000:148D       _printGenHex
- 0000:154B       _printGenLHex
- 0000:1634       _printGenBin
- 0000:16E0       _printGenLBin
- 0000:179D       _printGenPtr
- 0000:17DB       _printfGen
- 0000:1808       _putCar
- 0000:181B       _putLn
- 0000:182D       _putStr
- 0000:1845       _putStrHasta
- 0000:1863       _putDec
- 0000:187D       _putLDec
- 0000:189A       _putInt
- 0000:18B4       _putLInt
- 0000:18D1       _putHex
- 0000:18EB       _putLHex
- 0000:1908       _putBin
- 0000:1922       _putLBin
- 0000:193F       _putPtr
- 0000:1959       _inicScanner
- 0000:1965       _obtenCar
- 0000:1997       _saltarBlancos
- 0000:19A4       _numDec
- 0000:1A77       _numHex
- 0000:1B63       _identificador
- 0000:1C8D       _obtenSimb
- 0000:1D1E       _obtenStr
- 0000:1D52       _copiarStr
- 0000:1D7B       _copiarStrHasta
- 0000:1DB5       _iguales
- 0000:1DEE       _igualesHasta
- 0000:1E32       _igualesSalvoMayusculasHasta
- 0000:1E84       _pointer
- 0000:1E9C       _seg
- 0000:1EB1       _off
- 0000:1EC6       _incPtr
- 0000:1EEF       N_LDIV@
- 0000:1EF2       F_LDIV@
- 0000:1EF2       LDIV@
- 0000:1EF6       N_LUDIV@
- 0000:1EF9       F_LUDIV@
- 0000:1EF9       LUDIV@
- 0000:1EFE       N_LMOD@
- 0000:1F01       LMOD@
- 0000:1F01       F_LMOD@
- 0000:1F06       N_LUMOD@
- 0000:1F09       LUMOD@
- 0000:1F09       F_LUMOD@
- 0000:1F9D       N_LXLSH@
- 0000:1FA0       LXLSH@
- 0000:1FA0       F_LXLSH@
- 0000:1FBE       N_LXMUL@
- 01FD:0006       _startData
- 01FD:0058       _argv
- 01FD:0082       _strCola
- 01FD:0830       _dig
- 01FD:085C       _inCmd
- 01FD:085E       _outCmd
- 01FD:0860       _nComandos
- 01FD:0862       _simbCmd
- 01FD:095A       _numCmds
- 01FD:095C       _descProceso
- 01FD:095C       _startBSS
- 01FD:095C       _finData
- 01FD:171C       _descFichero
- 01FD:18C0       _descRecurso
- 01FD:1D4A       _e2PFR
- 01FD:2042       _c2cPFR
- 01FD:20A6       _ptrC2c
- 01FD:20E0       _comando
- 01FD:2400       _car
- 01FD:2402       _pos
- 01FD:2404       _simb
- 01FD:2406       _num
- 01FD:2408       _numLargo
- 01FD:240C       _str
- 01FD:245C       _finBSS
+ 0000:0796       _escribirCursor
+ 0000:07B7       _leerCursor
+ 0000:07F6       _establecerLineas
+ 0000:0808       _createProcess
+ 0000:0821       _exec
+ 0000:083A       _waitpid
+ 0000:0890       _exit
+ 0000:089D       _setuid
+ 0000:08AC       _setgid
+ 0000:08BB       _kill
+ 0000:08CF       _open
+ 0000:08E6       _close
+ 0000:08FA       _write
+ 0000:0914       _lseek
+ 0000:0942       _ioctl
+ 0000:095C       _fork
+ 0000:096D       _getpid
+ 0000:097E       _getpindx
+ 0000:098F       _getppid
+ 0000:09A0       _getuid
+ 0000:09B1       _getgid
+ 0000:09C2       _read
+ 0000:09DC       _aio_read
+ 0000:09F6       _aio_write
+ 0000:0A10       _leer
+ 0000:0A36       _leerListo
+ 0000:0A5C       _leerAsciiListo
+ 0000:0A9E       _fcntl
+ 0000:0AB8       _obtenInfoSO1
+ 0000:0AC5       _crearRecurso
+ 0000:0AD9       _crearFichero
+ 0000:0AFA       _esperarDesinstalacion
+ 0000:0B0B       _destruirRecurso
+ 0000:0B1F       _encolarCcbRecurso
+ 0000:0B38       _eliminarCcbRecurso
+ 0000:0B51       _obtenInfoPS
+ 0000:0B8C       _obtenInfoMEM
+ 0000:0BE8       _obtenInfoPFR
+ 0000:0C3B       _obtenInfoFAB
+ 0000:0C48       _obtenInfoINFO
+ 0000:0C55       _getdisk
+ 0000:0C66       _procesarEntrada
+ 0000:0D8C       _findFirst
+ 0000:0DB0       _findNext
+ 0000:0E48       _activarTraza
+ 0000:0E58       _analizarProcesos
+ 0000:0E67       _ll_buscarBloque
+ 0000:0E9F       _ll_devolverBloque
+ 0000:0EE6       _ll_tamBloqueMax
+ 0000:0F18       _retardoActivo
+ 0000:0FF9       _sem_inic
+ 0000:1016       _sem_bajar
+ 0000:1030       _sem_subir
+ 0000:104A       _mbox_send
+ 0000:1067       _mbox_receive
+ 0000:1084       _printGenLn
+ 0000:1098       _printGenStr
+ 0000:10D2       _printGenStrHasta
+ 0000:112A       _printGenDec
+ 0000:11F2       _printGenLDec
+ 0000:12CD       _printGenInt
+ 0000:13CE       _printGenLInt
+ 0000:14FF       _printGenHex
+ 0000:15BD       _printGenLHex
+ 0000:16A6       _printGenBin
+ 0000:1752       _printGenLBin
+ 0000:180F       _printGenPtr
+ 0000:184D       _printfGen
+ 0000:187A       _putCar
+ 0000:188D       _putLn
+ 0000:189F       _putStr
+ 0000:18B7       _putStrHasta
+ 0000:18D5       _putDec
+ 0000:18EF       _putLDec
+ 0000:190C       _putInt
+ 0000:1926       _putLInt
+ 0000:1943       _putHex
+ 0000:195D       _putLHex
+ 0000:197A       _putBin
+ 0000:1994       _putLBin
+ 0000:19B1       _putPtr
+ 0000:19CB       _inicScanner
+ 0000:19D7       _obtenCar
+ 0000:1A09       _saltarBlancos
+ 0000:1A16       _numDec
+ 0000:1AE9       _numHex
+ 0000:1BD5       _identificador
+ 0000:1CFF       _obtenSimb
+ 0000:1D90       _obtenStr
+ 0000:1DC4       _copiarStr
+ 0000:1DED       _copiarStrHasta
+ 0000:1E27       _iguales
+ 0000:1E60       _igualesHasta
+ 0000:1EA4       _igualesSalvoMayusculasHasta
+ 0000:1EF6       _pointer
+ 0000:1F0E       _seg
+ 0000:1F23       _off
+ 0000:1F38       _incPtr
+ 0000:1F61       N_LDIV@
+ 0000:1F64       LDIV@
+ 0000:1F64       F_LDIV@
+ 0000:1F68       N_LUDIV@
+ 0000:1F6B       F_LUDIV@
+ 0000:1F6B       LUDIV@
+ 0000:1F70       N_LMOD@
+ 0000:1F73       LMOD@
+ 0000:1F73       F_LMOD@
+ 0000:1F78       N_LUMOD@
+ 0000:1F7B       LUMOD@
+ 0000:1F7B       F_LUMOD@
+ 0000:200F       N_LXLSH@
+ 0000:2012       LXLSH@
+ 0000:2012       F_LXLSH@
+ 0000:2030       N_LXMUL@
+ 0204:0008       _startData
+ 0204:005A       _argv
+ 0204:0084       _strCola
+ 0204:0832       _dig
+ 0204:085E       _inCmd
+ 0204:0860       _outCmd
+ 0204:0862       _nComandos
+ 0204:0864       _simbCmd
+ 0204:095C       _numCmds
+ 0204:095E       _descProceso
+ 0204:095E       _startBSS
+ 0204:095E       _finData
+ 0204:171E       _descFichero
+ 0204:18C2       _descRecurso
+ 0204:1D4C       _e2PFR
+ 0204:2044       _c2cPFR
+ 0204:20A8       _ptrC2c
+ 0204:20E2       _comando
+ 0204:2402       _car
+ 0204:2404       _pos
+ 0204:2406       _simb
+ 0204:2408       _num
+ 0204:240A       _numLargo
+ 0204:240E       _str
+ 0204:245E       _finBSS
 
 Line numbers for ..\c2cprg.obj(..\c2cprg.c) segment _TEXT
 
-    69 0000:0030    72 0000:0034    73 0000:003D    74 0000:0047
-    75 0000:0051    77 0000:0057    78 0000:0062    79 0000:0069
-    80 0000:0074    81 0000:007B    82 0000:0086    84 0000:008D
-    85 0000:0094    86 0000:009A    88 0000:00A1    90 0000:00AC
-    91 0000:00B2    86 0000:00C7    93 0000:00D2    94 0000:00D9
-    96 0000:00DB   100 0000:00E2   102 0000:00E3   125 0000:00EA
-   127 0000:00EB   137 0000:00EF   140 0000:00FE   142 0000:0105
-   143 0000:010C   144 0000:011A   145 0000:0121   146 0000:012F
-   147 0000:0136   148 0000:0144   149 0000:014B   150 0000:0159
-   151 0000:0160   152 0000:016E   153 0000:0175   154 0000:0183
-   155 0000:018A   156 0000:0198   157 0000:019F   158 0000:01AD
-   159 0000:01B4   160 0000:01C2   161 0000:01C9   163 0000:01D7
-   164 0000:01DE   165 0000:01E5   166 0000:01EC   168 0000:01FA
-   169 0000:0213   170 0000:021A   165 0000:0230   173 0000:0239
-   174 0000:0240   175 0000:0247   176 0000:024E   178 0000:025B
-   179 0000:0262   180 0000:026D   181 0000:0274   182 0000:027B
-   175 0000:0290   184 0000:0299   188 0000:029F   189 0000:02A6
-   190 0000:02BC   191 0000:02C3   192 0000:02D3   193 0000:02E4
-   194 0000:02F5   195 0000:02FC   196 0000:030A   197 0000:0311
-   198 0000:031C   199 0000:0323   200 0000:032A   201 0000:0338
-   202 0000:033F   203 0000:034A   204 0000:0351   205 0000:0358
-   206 0000:0366   207 0000:036D   208 0000:0378   209 0000:037F
-   210 0000:0386   211 0000:0394   212 0000:039B   213 0000:03B3
-   214 0000:03BA   215 0000:03C1   217 0000:03C8   218 0000:03D3
-   215 0000:03D9   220 0000:03E4   221 0000:03EB   223 0000:03F2
-   221 0000:03F9   225 0000:0404   226 0000:040B   228 0000:0412
-   229 0000:0433   226 0000:0439   231 0000:0444   232 0000:044B
-   234 0000:0452   235 0000:0474   232 0000:047A   237 0000:0485
-   239 0000:048C   241 0000:048E   244 0000:0491   250 0000:04AB
-   251 0000:04B4   252 0000:04DE   253 0000:04E4   254 0000:050E
-   255 0000:0514   256 0000:053E   259 0000:054B   260 0000:055C
-   261 0000:055F   262 0000:0562   264 0000:0569   265 0000:056F
-   266 0000:0576   267 0000:0579   268 0000:0580   269 0000:058A
-   271 0000:0590   273 0000:0597   274 0000:05A1   275 0000:05AB
-   276 0000:05B5   277 0000:05BF   278 0000:05C9   279 0000:05D3
-   280 0000:05DD   281 0000:05E7   282 0000:05F1   283 0000:05FB
-   284 0000:0605   285 0000:0611   288 0000:0613   289 0000:0619
-   290 0000:0620   291 0000:0623   293 0000:062A   294 0000:062C
-   295 0000:0632   297 0000:063E   298 0000:0641
+    71 0000:0030    74 0000:0034    75 0000:003D    76 0000:0047
+    77 0000:0051    79 0000:0057    80 0000:0062    81 0000:0069
+    82 0000:0074    83 0000:007B    84 0000:0086    86 0000:008D
+    87 0000:0094    88 0000:009A    90 0000:00A1    92 0000:00AC
+    93 0000:00B2    88 0000:00C7    95 0000:00D2    96 0000:00D9
+    98 0000:00DB   102 0000:00E2   104 0000:00E3   127 0000:00EA
+   129 0000:00EB   139 0000:00EF   142 0000:00FE   144 0000:0105
+   145 0000:010C   146 0000:011A   147 0000:0121   148 0000:012F
+   149 0000:0136   150 0000:0144   151 0000:014B   152 0000:0159
+   153 0000:0160   154 0000:016E   155 0000:0175   156 0000:0183
+   157 0000:018A   158 0000:0198   159 0000:019F   160 0000:01AD
+   161 0000:01B4   162 0000:01C2   163 0000:01C9   165 0000:01D7
+   166 0000:01DE   167 0000:01E5   168 0000:01EC   170 0000:01FA
+   171 0000:0213   172 0000:021A   167 0000:0230   175 0000:0239
+   176 0000:0240   177 0000:0247   178 0000:024E   180 0000:025B
+   181 0000:0262   182 0000:026D   183 0000:0274   184 0000:027B
+   177 0000:0290   186 0000:0299   190 0000:029F   191 0000:02A6
+   192 0000:02BC   193 0000:02C3   194 0000:02D3   195 0000:02E4
+   196 0000:02F5   197 0000:02FC   198 0000:030A   199 0000:0311
+   200 0000:031C   201 0000:0323   202 0000:032A   203 0000:0338
+   204 0000:033F   205 0000:034A   206 0000:0351   207 0000:0358
+   208 0000:0366   209 0000:036D   210 0000:0378   211 0000:037F
+   212 0000:0386   213 0000:0394   214 0000:039B   215 0000:03B3
+   216 0000:03BA   217 0000:03C1   219 0000:03C8   220 0000:03D3
+   217 0000:03D9   222 0000:03E4   223 0000:03EB   225 0000:03F2
+   223 0000:03F9   227 0000:0404   228 0000:040B   230 0000:0412
+   231 0000:0433   228 0000:0439   233 0000:0444   234 0000:044B
+   236 0000:0452   237 0000:0474   234 0000:047A   239 0000:0485
+   241 0000:048C   243 0000:048E   246 0000:0491   252 0000:04AB
+   253 0000:04B4   254 0000:04DE   255 0000:04E4   256 0000:050E
+   257 0000:0514   258 0000:053E   261 0000:054B   262 0000:055C
+   263 0000:055F   264 0000:0562   266 0000:0569   267 0000:056F
+   268 0000:0576   269 0000:0579   270 0000:0580   271 0000:058A
+   273 0000:0590   275 0000:0597   276 0000:05A1   277 0000:05AB
+   278 0000:05B5   279 0000:05BF   280 0000:05C9   281 0000:05D3
+   282 0000:05DD   283 0000:05E7   284 0000:05F1   285 0000:05FB
+   286 0000:0605   287 0000:0611   290 0000:0613   291 0000:0619
+   292 0000:0620   293 0000:0623   295 0000:062A   296 0000:062C
+   297 0000:0632   299 0000:063E   300 0000:0641
 Program entry point at 0000:0000
 

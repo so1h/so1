@@ -2,39 +2,14 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="..\SO1PUB.H\BIOSDATA.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="..\SO1PUB.H\C2C.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="435" topLine="0" />
+			<Cursor1 position="532" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="..\SO1PUB.H\LL_S_EXEC.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="..\SO1PUB.H\FCNTL.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="7312" topLine="110" />
-		</Cursor>
-	</File>
-	<File name="..\SO1PUB\PRINTCON.C" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="556" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="..\SO1\AJUSTES.C" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="531" topLine="87" />
-		</Cursor>
-	</File>
-	<File name="..\SO1.H\INTERRUP.H" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="749" topLine="7" />
-		</Cursor>
-	</File>
-	<File name="..\STARTFIN.ASM\ENTRYEXE.ASM" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="510" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="..\SO1.H\BLOCKPR.H" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1349" topLine="25" />
+			<Cursor1 position="431" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="..\SO1PUB.H\AJUSTUSR.H" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -42,24 +17,14 @@
 			<Cursor1 position="494" topLine="15" />
 		</Cursor>
 	</File>
+	<File name="..\STARTFIN.ASM\ENTRYBIN.ASM" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="510" topLine="0" />
+		</Cursor>
+	</File>
 	<File name="..\STARTFIN.ASM\START.ASM" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="295" topLine="25" />
-		</Cursor>
-	</File>
-	<File name="..\SO1.H\AJUSTSP.H" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="836" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="..\SO1\SO1.C" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3371" topLine="45" />
-		</Cursor>
-	</File>
-	<File name="..\SO1PUB.H\TIPOS.H" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="455" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="..\SO1\S0.C" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -67,29 +32,19 @@
 			<Cursor1 position="429" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="..\SO1\SO1DBG.C" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="..\SO1.H\GM.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="634" topLine="0" />
+			<Cursor1 position="992" topLine="13" />
 		</Cursor>
 	</File>
-	<File name="..\SO1\MATRIX.C" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="..\SO1\SO1.C" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="578" topLine="0" />
+			<Cursor1 position="3500" topLine="54" />
 		</Cursor>
 	</File>
-	<File name="..\SO1\LLAMADAS.C" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="..\SO1PUB.H\LL_S_EXEC.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4286" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="..\SO1PUB\LL_S_SO1.C" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="618" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="..\SO1PUB.H\BIOS_0.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="462" topLine="0" />
+			<Cursor1 position="7312" topLine="110" />
 		</Cursor>
 	</File>
 	<File name="..\SO1PUB\AJUSTUSR.C" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -97,24 +52,64 @@
 			<Cursor1 position="846" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="..\SO1PUB\STDIO.C" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="12058" topLine="133" />
-		</Cursor>
-	</File>
 	<File name="..\SO1PUB.H\STDIO.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="42" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="..\SO1PUB.H\LL_S_SO1.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="..\SO1.H\AJUSTSP.H" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="666" topLine="0" />
+			<Cursor1 position="836" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="..\SO1\BIOS.C" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="..\SO1\SO1DBG.C" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="647" topLine="0" />
+			<Cursor1 position="634" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB\STDIO.C" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="12058" topLine="133" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB.H\TIPOS.H" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3792" topLine="101" />
+		</Cursor>
+	</File>
+	<File name="..\SO1\AJUSTES.C" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9755" topLine="179" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB.H\DEF_PROC.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6873" topLine="119" />
+		</Cursor>
+	</File>
+	<File name="..\SO1.H\BLOCKPR.H" open="0" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1349" topLine="25" />
+		</Cursor>
+	</File>
+	<File name="..\SO1\PROCESOS.C" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="24214" topLine="606" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB\PRINTCON.C" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="556" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB.H\PUERTOS.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6508" topLine="132" />
+		</Cursor>
+	</File>
+	<File name="..\SO1.H\PROCESOS.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3215" topLine="64" />
 		</Cursor>
 	</File>
 	<File name="..\SO1PUB\INTERPRE.C" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -122,14 +117,94 @@
 			<Cursor1 position="815" topLine="9" />
 		</Cursor>
 	</File>
-	<File name="..\STARTFIN.ASM\ENTRYBIN.ASM" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="..\SO1PUB.H\PTRC2C.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="510" topLine="0" />
+			<Cursor1 position="762" topLine="13" />
+		</Cursor>
+	</File>
+	<File name="..\SO1.H\AJUSTES.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1189" topLine="23" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB.H\SCANNER.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="489" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\SO1\BLOCKPR.C" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="625" topLine="34" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB.H\BIOSDATA.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="435" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB.H\STARTBSS.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="667" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\SO1.H\INTERRUP.H" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="749" topLine="7" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB.H\CONST.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="685" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\SO1\BIOS.C" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="647" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB\LL_S_SO1.C" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="618" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="..\SO1\INTERRUP.C" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="2425" topLine="48" />
+		</Cursor>
+	</File>
+	<File name="..\SO1\LLAMADAS.C" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4286" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB.H\LL_S_SO1.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="666" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB.H\BIOS_0.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="462" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\STARTFIN.ASM\ENTRYEXE.ASM" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="510" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB.H\CCB.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="599" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\SO1\MATRIX.C" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="578" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="..\SO1PUB.H\STRINGS.H" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="617" topLine="7" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

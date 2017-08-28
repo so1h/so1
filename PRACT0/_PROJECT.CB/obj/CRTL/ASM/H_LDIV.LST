@@ -1,0 +1,261 @@
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
+..\CRTL\ASM\H_LDIV.ASM
+
+
+
+      1				     ;[]-----------------------------------------------------------------[]
+      2				     ;|	     H_LDIV.ASM	-- long	division routine			  |
+      3				     ;[]-----------------------------------------------------------------[]
+      4
+      5				     ;
+      6				     ;	     C/C++ Run Time Library - Version 5.0
+      7				     ;
+      8				     ;	     Copyright (c) 1987, 1992 by Borland International
+      9				     ;	     All Rights	Reserved.
+     10				     ;
+     11
+     12				     ;	     INCLUDE RULES.ASI
+     13
+     14	0000			     _TEXT   segment public byte 'CODE'
+     15					     assume  cs:_TEXT
+     16					     public  LDIV@
+     17					     public  F_LDIV@
+     18					     public  N_LDIV@
+     19					     public  LUDIV@
+     20					     public  F_LUDIV@
+     21					     public  N_LUDIV@
+     22					     public  LMOD@
+     23					     public  F_LMOD@
+     24					     public  N_LMOD@
+     25					     public  LUMOD@
+     26					     public  F_LUMOD@
+     27					     public  N_LUMOD@
+     28
+     29	0000			     N_LDIV@:
+     30	0000  59			     pop     cx			     ;fix up far return
+     31	0001  0E			     push    cs
+     32	0002  51			     push    cx
+     33	0003			     LDIV@:
+     34	0003			     F_LDIV@:
+     35	0003  33 C9			     xor     cx,cx		     ; signed divide
+     36	0005  EB 16			     jmp     short common
+     37
+     38	0007			     N_LUDIV@:
+     39	0007  59			     pop     cx			     ;fix up far return
+     40	0008  0E			     push    cs
+     41	0009  51			     push    cx
+     42	000A			     LUDIV@:
+     43	000A			     F_LUDIV@:
+     44	000A  B9 0001			     mov     cx,1		     ; unsigned	divide
+     45	000D  EB 0E			     jmp     short common
+     46
+     47	000F			     N_LMOD@:
+     48	000F  59			     pop     cx			     ;fix up far return
+     49	0010  0E			     push    cs
+     50	0011  51			     push    cx
+     51	0012			     LMOD@:
+     52	0012			     F_LMOD@:
+     53	0012  B9 0002			     mov     cx,2		     ; signed remainder
+     54	0015  EB 06			     jmp     short   common
+     55
+     56	0017			     N_LUMOD@:
+     57	0017  59			     pop     cx			     ;fix up far return
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 2
+..\CRTL\ASM\H_LDIV.ASM
+
+
+
+     58	0018  0E			     push    cs
+     59	0019  51			     push    cx
+     60	001A			     LUMOD@:
+     61	001A			     F_LUMOD@:
+     62	001A  B9 0003			     mov     cx,3		     ; unsigned	remainder
+     63
+     64				     ;
+     65				     ;	     di	now contains a two bit control value.  The low order
+     66				     ;	     bit (test mask of 1) is on	if the operation is unsigned,
+     67				     ;	     signed otherwise.	The next bit (test mask	of 2) is on if
+     68				     ;	     the operation returns the remainder, quotient otherwise.
+     69				     ;
+     70	001D			     common:
+     71	001D  55			     push    bp
+     72	001E  56			     push    si
+     73	001F  57			     push    di
+     74	0020  8B EC			     mov     bp,sp		     ; set up frame
+     75	0022  8B F9			     mov     di,cx
+     76				     ;
+     77				     ;	     dividend is pushed	last, therefore	the first in the args
+     78				     ;	     divisor next.
+     79				     ;
+     80	0024  8B 46 0A			     mov     ax,10[bp]		     ; get the first low word
+     81	0027  8B 56 0C			     mov     dx,12[bp]		     ; get the first high word
+     82	002A  8B 5E 0E			     mov     bx,14[bp]		     ; get the second low word
+     83	002D  8B 4E 10			     mov     cx,16[bp]		     ; get the second high word
+     84
+     85	0030  0B C9			     or	     cx,cx
+     86	0032  75 08			     jnz     slow@ldiv		     ; both high words are zero
+     87
+     88	0034  0B D2			     or	     dx,dx
+     89	0036  74 69			     jz	     quick@ldiv
+     90
+     91	0038  0B DB			     or	     bx,bx
+     92	003A  74 65			     jz	     quick@ldiv		     ; if cx:bx	== 0 force a zero divide
+     93									     ; we don't	expect this to actually
+     94									     ; work
+     95
+     96	003C			     slow@ldiv:
+     97
+     98	003C  F7 C7 0001		     test    di,1		     ; signed divide?
+     99	0040  75 1C			     jnz     positive		     ; no: skip
+    100				     ;
+    101				     ;		     Signed division should be done.  Convert negative
+    102				     ;		     values to positive	and do an unsigned division.
+    103				     ;		     Store the sign value in the next higher bit of
+    104				     ;		     di	(test mask of 4).  Thus	when we	are done, testing
+    105				     ;		     that bit will determine the sign of the result.
+    106				     ;
+    107	0042  0B D2			     or	     dx,dx		     ; test sign of dividend
+    108	0044  79 0A			     jns     onepos
+    109	0046  F7 DA			     neg     dx
+    110	0048  F7 D8			     neg     ax
+    111	004A  83 DA 00			     sbb     dx,0		     ; negate dividend
+    112	004D  83 CF 0C			     or	     di,0Ch
+    113	0050			     onepos:
+    114	0050  0B C9			     or	     cx,cx		     ; test sign of divisor
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 3
+..\CRTL\ASM\H_LDIV.ASM
+
+
+
+    115	0052  79 0A			     jns     positive
+    116	0054  F7 D9			     neg     cx
+    117	0056  F7 DB			     neg     bx
+    118	0058  83 D9 00			     sbb     cx,0		     ; negate divisor
+    119	005B  83 F7 04			     xor     di,4
+    120	005E			     positive:
+    121	005E  8B E9			     mov     bp,cx
+    122	0060  B9 0020			     mov     cx,32		     ; shift counter
+    123	0063  57			     push    di			     ; save the	flags
+    124				     ;
+    125				     ;	     Now the stack looks something like	this:
+    126				     ;
+    127				     ;		     16[bp]: divisor (high word)
+    128				     ;		     14[bp]: divisor (low word)
+    129				     ;		     12[bp]: dividend (high word)
+    130				     ;		     10[bp]: dividend (low word)
+    131				     ;		      8[bp]: return CS
+    132				     ;		      6[bp]: return IP
+    133				     ;		      4[bp]: previous BP
+    134				     ;		      2[bp]: previous SI
+    135				     ;		       [bp]: previous DI
+    136				     ;		     -2[bp]: control bits
+    137				     ;			     01	- Unsigned divide
+    138				     ;			     02	- Remainder wanted
+    139				     ;			     04	- Negative quotient
+    140				     ;			     08	- Negative remainder
+    141				     ;
+    142	0064  33 FF			     xor     di,di		     ; fake a 64 bit dividend
+    143	0066  33 F6			     xor     si,si		     ;
+    144	0068			     xloop:
+    145	0068  D1 E0			     shl     ax,1		     ; shift dividend left one bit
+    146	006A  D1 D2			     rcl     dx,1
+    147	006C  D1 D6			     rcl     si,1
+    148	006E  D1 D7			     rcl     di,1
+    149	0070  3B FD			     cmp     di,bp		     ; dividend	larger?
+    150	0072  72 0B			     jb	     nosub
+    151	0074  77 04			     ja	     subtract
+    152	0076  3B F3			     cmp     si,bx		     ; maybe
+    153	0078  72 05			     jb	     nosub
+    154	007A			     subtract:
+    155	007A  2B F3			     sub     si,bx
+    156	007C  1B FD			     sbb     di,bp		     ; subtract	the divisor
+    157	007E  40			     inc     ax			     ; build quotient
+    158	007F			     nosub:
+    159	007F  E2 E7			     loop    xloop
+    160				     ;
+    161				     ;	     When done with the	loop the four register value look like:
+    162				     ;
+    163				     ;	     |	   di	  |	si     |     dx	    |	  ax	 |
+    164				     ;	     |	      remainder	       |	 quotient	 |
+    165				     ;
+    166	0081  5B			     pop     bx			     ; get control bits
+    167	0082  F7 C3 0002		     test    bx,2		     ; remainder?
+    168	0086  74 06			     jz	     usequo
+    169	0088  8B C6			     mov     ax,si
+    170	008A  8B D7			     mov     dx,di		     ; use remainder
+    171	008C  D1 EB			     shr     bx,1		     ; shift in	the remainder sign bit
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 4
+..\CRTL\ASM\H_LDIV.ASM
+
+
+
+    172	008E			     usequo:
+    173	008E  F7 C3 0004		     test    bx,4		     ; needs negative
+    174	0092  74 07			     jz	     finish
+    175	0094  F7 DA			     neg     dx
+    176	0096  F7 D8			     neg     ax
+    177	0098  83 DA 00			     sbb     dx,0		     ; negate
+    178	009B			     finish:
+    179	009B  5F			     pop     di
+    180	009C  5E			     pop     si
+    181	009D  5D			     pop     bp
+    182	009E  CA 0008			     retf    8
+    183
+    184	00A1			     quick@ldiv:
+    185	00A1  F7 F3			     div     bx			     ; unsigned	divide
+    186									     ; DX = remainder AX = quotient
+    187	00A3  F7 C7 0002		     test    di,2		     ; want remainder?
+    188	00A7  74 01			     jz	     quick@quo
+    189	00A9  92			     xchg    ax,dx
+    190
+    191	00AA			     quick@quo:
+    192
+    193	00AA  33 D2			     xor     dx,dx
+    194	00AC  EB ED			     jmp     short finish
+    195
+    196	00AE			     _TEXT   ends
+    197					     end
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 5
+Symbol Table
+
+
+
+
+Symbol Name		Type   Value			   Cref	(defined at #)
+
+??date			Text   "08-28-17"
+??filename		Text   "H_LDIV	"
+??time			Text   "13:03:16"
+??version		Number 0504
+@Cpu			Text   0101H
+@FileName		Text   H_LDIV
+@WordSize		Text   2			   #14
+@curseg			Text   _TEXT			   #14
+F_LDIV@			Near16 _TEXT:0003		   17  #34
+F_LMOD@			Near16 _TEXT:0012		   23  #52
+F_LUDIV@		Near16 _TEXT:000A		   20  #43
+F_LUMOD@		Near16 _TEXT:001A		   26  #61
+LDIV@			Near16 _TEXT:0003		   16  #33
+LMOD@			Near16 _TEXT:0012		   22  #51
+LUDIV@			Near16 _TEXT:000A		   19  #42
+LUMOD@			Near16 _TEXT:001A		   25  #60
+N_LDIV@			Near16 _TEXT:0000		   18  #29
+N_LMOD@			Near16 _TEXT:000F		   24  #47
+N_LUDIV@		Near16 _TEXT:0007		   21  #38
+N_LUMOD@		Near16 _TEXT:0017		   27  #56
+common			Near16 _TEXT:001D		   36  45  54  #70
+finish			Near16 _TEXT:009B		   174	#178  194
+nosub			Near16 _TEXT:007F		   150	153  #158
+onepos			Near16 _TEXT:0050		   108	#113
+positive		Near16 _TEXT:005E		   99  115  #120
+quick@ldiv		Near16 _TEXT:00A1		   89  92  #184
+quick@quo		Near16 _TEXT:00AA		   188	#191
+slow@ldiv		Near16 _TEXT:003C		   86  #96
+subtract		Near16 _TEXT:007A		   151	#154
+usequo			Near16 _TEXT:008E		   168	#172
+xloop			Near16 _TEXT:0068		   #144	 159
+
+Groups & Segments	Bit Size Align	Combine	Class	   Cref	(defined at #)
+
+_TEXT			16  00AE Byte	Public	CODE	   #14	15
+

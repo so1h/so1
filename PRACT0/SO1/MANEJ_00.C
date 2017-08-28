@@ -20,11 +20,12 @@
 /* AX = 0x000c kill                                                        */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\tipos.h>
+#include <so1pub.h\tipos.h>                              /* pid_t, pindx_t */
 #include <so1pub.h\strings.h>
 #include <so1pub.h\ptrc2c.h>
+#include <so1pub.h\def_proc.h>                                 /* rec_hijo */
 #include <so1.h\ajustes.h>
-#include <so1.h\ejecutar.h>
+#include <so1.h\ejecutar.h>                        /* kk_fork, preEjecutar */
 #include <so1.h\procesos.h>
 #include <so1.h\blockpr.h>
 #include <so1.h\bios.h>
@@ -64,7 +65,7 @@ void so1_manejador_00 ( void ) {                      /* ah = 00 ; int SO1 */
       if (tramaProceso->AL == 0x01)                                /* fork */
         pindx = kk_fork() ;
       else {                                              /* createProcess */
-        pindx = preEjecutarMacro(
+        pindx = preEjecutar(
           MK_FP(tramaProceso->CX, tramaProceso->BX),      /* CX:BX nombre  */
           MK_FP(tramaProceso->ES, tramaProceso->DX),      /* ES:DX comando */
           -1                                          /* createProcess: -1 */
@@ -117,7 +118,7 @@ void so1_manejador_00 ( void ) {                      /* ah = 00 ; int SO1 */
 #if (FALSE)
   printStrBIOS("\n manej_00 exec ") ;
 #endif
-      pindx = preEjecutarMacro(
+      pindx = preEjecutar(
         MK_FP(tramaProceso->CX, tramaProceso->BX),        /* CX:BX nombre  */
         MK_FP(tramaProceso->ES, tramaProceso->DX),        /* ES:DX comando */
         indProcesoActual                         /* exec: indProcesoActual */

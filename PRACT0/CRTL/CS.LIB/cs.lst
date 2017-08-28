@@ -1,0 +1,2310 @@
+TLIB 6.3 Copyright (c) 1987-2011 Embarcadero Technologies, Inc.
+Publics by module
+
+_abort  	size = 52
+	__abort                         
+
+_access 	size = 55
+	__access                        
+
+_chmoda 	size = 31
+	__chmod                         
+
+_fsopen 	size = 35
+	__fsopen                        
+
+_ftime  	size = 213
+	__ftime                         
+
+_setbll 	size = 33
+	__setlocalelib                  
+
+_setcoll	size = 56
+	__setstrcoll                    
+
+_setudef	size = 20
+	__setlocalebuff                 
+
+_setxfrm	size = 56
+	__setstrxfrm                    
+
+_stpcpy 	size = 44
+	__stpcpy                        
+
+_strcoll	size = 265
+	_LevelCollate                     __strcoll
+
+_strxfrm	size = 382
+	_LevelTransform                   __strxfrm
+
+_timecvt	size = 807
+	__dostounix                       __unixtodos
+
+_tmpnam 	size = 71
+	__TMPNAM                        
+
+abort   	size = 16
+	_abort                          
+
+abs     	size = 18
+	_abs                            
+
+absread 	size = 280
+	_absread                          _abswrite
+
+access  	size = 20
+	_access                         
+
+alloca  	size = 50
+	_alloca                         
+
+allocmem	size = 34
+	_allocmem                       
+
+append1 	size = 492
+	string::append(string&, unsigned int, unsigned int)
+
+append2 	size = 433
+	string::append(const char *)    
+
+append3 	size = 487
+	string::append(const char *, unsigned int, unsigned int)
+
+assert  	size = 34
+	___assertfail                   
+
+assign  	size = 680
+	string::assign(string&, unsigned int, unsigned int)
+
+atexit  	size = 106
+	__atexitcnt                       __atexittbl
+	_atexit                         
+
+atol    	size = 128
+	_atoi                             _atol
+
+bcd1    	size = 541
+	__BCD_LOG10                       __BCD_POW10
+	__BCD_TOBINARY                    __BCD_TODECIMAL
+
+bcd2    	size = 124
+	{1276}...                         {1276}...
+
+bdos    	size = 20
+	_bdos                           
+
+bdosptr 	size = 29
+	_bdosptr                        
+
+bios_com	size = 20
+	__bios_serialcom                
+
+bios_dsk	size = 46
+	__bios_disk                     
+
+bios_equ	size = 47
+	__bios_equiplist                  __bios_memsize
+	__bios_timeofday                
+
+bios_key	size = 41
+	__bios_keybrd                   
+
+bios_prn	size = 24
+	__bios_printer                  
+
+bioscom 	size = 20
+	_bioscom                        
+
+biosdisk	size = 62
+	_biosdisk                       
+
+biosequ 	size = 37
+	_biosequip                        _biosmemory
+	_biostime                       
+
+bioskey 	size = 41
+	_bioskey                        
+
+biosprin	size = 24
+	_biosprint                      
+
+brk     	size = 127
+	___brk                            ___sbrk
+	_brk                              _sbrk
+
+bsearch 	size = 98
+	_bsearch                        
+
+calloc  	size = 85
+	_calloc                         
+
+castmptr	size = 185
+	_cast_memptr({719}...           
+
+cconv   	size = 47
+	__localeconvention                _localeconv
+
+cgets   	size = 159
+	_cgets                          
+
+chainint	size = 24
+	__chain_intr                    
+
+chdir   	size = 26
+	_chdir                          
+
+chdrive 	size = 74
+	__chdrive                         __getdrive
+
+checks  	size = 1651
+	TDiagBase::Message(const char *, const char *, const char *, const char *, unsigned long)  TDiagBase::Out
+	TDiagBase::Output(const char *)   TDiagBase::Trace(const char *, const char *, const char *, unsigned long)
+	TDiagBase::Warn(const char *, const char *, const char *, unsigned long)  TDiagGroupDef::Flags
+	TDiagGroupDef::Name               TDiagGroupDef::Trace(unsigned char, const char *, const char *, unsigned long)
+	TDiagGroupDef::Warn(unsigned char, const char *, const char *, unsigned long)  xerror::MakeString(const char *, const char *, const char *, unsigned long)
+
+chmod   	size = 67
+	_chmod                          
+
+chmoda  	size = 31
+	__rtl_chmod                     
+
+chsize  	size = 195
+	_chsize                         
+
+clearerr	size = 16
+	_clearerr                       
+
+clocale 	size = 2618
+	__Clocale                         __LocaleCatNames
+	__LocaleLibName                   __pLocale
+
+clock   	size = 117
+	_clock                          
+
+clone   	size = 288
+	string::clone()                 
+
+close   	size = 42
+	_close                          
+
+closea  	size = 50
+	__close                           __rtl_close
+
+closeall	size = 89
+	_fcloseall                      
+
+clower  	size = 256
+	__lower                         
+
+clreol  	size = 51
+	_clreol                         
+
+clrscr  	size = 45
+	_clrscr                         
+
+collate 	size = 435
+	_GetCompressLevelWeight           _GetExpansionString
+	_GetNextAuxChar                   _GetNextExpansionWeight
+	_GetNextKeyWeight                 _GetSubstituteString
+
+color   	size = 100
+	_highvideo                        _lowvideo
+	_normvideo                        _textattr
+	_textbackground                   _textcolor
+
+compare1	size = 90
+	string::compare(string&) const  
+
+compare2	size = 160
+	string::compare(string&, unsigned int, unsigned int) const
+
+constrea	size = 2541
+	clreol(ostream&)                  conbuf::conbuf()
+	conbuf::current                   conbuf::makeActive()
+	conbuf::makeInactive()            conbuf::overflow(int)
+	conbuf::swap()                    constream::constream()
+	constream::isCon_                 delline(ostream&)
+	highvideo(ostream&)               insline(ostream&)
+	lowvideo(ostream&)                normvideo(ostream&)
+	setattr(int)                      setbk(int)
+	setclr(int)                       setcrsrtype(int)
+	setxy(int, int)                 
+
+contain 	size = 179
+	string::contains(const char *) const
+
+copy1   	size = 285
+	string::copy(char *, unsigned int)
+
+copy2   	size = 298
+	string::copy(char *, unsigned int, unsigned int)
+
+copy3   	size = 659
+	string::copy() const            
+
+coreleft	size = 20
+	_coreleft                       
+
+country 	size = 28
+	_country                        
+
+cplx1   	size = 302
+	operator *(complex&, complex&)    abs(complex&)
+	complex::operator *=(complex&)    norm(complex&)
+
+cplx2   	size = 4720
+	operator /(double, complex&)      operator /(complex&, complex&)
+	operator <<(ostream&, complex&)   operator >>(istream&, complex&)
+	acos(complex&)                    arg(complex&)
+	asin(complex&)                    atan(complex&)
+	complex::operator /=(complex&)    cos(complex&)
+	cosh(complex&)                    exp(complex&)
+	log(complex&)                     log10(complex&)
+	pow(double, complex&)             pow(complex&, double)
+	pow(complex&, complex&)           sin(complex&)
+	sinh(complex&)                    sqrt(complex&)
+	tan(complex&)                     tanh(complex&)
+
+cprintf 	size = 331
+	__CPUTN                           _cprintf
+
+cputs   	size = 25
+	_cputs                          
+
+cputype 	size = 100
+	__8086                          
+
+creat   	size = 25
+	_creat                          
+
+creata  	size = 154
+	__creat                           __rtl_creat
+	_creatnew                         _creattemp
+
+crotl   	size = 13
+	__crotl                         
+
+crotr   	size = 13
+	__crotr                         
+
+crtinit 	size = 468
+	__VideoInt                        __c0crtinit
+	__crtinit                         __directvideo
+	__turboCrt                        __video
+
+cscanf  	size = 33
+	_cscanf                         
+
+ctime   	size = 1638
+	_AmPm                             _LMonth
+	_LWeekday                         _SMonth
+	_SWeekday                         _asctime
+	_atime                            _ctime
+	_gmtime                           _localtime
+	_mktime                         
+
+ctor1   	size = 504
+	string::string()                
+
+ctor10  	size = 645
+	string::string(char, unsigned int)
+
+ctor11  	size = 646
+	string::string(signed char)     
+
+ctor12  	size = 645
+	string::string(signed char, unsigned int)
+
+ctor13  	size = 646
+	string::string(unsigned char)   
+
+ctor14  	size = 645
+	string::string(unsigned char, unsigned int)
+
+ctor15  	size = 648
+	string::string({719}...         
+
+ctor2   	size = 281
+	string::string(string&)         
+
+ctor3   	size = 664
+	string::string(const char *)    
+
+ctor4   	size = 718
+	string::string(const char *, unsigned int, unsigned int)
+
+ctor5   	size = 623
+	string::string(string&, unsigned int, unsigned int)
+
+ctor6   	size = 547
+	string::string(TSubString&)     
+
+ctor7   	size = 192
+	TStringRef::TStringRef({719}... 
+
+ctor8   	size = 143
+	TStringRef::TStringRef(char, unsigned int)
+
+ctor9   	size = 646
+	string::string(char)            
+
+ctrlbrk 	size = 74
+	_ctrlbrk                        
+
+ctype   	size = 257
+	__ctype                         
+
+cupper  	size = 256
+	__upper                         
+
+cursor  	size = 137
+	__setcursortype                 
+
+cvtfak  	size = 88
+	__cvtfak                        
+
+ddvt    	size = 82
+	_DDVTdispatch(void *, int)        _DDVTdispatchNULL(void *, int)
+
+del     	size = 16
+	operator delete(void *)         
+
+delarray	size = 16
+	operator delete[](void *)       
+
+delay   	size = 192
+	_delay                          
+
+delf    	size = 36
+	operator delete({719}...        
+
+delfarry	size = 20
+	operator delete[]({719}...      
+
+direct  	size = 380
+	_closedir                         _opendir
+	_readdir                          _rewinddir
+
+divt    	size = 16
+	_div                            
+
+dosalloc	size = 37
+	__dos_allocmem                  
+
+dosclose	size = 26
+	__dos_close                     
+
+doscmd  	size = 197
+	__DOSCMD                        
+
+doscmmit	size = 26
+	__dos_commit                    
+
+doscreat	size = 85
+	__dos_creat                       __dos_creatnew
+
+dosdfree	size = 56
+	__dos_getdiskfree               
+
+dosenv  	size = 270
+	__DOSENV                        
+
+dosext  	size = 34
+	_dosexterr                      
+
+dosfattr	size = 64
+	__dos_getfileattr                 __dos_setfileattr
+
+dosfind 	size = 104
+	__dos_findfirst                   __dos_findnext
+
+dosfree 	size = 26
+	__dos_freemem                   
+
+dosgdate	size = 54
+	__dos_getdate                     __dos_gettime
+
+dosgdriv	size = 46
+	__dos_getdrive                    __dos_setdrive
+
+dosgftim	size = 37
+	__dos_getftime                  
+
+doskeep 	size = 22
+	__dos_keep                      
+
+doslock 	size = 78
+	__dos_lock                        __dos_unlock
+
+dosopen 	size = 55
+	__dos_open                      
+
+dosread 	size = 39
+	__dos_read                      
+
+dossdate	size = 104
+	__dos_setdate                     __dos_settime
+
+dosseek 	size = 43
+	__dos_seek                      
+
+dossetbl	size = 31
+	__dos_setblock                  
+
+dossftim	size = 33
+	__dos_setftime                  
+
+dostimu 	size = 214
+	__DOSTIMETOU                    
+
+dosvect 	size = 40
+	__dos_getvect                     __dos_setvect
+
+doswrite	size = 39
+	__dos_write                     
+
+dtrcount	size = 4
+	__DestructorCount               
+
+dup2    	size = 104
+	_dup                              _dup2
+
+eof     	size = 126
+	_eof                            
+
+errormsg	size = 31
+	___ErrorMessage                 
+
+exec    	size = 931
+	__exec                          
+
+execl   	size = 30
+	_execl                          
+
+execle  	size = 46
+	_execle                         
+
+execlp  	size = 33
+	_execlp                         
+
+execlpe 	size = 47
+	_execlpe                        
+
+execv   	size = 29
+	_execv                          
+
+execve  	size = 31
+	_execve                         
+
+execvp  	size = 32
+	_execvp                         
+
+execvpe 	size = 32
+	_execvpe                        
+
+exit    	size = 166
+	__c_exit                          __cexit
+	__exit                            __exitbuf
+	__exitfopen                       __exitopen
+	_exit                           
+
+f_lxmul 	size = 23
+	F_LXMUL@                          LXMUL@
+
+f_pcmp  	size = 33
+	F_PCMP@                           PCMP@
+
+f_scopy 	size = 28
+	F_SCOPY@                          SCOPY@
+
+farheap 	size = 1052
+	___first                          ___last
+	___rover                          _farfree
+	_farmalloc                        _farrealloc
+
+fbrk    	size = 352
+	__brk                             __sbrk
+
+fcalloc 	size = 161
+	_farcalloc                      
+
+fclose  	size = 150
+	_fclose                         
+
+fcorelft	size = 80
+	_farcoreleft                    
+
+fddvt   	size = 83
+	_DDVTdispatch({719}...            _DDVTdispatchNULL({719}...
+
+fdiv16  	size = 552
+	F_FDIV@                           F_FDIVR@
+	N_FDIV@                           N_FDIVR@
+	__fdivflag                      
+
+fdopen  	size = 47
+	_fdopen                         
+
+fflush  	size = 152
+	_fflush                         
+
+ffmalloc	size = 20
+	__ffarmalloc                    
+
+fgetpos 	size = 41
+	_fgetpos                        
+
+fgets   	size = 118
+	_fgets                          
+
+fheapchk	size = 646
+	_farheapcheck                     _farheapcheckfree
+	_farheapchecknode                 _farheapfillfree
+	_farheapwalk                    
+
+files   	size = 800
+	__streams                       
+
+files2  	size = 102
+	__nfile                           __openfd
+
+find1   	size = 1119
+	string::find(string&, unsigned int) const  string::find_case_index(const char *, unsigned int, unsigned int&) const
+	string::find_index(const char *, unsigned int, unsigned int&) const  string::substring(const char *, unsigned int)
+	string::substring(const char *, unsigned int) const
+
+find2   	size = 82
+	TRegexp::find(string&, unsigned int *, unsigned int) const
+
+find3   	size = 60
+	string::find(TRegexp&, unsigned int) const
+
+find4   	size = 59
+	string::find(TRegexp&, unsigned int *, unsigned int) const
+
+findfirs	size = 104
+	_findfirst                        _findnext
+
+flength 	size = 69
+	_filelength                     
+
+flushall	size = 80
+	__flushall                        _flushall
+
+flushout	size = 114
+	__flushout                      
+
+fmemccpy	size = 57
+	__fmemccpy                      
+
+fmemchr 	size = 37
+	__fmemchr                       
+
+fmemcmp 	size = 40
+	__fmemcmp                       
+
+fmemcpy 	size = 36
+	__fmemcpy                       
+
+fmemicmp	size = 71
+	__fmemicmp                      
+
+fmemset 	size = 73
+	__fmemset                         __fsetmem
+
+fmode   	size = 4
+	__fmode                           __notUmask
+
+fmovmem 	size = 119
+	__fmemmove                        __fmovmem
+
+fndfrst 	size = 120
+	string::find_first_of(string&, unsigned int) const
+
+fndfrstn	size = 101
+	string::find_first_not_of(string&, unsigned int) const
+
+fndlast 	size = 144
+	string::find_last_of(string&, unsigned int) const
+
+fndlastn	size = 145
+	string::find_last_not_of(string&, unsigned int) const
+
+fnmerge 	size = 30
+	_fnmerge                        
+
+fnsplit 	size = 30
+	_fnsplit                        
+
+fopen   	size = 479
+	__GETFP                           __OPENFP
+	_fopen                          
+
+fprintf 	size = 26
+	_fprintf                        
+
+fpstklen	size = 2
+	__fpstklen                      
+
+fputs   	size = 70
+	_fputs                          
+
+fread   	size = 321
+	_fread                          
+
+freemem 	size = 26
+	_freemem                        
+
+freopen 	size = 46
+	_freopen                        
+
+fsattch 	size = 66
+	fstreambase::attach(int)        
+
+fsbattch	size = 180
+	filebuf::attach(int)            
+
+fsbclose	size = 142
+	filebuf::close()                
+
+fsbctr1 	size = 341
+	filebuf::filebuf()              
+
+fsbctr2 	size = 342
+	filebuf::filebuf(int)           
+
+fsbctr3 	size = 260
+	filebuf::filebuf(int, char *, int)
+
+fsbdtr  	size = 251
+	filebuf::~filebuf()               filebuf::openprot
+
+fsboflow	size = 256
+	filebuf::overflow(int)          
+
+fsbopen 	size = 299
+	filebuf::open(const char *, int, int)
+
+fsbsbuf 	size = 143
+	filebuf::setbuf(char *, int)    
+
+fsbskoff	size = 332
+	filebuf::seekoff(long, ios::seek_dir, int)
+
+fsbsync 	size = 321
+	filebuf::sync()                 
+
+fsbuflow	size = 349
+	filebuf::underflow()            
+
+fscanf  	size = 33
+	_fscanf                         
+
+fsclose 	size = 51
+	fstreambase::close()            
+
+fsctr1  	size = 401
+	fstreambase::fstreambase()      
+
+fsctr2  	size = 419
+	fstreambase::fstreambase(const char *, int, int)
+
+fsctr3  	size = 405
+	fstreambase::fstreambase(int)   
+
+fsctr4  	size = 412
+	fstreambase::fstreambase(int, char *, int)
+
+fsdtr   	size = 379
+	fstreambase::~fstreambase()     
+
+fseek   	size = 427
+	_fseek                            _ftell
+
+fsetpos 	size = 29
+	_fsetpos                        
+
+fsopen  	size = 92
+	fstreambase::open(const char *, int, int)
+
+fssbuf  	size = 65
+	fstreambase::setbuf(char *, int)
+
+fstat   	size = 148
+	_fstat                          
+
+fstrcat 	size = 63
+	__fstrcat                       
+
+fstrchr 	size = 63
+	__fstrchr                       
+
+fstrcmp 	size = 48
+	__fstrcmp                       
+
+fstrcpy 	size = 41
+	__fstrcpy                       
+
+fstrcspn	size = 73
+	__fstrcspn                      
+
+fstrdup 	size = 81
+	__fstrdup                       
+
+fstricmp	size = 65
+	__fstricmp                      
+
+fstrlen 	size = 33
+	__fstrlen                       
+
+fstrlwr 	size = 38
+	__fstrlwr                       
+
+fstrncat	size = 105
+	__fstrncat                      
+
+fstrncmp	size = 56
+	__fstrncmp                      
+
+fstrncpy	size = 49
+	__fstrncpy                      
+
+fstrnicm	size = 68
+	__fstrnicmp                     
+
+fstrnset	size = 59
+	__fstrnset                      
+
+fstrpbrk	size = 80
+	__fstrpbrk                      
+
+fstrrchr	size = 77
+	__fstrrchr                      
+
+fstrrev 	size = 52
+	__fstrrev                       
+
+fstrset 	size = 47
+	__fstrset                       
+
+fstrspn 	size = 82
+	__fstrspn                       
+
+fstrstr 	size = 108
+	__fstrstr                       
+
+fstrtok 	size = 207
+	__fstrtok                       
+
+fstrupr 	size = 38
+	__fstrupr                       
+
+ftime   	size = 16
+	_ftime                          
+
+ftolower	size = 48
+	__ftolower                      
+
+ftoupper	size = 48
+	__ftoupper                      
+
+fullpath	size = 503
+	__fullpath                      
+
+fwrite  	size = 76
+	_fwrite                         
+
+getc    	size = 415
+	__Nfgetc                          __fgetc
+	_fgetc                            _fgetchar
+
+getcbrk 	size = 35
+	_getcbrk                          _setcbrk
+
+getch   	size = 106
+	__Ngetche                         __Nungetch
+	_getch                            _getche
+	_ungetch                        
+
+getcurdi	size = 29
+	_getcurdir                      
+
+getcwd  	size = 113
+	_getcwd                         
+
+getdate 	size = 42
+	_getdate                          _gettime
+
+getdcwd 	size = 128
+	__getdcwd                       
+
+getdisk 	size = 57
+	_getdisk                          _setdisk
+
+getdta  	size = 13
+	_getdta                         
+
+getenv  	size = 95
+	_getenv                         
+
+getfat  	size = 92
+	_getdfree                         _getfat
+	_getfatd                        
+
+getftime	size = 35
+	_getftime                       
+
+getpass 	size = 159
+	_getpass                        
+
+getpsp  	size = 11
+	_getpsp                         
+
+gets    	size = 108
+	_gets                           
+
+getswit 	size = 31
+	__getswitchar                     __setswitchar
+
+getvect 	size = 40
+	_getvect                          _setvect
+
+getverf 	size = 28
+	_getverify                        _setverify
+
+getw    	size = 104
+	_getw                           
+
+gexit   	size = 16
+	__graphexit                     
+
+gfreemem	size = 16
+	__graphfreemem                  
+
+ggetmem 	size = 18
+	__graphgetmem                   
+
+gotoxy  	size = 77
+	_gotoxy                         
+
+gptext  	size = 196
+	_gettext                          _puttext
+
+gregistr	size = 40
+	_registerbgidriver                _registerbgifont
+
+h_ldiv  	size = 174
+	F_LDIV@                           F_LMOD@
+	F_LUDIV@                          F_LUMOD@
+	LDIV@                             LMOD@
+	LUDIV@                            LUMOD@
+	N_LDIV@                           N_LMOD@
+	N_LUDIV@                          N_LUMOD@
+
+h_llsh  	size = 33
+	F_LXLSH@                          LXLSH@
+	N_LXLSH@                        
+
+h_lrsh  	size = 32
+	F_LXRSH@                          LXRSH@
+	N_LXRSH@                        
+
+h_lursh 	size = 33
+	F_LXURSH@                         LXURSH@
+	N_LXURSH@                       
+
+h_pada  	size = 136
+	F_PADA@                           F_PSBA@
+	N_PADA@                           N_PSBA@
+	PADA@                             PSBA@
+
+h_padd  	size = 96
+	F_PADD@                           F_PSUB@
+	N_PADD@                           N_PSUB@
+	PADD@                             PSUB@
+
+h_pina  	size = 102
+	F_PDEA@                           F_PINA@
+	N_PDEA@                           N_PINA@
+	PDEA@                             PINA@
+
+h_psbh  	size = 32
+	F_PSBH@                           N_PSBH@
+
+h_psbp  	size = 40
+	F_PSBP@                           N_PSBP@
+	PSBP@                           
+
+h_spush 	size = 39
+	F_SPUSH@                          N_SPUSH@
+	SPUSH@                          
+
+hard    	size = 48
+	_harderr                          _hardresume
+	_hardretn                       
+
+harderr 	size = 297
+	___harderr                        __harderr
+	__hardresume                      __hardretn
+
+hash    	size = 275
+	string::hash() const              string::hash_case() const
+
+heaplen 	size = 2
+	__heaplen                       
+
+hqsort  	size = 910
+	__hqsort                        
+
+ifsctr1 	size = 581
+	ifstream::ifstream()            
+
+ifsctr2 	size = 595
+	ifstream::ifstream(const char *, int, int)
+
+ifsctr3 	size = 585
+	ifstream::ifstream(int)         
+
+ifsctr4 	size = 591
+	ifstream::ifstream(int, char *, int)
+
+ifsdtr  	size = 560
+	ifstream::~ifstream()           
+
+inport  	size = 56
+	_inp                              _inport
+	_inportb                          _inpw
+
+insert1 	size = 869
+	string::insert(unsigned int, string&)
+
+insert2 	size = 931
+	string::insert(unsigned int, string&, unsigned int, unsigned int)
+
+insline 	size = 68
+	_delline                          _insline
+
+int86   	size = 198
+	_int86                            _int86x
+
+intdos  	size = 137
+	_intdos                           _intdosx
+
+intr    	size = 164
+	_intr                           
+
+ioctl   	size = 43
+	_ioctl                          
+
+ioerror 	size = 173
+	__DOSERROR                        __IOERROR
+	__dosErrorToSV                    __doserrno
+
+iofsctr1	size = 759
+	fstream::fstream()              
+
+iofsctr2	size = 769
+	fstream::fstream(const char *, int, int)
+
+iofsctr3	size = 763
+	fstream::fstream(int)           
+
+iofsctr4	size = 769
+	fstream::fstream(int, char *, int)
+
+iofsdtr 	size = 729
+	fstream::~fstream()             
+
+iomacro 	size = 210
+	_feof                             _ferror
+	_fileno                           _getc
+	_getchar                          _putc
+	_putchar                        
+
+iosrctr1	size = 777
+	strstream::strstream()          
+
+iosrctr2	size = 899
+	strstream::strstream(char *, int, int)
+
+iosrdtr 	size = 739
+	strstream::~strstream()         
+
+iostasn1	size = 28
+	iostream_withassign::operator =(ios&)
+
+iostasn2	size = 25
+	iostream_withassign::operator =(streambuf *)
+
+iostctr1	size = 458
+	iostream::iostream(streambuf *) 
+
+iostctr2	size = 445
+	iostream::iostream()            
+
+iostctr3	size = 515
+	iostream_withassign::iostream_withassign()
+
+iostdtr1	size = 424
+	iostream::~iostream()           
+
+iostdtr2	size = 495
+	iostream_withassign::~iostream_withassign()
+
+ioststd 	size = 2094
+	Iostream_delete()                 ___stderr_streambuf
+	___stdin_streambuf                ___stdout_streambuf
+	_cerr                             _cin
+	_clog                             _cout
+
+is      	size = 320
+	___isctype                        _isalnum
+	_isalpha                          _isascii
+	_iscntrl                          _isdigit
+	_isgraph                          _islower
+	_isprint                          _ispunct
+	_isspace                          _isupper
+	_isxdigit                       
+
+isatty  	size = 21
+	_isatty                         
+
+isrctr1 	size = 905
+	istrstream::istrstream(char *)    istrstream::istrstream(unsigned char *)
+	istrstream::istrstream(signed char *)
+
+isrctr2 	size = 911
+	istrstream::istrstream(char *, int)  istrstream::istrstream(unsigned char *, int)
+	istrstream::istrstream(signed char *, int)
+
+isrdtr  	size = 570
+	istrstream::~istrstream()       
+
+istasn1 	size = 30
+	istream_withassign::operator =(istream&)
+
+istasn2 	size = 25
+	istream_withassign::operator =(streambuf *)
+
+istctr1 	size = 259
+	istream::istream()              
+
+istctr2 	size = 258
+	istream::istream(streambuf *)   
+
+istctr3 	size = 281
+	istream::istream(streambuf *, int, ostream *)
+
+istctr4 	size = 335
+	istream_withassign::istream_withassign()
+
+istdget 	size = 100
+	istream::do_get()               
+
+istdipfx	size = 193
+	istream::ipfx(int)              
+
+istdtr1 	size = 227
+	istream::~istream()             
+
+istdtr2 	size = 324
+	istream_withassign::~istream_withassign()
+
+isteatwh	size = 133
+	istream::eatwhite()             
+
+istebor 	size = 401
+	istream::operator >>(bool&)     
+
+istebuf 	size = 240
+	istream::operator >>(streambuf *)
+
+istechp 	size = 232
+	istream::operator >>(char *)    
+
+istedbl 	size = 1467
+	istream::operator >>(double&)   
+
+isteflt 	size = 143
+	istream::operator >>(float&)    
+
+isteint 	size = 49
+	istream::operator >>(int&)      
+
+isteldbl	size = 1504
+	istream::operator >>(long double&)
+
+istelng 	size = 979
+	istream::operator >>(long&)     
+
+istepchr	size = 127
+	istream::operator >>(char&)     
+
+isteschr	size = 127
+	istream::operator >>(signed char&)
+
+istesh  	size = 49
+	istream::operator >>(short&)    
+
+isteuchr	size = 127
+	istream::operator >>(unsigned char&)
+
+isteuint	size = 49
+	istream::operator >>(unsigned int&)
+
+isteulng	size = 55
+	istream::operator >>(unsigned long&)
+
+isteush 	size = 49
+	istream::operator >>(unsigned short&)
+
+istgbuf 	size = 245
+	istream::get(streambuf&, char)  
+
+istget  	size = 123
+	istream::get()                  
+
+istgline	size = 206
+	istream::getline(char *, int, char)
+
+istgpchr	size = 149
+	istream::get(char&)             
+
+istgschr	size = 149
+	istream::get(signed char&)      
+
+istgstr 	size = 207
+	istream::get(char *, int, char) 
+
+istguchr	size = 149
+	istream::get(unsigned char&)    
+
+istign  	size = 168
+	istream::ignore(int, int)       
+
+istmanip	size = 21
+	istream::operator >>(ios& (*)(ios&))
+
+istpback	size = 125
+	istream::putback(char)          
+
+istread 	size = 182
+	istream::read(char *, int)      
+
+istskoff	size = 89
+	istream::seekg(long, ios::seek_dir)
+
+istskpos	size = 86
+	istream::seekg(long)            
+
+isttellg	size = 104
+	istream::tellg()                
+
+istws   	size = 82
+	ws(istream&)                    
+
+istx    	size = 903
+	istream::istream(int, int, ostream *)  istream::istream(int, char *, int)
+
+kbhit   	size = 24
+	__cChar                           __cFlag
+	_kbhit                          
+
+keep    	size = 22
+	_keep                           
+
+labs    	size = 44
+	_labs                           
+
+lconv   	size = 158
+	__llocaleconv                   
+
+ldivt   	size = 152
+	_ldiv                           
+
+loadprog	size = 615
+	__LoadProg                      
+
+locale  	size = 711
+	___initialize_locale              ___set_c_locale
+	___uninitialize_locale          
+
+lock    	size = 78
+	_lock                             _unlock
+
+locking 	size = 289
+	_locking                        
+
+longtoa 	size = 158
+	__LONGTOA                         __UTOA
+
+lrotl   	size = 32
+	__lrotl                         
+
+lrotr   	size = 33
+	__lrotr                         
+
+lsearch 	size = 153
+	_lfind                            _lsearch
+
+lseek   	size = 45
+	_lseek                          
+
+lsetlocl	size = 3559
+	___delete_locale                  ___dup_locale
+	___find_localecat                 ___find_localelib
+	___locale_error                   ___open_locale
+	___open_localelib                 ___read_localecat
+	___read_localeenv                 ___set_localestring_locale
+	__lsetlocale                    
+
+lstrcoll	size = 25
+	__lstrcoll                      
+
+lstrftim	size = 1555
+	__getordinal                      __lstrftime
+
+lstrlwr 	size = 41
+	__lstrlwr                       
+
+lstrupr 	size = 41
+	__lstrupr                       
+
+lstrxfrm	size = 29
+	__lstrxfrm                      
+
+ltoa1   	size = 115
+	_itoa                             _ltoa
+	_ultoa                          
+
+ltolower	size = 41
+	__ltolower                      
+
+ltoupper	size = 41
+	__ltoupper                      
+
+makepath	size = 138
+	__makepath                      
+
+match   	size = 2091
+	esc(const char * *)               makepat(const char *, unsigned char *, unsigned int)
+	matchs(const char *, const unsigned char *, char * *)  patcmp(const char *, const unsigned char *, const char *)
+
+mbyte1  	size = 222
+	_mblen                            _mbstowcs
+	_mbtowc                           _wcstombs
+	_wctomb                         
+
+memccpy 	size = 53
+	_memccpy                        
+
+memchr  	size = 33
+	memchr(void *, int, unsigned int)  memchr(const void *, int, unsigned int)
+	_memchr                         
+
+memcmp  	size = 41
+	_memcmp                         
+
+memcpy  	size = 31
+	_memcpy                         
+
+memicmp 	size = 65
+	_memicmp                        
+
+memset  	size = 68
+	_memset                           _setmem
+
+mkdir   	size = 26
+	_mkdir                          
+
+mkname  	size = 89
+	__MKNAME                        
+
+mktemp  	size = 226
+	_mktemp                         
+
+mnrstflg	size = 104
+	resetiosflags(long)             
+
+mnsbase 	size = 167
+	setbase(int)                    
+
+mnsetflg	size = 104
+	setiosflags(long)               
+
+mnsetw  	size = 95
+	setw(int)                       
+
+mnsfill 	size = 96
+	setfill(int)                    
+
+mnsprec 	size = 95
+	setprecision(int)               
+
+movedata	size = 34
+	_movedata                       
+
+movetext	size = 168
+	_movetext                       
+
+movmem  	size = 100
+	_memmove                          _movmem
+
+n_lxmul 	size = 23
+	N_LXMUL@                        
+
+n_pcmp  	size = 33
+	N_PCMP@                         
+
+n_scopy 	size = 28
+	N_SCOPY@                        
+
+nearheap	size = 637
+	__first                           __last
+	__rover                           _free
+	_malloc                           _realloc
+
+new     	size = 149
+	operator new(unsigned int)        set_new_handler(void (*)())
+
+newarray	size = 16
+	operator new[](unsigned int)    
+
+newf    	size = 81
+	operator new(unsigned long)     
+
+newfarry	size = 20
+	operator new[](unsigned long)   
+
+newfpl  	size = 15
+	operator new(unsigned long, {719}...
+
+newfplar	size = 15
+	operator new[](unsigned long, {719}...
+
+newpl   	size = 12
+	operator new(unsigned int, void *)
+
+newplarr	size = 12
+	operator new[](unsigned int, void *)
+
+nheapchk	size = 507
+	_heapcheck                        _heapcheckfree
+	_heapchecknode                    _heapfillfree
+	_heapwalk                       
+
+ofsctr1 	size = 581
+	ofstream::ofstream()            
+
+ofsctr2 	size = 595
+	ofstream::ofstream(const char *, int, int)
+
+ofsctr3 	size = 585
+	ofstream::ofstream(int)         
+
+ofsctr4 	size = 591
+	ofstream::ofstream(int, char *, int)
+
+ofsdtr  	size = 560
+	ofstream::~ofstream()           
+
+open    	size = 432
+	_open                           
+
+opena   	size = 101
+	__open                            __rtl_open
+
+oprasgn1	size = 148
+	TSubString::operator =(string&) 
+
+oprasgn2	size = 260
+	TRegexp::operator =(TRegexp&)   
+
+oprasgn3	size = 252
+	TRegexp::operator =(const char *)
+
+oprcall1	size = 282
+	string::operator ()(unsigned int)
+
+oprcall2	size = 289
+	TSubString::operator ()(unsigned int)
+
+oprcall3	size = 135
+	string::operator ()(TRegexp&, unsigned int)
+
+oprcall4	size = 135
+	string::operator ()(TRegexp&, unsigned int) const
+
+opreql  	size = 159
+	TSubString::operator ==(const char *) const
+
+oprplus 	size = 894
+	operator +(const char *, string&)
+
+osrctr1 	size = 1052
+	ostrstream::ostrstream(char *, int, int)  ostrstream::ostrstream(unsigned char *, int, int)
+	ostrstream::ostrstream(signed char *, int, int)
+
+osrctr2 	size = 599
+	ostrstream::ostrstream()        
+
+osrdtr  	size = 570
+	ostrstream::~ostrstream()       
+
+ostasn1 	size = 40
+	ostream_withassign::operator =(ostream&)
+
+ostasn2 	size = 35
+	ostream_withassign::operator =(streambuf *)
+
+ostctr1 	size = 254
+	ostream::ostream()              
+
+ostctr2 	size = 250
+	ostream::ostream(streambuf *)   
+
+ostctr3 	size = 335
+	ostream_withassign::ostream_withassign()
+
+ostdtr1 	size = 256
+	ostream::~ostream()             
+
+ostdtr2 	size = 324
+	ostream_withassign::~ostream_withassign()
+
+ostendl 	size = 30
+	endl(ostream&)                  
+
+ostends 	size = 23
+	ends(ostream&)                  
+
+ostfloat	size = 134
+	ostream::operator <<(double)    
+
+ostflush	size = 57
+	ostream::flush()                
+
+ostibool	size = 90
+	ostream::operator <<(bool)      
+
+ostibuf 	size = 195
+	ostream::operator <<(streambuf *)
+
+ostint  	size = 785
+	ostream::operator <<(long)        ostream::operator <<(unsigned long)
+
+ostischr	size = 391
+	ostream::operator <<(char)      
+
+ostldbl 	size = 134
+	ostream::operator <<(long double)
+
+ostmanip	size = 21
+	ostream::operator <<(ios& (*)(ios&))
+
+ostmflsh	size = 30
+	flush(ostream&)                 
+
+ostopfx 	size = 51
+	ostream::do_opfx()              
+
+ostosfx 	size = 68
+	ostream::do_osfx()              
+
+ostoutst	size = 570
+	ostream::outstr(const char *, const char *)
+
+ostptr  	size = 163
+	ostream::operator <<(void *)    
+
+ostskoff	size = 89
+	ostream::seekp(long, ios::seek_dir)
+
+ostskpos	size = 86
+	ostream::seekp(long)            
+
+osttellp	size = 107
+	ostream::tellp()                
+
+ostwrite	size = 63
+	ostream::write(const char *, int)
+
+ostx    	size = 861
+	ostream::ostream(int)             ostream::ostream(int, char *)
+
+outport 	size = 66
+	_outp                             _outport
+	_outportb                         _outpw
+
+parsfnm 	size = 34
+	_parsfnm                        
+
+peek    	size = 36
+	_peek                             _peekb
+
+perror  	size = 736
+	__sys_errlist                     __sys_nerr
+	_perror                         
+
+poke    	size = 42
+	_poke                             _pokeb
+
+prepend 	size = 481
+	string::prepend(const char *, unsigned int, unsigned int)
+
+printf  	size = 27
+	_printf                         
+
+pureerr 	size = 114
+	__fpure_error_                    __npure_error_
+
+putc    	size = 840
+	__FPUTN                           __fputc
+	_fputc                            _fputchar
+
+putch   	size = 23
+	_putch                          
+
+putenv  	size = 205
+	_putenv                         
+
+puts    	size = 81
+	_puts                           
+
+putw    	size = 101
+	_putw                           
+
+qsort   	size = 561
+	_qsort                          
+
+rand    	size = 66
+	_rand                             _srand
+
+randblk 	size = 40
+	_randbrd                          _randbwr
+
+read    	size = 200
+	___read                         
+
+reada   	size = 73
+	__read                            __rtl_read
+
+readu   	size = 3
+	_read                           
+
+realcvt 	size = 4
+	__REALCVT                       
+
+regexp  	size = 525
+	TRegexp::TRegexp(const char *)    TRegexp::TRegexp(TRegexp&)
+	TRegexp::~TRegexp()               TRegexp::copy_pattern(TRegexp&)
+	TRegexp::gen_pattern(const char *)  TRegexp::maxpat
+
+remove  	size = 26
+	_remove                         
+
+rename  	size = 31
+	_rename                         
+
+replace 	size = 962
+	string::replace(unsigned int, unsigned int, string&, unsigned int, unsigned int)
+
+reserve 	size = 384
+	string::reserve(unsigned int)   
+
+resize  	size = 105
+	string::resize(unsigned int)    
+
+rewind  	size = 34
+	_rewind                         
+
+rfind   	size = 822
+	string::rfind(string&, unsigned int) const  string::rfind_case_index(const char *, unsigned int, unsigned int&) const
+	string::rfind_index(const char *, unsigned int, unsigned int&) const
+
+rmdir   	size = 26
+	_rmdir                          
+
+rmtmp   	size = 71
+	_rmtmp                          
+
+rotl    	size = 17
+	__rotl                          
+
+rotr    	size = 17
+	__rotr                          
+
+scanf   	size = 34
+	_scanf                          
+
+scanner 	size = 1318
+	__scanner                       
+
+scantod 	size = 12
+	__scanpop                         __scanrslt
+	__scantod                       
+
+scantol 	size = 430
+	__scantol                       
+
+screen  	size = 467
+	__SCREENIO                        __VALIDATEXY
+
+scroll  	size = 385
+	__SCROLL                        
+
+sdbctr  	size = 321
+	stdiobuf::stdiobuf(FILE *)      
+
+sdbdtr  	size = 233
+	stdiobuf::~stdiobuf()           
+
+sdboflow	size = 260
+	stdiobuf::overflow(int)         
+
+sdbpbfl 	size = 25
+	stdiobuf::pbackfail(int)        
+
+sdbskoff	size = 229
+	stdiobuf::seekoff(long, ios::seek_dir, int)
+
+sdbsync 	size = 206
+	stdiobuf::sync()                
+
+sdbuflow	size = 321
+	stdiobuf::underflow()           
+
+sdctr   	size = 361
+	stdiostream::stdiostream(FILE *)
+
+sddtr   	size = 347
+	stdiostream::~stdiostream()     
+
+segread 	size = 23
+	_segread                        
+
+setargv 	size = 320
+	__argc                            __argv
+	__setargv__                     
+
+setblock	size = 32
+	_setblock                       
+
+setbuf  	size = 38
+	_setbuf                         
+
+setdate 	size = 42
+	_setdate                          _settime
+
+setdta  	size = 18
+	_setdta                         
+
+setenvp 	size = 95
+	__environ                         __setenvp__
+
+setftime	size = 35
+	_setftime                       
+
+setjmp  	size = 204
+	_longjmp                          _setjmp
+
+setlocal	size = 53
+	_setlocale                      
+
+setmode 	size = 83
+	_setmode                        
+
+setnew  	size = 617
+	___xalloc                         __new_handler
+
+setupio 	size = 318
+	__freeio                          __setupio
+
+setvbuf 	size = 237
+	_setvbuf                        
+
+sigdata 	size = 2
+	___SignalPtr                    
+
+signal  	size = 904
+	_raise                            _signal
+
+sleep   	size = 97
+	_sleep                          
+
+sopen   	size = 52
+	_sopen                          
+
+sound   	size = 59
+	_nosound                          _sound
+
+spawn   	size = 197
+	__spawn                         
+
+spawnl  	size = 71
+	_spawnl                         
+
+spawnle 	size = 90
+	_spawnle                        
+
+spawnlp 	size = 77
+	_spawnlp                        
+
+spawnlpe	size = 92
+	_spawnlpe                       
+
+spawnv  	size = 68
+	_spawnv                         
+
+spawnve 	size = 71
+	_spawnve                        
+
+spawnvp 	size = 74
+	_spawnvp                        
+
+spawnvpe	size = 73
+	_spawnvpe                       
+
+splitpth	size = 641
+	___fnsplit                        __splitpath
+
+sprintf 	size = 109
+	_sprintf                          _vsprintf
+
+srbctr1 	size = 245
+	strstreambuf::strstreambuf()    
+
+srbctr2 	size = 247
+	strstreambuf::strstreambuf(void * (*)(long), void (*)(void *))
+
+srbctr3 	size = 302
+	strstreambuf::strstreambuf(int) 
+
+srbctr4 	size = 241
+	strstreambuf::strstreambuf(signed char *, int, signed char *)
+
+srbctr5 	size = 241
+	strstreambuf::strstreambuf(unsigned char *, int, unsigned char *)
+
+srbctr6 	size = 241
+	strstreambuf::strstreambuf(char *, int, char *)
+
+srbdalc 	size = 111
+	strstreambuf::doallocate()      
+
+srbdtr  	size = 260
+	strstreambuf::~strstreambuf()   
+
+srbfreez	size = 39
+	strstreambuf::freeze(int)       
+
+srbinit 	size = 156
+	strstreambuf::init(char *, int, char *)
+
+srboflow	size = 364
+	strstreambuf::overflow(int)     
+
+srbsbuf 	size = 37
+	strstreambuf::setbuf(char *, int)
+
+srbskoff	size = 473
+	strstreambuf::seekoff(long, ios::seek_dir, int)
+
+srbstr  	size = 27
+	strstreambuf::str()             
+
+srbsync 	size = 7
+	strstreambuf::sync()            
+
+srbuflow	size = 118
+	strstreambuf::underflow()       
+
+srchenv 	size = 39
+	__searchenv                     
+
+srchpath	size = 135
+	_searchpath                     
+
+srchstr 	size = 224
+	__searchstr                     
+
+srctr1  	size = 420
+	strstreambase::strstreambase(char *, int, char *)
+
+srctr2  	size = 409
+	strstreambase::strstreambase()  
+
+srdtr   	size = 387
+	strstreambase::~strstreambase() 
+
+sscanf  	size = 114
+	_sscanf                           _vsscanf
+
+stack   	size = 36
+	F_OVERFLOW@                       N_OVERFLOW@
+	OVERFLOW@                       
+
+stat    	size = 368
+	_stat                           
+
+status  	size = 55
+	TRegexp::status()               
+
+stbalc  	size = 50
+	streambuf::doallocate()         
+
+stbctr1 	size = 196
+	streambuf::streambuf()          
+
+stbctr2 	size = 212
+	streambuf::streambuf(char *, int)
+
+stbdbp  	size = 330
+	streambuf::dbp()                
+
+stbdnext	size = 41
+	streambuf::do_snextc()          
+
+stbdsgtn	size = 148
+	streambuf::do_sgetn(char *, int)
+
+stbdsptn	size = 133
+	streambuf::do_sputn(const char *, int)
+
+stbdtr  	size = 155
+	streambuf::~streambuf()         
+
+stboflow	size = 8
+	streambuf::overflow(int)        
+
+stbpbfl 	size = 8
+	streambuf::pbackfail(int)       
+
+stbsbuf 	size = 34
+	streambuf::setbuf(char *, int)  
+
+stbsetb 	size = 121
+	streambuf::setb(char *, char *, int)
+
+stbsetg 	size = 67
+	streambuf::setg(char *, char *, char *)
+
+stbsetp 	size = 52
+	streambuf::setp(char *, char *) 
+
+stbsgetn	size = 79
+	streambuf::sgetn(char *, int)   
+
+stbskoff	size = 11
+	streambuf::seekoff(long, ios::seek_dir, int)
+
+stbskpos	size = 35
+	streambuf::seekpos(long, int)   
+
+stbsputn	size = 79
+	streambuf::sputn(const char *, int)
+
+stbstb1 	size = 57
+	streambuf::setbuf(char *, int, int)
+
+stbsync 	size = 62
+	streambuf::sync()               
+
+stbtalc 	size = 49
+	ios::bitalloc()                 
+
+stbuflow	size = 42
+	streambuf::underflow()          
+
+stclear 	size = 56
+	ios::clear(int)                 
+
+stctr1  	size = 130
+	ios::ios()                      
+
+stctr2  	size = 134
+	ios::ios(streambuf *)           
+
+stdec   	size = 36
+	dec(ios&)                       
+
+stdtr   	size = 374
+	ios::~ios()                       ios::adjustfield
+	ios::basefield                    ios::floatfield
+	ios::nextbit                      ios::stdioflush
+	ios::usercount                  
+
+stflags 	size = 70
+	ios::flags(long)                
+
+sthex   	size = 36
+	hex(ios&)                       
+
+stime   	size = 123
+	_stime                            _time
+
+stinit  	size = 73
+	ios::init(streambuf *)          
+
+stiword 	size = 82
+	ios::iword(int)                 
+
+stkavail	size = 17
+	_stackavail                     
+
+stklen  	size = 2
+	__stklen                        
+
+stoct   	size = 36
+	oct(ios&)                       
+
+stpcpy  	size = 44
+	_stpcpy                         
+
+stpword 	size = 80
+	ios::pword(int)                 
+
+strcat  	size = 57
+	_strcat                         
+
+strchr  	size = 56
+	strchr(char *, int)               strchr(const char *, int)
+	_strchr                         
+
+strcmp  	size = 47
+	_strcmp                         
+
+strcoll 	size = 20
+	_strcoll                        
+
+strcpy  	size = 34
+	_strcpy                         
+
+strcspn 	size = 61
+	_strcspn                        
+
+strdate 	size = 240
+	__strdate                         __strtime
+
+strdup  	size = 53
+	_strdup                         
+
+stremove	size = 746
+	string::remove(unsigned int, unsigned int)
+
+strerror	size = 311
+	__strerror                        _strerror
+
+strftime	size = 1061
+	_strftime                       
+
+stricmp 	size = 64
+	_stricmp                        
+
+stringio	size = 1056
+	operator <<(ostream&, string&)    operator >>(istream&, string&)
+	TStringRef::read_to_delim(istream&, char)  TStringRef::read_token(istream&)
+	getline(istream&, string&)        getline(istream&, string&, char)
+	string::read_file(istream&)       string::read_line(istream&)
+	string::read_string(istream&)     string::read_to_delim(istream&, char)
+	string::read_token(istream&)    
+
+strings 	size = 2612
+	TStringRef::TStringRef(const char *, unsigned int, const char *, unsigned int, unsigned int)  TStringRef::~TStringRef()
+	TStringRef::check_freeboard()     TStringRef::grow_to(unsigned int)
+	TStringRef::reserve(unsigned int)  TStringRef::round_capacity(unsigned int)
+	TStringRef::splice(unsigned int, unsigned int, const char *, unsigned int)  TSubString::assert_element(unsigned int) const
+	string::~string()                 string::assert_element(unsigned int) const
+	string::assert_index(unsigned int) const  string::case_sensitive
+	string::freeboard                 string::initial_capac
+	string::initial_capacity(unsigned int)  string::max_waste(unsigned int)
+	string::paranoid_check            string::resize_inc
+	string::resize_increment(unsigned int)  string::set_case_sensitive(int)
+	string::set_paranoid_check(int)   string::skip_white
+	string::skip_whitespace(int)    
+
+strip   	size = 221
+	string::strip(string::StripType, char)
+
+strlen  	size = 28
+	_strlen                         
+
+strlwr  	size = 34
+	_strlwr                         
+
+strncat 	size = 79
+	_strncat                        
+
+strncmp 	size = 55
+	_strncmp                        
+
+strncpy 	size = 44
+	_strncpy                        
+
+strnicmp	size = 67
+	_strnicmp                       
+
+strnset 	size = 45
+	_strnset                        
+
+strpbrk 	size = 51
+	strpbrk(char *, const char *)     strpbrk(const char *, const char *)
+	_strpbrk                        
+
+strrchr 	size = 47
+	strrchr(char *, int)              strrchr(const char *, int)
+	_strrchr                        
+
+strrev  	size = 48
+	_strrev                         
+
+strset  	size = 33
+	_strset                         
+
+strspn  	size = 68
+	_strspn                         
+
+strstr  	size = 94
+	strstr(char *, const char *)      strstr(const char *, const char *)
+	_strstr                         
+
+strtok  	size = 146
+	_strtok                         
+
+strtol  	size = 262
+	_strtol                         
+
+strtoul 	size = 204
+	_strtoul                        
+
+strupr  	size = 34
+	_strupr                         
+
+strxfrm 	size = 52
+	_strxfrm                        
+
+stsetf1 	size = 183
+	ios::setf(long)                 
+
+stsetf2 	size = 96
+	ios::setf(long, long)           
+
+stsetst 	size = 45
+	ios::setstate(int)              
+
+stskip  	size = 73
+	ios::skip(int)                  
+
+stsync  	size = 931
+	ios::sync_with_stdio()          
+
+sttie   	size = 83
+	ios::tie(ostream *)             
+
+stunset 	size = 76
+	ios::unsetf(long)               
+
+stusize 	size = 119
+	ios::usersize(int)              
+
+stxalc  	size = 12
+	ios::xalloc()                   
+
+substr1 	size = 527
+	string::substr(unsigned int) const
+
+substr2 	size = 530
+	string::substr(unsigned int, unsigned int) const
+
+swab    	size = 31
+	_swab                           
+
+system  	size = 315
+	_system                         
+
+tell    	size = 26
+	_tell                           
+
+tempnam 	size = 266
+	_tempnam                        
+
+textmode	size = 35
+	_textmode                       
+
+timecvt 	size = 47
+	_dostounix                        _unixtodos
+
+tmpfile 	size = 61
+	__tmpnum                          _tmpfile
+
+tmpnam  	size = 19
+	_tmpnam                         
+
+tolower 	size = 48
+	_tolower                        
+
+toupper 	size = 48
+	_toupper                        
+
+tzset   	size = 737
+	__ISDST                           __daylight
+	__monthDay                        __timezone
+	__tzname                          _tzset
+
+umask   	size = 25
+	_umask                          
+
+ungetc  	size = 84
+	__Nungetc                         _ungetc
+
+unhandl 	size = 149
+	SETUNHANDLEDEXCEPTIONFILTER       UNHANDLEDEXCEPTIONFILTER
+
+unlink  	size = 26
+	_unlink                         
+
+uprlwr  	size = 842
+	TSubString::to_lower()            TSubString::to_upper()
+	string::to_lower()                string::to_upper()
+	to_lower(string&)                 to_upper(string&)
+
+utime   	size = 644
+	_utime                          
+
+vapp    	size = 668
+	__vector_apply_                 
+
+vappv   	size = 842
+	__vector_applyv_                
+
+vdel    	size = 332
+	__vector_delete_                
+
+vdelf   	size = 653
+	_vector_delete_({719}...        
+
+vdeln   	size = 518
+	_vector_delete_(void *, unsigned int, unsigned int, unsigned int, ...)
+
+vdelxf  	size = 212
+	_vector_delete_({719}...        
+
+vdelxn  	size = 173
+	_vector_delete_(void *, unsigned int, unsigned int, unsigned int, unsigned int, ...)
+
+vfprintf	size = 25
+	_vfprintf                       
+
+vfscanf 	size = 32
+	_vfscanf                        
+
+vidinfo 	size = 75
+	_gettextinfo                    
+
+vnew    	size = 306
+	__vector_new_                   
+
+vnewf   	size = 701
+	_vector_new_({719}...           
+
+vnewn   	size = 500
+	_vector_new_(void *, unsigned int, unsigned int, unsigned int, ...)
+
+vnewv   	size = 338
+	__vector_vnew_                  
+
+vnewvf  	size = 780
+	_vector_vnew_({719}...          
+
+vnewvn  	size = 575
+	_vector_vnew_(void *, unsigned int, unsigned int, unsigned int, ...)
+
+vprinter	size = 1330
+	__VPRINTER                      
+
+vprintf 	size = 26
+	_vprintf                        
+
+vram    	size = 158
+	__VPTR                            __VRAM
+
+vscanf  	size = 33
+	_vscanf                         
+
+wherexy 	size = 56
+	__wherexy                         _wherex
+	_wherey                         
+
+wild    	size = 677
+	__wildargv                      
+
+window  	size = 101
+	_window                         
+
+write   	size = 297
+	___write                        
+
+writea  	size = 86
+	__rtl_write                       __write
+
+writeu  	size = 3
+	_write                          
+
+wscroll 	size = 2
+	__wscroll                       
+
+xalloc  	size = 443
+	xalloc::xalloc(string&, unsigned int)  xalloc::raise()
+
+xclose  	size = 26
+	__xclose                        
+
+xfclose 	size = 63
+	__xfclose                       
+
+xfflush 	size = 62
+	__xfflush                       
+
+xmsg    	size = 811
+	xmsg::operator =(xmsg&)           xmsg::xmsg(xmsg&)
+	xmsg::xmsg(string&)               xmsg::~xmsg()
+	xmsg::raise()                   
+
+xx      	size = 12846
+	_CatchCleanup()                   _ReThrowException(unsigned int, unsigned char *)
+	_ThrowException({719}...          __DynamicCast({719}...
+	__GetTypeInfo({719}...            __ThrowExceptionName()
+	__ThrowFileName()                 __ThrowLineNumber()
+	typeinfo::operator =(typeinfo&)   typeinfo::typeinfo(typeinfo&)
+	typeinfo::~typeinfo()             typeinfo::operator ==(typeinfo&) const
+	typeinfo::operator !=(typeinfo&) const  typeinfo::{1097}...
+	typeinfo::{1097}...               _RaiseException
+	__CurrExcContext                  __ExceptionHandler
+	__Global_unwind                   __Local_unwind
+	__Return_unwind                   ___JumpToCatch__
+
+xxa     	size = 86
+	___InitExceptBlock              
+
+xxas    	size = 133
+	__RefDestructorCount()            __RefExceptionList()
+	___ExitExceptBlocks               ___InitExceptBlocks
+
+xxv     	size = 888
+	__GetPolymorphicDTC({719}...      __GetPolymorphicDTCfar({719}...
+	set_terminate(void (*)())         set_unexpected(void (*)())
+	terminate()                       unexpected()
+	__DestructorCountPtr              __ExceptInit
+	___CPPexceptionList               ___ExceptStaticXbuff
+	___call_terminate                 ___call_unexpected
+	___exceptFlags                    ___exceptMemAllocVars
+	___exceptStaticBuffP              ___exceptionNameBuff
+	___savedDS                        ___savedSI
+	___terminatePTR                   ___terminate_DS
+	___throwExceptionName             ___throwFileName
+	___throwLineNumber                ___unexpectdPTR
+	___unexpectd_DS                 
+
+zapctlz 	size = 179
+	__APPENDCTLZ                      __TRIMCTLZ

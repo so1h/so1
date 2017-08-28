@@ -313,6 +313,7 @@ pindx_t crearProceso (       word_t     segmento,
   int dfs ;
   modoAp_t modoAp ;
 
+//return(-101) ;                                             /* depuracion */
            /* createProcess (pindx = -1) o exec (pindx = indProcesoActual) */
 
   if ((pindx < 0) && (c2cPFR[DPOcupados].numElem == maxProcesos)) return(-1) ;
@@ -324,10 +325,12 @@ pindx_t crearProceso (       word_t     segmento,
       return(-1) ;                                  /* cabecera incorrecta */
     cabecera = (cabecera_t far *)pointer(segmento, desplCab()) ;
   }
-  if ((cabecera->magicbyte[ 5] != ptrMagicByteUsr[ 5]) ||   /* ver AJUSTES.H */
+  if ((cabecera->magicbyte[ 5] != ptrMagicByteUsr[ 5]) || /* ver AJUSTES.H */
       (cabecera->magicbyte[ 8] != ptrMagicByteUsr[ 8]) ||
       (cabecera->magicbyte[11] != ptrMagicByteUsr[11]))
     return(-1) ;                                    /* cabecera incorrecta */
+	
+//return(-102) ;                                             /* depuracion */  
 
   despl = (16*cabecera->segDatosSR) + cabecera->startData ;
   if (despl & 0x0001) despl++ ;                     /* alineamos a palabra */
@@ -370,12 +373,19 @@ pindx_t crearProceso (       word_t     segmento,
   /* descProceso[i].tCPU = 0 ; */         /* tiempo de CPU en (tics/2**16) */
   }
   else
-    eliminarPC2c(i, (ptrC2c_t)&c2cPFR[POrdenados]) ;        /* 12/07/2015 */
+    eliminarPC2c(i, (ptrC2c_t)&c2cPFR[POrdenados]) ;         /* 12/07/2015 */
+
+//return(-103) ;                                             /* depuracion */
 
   descProceso[i].estado = preparado ;
+  
+//return(-(1035+i)) ;                                        /* depuracion */
+  
   registrarEnPOrdenados(i) ;
 
   /* transmisión de la linea de comando al proceso suprimiendo cosas */
+
+//return(-104) ;                                             /* depuracion */  
 
   for ( j = 0 ; (j < tamComando) &&
                 ((carCmd = comando[j]) != (char)0) &&
@@ -390,6 +400,8 @@ pindx_t crearProceso (       word_t     segmento,
   argc = ponerArgs(i, SS_NuevoProceso, offDATADS, &offArgv) ;
 
   ptrPila = (word_t far *)pointer(SS_NuevoProceso, SP_NuevoProceso) ;
+
+//return(-105) ;                                             /* depuracion */  
 
   *(--ptrPila) = offArgv ;                         /* apilo parametro argv */
   *(--ptrPila) = argc ;                            /* apilo parametro argc */
@@ -415,6 +427,9 @@ pindx_t crearProceso (       word_t     segmento,
   descProceso[i].trama->AX = 0x0000 ;
   descProceso[i].trama->IP = cabecera->desplMain ;
   descProceso[i].trama->CS = segmento ;
+  
+//return(-106) ;                                              /* depuracion */ 
+  
   asm {
     pushf ;
     pop ax ;

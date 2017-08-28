@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 5.4	    01-30-17 13:05:30	    Page 1
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
 asm\matrix.asm
 
 
@@ -20,8 +20,8 @@ asm\matrix.asm
      15					     endif
      16					     ?debug  V 301h
      17					     ?debug  S "..\so1\matrix.c"
-     18					     ?debug  C E9B7AE61490F2E2E5C736F315C6D61747269782E63
-     19					     ?debug  C E94BBE6A491B583A5C534F5C5052414354305C736F312E685C6D61+
+     18					     ?debug  C E9B7B661490F2E2E5C736F315C6D61747269782E63
+     19					     ?debug  C E91D07484A1B583A5C534F5C5052414354305C736F312E685C6D61+
      20					     ?debug  C 747269782E68
      21	0000			     _TEXT   segment byte public 'CODE'
      22	0000			     _TEXT   ends
@@ -38,10 +38,10 @@ asm\matrix.asm
      33	0000			     _TEXT   segment byte public 'CODE'
      34					     assume  cs:_TEXT,ds:DGROUP
      35	0000			     _matrix proc    near
-     36					     ?debug  C E8010F2E2E5C736F315C6D61747269782E63B7AE+
+     36					     ?debug  C E8010F2E2E5C736F315C6D61747269782E63B7B6+
      37					     ?debug  C 6149
      38					     ?debug  C E8021B583A5C534F5C5052414354305C736F312E+
-     39					     ?debug  C 685C6D61747269782E684BBE6A49
+     39					     ?debug  C 685C6D61747269782E681D07484A
      40					     ?debug  C E801
      41					;
      42					;    void matrix ( void	)
@@ -60,7 +60,7 @@ asm\matrix.asm
      55	0246  C3			     ret
      56	0247			     _matrix endp
      57					     ?debug  C E9
-Turbo Assembler	 Version 5.4	    01-30-17 13:05:30	    Page 2
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 2
 asm\matrix.asm
 
 
@@ -74,7 +74,7 @@ asm\matrix.asm
      64	0247			     _TEXT   ends
      65					     public  _matrix
      66					     end
-Turbo Assembler	 Version 5.4	    01-30-17 13:05:30	    Page 3
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 3
 Symbol Table
 
 
@@ -82,9 +82,9 @@ Symbol Table
 
 Symbol Name		Type   Value			   Cref	(defined at #)
 
-??date			Text   "01-30-17"
+??date			Text   "08-28-17"
 ??filename		Text   "matrix	"
-??time			Text   "13:05:30"
+??time			Text   "13:03:16"
 ??version		Number 0504
 @Cpu			Text   0707H			   #1
 @FileName		Text   matrix

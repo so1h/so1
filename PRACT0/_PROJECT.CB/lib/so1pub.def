@@ -1,0 +1,262 @@
+Publics by module
+
+BIOSDATA	size = 8
+	_ptrBiosArea                      _ptrFechaBios
+
+BIOS_0  	size = 2267
+	_connectApmBIOS                   _cpuBusyBIOS
+	_cpuIdleBIOS                      _disconnectApmBIOS
+	_enviarBIOS                       _esperarTicsBIOS
+	_establecerModoDeVideo            _establecerPaginaActiva
+	_goToXYBIOS                       _goToXYPag
+	_hayApmBIOS                       _leerTeclaBIOS
+	_leerTeclaExtBIOS                 _leerTeclaListaBDA
+	_memBIOS                          _modoDeVideo
+	_numPagsVideo                     _ocultaCursorBIOS
+	_paginaActiva                     _printBinBIOS
+	_printCadBIOS                     _printCarAtrPagBIOS
+	_printCarBIOS                     _printCarPagBIOS
+	_printCarRawBIOS                  _printDecBIOS
+	_printHexBIOS                     _printIntBIOS
+	_printLBinBIOS                    _printLDecBIOS
+	_printLHexBIOS                    _printLIntBIOS
+	_printLnBIOS                      _printPtrBIOS
+	_printStrBIOS                     _printStrHastaBIOS
+	_printWordBIOS                    _readXYBIOS
+	_readXYPagBIOS                    _rebootLegacy
+	_recibirBIOS                      _scrollBIOS
+	_scrollPagBDA                     _scrollPagBIOS
+	_setCursorBIOS                    _teclaListaBDA
+	_teclaListaBIOS                   _tipoOrdenador
+	_tipoTeclado                    
+
+BIOS_CRT	size = 1534
+	_comprobarAdaptador               _finBiosCrt
+	_fontSize                         _getFilas
+	_getFontSize                      _inicBiosCrt
+	_numColumnas                      _numFilas
+	_ptrPant                          _redimensionable
+	_redimensionar                    _set25x80
+	_setCursorVisibilidad             _setFontSize
+	_tipoAdaptador                    _tipoDeAdaptador
+	_visibilidad                    
+
+BIOS_RAT	size = 250
+	_hayDriverRaton                   _hayRatonBIOS
+	_installMouseEventHandler         _leerRatonBIOS
+	_mostrarCursorRatonBIOS           _ocultarCursorRatonBIOS
+	_resetRatonBIOS                   _situarCursorRatonBIOS
+	_uninstallMouseEventHandler       _versionRatonBIOS
+
+C2C     	size = 800
+	_apilarC2c                        _desencolarC2c
+	_eliminarC2c                      _encolarC2c
+	_inicializarC2c                   _posicionC2c
+
+CARACTER	size = 97
+	_dig                              _mayuscula
+	_minuscula                      
+
+CCB     	size = 971
+	_atenderCcb                       _desencolarCcb
+	_eliminarCcb                      _eliminarSegCcb
+	_encolarCcb                       _inicCcb
+	_vaciarCcb                      
+
+CMOS    	size = 97
+	_bcdToInt                         _escribirCmos
+	_leerCmos                       
+
+COLORES 	size = 28
+	_combinacion                    
+
+COPIA   	size = 188
+	_copia                            _copiaLarga
+
+CRTHW   	size = 132
+	_goToXYHw                         _inicCrtHw
+	_ocultaCursorHw                   _setCursorHw
+
+DEBUG   	size = 169
+	_assert                           _debug_parar
+	_mostrarFlags                     _puntoDeParada
+	_valorFlags                     
+
+ESCRIBIR	size = 373
+	_escribirBin                      _escribirCar
+	_escribirCursor                   _escribirDec
+	_escribirHex                      _escribirInt
+	_escribirLBin                     _escribirLDec
+	_escribirLHex                     _escribirLInt
+	_escribirLn                       _escribirPtr
+	_escribirStr                      _escribirStrHasta
+	_establecerLineas                 _leerCursor
+
+INTERPRE	size = 6277
+	_cambiarPromptDOS                 _controlarFinYFilas
+	_entreComillas                    _escribirPtos
+	_interpretarComandos              _interpretar_cd
+	_interpretar_ctty                 _interpretar_dir
+	_interpretar_exit                 _interpretar_host
+	_interpretar_id                   _interpretar_nohost
+	_interpretar_ptos                 _interpretar_ret
+	_interpretar_salida               _interpretar_status
+	_interpretar_traza                _interpretar_type
+	_interpretar_ver                  _listarDirectorio
+	_listarDirectorioHost             _mostrarEntradaOpcionL
+	_mostrarEntradaOpcionW            _mostrarFicheroDOS
+	_prompt                           _redirigirSTDIO
+	_tratarError                    
+
+LEERCMD 	size = 2445
+	_autocompletarCExt                _autocompletarCInt
+	_borrarCaracter                   _borrarLineaDeComando
+	_borrarUltimoCaracter             _carAnt
+	_comBusqueda                      _copiarComando
+	_fcb                              _ffblk
+	_iAnt                             _leerComando
+	_unidad                           _unidadLogica
+
+LL_S_EXC	size = 340
+	_close                            _createProcess
+	_exec                             _exit
+	_ioctl                            _kill
+	_lseek                            _open
+	_setgid                           _setuid
+	_waitpid                          _write
+
+LL_S_SO1	size = 1857
+	_activarTraza                     _aio_read
+	_aio_write                        _analizarProcesos
+	_crearFichero                     _crearRecurso
+	_destruirRecurso                  _eliminarCcbRecurso
+	_encolarCcbRecurso                _esperarDesinstalacion
+	_fcntl                            _findFirst
+	_findNext                         _fork
+	_getdisk                          _getgid
+	_getpid                           _getpindx
+	_getppid                          _getuid
+	_leer                             _leerAsciiListo
+	_leerListo                        _ll_buscarBloque
+	_ll_devolverBloque                _ll_tamBloqueMax
+	_mbox_receive                     _mbox_send
+	_obtenInfoFAB                     _obtenInfoINFO
+	_obtenInfoMEM                     _obtenInfoPFR
+	_obtenInfoPS                      _obtenInfoSO1
+	_procesarEntrada                  _read
+	_retardoActivo                    _sem_bajar
+	_sem_inic                         _sem_subir
+
+MATRIX  	size = 583
+	_matrix                         
+
+MEMVIDEO	size = 300
+	_cursorC                          _cursorF
+	_finMemVideo                      _goToXYVideo
+	_inicMemVideo                     _printCarVideo
+
+MSDOS   	size = 1650
+	_argcMSDOS                        _argvMSDOS
+	_chdirDOS                         _closeDOS
+	_commitFileDOS                    _createDOS
+	_entornoMSDOS                     _extendedOpenDOS
+	_finProgDOS                       _findfirstDOS
+	_findnextDOS                      _getcurdirDOS
+	_getdiskDOS                       _hayDOSBox
+	_hayMSDOS                         _hayWindowsNT
+	_lseekDOS                         _openDOS
+	_readDOS                          _segPSP
+	_setdiskDOS                       _valorMSDOS
+	_versionMSDOS                     _writeDOS
+
+NOP     	size = 1
+	_hacerNada                      
+
+PANTALLA	size = 609
+	_borrarCPantalla                  _borrarPantalla
+	_copiarCPantalla                  _copiarPantalla
+	_pantallazo                       _scrollCPantalla
+	_scrollPantalla                   _tamPantalla
+
+PIC     	size = 384
+	_enable_hwirq                     _establecerIMR
+	_get_pic1_isr                     _get_pic2_isr
+	_mask_pic1                        _mask_pic2
+	_pic_setup                        _ptrTVI
+	_set_pics                         _unmask_pic1
+	_unmask_pic2                      _valorIMR
+
+PRINTGEN	size = 2007
+	_printGenBin                      _printGenDec
+	_printGenHex                      _printGenInt
+	_printGenLBin                     _printGenLDec
+	_printGenLHex                     _printGenLInt
+	_printGenLn                       _printGenPtr
+	_printGenStr                      _printGenStrHasta
+	_printfGen                      
+
+PRINTVID	size = 242
+	_printBinVideo                    _printDecVideo
+	_printHexVideo                    _printIntVideo
+	_printLBinVideo                   _printLDecVideo
+	_printLHexVideo                   _printLIntVideo
+	_printLnVideo                     _printPtrVideo
+	_printStrHastaVideo               _printStrVideo
+
+PTRC2C  	size = 889
+	_apilarPC2c                       _desencolarPC2c
+	_eliminarPC2c                     _encolarPC2c
+	_inicializarPC2c                  _posicionPC2c
+
+PUERTOS 	size = 114
+	_contadorTimer0                   _inport
+	_inportb                          _inportb_r
+	_outport                          _outportb
+	_outportb_r                     
+
+PUT     	size = 381
+	_putBin                           _putCar
+	_putDec                           _putHex
+	_putInt                           _putLBin
+	_putLDec                          _putLHex
+	_putLInt                          _putLn
+	_putPtr                           _putStr
+	_putStrHasta                    
+
+SALUDOS 	size = 217
+	_mostrarSaludo                    _mostrarSaludoGrande
+	_printStrRojo                   
+
+SCANNER 	size = 2165
+	_car                              _comando
+	_identificador                    _inCmd
+	_inicScanner                      _nComandos
+	_num                              _numCmds
+	_numDec                           _numHex
+	_numLargo                         _obtenCar
+	_obtenSimb                        _obtenStr
+	_outCmd                           _pos
+	_saltarBlancos                    _simb
+	_simbCmd                          _str
+
+STDIO   	size = 806
+	_S                                _Scount
+	_aP                               _abandonP
+	_eof_error                        _fc
+	_flagSet                          _getch
+	_isSigned                         _leadZ
+	_plusSign                         _precision
+	_printf                           _tempStr
+	_totalSent                        _width
+
+STRINGS 	size = 306
+	_copiarStr                        _copiarStrHasta
+	_iguales                          _igualesHasta
+	_igualesSalvoMayusculasHasta    
+
+TELON   	size = 228
+	_restaurarPantallaInicial         _salvarPantallaInicial
+
+TIPOS   	size = 107
+	_incPtr                           _off
+	_pointer                          _seg

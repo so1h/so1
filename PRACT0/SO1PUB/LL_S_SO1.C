@@ -327,23 +327,8 @@ int aio_write ( int df, pointer_t dir, word_t nbytes ) {
   }
   return(res) ;
 }
-
-long lseek ( int df, long pos, word_t whence  ) {
-  dword_t res ;
-  word_t res_L ;
-  word_t res_H ;
-  asm {
-    mov bx,df ;
-    les dx,pos ;
-    mov cx,whence ;
-    mov ax,0106h ;
-    int nVIntSO1 ;
-    mov res_L,ax ;
-    mov res_H,bx ;
-  }
-  res = (((dword_t)res_H) << 16) | res_L ;
-  return(res) ;
-}
+                                            /* implementada en ll_s_exec.h */
+long lseek ( int df, long pos, word_t whence  ) ; 
 
 /* ----------------------------------------------------------------------- */
 /* char leer(df)                                                           */
@@ -383,7 +368,7 @@ char leerAsciiListo ( int df ) {
   }
   return(car) ;
 }
-
+                                          
 word_t fcntl ( int df, word_t cmd, word_t arg  ) {
   word_t res ;
   asm {
@@ -396,20 +381,9 @@ word_t fcntl ( int df, word_t cmd, word_t arg  ) {
   }
   return((bool_t)res) ;
 }
-
-word_t ioctl ( int df, word_t cmd, word_t arg  ) {
-  int res ;
-  asm {
-    mov bx,df ;
-    mov cx,cmd ;
-    mov dx,arg ;
-    mov ax,0108h ;
-    int nVIntSO1 ;
-    mov res,ax ;
-  }
-  return((bool_t)res) ;
-}
-
+                                            /* implementada en ll_s_exec.h */
+word_t ioctl ( int df, word_t cmd, word_t arg  ) ;
+	
 /* ======================================================================= */
 /*  AX            operaciones de manejo de drivers (AH = 2)                */
 /* ======================================================================= */

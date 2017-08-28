@@ -4,7 +4,7 @@
 /*            busqueda, carga y ejecucion de comandos externos             */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\caracter.h>                                 
+#include <so1pub.h\tipos.h>                              /* pid_t, pindx_t */
 #include <so1pub.h\def_proc.h>
 #include <so1pub.h\scanner.h>                                /* tamComando */
 #include <so1pub.h\msdos.h>                  /* lssekMSDOS, SEEK_SET_MSDOS */
@@ -12,7 +12,6 @@
 #include <so1pub.h\bios_0.h>
 #include <so1pub.h\copia.h>                                  /* copiaLarga */
 #include <so1pub.h\ptrc2c.h>         /* ptrC2c_t, desencolarPC2c, inicPC2c */ /* encolarPC2c */
-#include <so1.h\ejecutar.h>                                /* crearProceso */
 #include <so1.h\gm.h>                  /* k_buscarBloque, k_devolverBloque */
 #include <so1.h\procesos.h>
 #include <so1.h\ajustes.h>
@@ -104,14 +103,32 @@ pindx_t preEjecutar ( const char far * nombre,
   int unidad1 ;
   word_t accion ;
   word_t error ;
-  char nombreBackup [12] ;                                    /* v. local */
-  char comandoBackup [tamComando] ;                           /* v. local */
+  char nombreBackup [12] ;                                     /* v. local */
+  char comandoBackup [tamComando] ;                            /* v. local */
+
+#if (TRUE)  
+  /* Fake86: No se por que motivo con el emulador Fake86 cuando se llama */
+  /* con el parametro pindx = -1 (0xFFFF), resulta que se recibe 255     */
+  /* (0x00FF). Para intentar subsanarlo pongo la siguiente instruccion:  */
+  if (pindx >= maxProcesos) pindx = -1 ;                   /* 2017-08-25 */
+#endif
+  
+#if (FALSE)
+  printStrBIOS("\n ejecutar: pindx = ") ;
+  printIntBIOS(pindx, 1) ;
+  printStrBIOS(" = 0x") ;
+  printHexBIOS(pindx, 4) ;
+#endif 
 
   copiarStrHasta(nombre, nombreBackup, 12) ;
   copiarStrHasta(comando, comandoBackup, tamComando) ;
 
 #if (FALSE)
-//if (pindx != -1) {                                              /* exec */
+//if (pindx != -1) {                                               /* exec */
+  printStrBIOS("\n ejecutar: pindx = ") ;
+  printIntBIOS(pindx, 1) ;
+  printStrBIOS(" = 0x") ;
+  printHexBIOS(pindx, 4) ;
   printStrBIOS("\n ejecutar: nombre = ") ;
   printStrBIOS((char far *)nombre) ;
   printStrBIOS("\n ejecutar: comando = ") ;
@@ -266,12 +283,17 @@ if (pindx != -1) {                                                 /* exec */
   printStrBIOS((char far *)nombre) ;
   printStrBIOS("\n ejecutar: comando = ") ;
   printStrBIOS((char far *)comando) ;
-  puntoDeParadaSO1() ;                                 /* puntoDeParadaSO1 */
+//puntoDeParadaSO1() ;                                 /* puntoDeParadaSO1 */
 }
 #endif
 
   if ((pindxAux = crearProceso(
                     segmento, tam, tamFich, nombreBackup, comandoBackup, pindx)) < 0) {
+#if (FALSE)
+    printStrBIOS("\n crearProceso devuelve el error: ") ;
+    printIntBIOS(pindxAux, 1) ;
+	printLnBIOS() ; 
+#endif
     k_devolverBloque(segmento, tam) ;
     return(-10) ;
   }

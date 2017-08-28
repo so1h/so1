@@ -1,13 +1,13 @@
 /* ----------------------------------------------------------------------- */
 /*                                escribir.h                               */
 /* ----------------------------------------------------------------------- */
-/*                                                                         */
+/*           funciones de escritura en la salida estandar STDOUT           */
 /* ----------------------------------------------------------------------- */
 
 #ifndef ESCRIBIR_H
 #define ESCRIBIR_H
 
-#include <so1pub.h\tipos.h>
+#include <so1pub.h\tipos.h>  /* byte_t, word_t, dword_t, bool_t, pointer_t */ 
 
 int escribirCar ( char car ) ;
 
@@ -38,5 +38,11 @@ int escribirBin ( word_t num, word_t l ) ;
 int escribirLBin ( dword_t num, word_t l ) ;
 
 int escribirPtr ( pointer_t ptr ) ;
+
+int escribirCursor ( byte_t F, byte_t C ) ; 
+
+int leerCursor ( byte_t * F, byte_t * C ) ; 
+
+int establecerLineas ( int lineas ) ;
 
 #endif /* ESCRIBIR_H */

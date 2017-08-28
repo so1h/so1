@@ -124,4 +124,8 @@ int close ( int df ) ;
 
 int write ( int df, pointer_t dir, word_t nbytes ) ;
 
+long int lseek ( int df, long int pos, word_t whence  ) ;
+
+word_t ioctl ( int df, word_t request, word_t arg ) ;
+
 #endif /* LL_S_EXC_H */

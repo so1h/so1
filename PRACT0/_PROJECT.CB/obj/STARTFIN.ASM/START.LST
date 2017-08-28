@@ -1,0 +1,70 @@
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
+..\STARTFIN.ASM\START.ASM
+
+
+
+      1				     ;/**************************************************************************/
+      2				     ;/*				start.asm				*/
+      3				     ;/**************************************************************************/
+      4
+      5	0000			     _TEXT segment byte	public 'CODE'
+      6
+      7	0000			     _startCode	proc near
+      8				     ;/* aqui no hay nada de nada */
+      9	0000			     _startCode	endp
+     10
+     11				     public _startCode
+     12
+     13	0000			     _TEXT ends
+     14
+     15				     ;/**************************************************************************/
+     16
+     17	0000			     _DATA segment word	public 'DATA'
+     18
+     19	0000			     _startData	proc near
+     20				     ;/* aqui no hay nada de nada */
+     21	0000			     _startData	endp
+     22
+     23				     public _startData
+     24
+     25	0000			     _DATA ends
+     26
+     27				     ;/**************************************************************************/
+     28
+     29	0000			     _BSS segment word public 'BSS'
+     30
+     31	0000			     _startBSS proc near
+     32				     ;/* aqui no hay nada de nada */
+     33	0000			     _startBSS endp
+     34
+     35				     public _startBSS
+     36
+     37	0000			     _BSS ends
+     38
+     39				     END
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name		Type   Value			   Cref	(defined at #)
+
+??date			Text   "08-28-17"
+??filename		Text   "START	"
+??time			Text   "13:03:16"
+??version		Number 0504
+@Cpu			Text   0101H
+@FileName		Text   START
+@WordSize		Text   2			   #5  #17  #29
+@curseg			Text   _BSS			   #5  #17  #29
+_startBSS		Near16 _BSS:0000		   #31	35
+_startCode		Near16 _TEXT:0000		   #7  11
+_startData		Near16 _DATA:0000		   #19	23
+
+Groups & Segments	Bit Size Align	Combine	Class	   Cref	(defined at #)
+
+_BSS			16  0000 Word	Public	BSS	   #29
+_DATA			16  0000 Word	Public	DATA	   #17
+_TEXT			16  0000 Byte	Public	CODE	   #5
+

@@ -1,0 +1,10 @@
+Publics by module
+
+AJUSTES 	size = 186
+	_BSS_SO1                          _CS_SO1
+	_DS_SO1                           _IMRInicial
+	_desplCab                         _finish
+	_modoSO1                          _segDatos
+	_startBin                         _startCabecera
+	_startCommon                      _startExe
+	_unidadBIOS                     

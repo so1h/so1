@@ -143,10 +143,10 @@ int printCarConsola ( byte_t con, char car )
     return(0) ;
 }
 
-void goToXYConsola ( byte_t con, byte_t F, byte_t C )
+int goToXYConsola ( byte_t con, byte_t F, byte_t C )
 {
-    if (F >= numFilas) return ;
-    if (C >= 80) return ;
+    if (F >= numFilas) return(-1) ;
+    if (C >= 80) return(-1) ;
     if (con == consolaDeSuperficie)
     {
         /*    goToXYHw(F, C) ; */
@@ -158,6 +158,7 @@ void goToXYConsola ( byte_t con, byte_t F, byte_t C )
         descConsola[con].F = F ;
         descConsola[con].C = C ;
     }
+	return(0) ;
 }
 
 void establecerConsolaDeSuperficie ( void )
@@ -325,9 +326,34 @@ int far aio_writeConsola ( int dfs, pointer_t dir, word_t nbytes )
 long int far lseekConsola ( int dfs, long int pos, word_t whence )
 {
 
-    /* posisicionar el cursor */
+    /* posicionar el cursor */
 
-    return((long int)-1) ;
+    word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+    word_t con ;
+	long int posActual ;
+	long int res ;
+
+    asm push ds
+    asm mov ds,DS_Consola
+
+    con = ptrDescFichero[dfs].menor ;
+
+	if (whence == SEEK_CUR) 
+	{
+		posActual = cursorF*80+cursorC ;
+        pos = posActual + pos ;
+	}		
+	if (whence != SEEK_END) {                        /* SEEK_END, SEEK_CUR */
+   	    if (goToXYConsola(con, pos/80, pos%80) == 0) 
+		    res = pos ;
+	    else 
+		    res = -1 ;
+	}
+	else                                                       /* SEEK_END */
+		res = posActual ;
+		
+    asm pop ds
+    return(res) ;
 }
 
 int far fcntlConsola ( int dfs, word_t cmd, word_t arg )
@@ -361,7 +387,7 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
             establecerConsolaDeSuperficie() ;
         }
     }
-    else if (request == 0x0002)
+    else if (request == 0x0002)               /* obtener la consola actual */
     {
         res = consolaDeSuperficie ;
 //  printStrBIOS("\n res = ") ;
@@ -369,28 +395,46 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
     }
     else if (request == 0x0003) /* cambiar numero de lineas de la pantalla */
     {
-		numFilasAnt = numFilas ;
-        numFilas = arg ;
-		
+		if (arg <= 0) res = numFilas ; /* devolvemos el numero de lineas actual */
+		else if ((arg != 25) && (arg != 28) && (arg != 50)) res = -1 ;
+		else if (arg == numFilasAnt) res = 0 ;
+        else  
+        {
+	     	numFilasAnt = numFilas ;
+            numFilas = arg ;		
 //  printStrBIOS("\n numFilas = ") ;
 //  printDecBIOS(numFilas, 1) ;
-        if (numFilas != numFilasAnt)
-        {
-//printStrBIOS(" numFilasAnt = ") ;
-//printDecBIOS(numFilasAnt, 1) ;
-//printStrBIOS(" cursorF = ") ;
-//printDecBIOS(cursorF, 1) ;
-            if (cursorF >= numFilas)
+//  printStrBIOS(" numFilasAnt = ") ;
+//  printDecBIOS(numFilasAnt, 1) ;
+//  printStrBIOS(" cursorF = ") ;
+//  printDecBIOS(cursorF, 1) ;
+#if (TRUE)
+            if (numFilasAnt >= numFilas)
             {
-                copiarCPantalla((pantalla_t far *)&ptrPant->t[cursorF-numFilas+1][0], ptrPant, numFilas) ;
+                copiarCPantalla((pantalla_t far *)&ptrPant->t[numFilasAnt-numFilas+1][0], ptrPant, numFilas) ;
 //              copiarPantalla((pantalla_t far *)&ptrPant->t[cursorF-numFilas+1][0], ptrPant, numFilas) ;
 //**/           borrarCPantalla((pantalla_t far *)&ptrPant->t[numFilas][0], numFilasAnt) ;
+/**/            borrarCPantalla((pantalla_t far *)&ptrPant->t[numFilas][0], numFilasAnt-numFilas) ;
                 cursorF = numFilas-1 ;
             }
+#endif			
             salvarConsolaDeSuperficie() ;
             redimensionar(numFilas, 80) ;
             numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
             establecerConsolaDeSuperficie() ;
+			res = numFilas ;
+			if (numFilas == arg) { 
+			
+#if (FALSE)
+            if (numFilasAnt >= numFilas)
+            {
+                copiarCPantalla((pantalla_t far *)&ptrPant->t[numFilasAnt-numFilas+1][0], ptrPant, numFilas) ;
+//              copiarPantalla((pantalla_t far *)&ptrPant->t[cursorF-numFilas+1][0], ptrPant, numFilas) ;
+//**/           borrarCPantalla((pantalla_t far *)&ptrPant->t[numFilas][0], numFilasAnt) ;
+/**/            borrarCPantalla((pantalla_t far *)&ptrPant->t[numFilas][0], numFilasAnt-numFilas) ;
+                cursorF = numFilas-1 ;
+            }
+#endif			
             for ( con = 0 ; con < maxConsolas ; con ++ )
             {
                 if (con != consolaDeSuperficie)
@@ -406,9 +450,11 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
                     }
                 }
             }
+			}
         }
 		
     }
+
     asm pop ds
     return(res) ;
 #endif
@@ -1225,7 +1271,7 @@ void main ( int argc, char * argv [ ] )
             {
                 if ((dfCon = open("CON0", O_RDONLY)) < 0)
                 {
-                    escribirStr(" no se puede abrir CON0") ;
+                    escribirStr(" no puede abrirse CON0") ;
                     exit(-1) ;
                 }
                 if (ioctl(dfCon, 0x0001, num) != 0)
@@ -1251,7 +1297,7 @@ void main ( int argc, char * argv [ ] )
 				}	
 				if ((dfCon = open("CON0", O_RDONLY)) < 0)
                 {
-                    escribirStr(" no se puede abrir CON0") ;
+                    escribirStr(" no abrirse CON0") ;
                     exit(-1) ;
                 }
                 if (ioctl(dfCon, 0x0003, num) != 0)

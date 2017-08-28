@@ -5,6 +5,7 @@
 		<Option title="SO1" />
 		<Option platforms="Windows;" />
 		<Option pch_mode="2" />
+		<Option default_target="so1d" />
 		<Option compiler="borland_c_502_so_2016" />
 		<Option virtualFolders="AJUSTES\;CRTL\;FIN\;START\;AJUSTUSR\;ENTRYEXE\;ENTRYBIN\;" />
 		<Option show_notes="0">
@@ -159,6 +160,7 @@ enlazador = tlink.exe (o ulink.exe)
 				<Option object_output="obj" />
 				<Option type="1" />
 				<Option compiler="borland_c_502_so_2016" />
+				<Option parameters="X:\SO\PRACT0\DISQUETE\SO1.EXE" />
 				<Compiler>
 					<Add option="-v" />
 				</Compiler>

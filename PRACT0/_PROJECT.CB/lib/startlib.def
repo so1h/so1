@@ -1,0 +1,5 @@
+Publics by module
+
+START   	size = 0
+	_startBSS                         _startCode
+	_startData                      

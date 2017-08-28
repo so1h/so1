@@ -1,0 +1,26 @@
+CS.LIB es una libreria estandar de Borland C.
+
+La S de CS indica que los modulos estan compilados
+utilizando el modelo de programacion SMALL.
+
+El fichero listar.bat ejecuta los comandos:
+
+  tlib cs.lib    /L > cs.lst
+  tdump cs.lib      > cs.dmp
+
+de manera que cs.lst contiene una relacion de todas las
+funciones de la libreria CS.LIB, y cs.dmp muestra un
+volcado de todas esas funciones. 
+
+Para extraer un fichero objeto con una determinada funcion
+(por ejemplo f_lxmul) de la libreria, basta ejecutar el 
+comando:
+
+  tlib cs.lib * f_lxmul  
+
+obteniendose como resultado un fichero f_lxmul.obj.
+
+Por otro lado las bibliotecas CRTL de Boland C estan 
+disponibles en ensamblador en las distribuciones de ese
+compilador. De ahi se han tomado los ficheros .ASM que
+hay en el directorio: CRTL\ASM.

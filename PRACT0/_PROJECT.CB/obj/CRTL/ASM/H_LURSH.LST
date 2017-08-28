@@ -1,0 +1,81 @@
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
+..\CRTL\ASM\H_LURSH.ASM
+
+
+
+      1				     ;[]-----------------------------------------------------------------[]
+      2				     ;|	     H_LURSH.ASM -- long shift right				  |
+      3				     ;[]-----------------------------------------------------------------[]
+      4
+      5				     ;
+      6				     ;	     C/C++ Run Time Library - Version 5.0
+      7				     ;
+      8				     ;	     Copyright (c) 1987, 1992 by Borland International
+      9				     ;	     All Rights	Reserved.
+     10				     ;
+     11
+     12				     ;	     INCLUDE RULES.ASI
+     13
+     14	0000			     _TEXT   segment public byte 'CODE'
+     15					     assume  cs:_TEXT
+     16					     public  LXURSH@
+     17					     public  F_LXURSH@
+     18					     public  N_LXURSH@
+     19
+     20	0000			     N_LXURSH@:
+     21	0000  5B			     pop     bx			     ;fix up far return
+     22	0001  0E			     push    cs
+     23	0002  53			     push    bx
+     24	0003			     LXURSH@:
+     25	0003			     F_LXURSH@:
+     26	0003  80 F9 10			     cmp     cl,16
+     27	0006  73 10			     jae     lsh@small
+     28	0008  8B DA			     mov     bx,dx		     ; save the	high bits
+     29	000A  D3 E8			     shr     ax,cl		     ; now shift each half
+     30	000C  D3 EA			     shr     dx,cl
+     31				     ;
+     32				     ;			     We	now have a hole	in AX where the	lower bits of
+     33				     ;			     DX	should have been shifted.  So we must take our
+     34				     ;			     copy of DX	and do a reverse shift to get the proper
+     35				     ;			     bits to be	or'ed into AX.
+     36				     ;
+     37	000E  F6 D9			     neg     cl
+     38	0010  80 C1 10			     add     cl,16
+     39	0013  D3 E3			     shl     bx,cl
+     40	0015  0B C3			     or	     ax,bx
+     41	0017  CB			     retf
+     42	0018			     lsh@small:
+     43	0018  80 E9 10			     sub     cl,16		     ; for shifts more than 15,	do this
+     44									     ; short sequence.
+     45	001B  92			     xchg    ax,dx
+     46	001C  33 D2			     xor     dx,dx		     ; We have now done	a shift	by 16.
+     47	001E  D3 E8			     shr     ax,cl		     ; Now shift the remainder.
+     48	0020  CB			     retf
+     49
+     50	0021			     _TEXT   ends
+     51					     end
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name		Type   Value			   Cref	(defined at #)
+
+??date			Text   "08-28-17"
+??filename		Text   "H_LURSH	"
+??time			Text   "13:03:16"
+??version		Number 0504
+@Cpu			Text   0101H
+@FileName		Text   H_LURSH
+@WordSize		Text   2			   #14
+@curseg			Text   _TEXT			   #14
+F_LXURSH@		Near16 _TEXT:0003		   17  #25
+LXURSH@			Near16 _TEXT:0003		   16  #24
+N_LXURSH@		Near16 _TEXT:0000		   18  #20
+lsh@small		Near16 _TEXT:0018		   27  #42
+
+Groups & Segments	Bit Size Align	Combine	Class	   Cref	(defined at #)
+
+_TEXT			16  0021 Byte	Public	CODE	   #14	15
+

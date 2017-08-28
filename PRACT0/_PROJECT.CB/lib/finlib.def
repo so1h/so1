@@ -1,0 +1,10 @@
+Publics by module
+
+FINBSS  	size = 0
+	_finBSS                         
+
+FINCODE 	size = 0
+	_finCode                        
+
+FINDATA 	size = 0
+	_finData                        

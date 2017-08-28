@@ -186,9 +186,9 @@ int write ( int df, pointer_t dir, word_t nbytes ) ;
 int aio_write ( int df, pointer_t dir, word_t nbytes ) ;
 
 long int lseek ( int df, long int pos, word_t whence  ) ;
-
+                                               /* declarada en ll_s_exec.h */
 word_t fcntl ( int df, word_t cmd, word_t arg ) ;
-
+                                               /* declarada en ll_s_exec.h */
 word_t ioctl ( int df, word_t request, word_t arg ) ;
 
 /* drivers */
@@ -334,35 +334,6 @@ dword_t retardoActivo ( dword_t nVueltas ) ;
 /* Si nVueltas > 1 esta llamada establece en SO1 el numero de vueltas que  */
 /* se utiliza en el bucle de retardo mencionado                            */
 /* ----------------------------------------------------------------------- */
-
-/* --------------------------------------------------------------------- */
-/*                               semaforos                               */
-/* --------------------------------------------------------------------- */
-/*           funciones de interfaz para el manejo de semaforos           */
-/* --------------------------------------------------------------------- */
-
-int sem_inic (unsigned int sem,     /* codigo de operacion en ax = 0500h */
-              unsigned int valor  ) ;
-
-int sem_bajar (unsigned int sem ) ; /* codigo de operacion en ax = 0501h */
-
-
-int sem_subir (unsigned int sem ) ; /* codigo de operacion en ah = 0502h */
-
-/* --------------------------------------------------------------------- */
-/*                                buzones                                */
-/* --------------------------------------------------------------------- */
-/* especificacion de las funciones de interfaz  para el paso de mensajes */
-/* --------------------------------------------------------------------- */
-
-int mbox_send ( unsigned   mbox,    /* codigo de operacion en ax = 0600h */
-                void far * msj ) ;
-
-int mbox_receive ( unsigned   mbox, /* codigo de operacion en ax = 0601h */
-                   void far * msj ) ;
-
-
-
 
 #endif /* LL_S_SO1_H */
 

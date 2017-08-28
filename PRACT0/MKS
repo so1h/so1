@@ -33,6 +33,8 @@ debug:
 ..\DISQUETE\$(PROGRAMA).bin: $(PROGRAMA).bin 
   @echo.
   SPINIC $(PROGRAMA).bin $(SPINICIAL) 
+  @if exist $(PROGRAMA).com erase $(PROGRAMA).com
+  @copy $(PROGRAMA).bin $(PROGRAMA).com  
   @echo.
   @if exist ..\DISQUETE\$(PROGRAMA).bin del ..\DISQUETE\$(PROGRAMA).bin 
   @if not exist ..\DISQUETE mkdir ..\DISQUETE
@@ -44,7 +46,11 @@ debug:
   @echo.
   @if exist $@ del $@ 
   @if not exist ..\DISQUETE mkdir ..\DISQUETE
-  copy $(PROGRAMA).exe ..\DISQUETE
+# copy $(PROGRAMA).exe ..\DISQUETE
+  cd ..\DISQUETE
+  msdos -c ..\SO1\$(PROGRAMA).exe 
+  ren new_exec_file.exe $(PROGRAMA).exe
+  cd ..\SO1
  
 $(PROGRAMA).bin:: $(OBJS2LNK)
 
@@ -191,26 +197,27 @@ delsrc:
 run: 
   @echo.
   cd ..\disquete
-  start $(PROGRAMA).exe
+  if %MSYSTEM%==MINGW64 ($(PROGRAMA).exe)
+  if NOT %MSYSTEM%==MINGW64 ($(PROGRAMA).exe)  
   
 runcom: 
   @echo.
   cd ..\disquete
-  if exist $(PROGRAMA).com erase $(PROGRAMA).com
-  copy $(PROGRAMA).bin $(PROGRAMA).com
-  start $(PROGRAMA).com
+  if %MSYSTEM%==MINGW64 (msdos ..\so1\$(PROGRAMA).com)
+  if NOT %MSYSTEM%==MINGW64 (msdos ..\so1\$(PROGRAMA).com)  
   
 rundosbox: 
   @echo.
-  cd ..\disquete
-  start $(UUSB):\Interno\dosbox-0.74\dosbox.exe $(PROGRAMA).exe -noconsole -exit 
-  exit
+# cd ..\disquete
+# start $(UUSB):\Interno\dosbox-0.74\dosbox.exe $(PROGRAMA).exe -noconsole -exit 
+  start $(UUSB):\Interno\dosbox-0.74\dosbox.exe ..\so1dbox.bat -noconsole -exit 
+
   
 rundosboxdbg: 
   @echo.
-  cd ..\disquete
-  start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe $(PROGRAMA).exe -noconsole -exit 
-  exit
+# cd ..\disquete
+# start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe $(PROGRAMA).exe -noconsole -exit 
+  start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe ..\so1dbox.bat -noconsole -exit 
   
 imagen:
   @echo.
@@ -232,15 +239,12 @@ help:
   @"echo    make mb         hace que SO1.BIN y SO1.EXE sean multiboot (grub)"
   @"echo    make mbclean    borra los ficheros producidos por make mb"
   @"echo    make mbbuild    borra ficheros producidos por make mb y lo repite"
-  @"echo    make run        ejecuta SO1.EXE en el directorio DISQUETE (Windows)"
+  @"echo    make run        ejecuta SO1.EXE en el directorio DISQUETE (Player)"
+  @"echo    make runcom     ejecuta SO1.COM en el directorio DISQUETE (Player)"
   @"echo    make rundosbox  ejecuta SO1.EXE en el directorio DISQUETE (DOSBox)"
   @"echo    make build      borra todo y genera de nuevo (make clean + make)" 
   @"echo    make show       mueve los ficheros .C de los directorios SOURCE" 
   @"echo    make hide       mueve los ficheros .C a los directorios SOURCE" 
   @"echo                    y guarda los .OBJ en los directorios _OCULTOS"
   @"echo    make help       muestra esta ayuda sobre los objetivos disponibles"  
-  
-  
-  
-  
   

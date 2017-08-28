@@ -90,7 +90,21 @@ void ps ( void )
             escribirCar(' ') ;
             if (descProceso[i].estado == bloqueado)
             {
+				/* no funciona en Fake86 porque Fake86 tiene un error */	
+#if (TRUE)						
                 escribirStr("bloqueado") ;
+                escribirCar('(') ;
+    			if (descProceso[i].esperandoPor >= 0)
+                    escribirDec(descProceso[i].esperandoPor, 1) ;
+				else {
+					ind = -descProceso[i].esperandoPor ; 
+                    if (ind < tamCarRec) 
+						escribirCar(carRecurso[ind]) ;
+                    else escribirCar('#') ;
+				}	
+                escribirCar(')') ;
+#else			     
+             	escribirStr("bloqueado") ;
                 esperandoPor = descProceso[i].esperandoPor ;
                 escribirCar('(') ;
                 ind = (-1)*esperandoPor ;
@@ -100,6 +114,7 @@ void ps ( void )
                 else
                     escribirDec(esperandoPor, 1) ;
                 escribirCar(')') ;
+#endif				
             }
             else
                 escribirStr(strEstado[descProceso[i].estado]) ;

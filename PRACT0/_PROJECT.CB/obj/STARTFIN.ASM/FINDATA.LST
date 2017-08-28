@@ -1,0 +1,45 @@
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
+..\STARTFIN.ASM\FINDATA.ASM
+
+
+
+      1				     ;/**************************************************************************/
+      2				     ;/*			      findata.asm				*/
+      3				     ;/**************************************************************************/
+      4				     ;/*    Funcion nula en el segmento	de datos para determinar algun punto	*/
+      5				     ;/*	   del segmento	de datos en el momento del enlazado		*/
+      6				     ;/**************************************************************************/
+      7
+      8	0000			     _DATA segment word	public 'DATA'
+      9
+     10	0000			     _finData proc near
+     11				       ; aqui no hay nada de nada */
+     12	0000			     _finData endp
+     13
+     14				     public _finData
+     15
+     16	0000			     _DATA ends
+     17
+     18				     END
+Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name		Type   Value			   Cref	(defined at #)
+
+??date			Text   "08-28-17"
+??filename		Text   "FINDATA	"
+??time			Text   "13:03:16"
+??version		Number 0504
+@Cpu			Text   0101H
+@FileName		Text   FINDATA
+@WordSize		Text   2			   #8
+@curseg			Text   _DATA			   #8
+_finData		Near16 _DATA:0000		   #10	14
+
+Groups & Segments	Bit Size Align	Combine	Class	   Cref	(defined at #)
+
+_DATA			16  0000 Word	Public	DATA	   #8
+

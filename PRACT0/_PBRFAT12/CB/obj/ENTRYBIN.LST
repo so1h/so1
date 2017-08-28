@@ -1,0 +1,31 @@
+Turbo Assembler	 Version 5.4	    11-01-16 21:30:05	    Page 1
+..\..\STARTFIN.ASM\ENTRYBIN.ASM
+
+
+
+      1				     ;/**************************************************************************/
+      2				     ;/*			      entrybin.asm				*/
+      3				     ;/**************************************************************************/
+      4				     ;/*    Modulo vacio para determinar el punto de entrada del ejecutable	*/
+      5				     ;/*									*/
+      6				     ;/**************************************************************************/
+      7
+      8				     EXTRN _startBin
+      9
+     10				     END _startBin
+Turbo Assembler	 Version 5.4	    11-01-16 21:30:05	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name		Type   Value			   Cref	(defined at #)
+
+??date			Text   "11-01-16"
+??filename		Text   "ENTRYBIN"
+??time			Text   "21:30:05"
+??version		Number 0504
+@Cpu			Text   0101H
+@FileName		Text   ENTRYBIN
+_startBin		Word   ----:---- Extern		   #8  10
+

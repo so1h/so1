@@ -104,19 +104,25 @@ delsrc:
 run:
   @echo.
   cd ..\..\disquete
-  start so1.exe
+  if %MSYSTEM%==MINGW64 (start so1.exe)
+  if NOT %MSYSTEM%==MINGW64 (so1.exe)
 
+runcom:
+  cd ..\..\disquete
+  if %MSYSTEM%==MINGW64 (start msdos ..\so1\so1.com)
+  if NOT %MSYSTEM%==MINGW64 (msdos ..\so1\so1.com)
+  
 rundosbox:
   @echo.
-  cd ..\..\disquete
-  start $(UUSB):\Interno\dosbox-0.74\dosbox.exe so1.exe -noconsole -exit
-  exit
+# cd ..\..\disquete
+# start $(UUSB):\Interno\dosbox-0.74\dosbox.exe so1.exe -noconsole -exit
+  start $(UUSB):\Interno\dosbox-0.74\dosbox.exe ..\..\so1dbox.bat -noconsole -exit
 
 rundosboxdbg:
   @echo.
-  cd ..\disquete
-  start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe so1.exe -noconsole -exit
-  exit
+# cd ..\disquete
+# start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe so1.exe -noconsole -exit
+  start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe ..\..\so1dbox.bat -noconsole -exit
 
 help:
 # echo off & color 07 & title help & msg * "Hola"
@@ -127,7 +133,8 @@ help:
   @"echo    make pule       borra todo salvo $(PROGRAMA).BIN, $(PROGRAMA).C y MAKEFILE"
   @"echo    make clean      borra todo salvo $(PROGRAMA).C y MAKEFILEs"
   @"echo    make build      borra y genera nuevo fichero $(PROGRAMA).BIN"
-  @"echo    make run        ejecuta SO1.EXE en el directorio DISQUETE (Windows)"
+  @"echo    make run        ejecuta SO1.EXE en el directorio DISQUETE (Player)"
+  @"echo    make runcom     ejecuta SO1.COM en el directorio DISQUETE (Player)"
   @"echo    make rundosbox  ejecuta SO1.EXE en el directorio DISQUETE (DOSBox)"
   @"echo    make show       mueve los ficheros .C de los directorios SOURCE"
   @"echo    make hide       mueve los ficheros .C a los directorios SOURCE"
