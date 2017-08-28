@@ -369,7 +369,7 @@ char leerAsciiListo ( int df ) {
   return(car) ;
 }
                                           
-word_t fcntl ( int df, word_t cmd, word_t arg  ) {
+int fcntl ( int df, word_t cmd, word_t arg  ) {
   word_t res ;
   asm {
     mov bx,df ;
@@ -382,7 +382,7 @@ word_t fcntl ( int df, word_t cmd, word_t arg  ) {
   return((bool_t)res) ;
 }
                                             /* implementada en ll_s_exec.h */
-word_t ioctl ( int df, word_t cmd, word_t arg  ) ;
+int ioctl ( int df, word_t cmd, word_t arg  ) ;
 	
 /* ======================================================================= */
 /*  AX            operaciones de manejo de drivers (AH = 2)                */

@@ -187,10 +187,10 @@ int aio_write ( int df, pointer_t dir, word_t nbytes ) ;
 
 long int lseek ( int df, long int pos, word_t whence  ) ;
                                                /* declarada en ll_s_exec.h */
-word_t fcntl ( int df, word_t cmd, word_t arg ) ;
+int fcntl ( int df, word_t cmd, word_t arg ) ;
+                                               
+int ioctl ( int df, word_t request, word_t arg ) ;
                                                /* declarada en ll_s_exec.h */
-word_t ioctl ( int df, word_t request, word_t arg ) ;
-
 /* drivers */
 
 void obtenInfoSO1 ( descSO1_t far * descSO1 ) ;

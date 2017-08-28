@@ -236,7 +236,7 @@ int write ( int df, pointer_t dir, word_t nbytes ) {
   return(res) ;
 }
 
-long lseek ( int df, long pos, word_t whence  ) {
+long int lseek ( int df, long pos, word_t whence  ) {
   dword_t res ;
   word_t res_L ;
   word_t res_H ;
@@ -253,7 +253,7 @@ long lseek ( int df, long pos, word_t whence  ) {
   return(res) ;
 }
 
-word_t ioctl ( int df, word_t cmd, word_t arg  ) {
+int ioctl ( int df, word_t cmd, word_t arg  ) {
   int res ;
   asm {
     mov bx,df ;
