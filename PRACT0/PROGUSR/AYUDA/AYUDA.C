@@ -4,30 +4,30 @@
 /*                     programa ayuda para el sistema SO1                  */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
-#include <so1pub.h\carsctrl.h>
+#include <so1pub.h\stdio.h>                               /* printf, getch */
+#include <so1pub.h\carsctrl.h>                                      /* ESC */
 
 void pause ( void )
 {
     int i ;
-    escribirStr(
+	
+    printf(
         "\n"
         " Pulse una tecla para continuar (ESC para salir) ... "
     ) ;
 
-    if (leer(STDIN) == ESC)
+    if (getch() == ESC)
     {
-        escribirLn() ;
+        printf("\n") ;
         exit(0) ;
     }
 
-    for ( i = 0 ; i < 53 ; i++ ) escribirCar('\b') ;
+    for ( i = 0 ; i < 53 ; i++ ) printf("\b") ; 
 }
 
 void ayuda ( void )
 {
-    escribirStr(
+    printf(
         "\n"
         "\n"
         "           comandos internos del shell (SH) de SO1:               \n"
@@ -51,7 +51,7 @@ void ayuda ( void )
 
     pause() ;
 
-    escribirStr(
+    printf(
         "         otros comandos de SO1 (externos):                        \n"
         "\n"
         "   PS     (e) muestra la tabla de procesos de SO1                 \n"
@@ -73,7 +73,7 @@ void ayuda ( void )
 
     pause() ;
 
-    escribirStr(
+    printf(
         "         manejo de la interfaz multiscreen de SO1: \n"
         "\n"
         "   Alt + F1   conmuta a la consola CON1 (SH)                     \n"
@@ -90,7 +90,7 @@ void ayuda ( void )
 
     pause() ;
 
-    escribirStr(
+    printf(
         "         autocompletado de comandos de SO1: \n"
         "\n"
         "   Tab       autocompleta nombres de comandos internos (CLS, .. )\n"

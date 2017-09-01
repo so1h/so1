@@ -14,7 +14,6 @@
 #include <so1pub.h\comundrv.h>       /* segDatos, ptrIndProcesoActual, ... */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>                 /* escribirStr, escribirDec */
-#include <so1pub.h\carsctrl.h>                  /* CR, LF, FF, BS, HT, BEL */
 #include <so1pub.h\caracter.h>                                /* mayuscula */
 #include <so1pub.h\strings.h>                        /* copiarStr, iguales */
 #include <so1pub.h\bios_0.h>            /* printCarBIOS, leerTeclaListaBDA */
@@ -49,6 +48,7 @@ typedef struct
     teclado_t  teclado ;
     byte_t     F ;                       /* fila de la posicion del cursor */
     byte_t     C ;                    /* columna de la posicion del cursor */
+//	byte_t     maxF ;                    /* ultima (mayor) fila modificada */
 } descConsola_t ;
 
 descConsola_t far * descConsola ;
@@ -88,8 +88,13 @@ char sacar ( teclado_t far * teclado  )     /* se supone: teclado.ncar > 0 */
 
 int printCarConsola ( byte_t con, char car )
 {
-    if (con == consolaDeSuperficie)
+    if (con == consolaDeSuperficie) {
         printCarVideo(car) ;
+//		if (car == '\f') 
+//			descConsola[con].maxF = 0 ;
+//	    else if (cursorF > descConsola[con].maxF) 
+//			descConsola[con].maxF = cursorF ; 
+	}
     else
     {
         pantalla_t far * pantalla = (pantalla_t far *)&descConsola[con].pantalla ;
@@ -97,34 +102,37 @@ int printCarConsola ( byte_t con, char car )
         byte_t C = descConsola[con].C ;
         switch (car)
         {
-        case FF  :
+        case '\f'  :
             borrarCPantalla(pantalla, numFilas) ;
             /* borrarPantalla(pantalla, numFilas) ; */
             descConsola[con].F = 0 ;
             descConsola[con].C = 0 ;
+//			descConsola[con].maxF = 0 ;
             break ;
-        case CR  :
+        case '\r'  :
             descConsola[con].C = 0 ;
             break ;
-        case LF  :
+        case '\n'  :
             if (++descConsola[con].F == numFilas)
             {
                 scrollCPantalla(pantalla, numFilas) ;
                 descConsola[con].F = numFilas-1 ;
             }
+//          if (descConsola[con].F > descConsola[con].maxF) 
+//		        descConsola[con].maxF = descConsola[con].F ; 				
             break ;
-        case BS  :
+        case '\b'  :
             if (C > 0)
             {
                 C-- ;
                 pantalla->t[F][C].car = ' ' ;
                 descConsola[con].C = C ;
             }
-            else printCarBIOS(BEL) ;
+            else printCarBIOS('\a') ;
             break ;
-        case HT  :
+        case '\t'  :
             car = ' ' ;
-        case BEL :
+        case '\a' :
             printCarBIOS(car) ;
             break ;
         default  :
@@ -137,6 +145,8 @@ int printCarConsola ( byte_t con, char car )
                     scrollCPantalla(pantalla, numFilas) ;
                     descConsola[con].F = numFilas-1 ;
                 }
+//              if (descConsola[con].F > descConsola[con].maxF) 
+//	    	        descConsola[con].maxF = descConsola[con].F ; 						
             }
         }
     }
@@ -152,12 +162,14 @@ int goToXYConsola ( byte_t con, byte_t F, byte_t C )
         /*    goToXYHw(F, C) ; */
         cursorF = F ;
         cursorC = C ;
-    }
+	}
     else
     {
         descConsola[con].F = F ;
         descConsola[con].C = C ;
     }
+//	if (F > descConsola[con].maxF) 
+//		descConsola[con].maxF = F ;     
 	return(0) ;
 }
 
@@ -229,7 +241,7 @@ int far readConsola ( int dfs, pointer_t dir, word_t nbytes )
 //    car = sacar(teclado) ;
 //    car = tablaSP[sacar(teclado)] ;
             car = tablaDeConversion[sacar(teclado)] ;
-            if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+            if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
             dir[i++] = car ;
             nbytes-- ;
         }
@@ -243,7 +255,7 @@ int far readConsola ( int dfs, pointer_t dir, word_t nbytes )
 //    car = sacar(teclado) ;
 //    car = tablaSP[sacar(teclado)] ;
             car = tablaDeConversion[sacar(teclado)] ;
-            if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+            if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
             dir[i++] = car ;
             nbytes-- ;
         }
@@ -286,7 +298,7 @@ int far aio_readConsola ( int dfs, pointer_t dir, word_t nbytes )
     while (nbARetornar > 0)
     {
         car = sacar(teclado) ;
-        if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+        if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
         dir[i++] = car ;
         nbARetornar-- ;
     }
@@ -371,6 +383,7 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
     byte_t cursorFAux ;
     pantalla_t far * pantallaAux ;
     int numFilasAnt ;
+//	byte_t maxF ; 
 	
     asm push ds
     asm mov ds,DS_Consola
@@ -397,7 +410,7 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
     {
 		if (arg <= 0) res = numFilas ; /* devolvemos el numero de lineas actual */
 		else if ((arg != 25) && (arg != 28) && (arg != 50)) res = -1 ;
-		else if (arg == numFilasAnt) res = 0 ;
+		else if (arg == numFilas) res = 0 ;
         else  
         {
 	     	numFilasAnt = numFilas ;
@@ -408,48 +421,54 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
 //  printDecBIOS(numFilasAnt, 1) ;
 //  printStrBIOS(" cursorF = ") ;
 //  printDecBIOS(cursorF, 1) ;
-#if (TRUE)
-            if (numFilasAnt >= numFilas)
+//          maxF = descConsola[consolaDeSuperficie].maxF ;
+//          if (maxF >= numFilas)
+            if (cursorF >= numFilas)
             {
-                copiarCPantalla((pantalla_t far *)&ptrPant->t[numFilasAnt-numFilas+1][0], ptrPant, numFilas) ;
-//              copiarPantalla((pantalla_t far *)&ptrPant->t[cursorF-numFilas+1][0], ptrPant, numFilas) ;
-//**/           borrarCPantalla((pantalla_t far *)&ptrPant->t[numFilas][0], numFilasAnt) ;
-/**/            borrarCPantalla((pantalla_t far *)&ptrPant->t[numFilas][0], numFilasAnt-numFilas) ;
+//              copiarPantalla((pantalla_t far *)&ptrPant->t[maxF-numFilas+1][0], ptrPant, numFilas) ;
+                copiarCPantalla((pantalla_t far *)&ptrPant->t[cursorF-numFilas+1][0], ptrPant, numFilas) ;
+                borrarCPantalla((pantalla_t far *)&ptrPant->t[numFilas][0], numFilasAnt-numFilas) ;
                 cursorF = numFilas-1 ;
+//				if ((maxF-cursorF+1) <= numFilas)
+//                  cursorF = numFilas-1-(maxF-cursorF) ;
+//              else 				
+//					cursorF = 0 ;
+//              descConsola[consolaDeSuperficie].maxF = numFilas-1 ;
             }
-#endif			
             salvarConsolaDeSuperficie() ;
             redimensionar(numFilas, 80) ;
             numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
             establecerConsolaDeSuperficie() ;
 			res = numFilas ;
-			if (numFilas == arg) { 
+			if (numFilas == arg) 
+			{ 
 			
-#if (FALSE)
-            if (numFilasAnt >= numFilas)
-            {
-                copiarCPantalla((pantalla_t far *)&ptrPant->t[numFilasAnt-numFilas+1][0], ptrPant, numFilas) ;
-//              copiarPantalla((pantalla_t far *)&ptrPant->t[cursorF-numFilas+1][0], ptrPant, numFilas) ;
-//**/           borrarCPantalla((pantalla_t far *)&ptrPant->t[numFilas][0], numFilasAnt) ;
-/**/            borrarCPantalla((pantalla_t far *)&ptrPant->t[numFilas][0], numFilasAnt-numFilas) ;
-                cursorF = numFilas-1 ;
-            }
-#endif			
-            for ( con = 0 ; con < maxConsolas ; con ++ )
-            {
-                if (con != consolaDeSuperficie)
+                for ( con = 0 ; con < maxConsolas ; con ++ )
                 {
-                    cursorFAux = descConsola[con].F ;
-                    if (cursorFAux >= numFilas)
+                    if (con != consolaDeSuperficie)
                     {
-                        pantallaAux = (pantalla_t far *)&descConsola[con].pantalla ;
-                        copiarCPantalla((pantalla_t far *)&pantallaAux->t[cursorFAux-numFilas+1][0], pantallaAux, numFilas) ;
-//                      copiarPantalla((pantalla_t far *)&pantallaAux->t[cursorFAux-numFilas+1][0], pantallaAux, numFilas) ; */
-//**/                   borrarCPantalla((pantalla_t far *)&pantallaAux->t[numFilas][0], numFilasAnt) ;
-                        descConsola[con].F = numFilas-1 ;
+//						maxF = descConsola[con].maxF ;
+                        cursorFAux = descConsola[con].F ;
+//                      if (maxF >= numFilas)
+                        if (cursorFAux >= numFilas)
+                        {
+                            pantallaAux = (pantalla_t far *)&descConsola[con].pantalla ;
+//                          copiarCPantalla((pantalla_t far *)&pantallaAux->t[maxF-numFilas+1][0], pantallaAux, numFilas) ;
+                            copiarCPantalla((pantalla_t far *)&pantallaAux->t[cursorFAux-numFilas+1][0], pantallaAux, numFilas) ;
+                            borrarCPantalla((pantalla_t far *)&pantallaAux->t[numFilas][0], numFilasAnt-numFilas) ;
+                            descConsola[con].F = numFilas-1 ;
+//             				if ((maxF-cursorFAux+1) <= numFilas)
+//                              cursorFAux = numFilas-1-(maxF-cursorFAux) ;
+//                          else 				
+//				            	cursorFAux = 0 ;
+//							descConsola[con].F = cursorFAux ;
+//                          descConsola[con].maxF = numFilas-1 ;
+                        }
                     }
                 }
-            }
+			}
+			else {
+				numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
 			}
         }
 		
@@ -521,7 +540,8 @@ void far isr_consola ( void )
     ptrVIOrg[nVIntConsola]() ;  /* llamamos a la antigua rti (pushf + int) */
 
     nuevaConsola = 0xFF ;
-    numFilasAnt = numFilas ;
+//  numFilasAnt = numFilas ;
+    numFilasAnt = ptrBiosArea->VIDEO_lastrow + 1 ;
 
 #if (FALSE)                               /* trazas por si hay que depurar */
     printCarBIOS('<') ;
@@ -586,64 +606,68 @@ void far isr_consola ( void )
             case 0x1B : ;                                          /* Alt+ */
             case 0x35 : ;                                          /* Alt- */
                 if (scanCode == 0x1B)                              /* Alt+ */
-                    switch(numFilasAnt)
-                    {
-                    case 25 :
-                        numFilas = 28 ;
-                        break ;
-                    case 28 :
-                        numFilas = 50 ;
-                        break ;
-                    case 50 :
-                        numFilas = 25 ;
-                        break ;
-                    default :
-                        break ;
-                    }
+				{
+				    if (numFilasAnt >= 50) numFilas = 25 ; 
+                    else if (numFilasAnt >= 28) numFilas = 50 ;
+                    else numFilas = 28 ;
+				}
                 else                                               /* Alt- */
-                    switch(numFilasAnt)
-                    {
-                    case 25 :
-                        numFilas = 50 ;
-                        break ;
-                    case 28 :
-                        numFilas = 25 ;
-                        break ;
-                    case 50 :
-                        numFilas = 28 ;
-                        break ;
-                    default :
-                        break ;
-                    }
-                if (numFilas != numFilasAnt)
-                {
+				{
+					if (numFilasAnt >= 50) numFilas = 28 ;
+                    else if (numFilasAnt >= 28) numFilas = 25 ;
+                    else numFilas = 50 ;
+				}
+////            if (numFilas != numFilasAnt)
+////            {
                     if (cursorF >= numFilas)
                     {
                         copiarCPantalla((pantalla_t far *)&ptrPant->t[cursorF-numFilas+1][0], ptrPant, numFilas) ;
+                        borrarCPantalla((pantalla_t far *)&ptrPant->t[numFilas][0], numFilasAnt-numFilas) ;
 //                      copiarPantalla((pantalla_t far *)&ptrPant->t[cursorF-numFilas+1][0], ptrPant, numFilas) ;
-//**/                   borrarCPantalla((pantalla_t far *)&ptrPant->t[numFilas][0], numFilasAnt) ;
                         cursorF = numFilas-1 ;
                     }
                     salvarConsolaDeSuperficie() ;
                     redimensionar(numFilas, 80) ;
-                    numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
-                    establecerConsolaDeSuperficie() ;
-                    for ( con = 0 ; con < maxConsolas ; con ++ )
-                    {
-                        if (con != consolaDeSuperficie)
+#define MSDOS_Player 1					
+#ifdef MSDOS_Player       
+                    goToXYHw(24, 79) ;      					
+                    goToXYHw(cursorF, cursorC) ;   /* necesario para MSDOS Player (Takeda) ??? */
+#endif
+                    if (numFilas == ptrBiosArea->VIDEO_lastrow + 1)
+					{
+                        numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
+						establecerConsolaDeSuperficie() ;
+                        for ( con = 0 ; con < maxConsolas ; con ++ )
                         {
-                            cursorFAux = descConsola[con].F ;
-                            if (cursorFAux >= numFilas)
+                            if (con != consolaDeSuperficie)
                             {
-                                pantallaAux = (pantalla_t far *)&descConsola[con].pantalla ;
-                                copiarCPantalla((pantalla_t far *)&pantallaAux->t[cursorFAux-numFilas+1][0], pantallaAux, numFilas) ;
-//                              copiarPantalla((pantalla_t far *)&pantallaAux->t[cursorFAux-numFilas+1][0], pantallaAux, numFilas) ; */
-//**/                           borrarCPantalla((pantalla_t far *)&pantallaAux->t[numFilas][0], numFilasAnt) ;
-                                descConsola[con].F = numFilas-1 ;
+                                cursorFAux = descConsola[con].F ;
+                                if (cursorFAux >= numFilas)
+                                {
+                                    pantallaAux = (pantalla_t far *)&descConsola[con].pantalla ;
+                                    copiarCPantalla((pantalla_t far *)&pantallaAux->t[cursorFAux-numFilas+1][0], pantallaAux, numFilas) ;
+                                    borrarCPantalla((pantalla_t far *)&pantallaAux->t[numFilas][0], numFilasAnt-numFilas) ;
+                                    descConsola[con].F = numFilas-1 ;
+                                }
                             }
                         }
-                    }
-                }
+					}
+					else {
+/*						
+						printStrBIOS(
+						    "\n"
+							"                                               \n"
+							" Could not resize                              \n"
+							"                                               \n"
+							" ptrBiosArea->VIDEO_lastrow+1 == ") ;
+						printDecBIOS(ptrBiosArea->VIDEO_lastrow+1, 2) ;
+						printStrBIOS(                                " !!!! \n"
+							"                                               \n"
+						) ;						
+*/
+						numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
+					}
+////            }
                 break ;
             default :
                 ;
@@ -693,7 +717,7 @@ void far isr_consola ( void )
             nbytes = nbytesProceso[pindx] ;
             dir = dirProceso[pindx] ;
             nbytes-- ;
-            if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+            if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
             dir[0] = car ;                                          /* car */
             dir++ ;
             if (extendido)
@@ -979,9 +1003,13 @@ int integrarConsola ( byte_t numConsolas, bool_t conMensajes )
 
     inicCrtHw() ;
 
-	if (*((word_t far *)0xF000FFFB) == 0x3630)    /* anio fecha BIOS msdos */ /* Takeda */
-        inicBiosCrt(24, 80, TRUE) ;           /* se fuerza redimensionable */
-    else 
+//	if (*((word_t far *)0xF000FFFB) == 0x3630)    /* anio fecha BIOS msdos */ /* Takeda */
+	if (*((word_t far *)0xF000FFFB) == 0x3239)    /* anio fecha BIOS msdos */ /* Takeda */
+//      inicBiosCrt(24, 80, TRUE) ;           /* se fuerza redimensionable */
+    {
+        inicBiosCrt(ptrBiosArea->VIDEO_lastrow + 1, 80, TRUE) ; /* se fuerza redimensionable */
+    }
+	else 
 		inicBiosCrt(50, 80, FALSE) ;       /* no se fuerza redimensionable */
 
     establecerTablaDeConversion() ;                       /* teclado US/SP */
@@ -1300,7 +1328,7 @@ void main ( int argc, char * argv [ ] )
                     escribirStr(" no abrirse CON0") ;
                     exit(-1) ;
                 }
-                if (ioctl(dfCon, 0x0003, num) != 0)
+                if (ioctl(dfCon, 0x0003, num) == -1)
                 {
                     escribirStr(" numero de consola erroneo (") ;
                     escribirDec(num, 1) ;

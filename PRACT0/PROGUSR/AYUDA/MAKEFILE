@@ -14,6 +14,7 @@ $(PROGRAMA).obj,                 \
 ..\..\so1pub\obj\tipos.obj,      \
 ..\..\so1pub\obj\put.obj,        \
 ..\..\so1pub\obj\escribir.obj,   \
+..\..\so1pub\obj\stdio.obj,      \
 ..\..\so1pub\obj\scanner.obj,    \
 ..\..\so1pub\obj\strings.obj,    \
 ..\..\crtl\obj\h_ldiv.obj,       \

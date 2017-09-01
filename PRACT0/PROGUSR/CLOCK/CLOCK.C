@@ -5,23 +5,21 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
-#include <so1pub.h\carsctrl.h>                                       /* FF */
 #include <so1pub.h\caracter.h>                           /* dig, mayuscula */
 #include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\stdio.h>                               /* printf, getch */
+#include <so1pub.h\escribir.h>                              /* escribirDec */
 
 int dfReloj ;
 
 void formato ( void )
 {
-    escribirStr(
-        " formato: CLOCK [ -n | -b | -h ] "
-    ) ;
+    printf(" formato: CLOCK [ -n | -b | -h ] ") ;
 }
 
 void help ( void )
 {
-    escribirStr(
+    printf(
         "\n"
         "\n"
         " formato : CLOCK [ -n | -b | -h ]         \n"
@@ -41,7 +39,8 @@ void help ( void )
 void borrarCentrar ( word_t tamWin )
 {
 //  word_t lineas, columnas ;
-    escribirCar(FF) ;
+//  escribirCar(FF) ;
+    printf("\f") ;
 //  lineas = tamWin & 0x00FF ;
 //  columnas = tamWin >> 8 ;
 //  gotoXYWindow((columnas - 8)/2, lineas/2) ;
@@ -51,13 +50,13 @@ void borrarCentrar ( word_t tamWin )
 
 void escribirHora ( word_t horas, word_t minutos, word_t segundos )
 {
-    if (horas <= 9) escribirCar('0') ;
+    if (horas <= 9) printf("0") ;
     escribirDec(horas, 1) ;
-    escribirCar(':') ;
-    if (minutos <= 9) escribirCar('0') ;
+    printf(":") ;
+    if (minutos <= 9) printf("0") ;
     escribirDec(minutos, 1) ;
-    escribirCar(':') ;
-    if (segundos <= 9) escribirCar('0') ;
+    printf(":") ;
+    if (segundos <= 9) printf("0") ;
     escribirDec(segundos, 1) ;
 }
 
@@ -86,7 +85,7 @@ void main ( int argc, char * argv [ ] )
 
     if (dfTimer < 0)
     {
-        escribirStr(" recurso TIMER no disponible ") ;
+        printf(" recurso TIMER no disponible ") ;
         exit(-1) ;
     }
 
@@ -94,7 +93,7 @@ void main ( int argc, char * argv [ ] )
 
     if (dfReloj < 0)
     {
-        escribirStr(" recurso RELOJ no disponible ") ;
+        printf(" recurso RELOJ no disponible ") ;
         exit(-1) ;
     }
 
@@ -122,7 +121,7 @@ void main ( int argc, char * argv [ ] )
 
 //  ocultarCursor(TRUE) ;
 
-    escribirStr(" ") ;
+    printf(" ") ;
 
     leerHora((word_t *)&horas, (word_t *)&minutos, (word_t *)&segundos) ;
     escribirHora(horas, minutos, segundos) ;
@@ -151,7 +150,7 @@ void main ( int argc, char * argv [ ] )
         }
         if ((segundos != s_ant) || (minutos != m_ant) || (horas != h_ant))
         {
-            escribirStr("\b\b\b\b\b\b\b\b") ;
+            printf("\b\b\b\b\b\b\b\b") ;
             escribirHora(horas, minutos, segundos) ;
         }
     }

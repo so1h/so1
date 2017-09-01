@@ -121,7 +121,7 @@ void interpretar_salida ( simb_t simbolo ) {
 
 void interpretar_ver ( void ) {
   obtenStr() ;
-  escribirStr("\n\n SO1 [Version 1.4 (07-09-2015)] ") ;
+  escribirStr("\n\n SO1 [Version 1.7 (07-09-2017)] ") ;
   if ((str[0] == '-') && (str[1] == 'C') && (str[2] == (char)0)) {
     escribirStr("\n\n Compilacion: __TURBOC__ == 0x") ;
     escribirHex(__TURBOC__, 4) ;

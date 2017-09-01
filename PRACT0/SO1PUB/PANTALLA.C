@@ -4,6 +4,7 @@
 /*                                                                         */
 /* ----------------------------------------------------------------------- */
 
+#include <so1pub.h\def_pant.h>                  /* pantalla_t, maxColumnas */
 #include <so1pub.h\pantalla.h>
 
 word_t tamPantalla ( byte_t numFilas ) {

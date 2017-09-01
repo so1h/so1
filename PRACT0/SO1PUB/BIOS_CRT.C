@@ -58,7 +58,8 @@ void inicBiosCrt ( int filas, int columnas, bool_t redim ) {
 
   redimensionable = TRUE ;               /* ¡deberia ser TRUE y no lo era! */
 
-  redimensionar(filas, columnas) ;
+  if (ptrBiosArea->VIDEO_lastrow + 1 != filas)
+	  redimensionar(filas, columnas) ;
 //redimensionar(50, 80) ;
 //redimensionar(25, 80) ;
   /* redimensionar(25, 80) ; */ /* setFontSize(_FONT16) ; */
@@ -312,7 +313,7 @@ void setFontSize ( fontSize_t size ) {
   case _MDS_GENIUS : break;
   case _EGACOLOR   :
   case _EGAMONO    :
-    if (redimensionable && (fontSize != size)) {
+    if (redimensionable /* && (fontSize != size) */) {
       switch (size) {
       case _FONT08:
         asm mov ax,1112h ;
@@ -328,7 +329,7 @@ void setFontSize ( fontSize_t size ) {
     break;
   case _VGACOLOR:
   case _VGAMONO:
-    if (redimensionable && (fontSize != size)) {
+    if (redimensionable /* && (fontSize != size) */) {
       switch (size) {
       case _FONT08:
         asm mov ax,1112h ;
@@ -383,7 +384,8 @@ void redimensionar ( byte_t nFilas, byte_t nCols ) {
       if (nFilas > 25)
         setFontSize(_FONT14) ;
       else
-        set25x80() ;
+        setFontSize(_FONT16) ;
+//      set25x80() ;
   }
 /*  PDC_set_blink(COLORS == 8); */
 }

@@ -14,6 +14,10 @@ void main ( void )
 	byte_t F, C ; 
     escribirStr("\n\n Programa que muestra el uso de lseek para situar el cursor ") ;
     getch() ;
+    escribirStr("\n escribirCursor(40, 20) ") ;
+    escribirCursor(40, 20) ;
+	escribirCar('\xFE') ;
+    getch() ;
     escribirStr("\n escribirCursor(10, 20) ") ;
     escribirCursor(10, 20) ;
 	escribirCar('\xFE') ;

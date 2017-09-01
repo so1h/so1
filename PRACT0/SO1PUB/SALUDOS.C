@@ -11,30 +11,31 @@
 #include <so1pub.h\escribir.h>
 #include <so1pub.h\saludos.h>
 #include <so1pub.h\strings.h>
+#include <so1pub.h\stdio.h>
 
 void printStrRojo ( char * str ) {
-/*setColorWindow(rojoClaro, azul, especial, especial) ; */
-  escribirStr(str) ;
-/*setColorWindow(grisClaro, azul, especial, especial) ; */
+//* setColorWindow(rojoClaro, azul, especial, especial) ; */
+    printf(str) ;
+//* escribirStr(str) ; */
+//* setColorWindow(grisClaro, azul, especial, especial) ; */
 }
 
 void mostrarSaludoGrande ( void ) {
-/*ponerEnIntenso(TRUE) ; */
-  escribirStr(" ‹‹‹‹ ‹‹‹‹ ‹ ") ; escribirLn() ;
-  escribirStr(" €  ﬂ €  € € ") ; /* ponerEnIntenso(FALSE) ; printStrRojo(" CT31") */ ; escribirStr(" v1.4") ; /* ponerEnIntenso(TRUE) */ ; escribirLn() ;
-  escribirStr(" ﬂﬂﬂ€ €  € € ") ; escribirLn() ;
-  escribirStr(" €‹‹€ €‹‹€ € ") ; /* ponerEnIntenso(FALSE) ; */
-  escribirStr(" 07-09-2015") ;
+//* ponerEnIntenso(TRUE) ; */
+    printf(
+        " ‹‹‹‹ ‹‹‹‹ ‹ \n"
+        " €  ﬂ €  € €  v1.7 \n" /* ponerEnIntenso(FALSE) ; printStrRojo(" CT31") ; ponerEnIntenso(TRUE) */ 
+        " ﬂﬂﬂ€ €  € € \n"
+        " €‹‹€ €‹‹€ €  07-09-2017 " /* ponerEnIntenso(FALSE) ; */
+	) ;
 }
 
 void mostrarSaludo ( void ) {
-/*ponerEnIntenso(TRUE) ; */
-  escribirStr(" ‹‹‹ ‹‹‹ ‹ ") ; escribirLn() ;
-  escribirStr(" €‹‹ € € € ") ; escribirLn() ;
-  escribirStr(" ‹‹€ €‹€ € ") ;
-/*ponerEnIntenso(FALSE) ; */
-  escribirStr("v1.4") ;
-  escribirLn() ;
-
+//* ponerEnIntenso(TRUE) ; */
+    printf(
+        " ‹‹‹ ‹‹‹ ‹ \n"
+        " €‹‹ € € € \n"
+        " ‹‹€ €‹€ € v1.7 \n" /* ponerEnIntenso(FALSE) ; */
+	) ;
 }
 

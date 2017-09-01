@@ -15,6 +15,7 @@ $(PROGRAMA).obj,                 \
 ..\..\so1pub\obj\nop.obj,        \
 ..\..\so1pub\obj\put.obj,        \
 ..\..\so1pub\obj\escribir.obj,   \
+..\..\so1pub\obj\stdio.obj,      \
 ..\..\so1pub\obj\strings.obj,    \
 ..\..\so1pub\obj\cmos.obj,       \
 ..\..\so1pub\obj\puertos.obj,    \
