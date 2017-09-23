@@ -197,14 +197,29 @@ delsrc:
 run: 
   @echo.
   cd ..\disquete
-  if %MSYSTEM%==MINGW64 ($(PROGRAMA).exe)
-  if NOT %MSYSTEM%==MINGW64 ($(PROGRAMA).exe)  
+  @copy &&|
+@mode con cols=80 lines=25
+@so1.exe
+@exit
+| so1.cmd > nul
+  @if %MSYSTEM%==MINGW64 (echo --------start so1.cmd & start so1.cmd)
+  @if NOT %MSYSTEM%==MINGW64 (echo --------so1.cmd & so1.cmd)
+# @if %MSYSTEM%==MINGW64 ($(PROGRAMA).exe)
+# @if NOT %MSYSTEM%==MINGW64 ($(PROGRAMA).exe)  
   
 runcom: 
   @echo.
   cd ..\disquete
-  if %MSYSTEM%==MINGW64 (msdos ..\so1\$(PROGRAMA).com)
-  if NOT %MSYSTEM%==MINGW64 (msdos ..\so1\$(PROGRAMA).com)  
+  @copy /Y ..\so1\so1.com so1.com
+  @copy &&|
+@mode con cols=80 lines=25
+@msdos so1.com
+@exit
+| so1.bat > nul
+  @if %MSYSTEM%==MINGW64 (echo --------start so1.bat & start so1.bat)
+  @if NOT %MSYSTEM%==MINGW64 (echo --------so1.bat & so1.bat)
+# @if %MSYSTEM%==MINGW64 (msdos ..\so1\$(PROGRAMA).com)
+# @if NOT %MSYSTEM%==MINGW64 (msdos ..\so1\$(PROGRAMA).com)  
   
 rundosbox: 
   @echo.
