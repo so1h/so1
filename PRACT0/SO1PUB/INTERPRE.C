@@ -6,7 +6,7 @@
 
 #include <so1pub.h\carsctrl.h>                                      /* ESC */
 #include <so1pub.h\caracter.h>                                /* mayuscula */
-#include <so1pub.h\scanner.h>               /* tamComando, car, simb, num, */
+#include <so1pub.h\scanner.h>           /* tamComando, car, simb, num, str */
                                 /* saltarBlancos, obtenSimb, obtenCar, ... */
 #include <so1pub.h\leercmd.h>                               /* leerComando */
 #include <so1pub.h\ll_s_so1.h>                           /* STDIN, STDOUT, */
@@ -207,33 +207,43 @@ void listarDirectorio ( byte_t unidadLogica, char opcion ) ;
 void listarDirectorioHost ( char * camino, char opcion ) ;
 
 void interpretar_dir ( bool_t host, int unidadLogica ) {
-  char camino [ tamComando ] ;
-  if (!host) {
+  char camino [ tamComando ] ; 
+  bool_t esCmdDir = (mayuscula(str[0]) == 'D') ;
+//escribirStr(" ** str = \"") ; escribirStr(str) ; escribirStr("\"") ;
+  if (!host) {                                        /* (dir|ls) [/W|-l] */ 
     obtenStr() ;
-    if ((str[0] == '/') &&
-        (mayuscula(str[1]) == 'W') &&
-        (str[2] == (char)0))
+	if (esCmdDir && (str[0] == '/') && (mayuscula(str[1]) == 'W') && (str[2] == (char)0))
       listarDirectorio(unidadLogica, 'W') ;
-    else
+    else if (!esCmdDir && (str[0] == '-') && (mayuscula(str[1]) == 'L') && (str[2] == (char)0))
       listarDirectorio(unidadLogica, ' ') ;
+    else {
+	  if (esCmdDir) 
+        listarDirectorio(unidadLogica, ' ') ;
+      else 
+        listarDirectorio(unidadLogica, 'W') ; 
+	}
   }
-  else {
+  else {                             /* (dir|ls) [camino] [/w|-l] [camino] */
     obtenStr() ;
     copiarStr(str, camino) ;
-    if ((str[0] == '/') &&
-        (mayuscula(str[1]) == 'W') &&
-        (str[2] == (char)0)) {
-      obtenStr() ;
-      listarDirectorioHost(str, 'W') ;
-    }
+	if (esCmdDir && (str[0] == '/') && (mayuscula(str[1]) == 'W') && (str[2] == (char)0)) {
+	  obtenStr() ;
+      listarDirectorioHost((char *)str, 'W') ;
+	}
+    else if (!esCmdDir && (str[0] == '-') && (mayuscula(str[1]) == 'L') && (str[2] == (char)0)) {
+	  obtenStr() ;
+      listarDirectorioHost((char *)str, ' ') ;
+	}
     else {
-      obtenStr() ;
-      if ((str[0] == '/') &&
-          (mayuscula(str[1]) == 'W') &&
-          (str[2] == (char)0))
-        listarDirectorioHost((char *)camino, 'W') ;
+	  obtenStr() ;
+	  if (esCmdDir) {
+	    if ((str[0] == '/') && (mayuscula(str[1]) == 'W') && (str[2] == (char)0)) 
+          listarDirectorioHost((char *)camino, 'W') ;
+	    else 
+          listarDirectorioHost((char *)camino, ' ') ;
+	  }
       else
-        listarDirectorioHost((char *)camino, ' ') ;
+        listarDirectorioHost((char *)camino, 'W') ;
     }
   }
 }
@@ -535,6 +545,7 @@ int interpretarComandos ( void ) {
     else if (car == ':') simb = s_nohost ;                    /* comando : */
     else if (('A' <= car) && (car <= 'Z')) {
       identificador() ;
+//    escribirStr("\n str = \"") ; escribirStr(str) ; escribirStr("\"\n") ;	  
       if ((simb == s_ident) &&
           (str[1] == (char)0) && (car == ':')) {             /* comando X: */
         unidad0 = str[0] - 'A' ;

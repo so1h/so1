@@ -509,6 +509,7 @@ byte_t keyStroke = 0x00 ;   /* extended ASCII keystroque (INT 16H Fn 0x00) */
 byte_t scanCode = 0x00 ;
 byte_t scanCodeAnt = 0x00 ;
 byte_t AltPulsada = FALSE ;
+byte_t CtrlPulsada = FALSE ;
 
 void far isr_consola ( void )
 {
@@ -552,7 +553,13 @@ void far isr_consola ( void )
 
     if (scanCodeAnt == CS_Alt) AltPulsada = TRUE ;
     else if (scanCodeAnt == (CS_Alt | 0x80)) AltPulsada = FALSE ;
+    
+	if (scanCodeAnt == CS_Ctrl) CtrlPulsada = TRUE ;
+    else if (scanCodeAnt == (CS_Ctrl | 0x80)) CtrlPulsada = FALSE ;
 
+	if ((CtrlPulsada) && (scanCode == 0x26))                     /* Ctrl+L */
+	    cambiarTeclaListaBDA((teclaListaBDA() & 0xFF00) | '\f') ; 
+	
     if (AltPulsada)
     {
 

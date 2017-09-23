@@ -338,6 +338,11 @@ void leerComando ( bool_t autoCompletado, bool_t enmascarado ) {
 //      i = autocompletarCExt(i) ;
       }
     }
+    else if (car == '\f') {         /* '\f' (formfeed ==> borrar pantalla) */
+	  escribirCar(car) ; 
+      car = '\r' ;                                     /* retorno de carro */
+      break ;
+    }
     else {              /* introducir el caracter car en comando[inCmd][i] */
 
       if (i < (tamComando-1)) {

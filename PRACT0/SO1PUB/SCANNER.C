@@ -31,6 +31,7 @@ char str [ tamComando ] ;                           /* ultimo string leido */
 regSimbCmd_t simbCmd [ ] = {         /* tabla de símbolos de los comandos */
   { "CD"       , 2, s_cd     },
   { "ID"       , 2, s_id     },
+  { "LS"       , 2, s_dir    },
   { "SU"       , 2, s_su     },
   { "CLS"      , 3, s_cls    },
   { "DIR"      , 3, s_dir    },
@@ -43,6 +44,7 @@ regSimbCmd_t simbCmd [ ] = {         /* tabla de símbolos de los comandos */
   { "HOST"     , 4, s_host   },
   { "PTOS"     , 4, s_ptos   },
   { "TYPE"     , 4, s_type   },
+  { "CLEAR"    , 5, s_cls    },
   { "TRAZA"    , 5, s_traza  },
   { "NOHOST"   , 6, s_nohost },
   { "STATUS"   , 6, s_status },
@@ -168,6 +170,10 @@ void identificador ( void ) {          /* analizar siguiente identificador */
                       &cmdEnMayusculas[pos0],
                       simbCmd[i].largo))) {
       simb = simbCmd[i].simb ;
+      j = 0 ;
+      for ( i = pos0 ; i < pos-1 ; i++ )
+        str[j++] = mayuscula(comando[inCmd][i]) ;
+      str[j] = (char)0 ;
       return ;
     }
   }

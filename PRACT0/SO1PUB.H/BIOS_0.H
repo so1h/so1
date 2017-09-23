@@ -57,6 +57,7 @@ word_t leerTeclaListaBDA ( void ) ;
 
 word_t teclaListaBDA ( void ) ;
 
+void cambiarTeclaListaBDA ( word_t w ) ;
 
 int printCarBIOS ( char car ) ;
 

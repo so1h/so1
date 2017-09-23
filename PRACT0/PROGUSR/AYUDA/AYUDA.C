@@ -4,6 +4,7 @@
 /*                     programa ayuda para el sistema SO1                  */
 /* ----------------------------------------------------------------------- */
 
+#include <so1pub.h\ll_s_so1.h>                                     /* exit */
 #include <so1pub.h\stdio.h>                               /* printf, getch */
 #include <so1pub.h\carsctrl.h>                                      /* ESC */
 
@@ -30,23 +31,23 @@ void ayuda ( void )
     printf(
         "\n"
         "\n"
-        "           comandos internos del shell (SH) de SO1:               \n"
+        "           comandos internos del shell (SH) de SO1:                \n"
         "\n"
-        "   !        (i) repite el comando anterior                        \n"
-        "   ID       (i) muestra el usuario y el pid de su sesion SH       \n"
-        "   SU       (i) se pasa a superusuario (root) uid = 0 gid = 0     \n"
-        "   DIR      (i) muestra el directorio de la unidad de arranque    \n"
-        "   CLS      (i) borra la pantalla                                 \n"
-        "   RET      (i) muestra/establece el retardo activo de SO1        \n"
-        "   VER      (i) muestra la version del sistema SO1 (VER [-c])     \n"
-        "   EXIT     (i) fin del interprete de comandos (shell)            \n"
-        "   PTOS     (i) escribe puntos hasta presionar una tecla          \n"
-        "   CTTY     (i) permite cambiar la consola del interprete         \n"
-        "   TYPE     (i) escribe por la salida estandar un fichero         \n"
-        "   HALT     (i) detencion y salida del sistema SO1                \n"
-        "   STATUS   (i) deja ver el estado de terminacion de los comandos \n"
-        "   REBOOT   (i) detencion y salida del sistema SO1                \n"
-        "   SHUTDOWN (i) detencion y salida del sistema SO1                \n"
+        "   !         (i) repite el comando anterior                        \n"
+        "   ID        (i) muestra el usuario y el pid de su sesion SH       \n"
+        "   SU        (i) se pasa a superusuario (root) uid = 0 gid = 0     \n"
+        "   DIR/LS    (i) muestra el directorio de la unidad de arranque    \n"
+        "   CLS/CLEAR (i) borra la pantalla                                 \n"
+        "   RET       (i) muestra/establece el retardo activo de SO1        \n"
+        "   VER       (i) muestra la version del sistema SO1 (VER [-c])     \n"
+        "   EXIT      (i) fin del interprete de comandos (shell)            \n"
+        "   PTOS      (i) escribe puntos hasta presionar una tecla          \n"
+        "   CTTY      (i) permite cambiar la consola del interprete         \n"
+        "   TYPE      (i) escribe por la salida estandar un fichero         \n"
+        "   HALT      (i) detencion y salida del sistema SO1                \n"
+        "   STATUS    (i) deja ver el estado de terminacion de los comandos \n"
+        "   REBOOT    (i) detencion y salida del sistema SO1                \n"
+        "   SHUTDOWN  (i) detencion y salida del sistema SO1                \n"
     ) ;
 
     pause() ;
@@ -95,6 +96,11 @@ void ayuda ( void )
         "\n"
         "   Tab       autocompleta nombres de comandos internos (CLS, .. )\n"
         "   May + Tab autocompleta nombres de comandos externos (DFS, .. )\n"
+		"\n"
+        "         otros: \n"
+        "\n"
+        "   Ctrl + L  borra la pantalla de la consola actual              \n"
+        "   Esc       borra la linea de comando actual                    \n"
     ) ;
 }
 

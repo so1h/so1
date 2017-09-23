@@ -142,6 +142,15 @@ word_t teclaListaBDA ( void ) {
   return(w) ;
 }
 
+void cambiarTeclaListaBDA ( word_t w ) {
+  word_t start = ptrBiosArea->KBD_start ;
+  word_t out = ptrBiosArea->KBD_bufhead ;
+  word_t in = ptrBiosArea->KBD_buftail ;
+  if (out != in)
+    /* w = *((word_t far *)pointer(0x040, out)) ; */
+    ptrBiosArea->KBD_buffer[(out-start)/2] = w ;
+}	
+
 /* Timer */
 
 void esperarTicsBIOS ( word_t tics ) {

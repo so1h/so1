@@ -90,13 +90,13 @@ shell:
 
 run:
   cd disquete
-  if %MSYSTEM%==MINGW64 (start so1.exe)
-  if NOT %MSYSTEM%==MINGW64 (so1.exe)
+  @if %MSYSTEM%==MINGW64 (echo --------start so1.exe & start so1.exe)
+  @if NOT %MSYSTEM%==MINGW64 (echo --------so1.exe & so1.exe)
 
 runcom:
   cd disquete
-  if %MSYSTEM%==MINGW64 (start msdos ..\so1\so1.com)
-  if NOT %MSYSTEM%==MINGW64 (msdos ..\so1\so1.com)
+  @if %MSYSTEM%==MINGW64 (echo --------start msdos ..\so1\so1.com & start msdos ..\so1\so1.com)
+  @if NOT %MSYSTEM%==MINGW64 (echo --------msdos ..\so1\so1.com & msdos ..\so1\so1.com)
 
 rundosbox:
 # cd disquete

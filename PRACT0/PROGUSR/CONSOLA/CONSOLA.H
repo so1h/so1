@@ -50,7 +50,7 @@
 #define CS_CorIz  0x1A /* [ {         */
 #define CS_CorDe  0x1B /* ] }         */
 #define CS_Enter  0x1C /* Enter       */
-#define CS_Crtl   0x1D /* Crtl        */
+#define CS_Ctrl   0x1D /* Ctrl        */
 #define CS_A      0x1E /* A           */
 #define CS_S      0x1F /* S           */
 #define CS_D      0x20 /* D           */
