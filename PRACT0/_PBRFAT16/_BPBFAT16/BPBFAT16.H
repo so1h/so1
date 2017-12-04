@@ -26,11 +26,13 @@ void startBPB ( void ) ;                               /* comienzo del BPB */
 #define C_sectoresReservados 1            /* sectores reservados           */
 #define C_numeroDeFATs       2            /* numero de FATs                */
 #define C_entradasDirRaiz    512          /* entradas del directorio raiz  */
-#define C_sectores16         65473        /* n. de sectores en total (16b) */
+#define C_sectores16         65457        /* n. de sectores en total (16b) */
+//#define C_sectores16       65473        /* n. de sectores en total (16b) */
 #define C_tipoDeMedio        0xF8         /* descriptor de medio           */
 #define C_sectoresPorFAT     254          /* sectores pot FAT              */
 #define C_sectoresPorPista   63           /* sectores por pista            */
-#define C_cabezas            255          /* cabezas                       */
+#define C_cabezas            16           /* cabezas                       */
+//#define C_cabezas          255          /* cabezas                       */
 #define C_primerSector       63           /* primer sector de la particion */
 #define C_sectores           0x00000000   /* n. de sectores en total (32)  */
 #define C_unidad             0x80         /* unidad (0 -> A:, 0x80 -> C:)  */
