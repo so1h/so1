@@ -1,45 +1,16 @@
 /* ----------------------------------------------------------------------- */
-/*                                  cola.c                                 */
+/*                                   c2c.c                                 */
 /* ----------------------------------------------------------------------- */
-/*                                                                         */
+/*              comando que muestra todas las colas c2c de SO1             */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
+#include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 
 #include <so1pub.h\strings.h>                                   /* iguales */
-#include <so1pub.h\scanner.h>
+#include <so1pub.h\scanner.h>                    /* inicScanner, obtenSimb */
 
 #include <so1pub.h\ptrc2c.h>                                   /* ptrC2c_t */
-
-#define eS(str)                                                              \
-  escribirStr(str)
-
-#define eSH(str, ancho, bool)                                                \
-  escribirStrHasta(str, ancho, bool)
-
-#define eH(num, ancho)                                                       \
-  escribirHex(num, ancho)
-
-#define eLH(num, ancho)                                                      \
-  escribirLHex(num, ancho)
-
-#define eD(num, ancho)                                                       \
-  escribirDec(num, ancho)
-
-#define eLD(num, ancho)                                                      \
-  escribirLDec(num, ancho)
-
-#define eI(num, ancho)                                                       \
-  escribirInt(num, ancho)
-
-#define ePtr(ptr)                                                            \
-  escribirPtr(ptr)
-
-#define eC(pindx)                                                            \
-  eS("\n descProceso[") ;                                                    \
-  eD(pindx, 1) ;                                                             \
-  eS("].") ;
 
 descProceso_t descProceso [ maxProcesos ] ;
 
@@ -71,176 +42,131 @@ ptrC2c_t ptrC2c [ 11 ] ;
 void ePC2c ( ptrC2c_t ptrC2c, char opcion)
 {
     int i, j ;
-    int numElem = ptrC2c->numElem ;
-    int primero = ptrC2c->primero ;
-    int cabecera = ptrC2c->cabecera ;
+
     if (opcion == 'e')
+		printf("%2i %2i %2i ", ptrC2c->numElem, ptrC2c->primero, ptrC2c->cabecera) ; 
+	
+    printf("[ ") ;
+    i = ptrC2c->primero ;
+    for ( j = 0 ; j < ptrC2c->numElem ; j++ )
     {
-        eI(numElem,2 ) ;
-        eS(" ") ;
-        eI(primero,2 ) ;
-        eS(" ") ;
-        eI(cabecera,2 ) ;
-        eS(" ") ;
-    }
-    eS("[ ") ;
-    i = primero ;
-    for ( j = 0 ; j < numElem ; j++ )
-    {
-        eI(i, 1) ;
+		printf("%i ", i) ; 
         /* eD(descProceso[i].pid, 1) ; */
-        escribirCar(' ') ;
         i = ptrC2c->e[i].sig ;
     }
-    eS("] ") ;
+    printf("] ") ;
 }
 
 void formato ( void )
 {
-//  escribirStrIntenso(" formato: COLA [ num | -n | -e | -h ] ") ; */
-    escribirStr(" formato: COLA [ num | -n | -e | -h ] ") ;
+    printf(" formato: COLA [ num | -n | -e | -h ] ") ;
 }
 
 void help ( void )
 {
-    escribirStr(
-        "\n"
-        "\n"
-        " formato : COLA [ num | -n | -e | -h ]                            \n"
-        "      -n : muestra todas las colas sin mas detalles               \n"
-        "      -e : muestra ademas numElen, primero y cabecera             \n"
-        "      -h : muestra este help                                      \n"
-        "     num : muestra en detalle la cola con ese numero            \n\n"
-        "       0 : DPLibres    : cola de descriptores de proceso libres   \n"
-        "       1 : DPOcupados  : cola de descriptores de proceso ocupados \n"
-        "       2 : DFLibres    : cola de descriptores de fichero libres   \n"
-        "       3 : DFOcupados  : cola de descriptores de fichero ocupados \n"
-        "       4 : DRLibres    : cola de descriptores de recurso libres   \n"
-        "       5 : DROcupados  : cola de descriptores de recurso ocupados \n"
-        "       6 : PPreparados : cola de procesos preparados              \n"
-        "       7 : PUrgentes   : cola de procesos urgentes                \n"
-        "       8 : POrdenados  : cola de procesos ordenados por direccion \n"
-        "       9 : c2cHijos    : cola de procesos hijos de un proceso     \n"
-        "      10 : c2cFichRec  : cola de ficheros de un recurso           \n"
-        "\n"
+    printf(
+        ""                                                                  "\n"
+        ""                                                                  "\n"
+        " formato : COLA [ num | -n | -e | -h ]"                            "\n"
+        "      -n : muestra todas las colas sin mas detalles"               "\n"
+        "      -e : muestra ademas numElen, primero y cabecera"             "\n"
+        "      -h : muestra este help"                                      "\n"
+        "     num : muestra en detalle la cola con ese numero"              "\n"
+		""                                                                  "\n"
+        "       0 : DPLibres    : cola de descriptores de proceso libres"   "\n"
+        "       1 : DPOcupados  : cola de descriptores de proceso ocupados" "\n"
+        "       2 : DFLibres    : cola de descriptores de fichero libres"   "\n"
+        "       3 : DFOcupados  : cola de descriptores de fichero ocupados" "\n"
+        "       4 : DRLibres    : cola de descriptores de recurso libres"   "\n"
+        "       5 : DROcupados  : cola de descriptores de recurso ocupados" "\n"
+        "       6 : PPreparados : cola de procesos preparados"              "\n"
+        "       7 : PUrgentes   : cola de procesos urgentes"                "\n"
+        "       8 : POrdenados  : cola de procesos ordenados por direccion" "\n"
+        "       9 : c2cHijos    : cola de procesos hijos de un proceso"     "\n"
+        "      10 : c2cFichRec  : cola de ficheros de un recurso"           "\n"
+        ""                                                                  "\n"
     ) ;
 }
 
 void colas ( char opcion, word_t num )
 {
-
     pindx_t pindx ;
     rindx_t rindx ;
-    int numElem ;
-    int primero ;
-    int cabecera ;
     int i ;
 
     if ((opcion == 'n') || (opcion == 'e'))
     {
 
-        eS("\n ") ;
+        printf("\n") ;
+		printf("\n c2cPFR[DPLibres   ] = ") ; ePC2c(&c2cPFR[DPLibres   ], opcion) ;
+        printf("\n c2cPFR[DPOcupados ] = ") ; ePC2c(&c2cPFR[DPOcupados ], opcion) ;
+        printf("\n c2cPFR[DFLibres   ] = ") ; ePC2c(&c2cPFR[DFLibres   ], opcion) ;
+        printf("\n c2cPFR[DFOcupados ] = ") ; ePC2c(&c2cPFR[DFOcupados ], opcion) ;
+        printf("\n c2cPFR[DRLibres   ] = ") ; ePC2c(&c2cPFR[DRLibres   ], opcion) ;
+        printf("\n c2cPFR[DROcupados ] = ") ; ePC2c(&c2cPFR[DROcupados ], opcion) ;
+        printf("\n c2cPFR[PPreparados] = ") ; ePC2c(&c2cPFR[PPreparados], opcion) ;
+        printf("\n c2cPFR[PUrgentes  ] = ") ; ePC2c(&c2cPFR[PUrgentes  ], opcion) ;
+        printf("\n c2cPFR[POrdenados ] = ") ; ePC2c(&c2cPFR[POrdenados ], opcion) ;
+        printf("\n c2cPFR[PDormidos  ] = ") ; ePC2c(&c2cPFR[PDormidos  ], opcion) ;
 
-        eS("\n c2cPFR[DPLibres   ] = ") ;
-        ePC2c(&c2cPFR[DPLibres   ], opcion) ;
-        eS("\n c2cPFR[DPOcupados ] = ") ;
-        ePC2c(&c2cPFR[DPOcupados ], opcion) ;
-        eS("\n c2cPFR[DFLibres   ] = ") ;
-        ePC2c(&c2cPFR[DFLibres   ], opcion) ;
-        eS("\n c2cPFR[DFOcupados ] = ") ;
-        ePC2c(&c2cPFR[DFOcupados ], opcion) ;
-        eS("\n c2cPFR[DRLibres   ] = ") ;
-        ePC2c(&c2cPFR[DRLibres   ], opcion) ;
-        eS("\n c2cPFR[DROcupados ] = ") ;
-        ePC2c(&c2cPFR[DROcupados ], opcion) ;
-        eS("\n c2cPFR[PPreparados] = ") ;
-        ePC2c(&c2cPFR[PPreparados], opcion) ;
-        eS("\n c2cPFR[PUrgentes  ] = ") ;
-        ePC2c(&c2cPFR[PUrgentes  ], opcion) ;
-        eS("\n c2cPFR[POrdenados ] = ") ;
-        ePC2c(&c2cPFR[POrdenados ], opcion) ;
-        eS("\n c2cPFR[PDormidos  ] = ") ;
-        ePC2c(&c2cPFR[PDormidos  ], opcion) ;
-
+		getchar() ;
+		
         if (c2cPFR[DPOcupados].numElem > 0)
-            eS("\n ") ;
+            printf("\n") ;
         for ( pindx = 0 ; pindx < maxProcesos ; pindx++ )
             if (descProceso[pindx].estado != libre)
             {
-                eC(pindx) ;
-                eS("c2cHijos = ") ;
+                printf("\n descProceso[%i].c2cHijos = ", pindx) ;
                 ePC2c(&descProceso[pindx].c2cHijos, opcion) ;
             }
 
+		getchar() ;	
+			
         if (c2cPFR[DROcupados].numElem > 0)
-            eS("\n ") ;
+            printf("\n") ;
+		
         for ( rindx = 0 ; rindx < maxRecursos ; rindx++ )
             if (descRecurso[rindx].tipo != rLibre)
             {
-                eS("\n descRecurso[") ;
-                eD(rindx, 1) ;
-                eS("].") ;
-                eS("c2cFichRec = ") ;
+                printf("\n descRecurso[%i].c2cFichRec = ", rindx) ;
                 ePC2c(&descRecurso[rindx].c2cFichRec, opcion) ;
             }
-        eS("\n ") ;
+        printf("\n") ;
     }
     else
     {
-        eS("\n\n ") ;
+		printf("\n\n ") ;
         ePC2c(ptrC2c[num], 'n') ;
-        eS("\n\n") ;
-        numElem = ptrC2c[num]->numElem ;
-        primero = ptrC2c[num]->primero ;
-        cabecera = ptrC2c[num]->cabecera ;
-        eS(" ") ;
-        eS(strCola[num]) ;
-        eS(".numElem  = ") ;
-        eI(numElem,2 ) ;
-        eS("\n") ;
-        eS(" ") ;
-        eS(strCola[num]) ;
-        eS(".primero  = ") ;
-        eI(primero,2 ) ;
-        eS("\n") ;
-        eS(" ") ;
-        eS(strCola[num]) ;
-        eS(".cabecera = ") ;
-        eI(cabecera,2 ) ;
-        eS("\n") ;
-        eS(" ") ;
-        eS(strCola[num]) ;
-        eS(".e        = ") ;
-        ePtr((pointer_t)ptrC2c[num]->e) ;
-        eS("\n") ;
-        eS("\n        i: ") ;
-        for ( i = 0 ; i <= cabecera ; i++ )
-        {
-            eI(i, 2) ;
-            escribirCar(' ') ;
-        }
-        eS("\n ---------") ;
-        for ( i = 0 ; i <= cabecera ; i++ )
-        {
-            eS("---") ;
-        }
-        eS("\n e[i].sig: ") ;
-        for ( i = 0 ; i <= cabecera ; i++ )
-        {
-            eI(ptrC2c[num]->e[i].sig, 2) ;
-            escribirCar(' ') ;
-        }
-        eS("\n e[i].ant: ") ;
-        for ( i = 0 ; i <= cabecera ; i++ )
-        {
-            eI(ptrC2c[num]->e[i].ant, 2) ;
-            escribirCar(' ') ;
-        }
-        eS("\n") ;
+		
+        printf("\n\n") ;
+        printf(" %s.numElem  = %2i\n", strCola[num], ptrC2c[num]->numElem) ;
+        printf(" %s.primero  = %2i\n", strCola[num], ptrC2c[num]->primero) ;
+        printf(" %s.cabecera = %2i\n", strCola[num], ptrC2c[num]->cabecera) ;
+        printf(" %s.e        = ", strCola[num]) ; 
+		printf("%04X:%04X", seg((pointer_t)ptrC2c[num]->e), 
+		                    off((pointer_t)ptrC2c[num]->e)) ;
+
+        printf("\n\n        i: ") ;
+        for ( i = 0 ; i <= ptrC2c[num]->cabecera ; i++ )
+            printf("%2i ", i) ;
+		
+        printf("\n ---------") ;
+        for ( i = 0 ; i <= ptrC2c[num]->cabecera ; i++ )
+            printf("---") ;
+		
+        printf("\n e[i].sig: ") ;
+        for ( i = 0 ; i <= ptrC2c[num]->cabecera ; i++ )
+            printf("%2i ", ptrC2c[num]->e[i].sig) ;
+		
+        printf("\n e[i].ant: ") ;		
+        for ( i = 0 ; i <= ptrC2c[num]->cabecera ; i++ )
+            printf("%2i ", ptrC2c[num]->e[i].ant) ;
+		
+        printf("\n") ;
     }
 }
 
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
 
     obtenInfoPFR ((descProceso_t far *)&descProceso,
@@ -249,6 +175,7 @@ void main ( int argc, char * argv [ ] )
                   (e2PFR_t far *)&e2PFR,
                   (c2c_t far *)&c2cPFR
                  ) ;
+				 
     if (argc == 2)
         if (iguales(argv[1], "-h") || iguales(argv[1], "-H"))
             help() ;
@@ -263,12 +190,19 @@ void main ( int argc, char * argv [ ] )
             obtenSimb() ;
             if (simb != s_numero)
             {
-                escribirCar('\a') ;
-                escribirStr("\n\n") ;
+                putchar('\a') ;
+				printf(
+				    "\n"
+					"\n"
+				) ;
                 formato() ;
-                escribirStr("\n\n error: num debe ser un numero y no \"") ;
-                escribirStr(argv[1]) ;
-                escribirStr("\"\n") ;
+                printf(
+				    "\n"
+					"\n"
+					" error: num debe ser un numero no negativo y no \"%s\" \n", 
+					argv[1]
+				) ;
+				return(-1) ;
             }
             else if (num <= 10)
             {
@@ -287,15 +221,25 @@ void main ( int argc, char * argv [ ] )
             }
             else
             {
-                escribirCar('\a') ;
-                escribirStr("\n\n") ;
+                putchar('\a') ;
+				printf(
+				    "\n"
+					"\n"
+				) ;
                 formato() ;
-                escribirStr("\n\n error: num debe ser <= 10 \n") ;
+                printf(
+				    "\n"
+					"\n"
+					" error: num (%u) debe ser <= 10 \n", num
+				) ;
+				return(-1) ;
             }
         }
     else if (argc == 1)
         colas('n', 0) ;
-    else
+    else {
         formato() ;
+		return(-1) ;
+	}
+	return(0) ;
 }
-

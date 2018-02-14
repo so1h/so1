@@ -88,7 +88,8 @@ char sacar ( teclado_t far * teclado  )     /* se supone: teclado.ncar > 0 */
 
 int printCarConsola ( byte_t con, char car )
 {
-    if (con == consolaDeSuperficie) {
+    if (con == consolaDeSuperficie) 
+	{
         printCarVideo(car) ;
 //		if (car == '\f') 
 //			descConsola[con].maxF = 0 ;
@@ -403,8 +404,8 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
     else if (request == 0x0002)               /* obtener la consola actual */
     {
         res = consolaDeSuperficie ;
-//  printStrBIOS("\n res = ") ;
-//  printDecBIOS(res, 1) ;
+//      printStrBIOS("\n res = ") ;
+//      printDecBIOS(res, 1) ;
     }
     else if (request == 0x0003) /* cambiar numero de lineas de la pantalla */
     {
@@ -931,20 +932,20 @@ void help ( void )
 {
     mostrarFormato() ;
     escribirStr(
-        "\n"
-        " instala/desinstala el driver de la consola    \n"
-        "\n"
-        " opciones: (por defecto -i y num = 6)          \n"
-        "\n"
-        "      -i : instala el driver (usar &)          \n"
-        "      -q : instala sin mensajes de salida (&)  \n"
-        "      -c : cambia la consola actual a la num   \n"
-        "      -l : establece en numero de lineas a num \n"
-        "      -n : status = numero de consola actual   \n"
-        "      -N : como -n y muestra un mensaje        \n"
-        "     num : numero de consolas (o nueva c.)     \n"
-        "      -u : desintala el driver                 \n"
-        "      -h : muestra este help                   \n"
+        ""                                                               "\n"
+        " instala/desinstala el driver de la consola"                    "\n"
+        ""                                                               "\n"
+        " opciones: (por defecto -i y num = 6)"                          "\n"
+        ""                                                               "\n"
+        "      -i  : instala el driver (usar &)"                         "\n"
+        "      -q  : instala sin mensajes de salida (&)"                 "\n"
+        "      -c  : cambia la consola actual a la num"                  "\n"
+        "      -l  : establece en numero de lineas a num"                "\n"
+        "      -n  : status = numero de consola actual"                  "\n"
+        "      -nq : como -n pero sin mensaje por pantalla"              "\n"
+        "     num  : numero de consolas (o nueva c.)"                    "\n"
+        "      -u  : desintala el driver"                                "\n"
+        "      -h  : muestra este help"                                  "\n"
     ) ;
     exit(0) ;
 }
@@ -1215,12 +1216,12 @@ int instalarConsola ( byte_t numConsolas, bool_t conMensajes )
     return(res) ;
 }
 
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
     int res ;
     int dfCon ;
     if (argc > 3) formato() ;
-    else if (argc == 1) exit(instalarConsola(numConsolasPorDefecto, TRUE)) ;
+    else if (argc == 1) return(instalarConsola(numConsolasPorDefecto, TRUE)) ;
     else if (argc == 2)
     {
         if (argv[1][0] != '-') formato() ;
@@ -1229,28 +1230,28 @@ void main ( int argc, char * argv [ ] )
         case 'H' :
             help() ;
         case 'I' :
-            exit(instalarConsola(numConsolasPorDefecto, TRUE)) ;
+            return(instalarConsola(numConsolasPorDefecto, TRUE)) ;
         case 'Q' :
-            exit(instalarConsola(numConsolasPorDefecto, FALSE)) ;
+            return(instalarConsola(numConsolasPorDefecto, FALSE)) ;
         case 'N' :
             if ((dfCon = open("CON0", O_RDONLY)) < 0)
             {
-                escribirStr(" no se puede abrir CON0") ;
-                exit(-1) ;
+                escribirStr(" no puede abrirse CON0") ;
+                return(-1) ;
             }
             else
             {
                 res = ioctl(dfCon, 0x0002, 0x0000) ;
-                if (argv[1][1] == 'N')
+                if (res < 0) escribirStr(" error al consultar la consola actual ") ;
+                else
                 {
-                    if (res < 0) escribirStr(" error al consultar la consola actual ") ;
-                    else
-                    {
-                        escribirStr(" la consola actual es CON") ;
+                    if (mayuscula(argv[1][2]) != 'Q') /* (-nq no muestra mensaje) */
+					{
+						escribirStr(" la consola actual es CON") ;
                         escribirDec(res, 1) ;
-                    }
+					}
                 }
-                exit(res) ;
+                return(res) ;
             }
         case 'U' :
             res = destruirRecurso("CONSOLA") ;
@@ -1271,7 +1272,7 @@ void main ( int argc, char * argv [ ] )
             default :
                 escribirStr(" CONSOLA no ha podido desinstalarse") ;
             }
-            exit(res) ;
+            return(res) ;
         default :
             ;
         }
@@ -1291,9 +1292,9 @@ void main ( int argc, char * argv [ ] )
             if (num == 0)
             {
                 escribirStr("\n\n el numero de consolas debe ser > 0 \n") ;
-                exit(-1) ;
+                return(-1) ;
             }
-            else exit(instalarConsola(num, (mayuscula(argv[1][1]) == 'Q'))) ;
+            else return(instalarConsola(num, (mayuscula(argv[1][1]) == 'Q'))) ;
         }
     }
     else if (argc == 3)
@@ -1307,16 +1308,16 @@ void main ( int argc, char * argv [ ] )
                 if ((dfCon = open("CON0", O_RDONLY)) < 0)
                 {
                     escribirStr(" no puede abrirse CON0") ;
-                    exit(-1) ;
+                    return(-1) ;
                 }
                 if (ioctl(dfCon, 0x0001, num) != 0)
                 {
                     escribirStr(" numero de consola erroneo (") ;
                     escribirDec(num, 1) ;
                     escribirCar(')') ;
-                    exit(-1) ;
+                    return(-1) ;
                 }
-                exit(0) ;
+                return(0) ;
             }
         }
         else if (iguales(argv[1], "-l") || iguales(argv[1], "-L"))
@@ -1328,24 +1329,23 @@ void main ( int argc, char * argv [ ] )
             {
                 if ((num != 25) && (num != 28) && (num != 50)) {
 					escribirStr(" el numero de lineas debe ser 25, 28 o 50") ;
-                    exit(-1) ;
+                    return(-1) ;
 				}	
 				if ((dfCon = open("CON0", O_RDONLY)) < 0)
                 {
-                    escribirStr(" no abrirse CON0") ;
-                    exit(-1) ;
+                    escribirStr(" no pudo abrirse CON0") ;
+                    return(-1) ;
                 }
                 if (ioctl(dfCon, 0x0003, num) == -1)
                 {
                     escribirStr(" numero de consola erroneo (") ;
                     escribirDec(num, 1) ;
                     escribirCar(')') ;
-                    exit(-1) ;
+                    return(-1) ;
                 }
-                exit(0) ;
+                return(0) ;
             }
         }		
     formato() ;
+	return(-1) ;
 }
-
-

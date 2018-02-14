@@ -1,7 +1,7 @@
 ﻿/* ----------------------------------------------------------------------- */
 /*                                mboot32.c                                */
 /* ----------------------------------------------------------------------- */
-/*    toma el control desde grub y reubica el programa a la dir 6000:0000  */
+/*    toma el control desde grub y reubica el programa a la dir 0060:0000  */
 /* ----------------------------------------------------------------------- */
 
 /* AVISO: En este modulo no se declaran variables globales, ya que el      */

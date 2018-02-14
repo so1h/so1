@@ -6,7 +6,7 @@
 
 #include <so1pub.h\comundrv.h>                               /* dirDescSO1 */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
+#include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 
 #include <so1pub.h\strings.h>                                   /* iguales */
 #include <so1pub.h\scanner.h>
@@ -16,56 +16,55 @@
 
 void formato ( void )
 {
-    escribirStr(
-        "\n"
-        "\n"
-        " formato: MEAPILA ( pid ( ( [ valor ] [ -c ] ) | -i ) | -h ) \n"
+    printf(
+        ""                                                               "\n"
+        ""                                                               "\n"
+        " formato: MEAPILA ( pid ( ( [ valor ] [ -c ] ) | -i ) | -h )"   "\n"
     ) ;
 }
 
 void help ( void )
 {
     formato() ;
-    escribirStr(
-        "\n"
-        "   MEAPILA pid [valor]                                    \n"
-        "\n"
-        "     rellena el area no utilizada de la pila del proceso  \n"
-        "     pid con el valor indicado (en hexadecimal). Si no se \n"
-        "     indica ningun valor, se utiliza el valor 20 (' ').   \n"
-        "\n"
-        "   MEAPILA pid [valor] -c                                 \n"
-        "\n"
-        "     calcula el mayor numero de bytes consecutivos con el \n"
-        "     valor indicado que hay en el espacio de pila que no  \n"
-        "     esta siendo utilizado actualmente por el proceso con \n"
-        "     el pid indicado. Por defecto valor = 20 (' ').       \n"
-        "\n"
-        "   MEAPILA pid -i                                         \n"
-        "\n"
-        "     indica el numero de bytes que hay en el espacio de   \n"
-        "     la pila que no esta siendo utilizado actualmente por \n"
-        "     el proceso con el pid indicado.                      \n"
-        "\n"
-        "   MEAPILA -h                                             \n"
-        "\n"
-        "     muestra esta informacion por la salida estandar.     "
+    printf(
+        ""                                                               "\n"
+        "   MEAPILA pid [valor]"                                         "\n"
+        ""                                                               "\n"
+        "     rellena el area no utilizada de la pila del proceso"       "\n"
+        "     pid con el valor indicado (en hexadecimal). Si no se"      "\n"
+        "     indica ningun valor, se utiliza el valor 20 (' ')."        "\n"
+        ""                                                               "\n"
+        "   MEAPILA pid [valor] -c"                                      "\n"
+        ""                                                               "\n"
+        "     calcula el mayor numero de bytes consecutivos con el"      "\n"
+        "     valor indicado que hay en el espacio de pila que no"       "\n"
+        "     esta siendo utilizado actualmente por el proceso con"      "\n"
+        "     el pid indicado. Por defecto valor = 20 (' ')."            "\n"
+        ""                                                               "\n"
+        "   MEAPILA pid -i"                                              "\n"
+        ""                                                               "\n"
+        "     indica el numero de bytes que hay en el espacio de"        "\n"
+        "     la pila que no esta siendo utilizado actualmente por"      "\n"
+        "     el proceso con el pid indicado."                           "\n"
+        ""                                                               "\n"
+        "   MEAPILA -h"                                                  "\n"
+        ""                                                               "\n"
+        "     muestra esta informacion por la salida estandar."
     ) ;
-    leer(STDIN) ;
-    escribirStr(
-        "\n"
-        "\n"
-        "   autor: Pedro Pablo Lopez Rodriguez. (C) 2016.          \n"
+	
+    getchar() ;
+    printf(
+        ""                                                               "\n"
+        ""                                                               "\n"
+        "   autor: Pedro Pablo Lopez Rodriguez. (C) 2016-2018."          "\n"
     ) ;
 }
 
 void mostrarError ( char * mensaje, int error )
 {
-    escribirCar('\a') ;
+    putchar('\a') ;
     formato() ;
-    escribirStr("\n error: ") ;
-    escribirStr(mensaje) ;
-    escribirLn() ;
+    printf("\n error: %s\n", mensaje) ;
     exit(error) ;
 }
 
@@ -75,22 +74,17 @@ int meapila ( pid_t pid, byte_t valor )
     int numBytesLibres ;
     int i, j ;
 /*
-    escribirStr("\n\n pid = ") ;
-    escribirInt(pid, 1) ;
-    escribirStr("\n valor = ") ;
-    escribirHex(valor, 2) ;
-    escribirStr("\n") ;
+    printf("\n\n pid = %i", pid) ;
+    printf("\n valor = %i\n", valor) ;
 */
     asm cli
-    obtenInfoSO1(dirDescSO1) ;                 /* obtenemos los datos de SO1 */
+    obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */
     i = 0 ;
     for ( i = 0 ; i < maxProcesos ; i++ )
     {
 /*
-        escribirStr("\n i = ") ;
-        escribirInt(i, 1) ;
-        escribirStr(" ptrDescProceso[i].pid = ") ;
-        escribirInt(ptrDescProceso[i].pid, 1) ;
+        printf("\n i = %i", i) ;
+        printf(" ptrDescProceso[i].pid = %i", ptrDescProceso[i].pid) ;
 */
         if (ptrDescProceso[i].pid == pid)
         {
@@ -111,23 +105,22 @@ int meapila ( pid_t pid, byte_t valor )
 
                 asm sti
 
-                escribirStr(" Ok ") ;
+                printf(" Ok ") ;
                 return(0) ;
             }
             else
             {
                 asm sti
-                escribirStr("\n\n error: el proceso con pid = ") ;
-                escribirInt(pid, 1) ;
-                escribirStr(" no esta bloqueado \n") ;
+                printf(
+				    "\n\n error: el proceso con pid = %i no esta bloqueado \n", 
+					pid
+				) ;
                 return(-1) ;
             }
         }
     }
     asm sti
-    escribirStr("\n\n error: no existe ningun proceso con pid = ") ;
-    escribirInt(pid, 1) ;
-    escribirStr("\n") ;
+    printf("\n\n error: no existe ningun proceso con pid = %i\n", pid) ;
     return(-2) ;
 }
 
@@ -151,62 +144,62 @@ int espacioLibre ( pid_t pid )
 
                 asm sti
 
-                escribirStr("\n\n informacion sobre la pila del proceso con pid = ") ;
-                escribirDec(pid, 1) ;
-                escribirStr(" (SS = DS = ") ;
-                escribirHex(ptrDescProceso[i].trama->DS, 4) ;
-                escribirStr(")") ;
-                escribirStr("\n\n   desplData SS:0000 ") ;
-                escribirStr("\n\n   desplBSS  SS:") ;
-                escribirHex(ptrDescProceso[i].desplBSS, 4) ;
-                escribirStr("\n\n   desplPila SS:") ;
-                escribirHex(ptrDescProceso[i].desplPila, 4) ;
-                escribirStr(" <----   | espacio libre ") ;
-                escribirStr("\n                             | \n   desplCima SS:") ;
-                escribirHex(off((pointer_t)ptrDescProceso[i].trama), 4) ;
-                escribirStr(" <---- ^ ") ;
-                escribirStr("\n                           | \n   desplBase SS:") ;
-                escribirHex((ptrDescProceso[i].tam - (ptrDescProceso[i].tamCodigo >> 4)) << 4, 4) ;
-                escribirStr(" <---- | ") ;
-                escribirStr("\n\n espacio libre en la pila: ") ;
-                escribirStr("\n\n   desde SS:") ;
-                escribirHex(ptrDescProceso[i].desplPila, 4) ;
-                escribirStr(" hasta SS:") ;
-                escribirHex(off((pointer_t)ptrDescProceso[i].trama) - 1, 4) ;
-                escribirStr(" inclusive (") ;
-                escribirHex(numBytesLibres, 4) ;
-                escribirStr(" = ") ;
-                escribirDec(numBytesLibres, 1) ;
-                escribirStr(" bytes libres)\n") ;
+                printf(
+				    ""                                                               "\n"
+					""                                                               "\n"
+					" informacion sobre la pila del proceso con pid = %i (SS = DS = ) \n"
+					""                                                               "\n"
+					"   desplData SS:0000"                                           "\n"
+                    ""                                                               "\n"
+					"   desplBSS  SS:%04X"                                           "\n"
+                    ""                                                               "\n"
+					"   desplPila SS:%04X <----   | espacio libre"                   "\n"
+					"                             |"                                 "\n"
+					"   desplCima SS:%04X <---- ^"                                   "\n"
+                    "                           |"                                   "\n"
+					"   desplBase SS:%04X <---- |"                                   "\n"
+                    ""                                                               "\n"
+					" espacio libre en la pila:"                                     "\n"
+                    ""                                                               "\n"
+					"   desde SS:%04X hasta SS:%04X inclusive (%04X = %i bytes libres)\n",
+                    pid, 
+					ptrDescProceso[i].trama->DS, 
+					ptrDescProceso[i].desplBSS, 
+					ptrDescProceso[i].desplPila, 
+					off((pointer_t)ptrDescProceso[i].trama), 
+					(ptrDescProceso[i].tam - (ptrDescProceso[i].tamCodigo >> 4)) << 4,
+                    ptrDescProceso[i].desplPila, 
+                    off((pointer_t)ptrDescProceso[i].trama) - 1, 
+					numBytesLibres, 
+                    numBytesLibres
+				) ;
                 return(0) ;
             }
             else
             {
                 asm sti
-                escribirStr("\n\n error: el proceso con pid = ") ;
-                escribirInt(pid, 1) ;
-                escribirStr(" no esta bloqueado \n") ;
+                printf(
+				    "\n\n error: el proceso con pid = %i no esta bloqueado \n", 
+					pid
+				) ;
                 return(-1) ;
             }
         }
     }
     asm sti
-    escribirStr("\n\n error: no existe ningun proceso con pid = ") ;
-    escribirInt(pid, 1) ;
-    escribirStr("\n") ;
+    printf("\n\n error: no existe ningun proceso con pid = %i\n") ;
     return(-2) ;
 }
 
 int espacioNoUtilizado ( pid_t pid, byte_t valor )
 {
-
     int numBytesLibres ;
     word_t contador = 0 ;
     pointer_t ptr ;
     int i, j ;
 
     asm cli
-    obtenInfoSO1(dirDescSO1) ;                 /* obtenemos los datos de SO1 */
+    obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */
     i = 0 ;
     for ( i = 0 ; i < maxProcesos ; i++ )
     {
@@ -236,47 +229,39 @@ int espacioNoUtilizado ( pid_t pid, byte_t valor )
 
                 asm sti
 
-                escribirStr("\n\n pila del proceso con pid = ") ;
-                escribirInt(pid, 1) ;
-                escribirStr(" (SS = DS = ") ;
-                escribirHex(ptrDescProceso[i].trama->DS, 4) ;
-                escribirStr(")") ;
-                escribirStr("\n\n   numero de bytes libres        = ") ;
-                escribirHex(numBytesLibres, 4) ;
-                escribirStr(" = ") ;
-                escribirDec(numBytesLibres, 1) ;
-                escribirStr(" bytes (SS:") ;
-                escribirHex(ptrDescProceso[i].desplPila, 4) ;
-                escribirStr(" .. SS:") ;
-                escribirHex(ptrDescProceso[i].desplPila + numBytesLibres - 1, 4) ;
-                escribirStr(")") ;
-                escribirStr("\n\n   numero de bytes no utilizados = ") ;
-                escribirHex(contador, 4) ;
-                escribirStr(" = ") ;
-                escribirDec(contador, 1) ;
-                escribirStr(" bytes (SS:") ;
-                escribirHex(ptrDescProceso[i].desplPila, 4) ;
-                escribirStr(" .. SS:") ;
-                escribirHex(ptrDescProceso[i].desplPila + contador - 1, 4) ;
-                escribirStr(")") ;
-                escribirLn() ;
+                printf(
+				    ""                                                                     "\n"
+				    ""                                                                     "\n"
+					" pila del proceso con pid = %i (SS = DS = %04X)"                      "\n"
+                    ""                                                                     "\n"
+					""                                                                     "\n"
+					"   numero de bytes libres        = %04X = %i bytes (SS:%04X .. SS:%04X)\n"
+                    ""                                                                     "\n"
+					"   numero de bytes no utilizados = %04X = %i bytes (SS:%04X .. SS:%04X)\n",
+                    pid, 
+                    ptrDescProceso[i].trama->DS, 
+                    numBytesLibres, 
+                    numBytesLibres, 
+                    ptrDescProceso[i].desplPila, 
+                    ptrDescProceso[i].desplPila + numBytesLibres - 1, 
+                    contador, 
+                    contador, 
+                    ptrDescProceso[i].desplPila, 
+                    ptrDescProceso[i].desplPila + contador - 1
+				) ;
 
                 return(0) ;
             }
             else
             {
                 asm sti
-                escribirStr("\n\n error: el proceso con pid = ") ;
-                escribirInt(pid, 1) ;
-                escribirStr(" no esta bloqueado \n") ;
+                printf("\n\n error: el proceso con pid = %i no esta bloqueado \n", pid) ;
                 return(-1) ;
             }
         }
     }
     asm sti
-    escribirStr("\n\n error: no existe ningun proceso con pid = ") ;
-    escribirInt(pid, 1) ;
-    escribirStr("\n") ;
+    printf("\n\n error: no existe ningun proceso con pid = %i\n", pid) ;
     return(-1) ;
 }
 

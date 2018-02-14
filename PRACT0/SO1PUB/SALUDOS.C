@@ -4,14 +4,10 @@
 /*                 mensajes que se muestran al inicio de SO1               */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\tipos.h>
 #include <so1pub.h\colores.h>
 #include <so1pub.h\ll_s_so1.h>
-#include <so1pub.h\printgen.h>
-#include <so1pub.h\escribir.h>
 #include <so1pub.h\saludos.h>
-#include <so1pub.h\strings.h>
-#include <so1pub.h\stdio.h>
+#include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 
 void printStrRojo ( char * str ) {
 //* setColorWindow(rojoClaro, azul, especial, especial) ; */

@@ -13,7 +13,7 @@
 /* puntoDeParadaSO1(). Luego en el depurador (bochs dgui) debemos poner    */
 /* como punto de parada (comando b) la direccion correspondiente al        */
 /* segmento de carga de SO1 (por ejemplo 0x0060) y el desplazamiento de la */
-/* funcion puntoDeParadaSO1(), el cual puede ser consultado en el fichero  */
+/* funcion puntoDeParadaSO1(), el cual puede consultarse en el fichero     */
 /* SO1.MAP o SO1BIN.MAP. Como a la hora de enlazar SO1 ponemos so1dbg.obj  */
 /* como uno de los primeros ficheros objeto la direccion de                */
 /* puntoDeParadaSO1 normalmente no variara al recompilar.                  */

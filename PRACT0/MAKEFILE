@@ -1,13 +1,13 @@
 !include "\SO\MKF0"
 
-DIRS = crtl/ \
-       so1pub/ \
-       startfin/ \
-       _mbr/ _pbrfat16/ \
-       so1/ \
-       progusr/
-
-
+DIRS = crtl/      \
+       so1pub/    \
+       startfin/  \
+       _mbr/      \
+	   _pbr/      \
+       so1/       \
+       progusr/   \
+	   
 DIRS.do       = $(DIRS:/=.do)
 DIRS.clean    = $(DIRS:/=.clean)
 DIRS.show     = $(DIRS:/=.show)
@@ -21,7 +21,6 @@ $(DIRS.do):
 # @"$(MAKE) " | extraer +l 1
   @"$(MAKE) "
   @cd ..
-
 
 clean: $(DIRS.clean) clearDisquete
   @if exist stderr.txt erase stderr.txt

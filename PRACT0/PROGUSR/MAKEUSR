@@ -100,6 +100,32 @@ hide:
 
 delsrc:
   @if exist SOURCE\*.C del SOURCE\*.C
+  
+lst: 
+  @echo.
+  @copy &&|
+$(CFLAGS_AS)
+| ops.cmp > nul
+  @if "$(DEBUG)" == "" (echo ------- $(CC) @ops.cmp $(PROGRAMA).C > CON)
+  @if "$(DEBUG)" == "" ($(CC) @ops.cmp $(PROGRAMA).C)
+  @if not "$(DEBUG)" == "" (echo ------- $(CC) @ops.cmp -v $(PROGRAMA).C > CON)
+  @if not "$(DEBUG)" == "" ($(CC) @ops.cmp -v $(PROGRAMA).C)
+  @if exist ops.cmp erase ops.cmp
+  @echo.
+!if $(TASM32) == TRUE
+  @copy &&|
+$(AFLAGS)
+| ops.ens > nul
+  @copy &&|
+, $(PROGRAMA).obj, $(PROGRAMA).lst
+| of.ens > nul
+  $(AS) @ops.ens $&.asm @of.ens
+  @if exist ops.ens erase ops.ens
+  @if exist of.ens erase of.ens
+!else
+  $(AS) $(AFLAGS) -Fl $(PROGRAMA).asm
+# $(AS) $(AFLAGS) $(PROGRAMA).C.asm
+!endif
 
 run:
   @echo.
@@ -149,6 +175,7 @@ help:
   @"echo    make pule       borra todo salvo $(PROGRAMA).BIN, $(PROGRAMA).C y MAKEFILE"
   @"echo    make clean      borra todo salvo $(PROGRAMA).C y MAKEFILEs"
   @"echo    make build      borra y genera nuevo fichero $(PROGRAMA).BIN"
+  @"echo    make lst        genera nuevo fichero de listado $(PROGRAMA).LST"
   @"echo    make run        ejecuta SO1.EXE en el directorio DISQUETE (Player)"
   @"echo    make runcom     ejecuta SO1.COM en el directorio DISQUETE (Player)"
   @"echo    make rundosbox  ejecuta SO1.EXE en el directorio DISQUETE (DOSBox)"

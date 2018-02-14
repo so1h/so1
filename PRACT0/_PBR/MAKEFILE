@@ -1,0 +1,70 @@
+!include "\SO\MKF0"
+
+DIRS = pbrfat12/  \
+	   pbrfat16/  \
+#	   pbrfat16_2/  \
+	   
+DIRS.do       = $(DIRS:/=.do)
+DIRS.clean    = $(DIRS:/=.clean)
+DIRS.show     = $(DIRS:/=.show)
+DIRS.hide     = $(DIRS:/=.hide)
+DIRS.delsrc   = $(DIRS:/=.delsrc)
+
+disquete: $(DIRS.do)
+
+$(DIRS.do):
+  cd $*
+# @"$(MAKE) " | extraer +l 1
+  @"$(MAKE) "
+  @cd ..
+
+clean: $(DIRS.clean) 
+  @if exist stderr.txt erase stderr.txt
+  @if exist stdout.txt erase stdout.txt
+
+$(DIRS.clean):
+  cd $*
+  @"$(MAKE) clean" | extraer +l 1
+  @cd ..
+
+pule: 
+  cd MBR
+  @"$(MAKE) pule" | extraer +l 1
+  @cd ..
+  
+show: $(DIRS.show)
+
+$(DIRS.show):
+  cd $*
+  @"$(MAKE) show" | extraer +l 1
+  @cd ..
+
+hide: $(DIRS.hide)
+
+$(DIRS.hide):
+  cd $*
+  @"$(MAKE) hide" | extraer +l 1
+  @cd ..
+
+delsrc: $(DIRS.delsrc)
+
+$(DIRS.delsrc):
+  cd $*
+  @"$(MAKE) delsrc" | extraer +l 1
+  @cd ..
+
+build: clean disquete
+
+help:
+# echo off & color 07 & title help & msg * "Hola"
+  @"echo."
+  @"echo    relacion de objetivos disponibles:"
+  @"echo."
+  @"echo    make           genera SO1.BIN y SO1.EXE y los copia en DISQUETE"
+  @"echo    make clean     borra todo salvo los fuentes y ficheros MAKEFILE"
+  @"echo    make build     borra todo y genera de nuevo (make clean + make)"
+  @"echo    make disquete  copia SO1.BIN y SO1.EXE en el directorio DISQUETE"
+  @"echo    make show      mueve los ficheros .C de los directorios SOURCE"
+  @"echo    make hide      mueve los ficheros .C a los directorios SOURCE"
+  @"echo                   y guarda los .OBJ en los directorios _OCULTOS"
+  @"echo    make help      muestra esta ayuda sobre los objetivos disponibles"

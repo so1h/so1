@@ -7,7 +7,7 @@
 #include <so1.h\ajustes.h>
 #include <so1pub.h\fincode.h>                                   /* finCode */
 #include <so1pub.h\startcode.h>
-#include <so1pub.h\startdata.h>                               /* startSata */
+#include <so1pub.h\startdata.h>                               /* startData */
 #include <so1pub.h\startbss.h>
 #include <so1pub.h\findata.h>                                   /* finData */
 #include <so1pub.h\finbss.h>                                     /* finBSS */
@@ -102,9 +102,9 @@
 #define habilitarPilaProvisional( ) \
   asm { \
     mov ax,cs ; \
-     add ax,0x3000 ;                 /* segmento 192 Ks (0x30000) posterior */\
-     mov ss,ax ; \
-     mov sp,SPInicialProvisional ;        /* SS:SP pila inicial provisional */\
+    add ax,0x3000 ;                 /* segmento 192 Ks (0x30000) posterior */\
+    mov ss,ax ; \
+    mov sp,SPInicialProvisional ;        /* SS:SP pila inicial provisional */\
 }
 
 void far startBin ( void ) {  /* se llega aqui como so1.bin o como so1.com */
@@ -193,7 +193,7 @@ word_t IMRInicial ;            /* mascara de interrupcion inicial del 8259 */
 
 void finish ( void ) {                          /* main debe retornar aqui */
   /* exit(0) ; */             /* esta función no se usa, pero por simetria */
-}                                                            /* ver atexit */
+}                               /* ver macro atexit en SO1PUB.H/AJUSTUSR.H */
 
 void segDatos ( void ) {              /* vamos a guardar aqui el valor del */
   /* asm db 'DS' */

@@ -10,7 +10,7 @@
 /* Caracteres de control ASCII */
 
 #define NUL   (char) 0  /* null (end string)    ^@ */                         /* '\000' */
-#define SOH   (char) 1  /* start of heading     ^A */                         /* '\x01' */
+#define SOH   (char) 1  /* start of heading     ^A */                         /* '\001' */
 #define STX   (char) 2  /* start of text        ^B */
 #define ETX   (char) 3  /* end of text          ^C */
 #define EOT   (char) 4  /* end of transmission  ^D */

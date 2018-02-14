@@ -2,75 +2,70 @@
 /*                                  date.c                                 */
 /* ----------------------------------------------------------------------- */
 /*                   comando que muestra la fecha actual                   */
+/*                   (accediendo directamente a la CMOS)                   */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
+#include <so1pub.h\stdio.h>                             /* printf, getchar */
 #include <so1pub.h\strings.h>                                   /* iguales */
 
 #include <so1pub.h\puertos.h>                   /* CMOS_RTC_DAY_MONTH, ... */
 #include <so1pub.h\cmos.h>                                     /* leerCmos */
 
-struct
+char nombreDiaSemana [8] [10] =
 {
-    char nombre [10] ;
-    word_t longitud ;
-} descDiaSemana [8] =
-{
-    { "error",     5 },
-    { "domingo",   7 },
-    { "lunes",     5 },
-    { "martes",    6 },
-    { "miercoles", 9 },
-    { "jueves",    6 },
-    { "viernes",   7 },
-    { "sabado",    6 }
+    "error",    
+    "domingo",  
+    "lunes",    
+    "martes",  
+    "miercoles",
+    "jueves",    
+    "viernes",  
+    "sabado"
 } ;
 
-struct
+char nombreMes [13] [11] =
 {
-    char nombre [11] ;
-    word_t longitud ;
-} descMes [13] =
-{
-    { "error",       5 },
-    { "enero",       5 },
-    { "febrero",     7 },
-    { "marzo",       5 },
-    { "abril",       5 },
-    { "mayo",        4 },
-    { "junio",       5 },
-    { "julio",       5 },
-    { "agosto",      6 },
-    { "septiembre", 10 },
-    { "octubre",     7 },
-    { "noviembre",   9 },
-    { "diciembre",   9 }
+    "error",      
+    "enero",     
+    "febrero",    
+    "marzo",      
+    "abril",     
+    "mayo",     
+    "junio",    
+    "julio",    
+    "agosto",    
+    "septiembre",
+    "octubre",   
+    "noviembre",  
+    "diciembre"
 } ;
 
 void formato ( void )
 {
 //  escribirStrIntenso(" formato: DATE [ -n | -f | -h ] ") ; */
-    escribirStr(" formato: DATE [ -n | -f | -h ] ") ;
+    printf(" formato: DATE [ -n | -f | -h ] ") ;
 }
 
 void help ( void )
 {
-    escribirLn() ;
-    escribirLn() ;
-    escribirStr(" formato : DATE [ -n | -f | -h ]          \n\n") ;
-    escribirStr(" muestra la fecha actual                  \n\n") ;
-    escribirStr(" opciones: (por defecto -n)               \n\n") ;
-    escribirStr("      -n : formato de la fecha DD/MM/AAAA \n") ;
-    escribirStr("      -f : formato en castellano          \n") ;
-    escribirStr("      -h : muestra este help              \n") ;
+	printf(
+	    ""                                                               "\n"
+		""                                                               "\n"
+		" formato : DATE [ -n | -f | -h ]"                               "\n"
+		""                                                               "\n"
+        " muestra la fecha actual"                                       "\n"
+		""                                                               "\n"
+        " opciones: (por defecto -n)"                                    "\n"
+		""                                                               "\n"
+        "      -n : formato de la fecha DD/MM/AAAA"                      "\n"
+        "      -f : formato en castellano"                               "\n"
+        "      -h : muestra este help"                                   "\n"
+	) ;
 }
 
-#pragma warn -aus
-
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
-
     word_t dia ;
     word_t mes ;
     word_t anio ;
@@ -79,7 +74,7 @@ void main ( int argc, char * argv [ ] )
     if ((argc == 2) && (iguales(argv[1], "-h") || iguales(argv[1], "-H")))
     {
         help() ;
-        return ;
+        return(0) ;
     }
     if ((argc == 1) ||
             ((argc == 2) &&
@@ -92,30 +87,25 @@ void main ( int argc, char * argv [ ] )
         if (iguales(argv[1], "-f") || iguales(argv[1], "-F"))
         {
             diaSemana = leerCmos(CMOS_RTC_DAY_WEEK) ;
-//          escribirStr("\n\n fecha: ") ; */
-            escribirStr(" ") ;
-            escribirStr(descDiaSemana[bcdToInt(diaSemana)].nombre) ;
-//          escribirStr(" dia ") ; */
-            escribirStr(" ") ;
-            escribirDec(bcdToInt(dia), 1) ;
-            escribirStr(" de ") ;
-            escribirStr(descMes[bcdToInt(mes)].nombre) ;
-            escribirStr(" de ") ;
-            escribirStr("20") ;
-            escribirHex(anio, 2) ;
+			printf(
+//              "\n"
+//              "\n"
+//              " fecha:"
+                " %s"
+//              " dia"
+                " %u de %s de 20%02x", 
+				nombreDiaSemana[bcdToInt(diaSemana)],
+                bcdToInt(dia),
+				nombreMes[bcdToInt(mes)],
+                anio
+            ) ;
         }
         else
-        {
-            escribirStr(" ") ;
-            escribirHex(dia, 2) ;
-            escribirCar('/') ;
-            escribirHex(mes, 2) ;
-            escribirCar('/') ;
-            escribirStr("20") ;
-            escribirHex(anio, 2) ;
-        }
+            printf(" %02x/%02x/20%02x", dia, mes, anio) ;           /* BCD */
+		                                  /* decimal codificado en binario */
+//		getchar() ;
+		return(0) ;
     }
-    else formato() ;
+    formato() ;
+	return(-1) ;
 }
-
-#pragma warn +aus

@@ -6,9 +6,9 @@
 
 #include <so1pub.h\scanner.h>                                /* tamComando */
 #include <so1pub.h\ll_s_so1.h>                          /* terminarProceso */
-#include <so1pub.h\ajustusr.h>
+#include <so1pub.h\ajustusr.h>                            /* startUserCode */
 
-#define SPInicial 0x7FFE      /* Valor inicial puntero de pila del proceso */
+#define SPInicial 0x7FFE         /* puntero de pila "a priori" del proceso */
                                                      /* podria redefinirse */
 #define maxArgs 20
 
@@ -37,7 +37,22 @@ void startBin ( void ) {    /* Inicializacion de los registros de segmento */
 }                                                                   /* ret */
 
 void finish ( void ) {                          /* main debe retornar aqui */
-  exit(0) ;                        /* no cambiar (crearProceso) despl 0022 */
+                                   /* no cambiar (crearProceso) despl 0022 */
+  manejador_t far * ptrManejadorAtExit ;
+  
+  asm push ax ;                       /* AX = resultado retornado por main */
+
+  ptrManejadorAtExit = (manejador_t far *)pointer(_DS, valor_SPInicial-2) ;
+  
+  if (((word_t)(*ptrManejadorAtExit)) != 0x0000)         /* se ha cambiado */
+  { 
+     asm pop ax ;        /* sacamos de la pila el valor retornado por main */
+     (*ptrManejadorAtExit)() ;   	  /* se llama a la funcion establecida */
+  }
+  else asm pop ax ;       /* restauramos en ax el valor retornado por main */
+  
+//exit(0) ;                        
+  exit(_AX) ;   /* codigo de terminacion = valor de retorno de main/atexit */
 }
 
 /* En cuanto a la llamada a main se hace en ensamblador para evitar que el */

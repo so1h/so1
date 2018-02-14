@@ -1,25 +1,31 @@
 /* ----------------------------------------------------------------------- */
-/*                                verargs.c                                */
+/*                                ver_args.c                               */
 /* ----------------------------------------------------------------------- */
-/*                    programa verargs para el sistema SO1                 */
+/*                  programa ver_args para el sistema SO1                  */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
+#include <so1pub.h\stdio.h>                             /* printf, getchar */
 
-void main ( int argc, char * argv [ ] ) {
-  int i ;
-  escribirStr("\n\n VER_ARGS: muestra los argumentos argc y argv de main") ;
-  escribirStr("\n\n   argc = ") ;
-  escribirInt(argc, 1) ;
-  escribirLn() ;
-  for ( i = 0 ; i < argc ; i++ ) {
-    escribirStr("\n   argv[") ;
-    escribirDec(i, 1) ;
-    escribirStr("] = \"") ;
-    escribirStr(argv[i]) ;
-    escribirStr("\"") ;
-  }
-  escribirLn() ;
+int main ( int argc, char * argv [ ] ) 
+{	
+    int i ;
+	
+	printf(
+	    ""                                                               "\n"
+		""                                                               "\n"
+		" VER_ARGS: muestra los argumentos argc y argv de main"          "\n"
+		""                                                               "\n"
+        "     argc = %i"                                                 "\n", 
+		argc
+	) ;
+    
+	for ( i = 0 ; i < argc ; i++ )
+	    printf(
+		    ""                                                           "\n"
+		    "     argv[%i] = \"%s\" ", i, argv[i]
+		) ;
+
+	getchar() ;	
+	printf("\n") ;
+	return(0) ;
 }
-

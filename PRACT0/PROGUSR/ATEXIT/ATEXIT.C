@@ -2,24 +2,28 @@
 /*                                 atexit.c                                */
 /* ----------------------------------------------------------------------- */
 /*                  programa de prueba de la macro atexit                  */
+/*       que permite disponer una funcion que se ejecute tras el main      */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>              /* necesario para macro atexit */
-#include <so1pub.h\stdio.h>                               /* printf, getch */
 #include <so1pub.h\ajustusr.h>                             /* macro atexit */
+#include <so1pub.h\stdio.h>                             /* printf, getchar */
 
-void finish_1 ( void )
+int finish_1 ( void )  /* funcion que queremos que se ejecute tras el main */
 { 
     printf("\n atexit: Adios mundo.") ;
-    getch() ;
+    getchar() ;
     printf("\n") ;
-	exit(0) ;
+	return(1234) ;        /* codigo de terminacion devuelto por el comando */
 }
 
-void main ( void )
+int main ( void )
 {
-    atexit(finish_1) ;
     printf("\n\n Hola mundo.") ;
-    getch() ;
+	getchar() ;
+    atexit(finish_1) ;
+    printf("\n\n Nueva funcion final: atexit(finish_1).") ;
+	getchar() ;
     printf("\n") ;
+	return(0) ;
 }

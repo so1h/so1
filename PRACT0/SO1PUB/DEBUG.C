@@ -22,9 +22,9 @@
 #define _O 4Fh
 #define _1 31h
 
-void far puntoDeParada ( void ) {
+void puntoDeParada ( void ) {
   asm {
-    retf ;
+    ret ;
 //  db 'Punto De Parada SO1' ;
     db _P,_u,_n,_t,_o,__,_d,_e,__,_P,_a,_r,_a,_d,_a,__,_S,_O,_1 ;
   }

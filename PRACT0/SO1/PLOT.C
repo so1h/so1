@@ -4,11 +4,16 @@
 /*                                                                         */
 /* ----------------------------------------------------------------------- */
 
+#include <so1pub.h\tipos.h>        /* bool_t, TRUE, FALSE, word_t, pindx_t */
+//                                                            /* pointer_t */
+#include <so1pub.h\const.h>                                 /* maxProcesos */
+#include <so1pub.h\def_proc.h>                                 /* estado_t */
 #include <so1pub.h\caracter.h>
 #include <so1pub.h\msdos.h>
 #include <so1pub.h\ccb.h>
-#include <so1.h\procesos.h>
+#include <so1.h\procesos.h>                                  
 #include <so1.h\gm.h>
+
 /*
 #include <so1.h\rs232.h>
 #include <so1.h\rs232pol.h>
@@ -16,11 +21,12 @@
 #include <so1.h\lpt.h>
 #include <so1.h\lptpol.h>
 */
+
 #include <so1.h\plot.h>
 
 #define tamBufPlot 0x1000                           /* paragrafos => 64 KB */
 
-/* vamos sacar partido del tamanio: x mod 64KB = x (hay desbordamiento)    */
+/* vamos a sacar partido del tamanio: x mod 64KB = x (hay desbordamiento)  */
 
 bool_t plotProcesos = FALSE ;
 
@@ -35,7 +41,7 @@ static word_t inBufPlot = 0 ;
 static word_t outBufPlot = 0 ;
 static word_t numBufPlot = 0 ;
 
-typedef void (* plotCar_t) (char car ) ;
+typedef void ( * plotCar_t ) ( char car ) ;
 
 plotCar_t plotCar ;
 
@@ -141,9 +147,9 @@ int far tareaPlot ( void far * arg ) {                 /* escribe en disco */
   printDecWin(win_so, numBufPlot, 1) ;
 */
   asm cli
-/*
-  if (contTics <= contTicsPlot) return(1) ; */   /* seccion critica (dwords) */
-/*  contTicsPlot = contTics ; */
+
+//if (contTics <= contTicsPlot) return(1) ;    /* seccion critica (dwords) */
+//contTicsPlot = contTics ; 
 
   num = numBufPlot ;
   while (num > 0) {
@@ -219,9 +225,12 @@ void plotCarFILE ( char car ) {
   writeDOS(df, (char *) &car, 1) ;
 }
 
-void plotCarE9 ( char car ) {                                 /* para qemu */
-  asm mov al,car
-  asm out 0E9h,al
+void plotCarE9 ( char car ) {                         /* para bochs y qemu */
+    asm 
+	{
+	    mov al,car ;
+        out 0E9h,al ;
+    }
 }
 
 bool_t cambioDeEstado ( void ) {

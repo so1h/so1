@@ -1,52 +1,53 @@
 
  Start  Stop   Length Name               Class
 
- 00000H 09640H 09641H _TEXT              CODE
- 09642H 09FABH 0096AH _DATA              DATA
- 09FACH 0C0ADH 02102H _BSS               BSS
+ 00000H 0968AH 0968BH _TEXT              CODE
+ 0968CH 09FF5H 0096AH _DATA              DATA
+ 09FF6H 0C0F7H 02102H _BSS               BSS
 
   Address         Publics by Name
 
- 0000:953D       F_LDIV@
- 0000:954C       F_LMOD@
- 0000:9544       F_LUDIV@
- 0000:9554       F_LUMOD@
- 0000:95EB       F_LXLSH@
- 0000:960C       F_LXURSH@
- 0000:953D       LDIV@
- 0000:954C       LMOD@
- 0000:9544       LUDIV@
- 0000:9554       LUMOD@
- 0000:95EB       LXLSH@
- 0000:960C       LXURSH@
- 0000:953A       N_LDIV@
- 0000:9549       N_LMOD@
- 0000:9541       N_LUDIV@
- 0000:9551       N_LUMOD@
- 0000:95E8       N_LXLSH@
- 0000:962A       N_LXMUL@
- 0000:9609       N_LXURSH@
+ 0000:9587       F_LDIV@
+ 0000:9596       F_LMOD@
+ 0000:958E       F_LUDIV@
+ 0000:959E       F_LUMOD@
+ 0000:9635       F_LXLSH@
+ 0000:9656       F_LXURSH@
+ 0000:9587       LDIV@
+ 0000:9596       LMOD@
+ 0000:958E       LUDIV@
+ 0000:959E       LUMOD@
+ 0000:9635       LXLSH@
+ 0000:9656       LXURSH@
+ 0000:9584       N_LDIV@
+ 0000:9593       N_LMOD@
+ 0000:958B       N_LUDIV@
+ 0000:959B       N_LUMOD@
+ 0000:9632       N_LXLSH@
+ 0000:9674       N_LXMUL@
+ 0000:9653       N_LXURSH@
  0000:5CBC       _abrirFichero
- 0964:0006       _activarAlEpilogo1
+ 0968:0010       _activarAlEpilogo1
  0000:3469       _activarProceso
  0000:0F23       _aio_readGP
  0000:0F73       _aio_writeGP
- 0000:8E80       _apilarPC2c
- 0000:7CE2       _argcMSDOS
- 0000:7DD1       _argvMSDOS
- 0000:7837       _assert
- 0000:76E6       _atenderCcb
+ 0000:8ECA       _apilarPC2c
+ 0000:7D2C       _argcMSDOS
+ 0000:7E1B       _argvMSDOS
+ 0000:7881       _assert
+ 0000:7730       _atenderCcb
  0000:163F       _bloquearEsperandoHijo
  0000:0245       _bloquearProcesoActual
- 0964:0974       _bloqueDeParametros
- 0000:82A1       _borrarCPantalla
- 0000:827D       _borrarPantalla
- 0964:0970       _BSS_SO1
+ 0968:097E       _bloqueDeParametros
+ 0000:82EB       _borrarCPantalla
+ 0000:82C7       _borrarPantalla
+ 0968:097A       _BSS_SO1
  0000:0206       _buscarNuevoProcesoActual
- 0964:2898       _bytesPorCluster
- 0964:2896       _bytesPorSector
- 0964:22C8       _c2cPFR
- 0964:2892       _cabezas
+ 0968:28A2       _bytesPorCluster
+ 0968:28A0       _bytesPorSector
+ 0968:22D2       _c2cPFR
+ 0968:289C       _cabezas
+ 0000:6BEF       _cambiarTeclaListaBDA
  0000:319B       _cambioDeEstado
  0000:5950       _cargaFAT12_Ok
  0000:59F0       _cargaFAT16_Ok
@@ -54,136 +55,136 @@
  0000:624D       _cargaFichero_Ok
  0000:2242       _cargarDescSO1
  0000:5861       _cargarSectoresFAT
- 0964:2624       _ccbAlEpilogo
+ 0968:262E       _ccbAlEpilogo
  0000:5EA1       _cerrarFichero
- 0000:8145       _chdirDOS
- 0000:7AEE       _close
- 0000:8013       _closeDOS
- 0964:28BA       _clusteres
- 0964:0E9A       _codOp
- 0964:01A0       _comandoSo1a
- 0964:01F0       _comandoSo1b
- 0000:802D       _commitFileDOS
- 0000:7307       _connectApmBIOS
- 0000:913D       _contadorTimer0
- 0964:2636       _contadorTimer00
- 0964:016E       _contOcioso
- 0964:2630       _contRodajas
- 0964:2634       _contTicsRodaja
- 0000:7766       _copia
- 0000:7790       _copiaLarga
- 0000:8321       _copiarCPantalla
- 0000:82C5       _copiarPantalla
- 0000:92C9       _copiarStr
- 0000:92F2       _copiarStrHasta
- 0000:7345       _cpuBusyBIOS
- 0000:733F       _cpuIdleBIOS
+ 0000:818F       _chdirDOS
+ 0000:7B38       _close
+ 0000:805D       _closeDOS
+ 0968:28C4       _clusteres
+ 0968:0EA4       _codOp
+ 0968:01AA       _comandoSo1a
+ 0968:01FA       _comandoSo1b
+ 0000:8077       _commitFileDOS
+ 0000:7351       _connectApmBIOS
+ 0000:9187       _contadorTimer0
+ 0968:2640       _contadorTimer00
+ 0968:0178       _contOcioso
+ 0968:263A       _contRodajas
+ 0968:263E       _contTicsRodaja
+ 0000:77B0       _copia
+ 0000:77DA       _copiaLarga
+ 0000:836B       _copiarCPantalla
+ 0000:830F       _copiarPantalla
+ 0000:9313       _copiarStr
+ 0000:933C       _copiarStrHasta
+ 0000:738F       _cpuBusyBIOS
+ 0000:7389       _cpuIdleBIOS
  0000:4798       _crearFich
  0000:37C4       _crearProceso
  0000:448B       _crearRec
- 0000:8047       _createDOS
- 0000:7A10       _createProcess
- 0964:096C       _CS_SO1
- 0964:000A       _debugWord
- 0964:091C       _debug_parar
- 0964:0138       _descCcbAlEpilogo
- 0964:0052       _descCcbGP
- 0964:1C9A       _descFichero
- 0964:0EDA       _descProceso
- 0964:1E3E       _descRecurso
- 0964:2764       _descUnidadFisica
- 0964:2638       _descUnidadLogica
+ 0000:8091       _createDOS
+ 0000:7A5A       _createProcess
+ 0968:0976       _CS_SO1
+ 0968:0014       _debugWord
+ 0968:0926       _debug_parar
+ 0968:0142       _descCcbAlEpilogo
+ 0968:005C       _descCcbGP
+ 0968:1CA4       _descFichero
+ 0968:0EE4       _descProceso
+ 0968:1E48       _descRecurso
+ 0968:276E       _descUnidadFisica
+ 0968:2642       _descUnidadLogica
  0000:58CB       _desempaquetarFAT12
- 0000:746D       _desencolarCcb
- 0000:8F99       _desencolarPC2c
+ 0000:74B7       _desencolarCcb
+ 0000:8FE3       _desencolarPC2c
  0000:00A1       _desplCab
  0000:4878       _destruirFich
  0000:497C       _destruirRec
  0000:407B       _devolverParticion
- 0964:0996       _dfs_gm
- 0964:0EAC       _dfs_sf
- 0964:090A       _dig
- 0964:0E9C       _dirDestino
- 0000:7323       _disconnectApmBIOS
+ 0968:09A0       _dfs_gm
+ 0968:0EB6       _dfs_sf
+ 0968:0914       _dig
+ 0968:0EA6       _dirDestino
+ 0000:736D       _disconnectApmBIOS
  0000:0287       _doKill
- 0964:096E       _DS_SO1
- 0964:232C       _e2PFR
- 0000:74CD       _eliminarCcb
- 0000:8DDB       _eliminarPC2c
+ 0968:0978       _DS_SO1
+ 0968:2336       _e2PFR
+ 0000:7517       _eliminarCcb
+ 0000:8E25       _eliminarPC2c
  0000:4186       _eliminarProcIndx
- 0000:75B2       _eliminarSegCcb
- 0000:8546       _enable_hwirq
- 0000:73FD       _encolarCcb
- 0000:8F01       _encolarPC2c
- 0964:0004       _enHalt
- 0000:7C12       _entornoMSDOS
- 0964:289E       _entradasDirRaiz
- 0964:28B6       _entradasFAT
- 0964:289C       _entradasPorCluster
- 0964:289A       _entradasPorSector
- 0000:72BF       _enviarBIOS
- 0000:795F       _escribirBin
- 0000:789B       _escribirCar
- 0000:799E       _escribirCursor
- 0000:78DE       _escribirDec
- 0000:7934       _escribirHex
- 0000:7909       _escribirInt
- 0000:7973       _escribirLBin
- 0000:78F2       _escribirLDec
- 0000:7948       _escribirLHex
- 0000:791D       _escribirLInt
- 0000:78AC       _escribirLn
- 0000:798A       _escribirPtr
+ 0000:75FC       _eliminarSegCcb
+ 0000:8590       _enable_hwirq
+ 0000:7447       _encolarCcb
+ 0000:8F4B       _encolarPC2c
+ 0968:000E       _enHalt
+ 0000:7C5C       _entornoMSDOS
+ 0968:28A8       _entradasDirRaiz
+ 0968:28C0       _entradasFAT
+ 0968:28A6       _entradasPorCluster
+ 0968:28A4       _entradasPorSector
+ 0000:7309       _enviarBIOS
+ 0000:79A9       _escribirBin
+ 0000:78E5       _escribirCar
+ 0000:79E8       _escribirCursor
+ 0000:7928       _escribirDec
+ 0000:797E       _escribirHex
+ 0000:7953       _escribirInt
+ 0000:79BD       _escribirLBin
+ 0000:793C       _escribirLDec
+ 0000:7992       _escribirLHex
+ 0000:7967       _escribirLInt
+ 0000:78F6       _escribirLn
+ 0000:79D4       _escribirPtr
  0000:00E0       _escribirSectorCSH
  0000:0117       _escribirSectorLBA
- 0000:78B4       _escribirStr
- 0000:78C6       _escribirStrHasta
- 0000:6BEF       _esperarTicsBIOS
- 0000:842D       _establecerIMR
- 0000:79FE       _establecerLineas
- 0000:6F26       _establecerModoDeVideo
- 0000:6F42       _establecerPaginaActiva
- 0000:7A29       _exec
- 0000:7A98       _exit
- 0000:7FBC       _extendedOpenDOS
- 0964:28BE       _FAT
+ 0000:78FE       _escribirStr
+ 0000:7910       _escribirStrHasta
+ 0000:6C39       _esperarTicsBIOS
+ 0000:8477       _establecerIMR
+ 0000:7A48       _establecerLineas
+ 0000:6F70       _establecerModoDeVideo
+ 0000:6F8C       _establecerPaginaActiva
+ 0000:7A73       _exec
+ 0000:7AE2       _exit
+ 0000:8006       _extendedOpenDOS
+ 0968:28C8       _FAT
  0000:0FA6       _fcntlGP
  0000:4C59       _fechaCompactada
- 0964:2A6E       _finBSS
- 0964:096C       _finData
- 0000:815C       _findfirstDOS
+ 0968:2A78       _finBSS
+ 0968:0976       _finData
+ 0000:81A6       _findfirstDOS
  0000:5A4B       _findFirstSo1
- 0000:818E       _findnextDOS
+ 0000:81D8       _findnextDOS
  0000:5A6F       _findNextSo1
  0000:0094       _finish
  0000:30D4       _finPlot
- 0000:7B64       _finProgDOS
+ 0000:7BAE       _finProgDOS
  0000:5B28       _formatearNombre
- 0000:8124       _getcurdirDOS
- 0000:80FD       _getdiskDOS
- 0000:84A3       _get_pic1_isr
- 0000:84B4       _get_pic2_isr
- 0000:722E       _goToXYBIOS
- 0000:721C       _goToXYPag
- 0000:72E1       _hayApmBIOS
- 0000:7D74       _hayDOSBox
- 0000:7B77       _hayMSDOS
- 0964:0008       _hayTic
- 0000:7F45       _hayWindowsNT
- 0000:932C       _iguales
- 0000:9365       _igualesHasta
- 0000:93A9       _igualesSalvoMayusculasHasta
- 0964:0972       _IMRInicial
- 0000:9511       _incPtr
+ 0000:816E       _getcurdirDOS
+ 0000:8147       _getdiskDOS
+ 0000:84ED       _get_pic1_isr
+ 0000:84FE       _get_pic2_isr
+ 0000:7278       _goToXYBIOS
+ 0000:7266       _goToXYPag
+ 0000:732B       _hayApmBIOS
+ 0000:7DBE       _hayDOSBox
+ 0000:7BC1       _hayMSDOS
+ 0968:0012       _hayTic
+ 0000:7F8F       _hayWindowsNT
+ 0000:9376       _iguales
+ 0000:93AF       _igualesHasta
+ 0000:93F3       _igualesSalvoMayusculasHasta
+ 0968:097C       _IMRInicial
+ 0000:955B       _incPtr
  0000:33E9       _indice
  0000:1B5B       _indiceTFA
  0000:1B0F       _indiceTFAS
- 0964:016A       _indProcesoActual
- 0964:016C       _indProcesoDeSuperficie
- 0000:739B       _inicCcb
+ 0968:0174       _indProcesoActual
+ 0968:0176       _indProcesoDeSuperficie
+ 0000:73E5       _inicCcb
  0000:0C87       _inicGM
  0000:0FBA       _inicGP
- 0000:904B       _inicializarPC2c
+ 0000:9095       _inicializarPC2c
  0000:2EDF       _inicMinisfFAT
  0000:2DFE       _inicMinisfMSDOS
  0000:3D75       _inicProcesos
@@ -193,15 +194,15 @@
  0000:6A42       _inicTeclado
  0000:1433       _inicTVI
  0000:2EE6       _initPlot
- 0000:90E7       _inport
- 0000:90DC       _inportb
- 0000:9108       _inportb_r
- 0000:7B4A       _ioctl
+ 0000:9131       _inport
+ 0000:9126       _inportb
+ 0000:9152       _inportb_r
+ 0000:7B94       _ioctl
  0000:0FA9       _ioctlGP
- 0964:0C9A       _isr
+ 0968:0CA4       _isr
  0000:10A1       _isrNula
  0000:1587       _isr_SO1
- 0000:7AC3       _kill
+ 0000:7B0D       _kill
  0000:03A0       _kk_fork
  0000:087F       _k_buscarBloque
  0000:0A12       _k_devolverBloque
@@ -212,7 +213,7 @@
  0000:0E70       _k_getpindx
  0000:0E73       _k_kill
  0000:0E69       _k_waitpid
- 0000:79BF       _leerCursor
+ 0000:7A09       _leerCursor
  0000:6A66       _leerScancode
  0000:6A63       _leerScancodeListo
  0000:00C6       _leerSectorCSH
@@ -222,45 +223,45 @@
  0000:6AA4       _leerTeclaBIOS
  0000:6AB4       _leerTeclaExtBIOS
  0000:6ADA       _leerTeclaListaBDA
- 0964:0990       _listaLibres
- 0000:7B1C       _lseek
- 0000:80AE       _lseekDOS
+ 0968:099A       _listaLibres
+ 0000:7B66       _lseek
+ 0000:80F8       _lseekDOS
  0000:0FA3       _lseekGP
  0000:642A       _main
- 0964:007A       _manejador
- 0000:843B       _mask_pic1
- 0000:8452       _mask_pic2
+ 0968:0084       _manejador
+ 0000:8485       _mask_pic1
+ 0000:849C       _mask_pic2
  0000:41C1       _matarProcIndx
  0000:2A7C       _matrix
- 0000:734B       _mayuscula
- 0000:72BC       _memBIOS
- 0000:7373       _minuscula
+ 0000:7395       _mayuscula
+ 0000:7306       _memBIOS
+ 0000:73BD       _minuscula
  0000:4D03       _mirarLoQueHay
- 0000:6F16       _modoDeVideo
+ 0000:6F60       _modoDeVideo
  0000:0098       _modoSO1
- 0000:785F       _mostrarFlags
+ 0000:78A9       _mostrarFlags
  0000:4E2C       _mostrarLoQueHay
- 0964:0002       _nivelActivacionSO1
+ 0968:000C       _nivelActivacionSO1
  0000:1BB2       _nuevaEntradaTFA
  0000:33E1       _nuevoPid
- 0964:28C2       _numFichAbiertos
- 0000:6F4E       _numPagsVideo
- 0964:0168       _numPids
+ 0968:28CC       _numFichAbiertos
+ 0000:6F98       _numPagsVideo
+ 0968:0172       _numPids
  0000:5A35       _numSectores
- 0000:725C       _ocultaCursorBIOS
- 0000:94FC       _off
- 0000:7AD7       _open
- 0000:7F9D       _openDOS
+ 0000:72A6       _ocultaCursorBIOS
+ 0000:9546       _off
+ 0000:7B21       _open
+ 0000:7FE7       _openDOS
  0000:0134       _opSectorCSH
  0000:0181       _opSectorLBA
- 0000:90F0       _outport
- 0000:90FC       _outportb
- 0000:9124       _outportb_r
- 0000:6F32       _paginaActiva
- 0000:81C9       _pantallazo
- 0000:853B       _pic_setup
+ 0000:913A       _outport
+ 0000:9146       _outportb
+ 0000:916E       _outportb_r
+ 0000:6F7C       _paginaActiva
+ 0000:8213       _pantallazo
+ 0000:8585       _pic_setup
  0000:31F3       _plot
- 0964:0EB6       _plotCar
+ 0968:0EC0       _plotCar
  0000:315D       _plotCarBuf
  0000:315B       _plotCarCOM
  0000:315C       _plotCarCOMP
@@ -268,108 +269,108 @@
  0000:317B       _plotCarFILE
  0000:315A       _plotCarLPT
  0000:3159       _plotCarNula
- 0964:012A       _plotProcesos
- 0000:94CF       _pointer
+ 0968:0134       _plotProcesos
+ 0000:9519       _pointer
  0000:4DFD       _ponerMuescaX
  0000:35D0       _ponerNumero
  0000:3567       _ponerNumeroHex
- 0000:8D63       _posicionPC2c
+ 0000:8DAD       _posicionPC2c
  0000:0562       _preEjecutar
  0000:01E7       _prepararDesbloqueadosUrgentes
- 0964:28A2       _primerSector
- 0964:28AE       _primerSectorDatos
- 0964:28AA       _primerSectorDirRaiz
- 0964:28A6       _primerSectorFAT
- 0000:6E4A       _printBinBIOS
- 0000:6EDA       _printCadBIOS
- 0000:6D7C       _printCarAtrPagBIOS
- 0000:6C3E       _printCarBIOS
- 0000:6C4A       _printCarPagBIOS
- 0000:6C2A       _printCarRawBIOS
- 0000:6DC9       _printDecBIOS
- 0000:8D60       _printfGen
- 0000:8BB9       _printGenBin
- 0000:863D       _printGenDec
- 0000:8A12       _printGenHex
- 0000:87E0       _printGenInt
- 0000:8C65       _printGenLBin
- 0000:8705       _printGenLDec
- 0000:8AD0       _printGenLHex
- 0000:88E1       _printGenLInt
- 0000:8597       _printGenLn
- 0000:8D22       _printGenPtr
- 0000:85AB       _printGenStr
- 0000:85E5       _printGenStrHasta
- 0000:6E1F       _printHexBIOS
- 0000:6DF4       _printIntBIOS
- 0000:6E5E       _printLBinBIOS
- 0000:6DDD       _printLDecBIOS
- 0000:6E33       _printLHexBIOS
- 0000:6E08       _printLIntBIOS
- 0000:6D8E       _printLnBIOS
- 0000:6E75       _printPtrBIOS
- 0000:6D9B       _printStrBIOS
- 0000:6DAF       _printStrHastaBIOS
- 0000:6E89       _printWordBIOS
- 0964:0902       _ptrBiosArea
- 0964:28C6       _ptrBuferSO1
- 0964:0906       _ptrFechaBios
- 0964:0968       _ptrTVI
- 0000:7822       _puntoDeParada
+ 0968:28AC       _primerSector
+ 0968:28B8       _primerSectorDatos
+ 0968:28B4       _primerSectorDirRaiz
+ 0968:28B0       _primerSectorFAT
+ 0000:6E94       _printBinBIOS
+ 0000:6F24       _printCadBIOS
+ 0000:6DC6       _printCarAtrPagBIOS
+ 0000:6C88       _printCarBIOS
+ 0000:6C94       _printCarPagBIOS
+ 0000:6C74       _printCarRawBIOS
+ 0000:6E13       _printDecBIOS
+ 0000:8DAA       _printfGen
+ 0000:8C03       _printGenBin
+ 0000:8687       _printGenDec
+ 0000:8A5C       _printGenHex
+ 0000:882A       _printGenInt
+ 0000:8CAF       _printGenLBin
+ 0000:874F       _printGenLDec
+ 0000:8B1A       _printGenLHex
+ 0000:892B       _printGenLInt
+ 0000:85E1       _printGenLn
+ 0000:8D6C       _printGenPtr
+ 0000:85F5       _printGenStr
+ 0000:862F       _printGenStrHasta
+ 0000:6E69       _printHexBIOS
+ 0000:6E3E       _printIntBIOS
+ 0000:6EA8       _printLBinBIOS
+ 0000:6E27       _printLDecBIOS
+ 0000:6E7D       _printLHexBIOS
+ 0000:6E52       _printLIntBIOS
+ 0000:6DD8       _printLnBIOS
+ 0000:6EBF       _printPtrBIOS
+ 0000:6DE5       _printStrBIOS
+ 0000:6DF9       _printStrHastaBIOS
+ 0000:6ED3       _printWordBIOS
+ 0968:090C       _ptrBiosArea
+ 0968:28D0       _ptrBuferSO1
+ 0968:0910       _ptrFechaBios
+ 0968:0972       _ptrTVI
+ 0000:786C       _puntoDeParada
  0000:6A2F       _puntoDeParadaSO1
- 0000:9278       _putBin
- 0000:9178       _putCar
- 0000:91D3       _putDec
- 0000:9241       _putHex
- 0000:920A       _putInt
- 0000:9292       _putLBin
- 0000:91ED       _putLDec
- 0000:925B       _putLHex
- 0000:9224       _putLInt
- 0000:918B       _putLn
- 0000:92AF       _putPtr
- 0000:919D       _putStr
- 0000:91B5       _putStrHasta
- 0000:8066       _readDOS
+ 0000:92C2       _putBin
+ 0000:91C2       _putCar
+ 0000:921D       _putDec
+ 0000:928B       _putHex
+ 0000:9254       _putInt
+ 0000:92DC       _putLBin
+ 0000:9237       _putLDec
+ 0000:92A5       _putLHex
+ 0000:926E       _putLInt
+ 0000:91D5       _putLn
+ 0000:92F9       _putPtr
+ 0000:91E7       _putStr
+ 0000:91FF       _putStrHasta
+ 0000:80B0       _readDOS
  0000:0E7C       _readGP
- 0000:728B       _readXYBIOS
- 0000:7267       _readXYPagBIOS
+ 0000:72D5       _readXYBIOS
+ 0000:72B1       _readXYPagBIOS
  0000:6A8C       _rebootLegacy
- 0000:72CE       _recibirBIOS
- 0964:0B9A       _recVInt
- 0964:0994       _rec_gm
- 0964:0998       _rec_gp
- 0964:0EAA       _rec_sf
+ 0000:7318       _recibirBIOS
+ 0968:0BA4       _recVInt
+ 0968:099E       _rec_gm
+ 0968:09A2       _rec_gp
+ 0968:0EB4       _rec_sf
  0000:14AA       _redirigirInt
  0000:14F6       _redirigirIntHardware
  0000:3715       _registrarEnPOrdenados
  0000:00B2       _resetControlerBIOS
  0000:33DA       _resetPids
  0000:1543       _restablecerInt
- 0000:94A8       _restaurarPantallaInicial
+ 0000:94F2       _restaurarPantallaInicial
  0000:10A2       _rti_00
- 0000:93FB       _salvarPantallaInicial
+ 0000:9445       _salvarPantallaInicial
  0000:3529       _salvarProceso
  0000:3548       _salvarTareaInterrumpida
- 0000:71EA       _scrollBIOS
- 0000:83D1       _scrollCPantalla
- 0000:6F6C       _scrollPagBDA
- 0000:71AF       _scrollPagBIOS
- 0000:837D       _scrollPantalla
- 0964:28A0       _sectoresDirRaiz
- 0964:2894       _sectoresPorCluster
- 0964:2890       _sectoresPorPista
- 0000:94E7       _seg
+ 0000:7234       _scrollBIOS
+ 0000:841B       _scrollCPantalla
+ 0000:6FB6       _scrollPagBDA
+ 0000:71F9       _scrollPagBIOS
+ 0000:83C7       _scrollPantalla
+ 0968:28AA       _sectoresDirRaiz
+ 0968:289E       _sectoresPorCluster
+ 0968:289A       _sectoresPorPista
+ 0000:9531       _seg
  0000:4F69       _segBuferSeguro
- 0964:28C4       _segBuferSO1
+ 0968:28CE       _segBuferSO1
  0000:0095       _segDatos
- 0000:7C02       _segPSP
+ 0000:7C4C       _segPSP
  0000:0FAC       _servidorGP
- 0000:724D       _setCursorBIOS
- 0000:810F       _setdiskDOS
- 0000:7AB4       _setgid
- 0000:7AA5       _setuid
- 0000:84C7       _set_pics
+ 0000:7297       _setCursorBIOS
+ 0000:8159       _setdiskDOS
+ 0000:7AFE       _setgid
+ 0000:7AEF       _setuid
+ 0000:8511       _set_pics
  0000:3425       _sigProceso
  0000:165B       _so1_manejador_00
  0000:1BE7       _so1_manejador_01
@@ -377,23 +378,23 @@
  0000:2860       _so1_manejador_03
  0000:29D3       _so1_manejador_04
  0000:1586       _so1_manejador_Nulo
- 0964:0986       _SP_Proceso
- 0964:098A       _SP_Tarea
- 0964:0984       _SS_Proceso
- 0964:0988       _SS_Tarea
+ 0968:0990       _SP_Proceso
+ 0968:0994       _SP_Tarea
+ 0968:098E       _SS_Proceso
+ 0968:0992       _SS_Tarea
  0000:0000       _startBin
- 0964:096C       _startBSS
+ 0968:0976       _startBSS
  0000:006C       _startCabecera
  0000:0000       _startCode
  0000:0056       _startCommon
- 0964:0002       _startData
+ 0968:000C       _startData
  0000:0043       _startExe
- 0964:0170       _strSo1
- 0964:28CA       _tablaFichAbiertos
- 0964:098E       _tamBloqueMax
- 0964:28B2       _tamFAT
+ 0968:017A       _strSo1
+ 0968:28D4       _tablaFichAbiertos
+ 0968:0998       _tamBloqueMax
+ 0968:28BC       _tamFAT
  0000:5C86       _tamFichero
- 0000:81BA       _tamPantalla
+ 0000:8204       _tamPantalla
  0000:5ED2       _tamProceso
  0000:3061       _tareaPlot
  0000:2EE2       _tareaPrueba
@@ -404,22 +405,22 @@
  0000:6A94       _tipoTeclado
  0000:4F26       _tirarS0
  0000:6696       _tirarSistema
- 0964:2628       _tramaProceso
- 0964:262C       _tramaTarea
+ 0968:2632       _tramaProceso
+ 0968:2636       _tramaTarea
  0000:00AA       _unidadBIOS
- 0964:0356       _unidadFisicaActual
- 0964:0354       _unidadLogicaActual
- 0000:846B       _unmask_pic1
- 0000:8486       _unmask_pic2
- 0000:768A       _vaciarCcb
- 0000:7851       _valorFlags
- 0000:841B       _valorIMR
- 0000:7C45       _valorMSDOS
- 0000:7BF2       _versionMSDOS
- 0964:099A       _VIOrg
- 0000:7A42       _waitpid
- 0000:7B02       _write
- 0000:808A       _writeDOS
+ 0968:0360       _unidadFisicaActual
+ 0968:035E       _unidadLogicaActual
+ 0000:84B5       _unmask_pic1
+ 0000:84D0       _unmask_pic2
+ 0000:76D4       _vaciarCcb
+ 0000:789B       _valorFlags
+ 0000:8465       _valorIMR
+ 0000:7C8F       _valorMSDOS
+ 0000:7C3C       _versionMSDOS
+ 0968:09A4       _VIOrg
+ 0000:7A8C       _waitpid
+ 0000:7B4C       _write
+ 0000:80D4       _writeDOS
  0000:0F5B       _writeGP
 
   Address         Publics by Value
@@ -559,285 +560,286 @@
  0000:6AC4       _teclaListaBIOS
  0000:6ADA       _leerTeclaListaBDA
  0000:6B9D       _teclaListaBDA
- 0000:6BEF       _esperarTicsBIOS
- 0000:6C2A       _printCarRawBIOS
- 0000:6C3E       _printCarBIOS
- 0000:6C4A       _printCarPagBIOS
- 0000:6D7C       _printCarAtrPagBIOS
- 0000:6D8E       _printLnBIOS
- 0000:6D9B       _printStrBIOS
- 0000:6DAF       _printStrHastaBIOS
- 0000:6DC9       _printDecBIOS
- 0000:6DDD       _printLDecBIOS
- 0000:6DF4       _printIntBIOS
- 0000:6E08       _printLIntBIOS
- 0000:6E1F       _printHexBIOS
- 0000:6E33       _printLHexBIOS
- 0000:6E4A       _printBinBIOS
- 0000:6E5E       _printLBinBIOS
- 0000:6E75       _printPtrBIOS
- 0000:6E89       _printWordBIOS
- 0000:6EDA       _printCadBIOS
- 0000:6F16       _modoDeVideo
- 0000:6F26       _establecerModoDeVideo
- 0000:6F32       _paginaActiva
- 0000:6F42       _establecerPaginaActiva
- 0000:6F4E       _numPagsVideo
- 0000:6F6C       _scrollPagBDA
- 0000:71AF       _scrollPagBIOS
- 0000:71EA       _scrollBIOS
- 0000:721C       _goToXYPag
- 0000:722E       _goToXYBIOS
- 0000:724D       _setCursorBIOS
- 0000:725C       _ocultaCursorBIOS
- 0000:7267       _readXYPagBIOS
- 0000:728B       _readXYBIOS
- 0000:72BC       _memBIOS
- 0000:72BF       _enviarBIOS
- 0000:72CE       _recibirBIOS
- 0000:72E1       _hayApmBIOS
- 0000:7307       _connectApmBIOS
- 0000:7323       _disconnectApmBIOS
- 0000:733F       _cpuIdleBIOS
- 0000:7345       _cpuBusyBIOS
- 0000:734B       _mayuscula
- 0000:7373       _minuscula
- 0000:739B       _inicCcb
- 0000:73FD       _encolarCcb
- 0000:746D       _desencolarCcb
- 0000:74CD       _eliminarCcb
- 0000:75B2       _eliminarSegCcb
- 0000:768A       _vaciarCcb
- 0000:76E6       _atenderCcb
- 0000:7766       _copia
- 0000:7790       _copiaLarga
- 0000:7822       _puntoDeParada
- 0000:7837       _assert
- 0000:7851       _valorFlags
- 0000:785F       _mostrarFlags
- 0000:789B       _escribirCar
- 0000:78AC       _escribirLn
- 0000:78B4       _escribirStr
- 0000:78C6       _escribirStrHasta
- 0000:78DE       _escribirDec
- 0000:78F2       _escribirLDec
- 0000:7909       _escribirInt
- 0000:791D       _escribirLInt
- 0000:7934       _escribirHex
- 0000:7948       _escribirLHex
- 0000:795F       _escribirBin
- 0000:7973       _escribirLBin
- 0000:798A       _escribirPtr
- 0000:799E       _escribirCursor
- 0000:79BF       _leerCursor
- 0000:79FE       _establecerLineas
- 0000:7A10       _createProcess
- 0000:7A29       _exec
- 0000:7A42       _waitpid
- 0000:7A98       _exit
- 0000:7AA5       _setuid
- 0000:7AB4       _setgid
- 0000:7AC3       _kill
- 0000:7AD7       _open
- 0000:7AEE       _close
- 0000:7B02       _write
- 0000:7B1C       _lseek
- 0000:7B4A       _ioctl
- 0000:7B64       _finProgDOS
- 0000:7B77       _hayMSDOS
- 0000:7BF2       _versionMSDOS
- 0000:7C02       _segPSP
- 0000:7C12       _entornoMSDOS
- 0000:7C45       _valorMSDOS
- 0000:7CE2       _argcMSDOS
- 0000:7D74       _hayDOSBox
- 0000:7DD1       _argvMSDOS
- 0000:7F45       _hayWindowsNT
- 0000:7F9D       _openDOS
- 0000:7FBC       _extendedOpenDOS
- 0000:8013       _closeDOS
- 0000:802D       _commitFileDOS
- 0000:8047       _createDOS
- 0000:8066       _readDOS
- 0000:808A       _writeDOS
- 0000:80AE       _lseekDOS
- 0000:80FD       _getdiskDOS
- 0000:810F       _setdiskDOS
- 0000:8124       _getcurdirDOS
- 0000:8145       _chdirDOS
- 0000:815C       _findfirstDOS
- 0000:818E       _findnextDOS
- 0000:81BA       _tamPantalla
- 0000:81C9       _pantallazo
- 0000:827D       _borrarPantalla
- 0000:82A1       _borrarCPantalla
- 0000:82C5       _copiarPantalla
- 0000:8321       _copiarCPantalla
- 0000:837D       _scrollPantalla
- 0000:83D1       _scrollCPantalla
- 0000:841B       _valorIMR
- 0000:842D       _establecerIMR
- 0000:843B       _mask_pic1
- 0000:8452       _mask_pic2
- 0000:846B       _unmask_pic1
- 0000:8486       _unmask_pic2
- 0000:84A3       _get_pic1_isr
- 0000:84B4       _get_pic2_isr
- 0000:84C7       _set_pics
- 0000:853B       _pic_setup
- 0000:8546       _enable_hwirq
- 0000:8597       _printGenLn
- 0000:85AB       _printGenStr
- 0000:85E5       _printGenStrHasta
- 0000:863D       _printGenDec
- 0000:8705       _printGenLDec
- 0000:87E0       _printGenInt
- 0000:88E1       _printGenLInt
- 0000:8A12       _printGenHex
- 0000:8AD0       _printGenLHex
- 0000:8BB9       _printGenBin
- 0000:8C65       _printGenLBin
- 0000:8D22       _printGenPtr
- 0000:8D60       _printfGen
- 0000:8D63       _posicionPC2c
- 0000:8DDB       _eliminarPC2c
- 0000:8E80       _apilarPC2c
- 0000:8F01       _encolarPC2c
- 0000:8F99       _desencolarPC2c
- 0000:904B       _inicializarPC2c
- 0000:90DC       _inportb
- 0000:90E7       _inport
- 0000:90F0       _outport
- 0000:90FC       _outportb
- 0000:9108       _inportb_r
- 0000:9124       _outportb_r
- 0000:913D       _contadorTimer0
- 0000:9178       _putCar
- 0000:918B       _putLn
- 0000:919D       _putStr
- 0000:91B5       _putStrHasta
- 0000:91D3       _putDec
- 0000:91ED       _putLDec
- 0000:920A       _putInt
- 0000:9224       _putLInt
- 0000:9241       _putHex
- 0000:925B       _putLHex
- 0000:9278       _putBin
- 0000:9292       _putLBin
- 0000:92AF       _putPtr
- 0000:92C9       _copiarStr
- 0000:92F2       _copiarStrHasta
- 0000:932C       _iguales
- 0000:9365       _igualesHasta
- 0000:93A9       _igualesSalvoMayusculasHasta
- 0000:93FB       _salvarPantallaInicial
- 0000:94A8       _restaurarPantallaInicial
- 0000:94CF       _pointer
- 0000:94E7       _seg
- 0000:94FC       _off
- 0000:9511       _incPtr
- 0000:953A       N_LDIV@
- 0000:953D       LDIV@
- 0000:953D       F_LDIV@
- 0000:9541       N_LUDIV@
- 0000:9544       F_LUDIV@
- 0000:9544       LUDIV@
- 0000:9549       N_LMOD@
- 0000:954C       F_LMOD@
- 0000:954C       LMOD@
- 0000:9551       N_LUMOD@
- 0000:9554       LUMOD@
- 0000:9554       F_LUMOD@
- 0000:95E8       N_LXLSH@
- 0000:95EB       LXLSH@
- 0000:95EB       F_LXLSH@
- 0000:9609       N_LXURSH@
- 0000:960C       F_LXURSH@
- 0000:960C       LXURSH@
- 0000:962A       N_LXMUL@
- 0964:0002       _nivelActivacionSO1
- 0964:0002       _startData
- 0964:0004       _enHalt
- 0964:0006       _activarAlEpilogo1
- 0964:0008       _hayTic
- 0964:000A       _debugWord
- 0964:0052       _descCcbGP
- 0964:007A       _manejador
- 0964:012A       _plotProcesos
- 0964:0138       _descCcbAlEpilogo
- 0964:0168       _numPids
- 0964:016A       _indProcesoActual
- 0964:016C       _indProcesoDeSuperficie
- 0964:016E       _contOcioso
- 0964:0170       _strSo1
- 0964:01A0       _comandoSo1a
- 0964:01F0       _comandoSo1b
- 0964:0354       _unidadLogicaActual
- 0964:0356       _unidadFisicaActual
- 0964:0902       _ptrBiosArea
- 0964:0906       _ptrFechaBios
- 0964:090A       _dig
- 0964:091C       _debug_parar
- 0964:0968       _ptrTVI
- 0964:096C       _startBSS
- 0964:096C       _CS_SO1
- 0964:096C       _finData
- 0964:096E       _DS_SO1
- 0964:0970       _BSS_SO1
- 0964:0972       _IMRInicial
- 0964:0974       _bloqueDeParametros
- 0964:0984       _SS_Proceso
- 0964:0986       _SP_Proceso
- 0964:0988       _SS_Tarea
- 0964:098A       _SP_Tarea
- 0964:098E       _tamBloqueMax
- 0964:0990       _listaLibres
- 0964:0994       _rec_gm
- 0964:0996       _dfs_gm
- 0964:0998       _rec_gp
- 0964:099A       _VIOrg
- 0964:0B9A       _recVInt
- 0964:0C9A       _isr
- 0964:0E9A       _codOp
- 0964:0E9C       _dirDestino
- 0964:0EAA       _rec_sf
- 0964:0EAC       _dfs_sf
- 0964:0EB6       _plotCar
- 0964:0EDA       _descProceso
- 0964:1C9A       _descFichero
- 0964:1E3E       _descRecurso
- 0964:22C8       _c2cPFR
- 0964:232C       _e2PFR
- 0964:2624       _ccbAlEpilogo
- 0964:2628       _tramaProceso
- 0964:262C       _tramaTarea
- 0964:2630       _contRodajas
- 0964:2634       _contTicsRodaja
- 0964:2636       _contadorTimer00
- 0964:2638       _descUnidadLogica
- 0964:2764       _descUnidadFisica
- 0964:2890       _sectoresPorPista
- 0964:2892       _cabezas
- 0964:2894       _sectoresPorCluster
- 0964:2896       _bytesPorSector
- 0964:2898       _bytesPorCluster
- 0964:289A       _entradasPorSector
- 0964:289C       _entradasPorCluster
- 0964:289E       _entradasDirRaiz
- 0964:28A0       _sectoresDirRaiz
- 0964:28A2       _primerSector
- 0964:28A6       _primerSectorFAT
- 0964:28AA       _primerSectorDirRaiz
- 0964:28AE       _primerSectorDatos
- 0964:28B2       _tamFAT
- 0964:28B6       _entradasFAT
- 0964:28BA       _clusteres
- 0964:28BE       _FAT
- 0964:28C2       _numFichAbiertos
- 0964:28C4       _segBuferSO1
- 0964:28C6       _ptrBuferSO1
- 0964:28CA       _tablaFichAbiertos
- 0964:2A6E       _finBSS
+ 0000:6BEF       _cambiarTeclaListaBDA
+ 0000:6C39       _esperarTicsBIOS
+ 0000:6C74       _printCarRawBIOS
+ 0000:6C88       _printCarBIOS
+ 0000:6C94       _printCarPagBIOS
+ 0000:6DC6       _printCarAtrPagBIOS
+ 0000:6DD8       _printLnBIOS
+ 0000:6DE5       _printStrBIOS
+ 0000:6DF9       _printStrHastaBIOS
+ 0000:6E13       _printDecBIOS
+ 0000:6E27       _printLDecBIOS
+ 0000:6E3E       _printIntBIOS
+ 0000:6E52       _printLIntBIOS
+ 0000:6E69       _printHexBIOS
+ 0000:6E7D       _printLHexBIOS
+ 0000:6E94       _printBinBIOS
+ 0000:6EA8       _printLBinBIOS
+ 0000:6EBF       _printPtrBIOS
+ 0000:6ED3       _printWordBIOS
+ 0000:6F24       _printCadBIOS
+ 0000:6F60       _modoDeVideo
+ 0000:6F70       _establecerModoDeVideo
+ 0000:6F7C       _paginaActiva
+ 0000:6F8C       _establecerPaginaActiva
+ 0000:6F98       _numPagsVideo
+ 0000:6FB6       _scrollPagBDA
+ 0000:71F9       _scrollPagBIOS
+ 0000:7234       _scrollBIOS
+ 0000:7266       _goToXYPag
+ 0000:7278       _goToXYBIOS
+ 0000:7297       _setCursorBIOS
+ 0000:72A6       _ocultaCursorBIOS
+ 0000:72B1       _readXYPagBIOS
+ 0000:72D5       _readXYBIOS
+ 0000:7306       _memBIOS
+ 0000:7309       _enviarBIOS
+ 0000:7318       _recibirBIOS
+ 0000:732B       _hayApmBIOS
+ 0000:7351       _connectApmBIOS
+ 0000:736D       _disconnectApmBIOS
+ 0000:7389       _cpuIdleBIOS
+ 0000:738F       _cpuBusyBIOS
+ 0000:7395       _mayuscula
+ 0000:73BD       _minuscula
+ 0000:73E5       _inicCcb
+ 0000:7447       _encolarCcb
+ 0000:74B7       _desencolarCcb
+ 0000:7517       _eliminarCcb
+ 0000:75FC       _eliminarSegCcb
+ 0000:76D4       _vaciarCcb
+ 0000:7730       _atenderCcb
+ 0000:77B0       _copia
+ 0000:77DA       _copiaLarga
+ 0000:786C       _puntoDeParada
+ 0000:7881       _assert
+ 0000:789B       _valorFlags
+ 0000:78A9       _mostrarFlags
+ 0000:78E5       _escribirCar
+ 0000:78F6       _escribirLn
+ 0000:78FE       _escribirStr
+ 0000:7910       _escribirStrHasta
+ 0000:7928       _escribirDec
+ 0000:793C       _escribirLDec
+ 0000:7953       _escribirInt
+ 0000:7967       _escribirLInt
+ 0000:797E       _escribirHex
+ 0000:7992       _escribirLHex
+ 0000:79A9       _escribirBin
+ 0000:79BD       _escribirLBin
+ 0000:79D4       _escribirPtr
+ 0000:79E8       _escribirCursor
+ 0000:7A09       _leerCursor
+ 0000:7A48       _establecerLineas
+ 0000:7A5A       _createProcess
+ 0000:7A73       _exec
+ 0000:7A8C       _waitpid
+ 0000:7AE2       _exit
+ 0000:7AEF       _setuid
+ 0000:7AFE       _setgid
+ 0000:7B0D       _kill
+ 0000:7B21       _open
+ 0000:7B38       _close
+ 0000:7B4C       _write
+ 0000:7B66       _lseek
+ 0000:7B94       _ioctl
+ 0000:7BAE       _finProgDOS
+ 0000:7BC1       _hayMSDOS
+ 0000:7C3C       _versionMSDOS
+ 0000:7C4C       _segPSP
+ 0000:7C5C       _entornoMSDOS
+ 0000:7C8F       _valorMSDOS
+ 0000:7D2C       _argcMSDOS
+ 0000:7DBE       _hayDOSBox
+ 0000:7E1B       _argvMSDOS
+ 0000:7F8F       _hayWindowsNT
+ 0000:7FE7       _openDOS
+ 0000:8006       _extendedOpenDOS
+ 0000:805D       _closeDOS
+ 0000:8077       _commitFileDOS
+ 0000:8091       _createDOS
+ 0000:80B0       _readDOS
+ 0000:80D4       _writeDOS
+ 0000:80F8       _lseekDOS
+ 0000:8147       _getdiskDOS
+ 0000:8159       _setdiskDOS
+ 0000:816E       _getcurdirDOS
+ 0000:818F       _chdirDOS
+ 0000:81A6       _findfirstDOS
+ 0000:81D8       _findnextDOS
+ 0000:8204       _tamPantalla
+ 0000:8213       _pantallazo
+ 0000:82C7       _borrarPantalla
+ 0000:82EB       _borrarCPantalla
+ 0000:830F       _copiarPantalla
+ 0000:836B       _copiarCPantalla
+ 0000:83C7       _scrollPantalla
+ 0000:841B       _scrollCPantalla
+ 0000:8465       _valorIMR
+ 0000:8477       _establecerIMR
+ 0000:8485       _mask_pic1
+ 0000:849C       _mask_pic2
+ 0000:84B5       _unmask_pic1
+ 0000:84D0       _unmask_pic2
+ 0000:84ED       _get_pic1_isr
+ 0000:84FE       _get_pic2_isr
+ 0000:8511       _set_pics
+ 0000:8585       _pic_setup
+ 0000:8590       _enable_hwirq
+ 0000:85E1       _printGenLn
+ 0000:85F5       _printGenStr
+ 0000:862F       _printGenStrHasta
+ 0000:8687       _printGenDec
+ 0000:874F       _printGenLDec
+ 0000:882A       _printGenInt
+ 0000:892B       _printGenLInt
+ 0000:8A5C       _printGenHex
+ 0000:8B1A       _printGenLHex
+ 0000:8C03       _printGenBin
+ 0000:8CAF       _printGenLBin
+ 0000:8D6C       _printGenPtr
+ 0000:8DAA       _printfGen
+ 0000:8DAD       _posicionPC2c
+ 0000:8E25       _eliminarPC2c
+ 0000:8ECA       _apilarPC2c
+ 0000:8F4B       _encolarPC2c
+ 0000:8FE3       _desencolarPC2c
+ 0000:9095       _inicializarPC2c
+ 0000:9126       _inportb
+ 0000:9131       _inport
+ 0000:913A       _outport
+ 0000:9146       _outportb
+ 0000:9152       _inportb_r
+ 0000:916E       _outportb_r
+ 0000:9187       _contadorTimer0
+ 0000:91C2       _putCar
+ 0000:91D5       _putLn
+ 0000:91E7       _putStr
+ 0000:91FF       _putStrHasta
+ 0000:921D       _putDec
+ 0000:9237       _putLDec
+ 0000:9254       _putInt
+ 0000:926E       _putLInt
+ 0000:928B       _putHex
+ 0000:92A5       _putLHex
+ 0000:92C2       _putBin
+ 0000:92DC       _putLBin
+ 0000:92F9       _putPtr
+ 0000:9313       _copiarStr
+ 0000:933C       _copiarStrHasta
+ 0000:9376       _iguales
+ 0000:93AF       _igualesHasta
+ 0000:93F3       _igualesSalvoMayusculasHasta
+ 0000:9445       _salvarPantallaInicial
+ 0000:94F2       _restaurarPantallaInicial
+ 0000:9519       _pointer
+ 0000:9531       _seg
+ 0000:9546       _off
+ 0000:955B       _incPtr
+ 0000:9584       N_LDIV@
+ 0000:9587       LDIV@
+ 0000:9587       F_LDIV@
+ 0000:958B       N_LUDIV@
+ 0000:958E       F_LUDIV@
+ 0000:958E       LUDIV@
+ 0000:9593       N_LMOD@
+ 0000:9596       F_LMOD@
+ 0000:9596       LMOD@
+ 0000:959B       N_LUMOD@
+ 0000:959E       LUMOD@
+ 0000:959E       F_LUMOD@
+ 0000:9632       N_LXLSH@
+ 0000:9635       LXLSH@
+ 0000:9635       F_LXLSH@
+ 0000:9653       N_LXURSH@
+ 0000:9656       F_LXURSH@
+ 0000:9656       LXURSH@
+ 0000:9674       N_LXMUL@
+ 0968:000C       _nivelActivacionSO1
+ 0968:000C       _startData
+ 0968:000E       _enHalt
+ 0968:0010       _activarAlEpilogo1
+ 0968:0012       _hayTic
+ 0968:0014       _debugWord
+ 0968:005C       _descCcbGP
+ 0968:0084       _manejador
+ 0968:0134       _plotProcesos
+ 0968:0142       _descCcbAlEpilogo
+ 0968:0172       _numPids
+ 0968:0174       _indProcesoActual
+ 0968:0176       _indProcesoDeSuperficie
+ 0968:0178       _contOcioso
+ 0968:017A       _strSo1
+ 0968:01AA       _comandoSo1a
+ 0968:01FA       _comandoSo1b
+ 0968:035E       _unidadLogicaActual
+ 0968:0360       _unidadFisicaActual
+ 0968:090C       _ptrBiosArea
+ 0968:0910       _ptrFechaBios
+ 0968:0914       _dig
+ 0968:0926       _debug_parar
+ 0968:0972       _ptrTVI
+ 0968:0976       _startBSS
+ 0968:0976       _CS_SO1
+ 0968:0976       _finData
+ 0968:0978       _DS_SO1
+ 0968:097A       _BSS_SO1
+ 0968:097C       _IMRInicial
+ 0968:097E       _bloqueDeParametros
+ 0968:098E       _SS_Proceso
+ 0968:0990       _SP_Proceso
+ 0968:0992       _SS_Tarea
+ 0968:0994       _SP_Tarea
+ 0968:0998       _tamBloqueMax
+ 0968:099A       _listaLibres
+ 0968:099E       _rec_gm
+ 0968:09A0       _dfs_gm
+ 0968:09A2       _rec_gp
+ 0968:09A4       _VIOrg
+ 0968:0BA4       _recVInt
+ 0968:0CA4       _isr
+ 0968:0EA4       _codOp
+ 0968:0EA6       _dirDestino
+ 0968:0EB4       _rec_sf
+ 0968:0EB6       _dfs_sf
+ 0968:0EC0       _plotCar
+ 0968:0EE4       _descProceso
+ 0968:1CA4       _descFichero
+ 0968:1E48       _descRecurso
+ 0968:22D2       _c2cPFR
+ 0968:2336       _e2PFR
+ 0968:262E       _ccbAlEpilogo
+ 0968:2632       _tramaProceso
+ 0968:2636       _tramaTarea
+ 0968:263A       _contRodajas
+ 0968:263E       _contTicsRodaja
+ 0968:2640       _contadorTimer00
+ 0968:2642       _descUnidadLogica
+ 0968:276E       _descUnidadFisica
+ 0968:289A       _sectoresPorPista
+ 0968:289C       _cabezas
+ 0968:289E       _sectoresPorCluster
+ 0968:28A0       _bytesPorSector
+ 0968:28A2       _bytesPorCluster
+ 0968:28A4       _entradasPorSector
+ 0968:28A6       _entradasPorCluster
+ 0968:28A8       _entradasDirRaiz
+ 0968:28AA       _sectoresDirRaiz
+ 0968:28AC       _primerSector
+ 0968:28B0       _primerSectorFAT
+ 0968:28B4       _primerSectorDirRaiz
+ 0968:28B8       _primerSectorDatos
+ 0968:28BC       _tamFAT
+ 0968:28C0       _entradasFAT
+ 0968:28C4       _clusteres
+ 0968:28C8       _FAT
+ 0968:28CC       _numFichAbiertos
+ 0968:28CE       _segBuferSO1
+ 0968:28D0       _ptrBuferSO1
+ 0968:28D4       _tablaFichAbiertos
+ 0968:2A78       _finBSS
 
 Line numbers for obj\so1\bios.obj(..\so1\bios.c) segment _TEXT
 
@@ -1096,43 +1098,43 @@ Line numbers for obj\so1\minifs.obj(..\so1\minifs.c) segment _TEXT
    122 0000:2EE1
 Line numbers for obj\so1\plot.obj(..\so1\plot.c) segment _TEXT
 
-    52 0000:2EE2    55 0000:2EE5    65 0000:2EE6    72 0000:2EEA
-    73 0000:2EEF    75 0000:2EF5    76 0000:2EFC    75 0000:2F07
-    78 0000:2F10    82 0000:2F32    83 0000:2F38    84 0000:2F40
-    88 0000:2F43    89 0000:2F49    91 0000:2F54    92 0000:2F56
-    93 0000:2F62    94 0000:2F67    95 0000:2F6A    96 0000:2F73
-    97 0000:2F79    98 0000:2F80    99 0000:2F8A   101 0000:2F9D
-   102 0000:2FA3   103 0000:2FA9   104 0000:2FAF   106 0000:2FBF
-   107 0000:2FC4   109 0000:2FE0   110 0000:2FFA   112 0000:3000
-   113 0000:3002   114 0000:3007   118 0000:3009   119 0000:300F
-   120 0000:301D   121 0000:301F   124 0000:3024   125 0000:3027
-   133 0000:3061   143 0000:3065   148 0000:3066   150 0000:306E
-   151 0000:3075   152 0000:307B   153 0000:308F   154 0000:3093
-   155 0000:3096   156 0000:3098   150 0000:309A   157 0000:30A4
-   158 0000:30B7   160 0000:30BF   161 0000:30C0   149 0000:30C9
-   163 0000:30CF   164 0000:30D2   168 0000:30D4   173 0000:30D8
-   175 0000:30E8   176 0000:30EF   177 0000:30F6   178 0000:310A
-   179 0000:310E   180 0000:3112   181 0000:3114   175 0000:3116
-   182 0000:3120   183 0000:3133   174 0000:313B   185 0000:3142
-   186 0000:314A   188 0000:3157   194 0000:3159   198 0000:315A
-   202 0000:315B   206 0000:315C   212 0000:315D   213 0000:3160
-   214 0000:316E   215 0000:3175   216 0000:3179   218 0000:317B
-   219 0000:317E   220 0000:318F   222 0000:3191   223 0000:3194
-   224 0000:3197   225 0000:3199   227 0000:319B   230 0000:319F
-   231 0000:31A6   232 0000:31BC   233 0000:31C4   232 0000:31D8
-   234 0000:31E1   230 0000:31E6   236 0000:31EF   237 0000:31F1
-   284 0000:31F3   288 0000:31F7   297 0000:3201   298 0000:3222
-   302 0000:3226   306 0000:322A   307 0000:3230   308 0000:3237
-   309 0000:3243   312 0000:3249   313 0000:3250   314 0000:325C
-   315 0000:3265   317 0000:326E   322 0000:3271   323 0000:3278
-   324 0000:3284   327 0000:328A   329 0000:328D   330 0000:3294
-   331 0000:32A0   332 0000:32A9   336 0000:32BF   337 0000:32C2
-   338 0000:32C9   339 0000:32D5   340 0000:32DE   341 0000:32E4
-   343 0000:32E7   344 0000:32EE   343 0000:32F9   345 0000:3302
-   347 0000:3309   348 0000:330F   350 0000:3313   351 0000:331A
-   352 0000:3326   353 0000:332F   354 0000:3336   353 0000:3375
-   361 0000:3384   363 0000:3386   364 0000:338D   365 0000:3399
-   367 0000:33A2   371 0000:33A4
+    58 0000:2EE2    61 0000:2EE5    71 0000:2EE6    78 0000:2EEA
+    79 0000:2EEF    81 0000:2EF5    82 0000:2EFC    81 0000:2F07
+    84 0000:2F10    88 0000:2F32    89 0000:2F38    90 0000:2F40
+    94 0000:2F43    95 0000:2F49    97 0000:2F54    98 0000:2F56
+    99 0000:2F62   100 0000:2F67   101 0000:2F6A   102 0000:2F73
+   103 0000:2F79   104 0000:2F80   105 0000:2F8A   107 0000:2F9D
+   108 0000:2FA3   109 0000:2FA9   110 0000:2FAF   112 0000:2FBF
+   113 0000:2FC4   115 0000:2FE0   116 0000:2FFA   118 0000:3000
+   119 0000:3002   120 0000:3007   124 0000:3009   125 0000:300F
+   126 0000:301D   127 0000:301F   130 0000:3024   131 0000:3027
+   139 0000:3061   149 0000:3065   154 0000:3066   156 0000:306E
+   157 0000:3075   158 0000:307B   159 0000:308F   160 0000:3093
+   161 0000:3096   162 0000:3098   156 0000:309A   163 0000:30A4
+   164 0000:30B7   166 0000:30BF   167 0000:30C0   155 0000:30C9
+   169 0000:30CF   170 0000:30D2   174 0000:30D4   179 0000:30D8
+   181 0000:30E8   182 0000:30EF   183 0000:30F6   184 0000:310A
+   185 0000:310E   186 0000:3112   187 0000:3114   181 0000:3116
+   188 0000:3120   189 0000:3133   180 0000:313B   191 0000:3142
+   192 0000:314A   194 0000:3157   200 0000:3159   204 0000:315A
+   208 0000:315B   212 0000:315C   218 0000:315D   219 0000:3160
+   220 0000:316E   221 0000:3175   222 0000:3179   224 0000:317B
+   225 0000:317E   226 0000:318F   228 0000:3191   231 0000:3194
+   232 0000:3197   234 0000:3199   236 0000:319B   239 0000:319F
+   240 0000:31A6   241 0000:31BC   242 0000:31C4   241 0000:31D8
+   243 0000:31E1   239 0000:31E6   245 0000:31EF   246 0000:31F1
+   293 0000:31F3   297 0000:31F7   306 0000:3201   307 0000:3222
+   311 0000:3226   315 0000:322A   316 0000:3230   317 0000:3237
+   318 0000:3243   321 0000:3249   322 0000:3250   323 0000:325C
+   324 0000:3265   326 0000:326E   331 0000:3271   332 0000:3278
+   333 0000:3284   336 0000:328A   338 0000:328D   339 0000:3294
+   340 0000:32A0   341 0000:32A9   345 0000:32BF   346 0000:32C2
+   347 0000:32C9   348 0000:32D5   349 0000:32DE   350 0000:32E4
+   352 0000:32E7   353 0000:32EE   352 0000:32F9   354 0000:3302
+   356 0000:3309   357 0000:330F   359 0000:3313   360 0000:331A
+   361 0000:3326   362 0000:332F   363 0000:3336   362 0000:3375
+   370 0000:3384   372 0000:3386   373 0000:338D   374 0000:3399
+   376 0000:33A2   380 0000:33A4
 Line numbers for obj\so1\procesos.obj(..\so1\procesos.c) segment _TEXT
 
     77 0000:33DA    79 0000:33E0    81 0000:33E1    83 0000:33E8

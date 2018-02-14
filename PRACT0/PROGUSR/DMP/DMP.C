@@ -6,12 +6,12 @@
 
 #include <so1pub.h\tipos.h>                                      /* incPtr */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
-#include <so1pub.h\caracter.h>                          /* dig, mayusculas */
+#include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */ 
 
-#include <so1pub.h\strings.h>
-#include <so1pub.h\scanner.h>
-#include <so1pub.h\msdos.h>
+#include <so1pub.h\caracter.h>                                /* mayuscula */
+#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\scanner.h>                    /* inicScanner, obtenSimb */ 
+#include <so1pub.h\msdos.h>                                /* versionMSDOS */
 
 typedef enum
 {
@@ -44,35 +44,27 @@ void escribirLinea ( pointer_t ptr, int comienzo, int final )
     unsigned char car ;                           /* para evitar problemas */
     int j ;
 
-    escribirStr(" ") ;
-    escribirHex(seg(ptr), 4) ;
-    escribirStr(":") ;
-    escribirHex(off(ptr), 4) ;
-    escribirStr("  ") ;
+	printf(" %04X:%04X  ", seg(ptr), off(ptr)) ;
+		
     for (j = 0 ; j < 16 ; j++)
-    {
         if ((comienzo <= j) && (j <= final))
-        {
+			printf("%02X ", ptr[j]) ;  
+        else
+            printf("   ") ;
+		
+    putchar(' ') ;
+
+    for (j = 0 ; j < 16 ; j++)		
+        if ((comienzo <= j) && (j <= final))
+		{
             car = ptr[j] ;
-            escribirCar(dig[car >> 4]) ;
-            escribirCar(dig[car & 0x0F]) ;
-            escribirCar(' ') ;
+            if ((' ' <= car) && (car <= '~')) 
+                putchar(car) ;   
+            else 
+				putchar('.') ;
         }
         else
-            escribirStr("   ") ;
-    }
-    escribirCar(' ') ;
-    for (j = 0 ; j < 16 ; j++)
-    {
-        if ((comienzo <= j) && (j <= final))
-        {
-            car = ptr[j] ;
-            if ((' ' <= car) && (car <= '~')) escribirCar(car) ;
-            else escribirCar('.') ;
-        }
-        else
-            escribirCar(' ') ;
-    }
+            putchar(' ') ;
 }
 
 typedef union
@@ -92,7 +84,6 @@ dword_t dirLineal ( pointer_t ptr )
 
 void volcar ( pointer_t ptr, dword_t nBytes )
 {
-
     comodin_t far * ptrbufer = (comodin_t far *)ptr ;
     pointer_t primeraLinea = (pointer_t)((dword_t)ptr & 0xFFFFFFF0L) ;
     sistemaPrevio_t sistema = sistemaPrevio() ;
@@ -102,35 +93,27 @@ void volcar ( pointer_t ptr, dword_t nBytes )
 
     if (nBytes == 0) return ;
 
-    escribirStr("\n\n ") ;
-    escribirHex(seg(ptr), 4) ;
-    escribirStr(":") ;
-    escribirHex(off(ptr), 4) ;
-    escribirStr("  (int)      ->     ") ;
-    if ((off(ptr) == 0xFFFF) && (sistema == sp_windowsNT))  /* idem en BOCHS */
-        escribirStr("error de direccionamiento (NTVDM)\n") ;
+	printf("\n\n %04X:%04X  (int)      ->     ", seg(ptr), off(ptr)) ;
+	
+    if ((off(ptr) == 0xFFFF) && (sistema == sp_windowsNT))   /* idem BOCHS */
+        printf("error de direccionamiento (NTVDM)\n") ;
     else
-    {
-        escribirHex(ptrbufer->i, 4) ;  /* da error si off(ptrbufer) = FFFF */
-        escribirStr("H = ") ;
-        escribirDec(ptrbufer->i, 11) ; /* da error si off(ptrbufer) = FFFF */
-        escribirStr(" (decimal)\n") ;
-    }
-
-    escribirStr("\n ") ;
-    escribirHex(seg(ptr), 4) ;
-    escribirStr(":") ;
-    escribirHex(off(ptr), 4) ;
-    escribirStr("  (long int) -> ") ;
+        printf(
+		    "%04XH = %11u (decimal)\n", 
+		    ptrbufer->i,               /* da error si off(ptrbufer) = FFFF */
+            ptrbufer->i                /* da error si off(ptrbufer) = FFFF */
+		) ;
+    
+    printf("\n %04X:%04X  (long int) -> ", seg(ptr), off(ptr)) ;
+		
     if (((off(ptr) & 0xFFFD) == 0xFFFD) && (sistema == sp_windowsNT)) /* idem en BOCHS */
-        escribirStr("    error de direccionamiento (NTVDM)\n\n") ;
+        printf("    error de direccionamiento (NTVDM)\n\n") ;
     else
-    {
-        escribirLHex(ptrbufer->l, 8) ;  /* da error si off(ptr) = FFFD o FFFF */
-        escribirStr("H = ") ;
-        escribirLDec(ptrbufer->l, 11) ; /* da error si off(ptr) = FFFD o FFFF */
-        escribirStr(" (decimal)\n\n") ;
-    }
+		printf(
+		    "%08lXH = %11lu (decimal)\n\n", 
+		    ptrbufer->l,           /* da error si off(ptrbufer) = FFFF o FFFD */
+            ptrbufer->l            /* da error si off(ptrbufer) = FFFF o FFFD */
+		) ;
 
     if (ultimaDirLineal < (dirLineal(ptr) + nBytes - 1))
         nBytes = nBytes - ((dirLineal(ptr) + nBytes - 1) - ultimaDirLineal) ;
@@ -140,24 +123,24 @@ void volcar ( pointer_t ptr, dword_t nBytes )
     final = ((word_t)(dirLineal(ptr) + nBytes - 1)) & 0x000F ;
 
     if ((dirLineal(ptr) & 0xFFFFFFF0L) ==               /* una unica linea */
-            ((dirLineal(ptr) + nBytes - 1) & 0xFFFFFFF0L))
+        ((dirLineal(ptr) + nBytes - 1) & 0xFFFFFFF0L))
     {
         escribirLinea(primeraLinea, comienzo, final) ;
-        escribirStr("\n") ;
+        printf("\n") ;
         return ;
     }
     escribirLinea(primeraLinea, comienzo, 16) ;
     incPtr((pointer_t far *)&primeraLinea, 16) ;
-    escribirStr("\n") ;
+    printf("\n") ;
 
     for ( i = 0 ; i < (nBytes-(16-comienzo)-1)/16 ; i++ )
     {
         escribirLinea(primeraLinea, 0, 15) ;
         incPtr((pointer_t far *)&primeraLinea, 16) ;
-        escribirStr("\n") ;
+        printf("\n") ;
         if (leerAsciiListo(STDIN) != (char)0)
         {
-            escribirStr("\n volcado interrumpido por el usuario \n") ;
+            printf("\n volcado interrumpido por el usuario \n") ;
             return ;
         }
     }
@@ -165,27 +148,33 @@ void volcar ( pointer_t ptr, dword_t nBytes )
     if (((nBytes-(16-comienzo)-1) % 16) != 0)
     {
         escribirLinea(primeraLinea, 0, final) ;
-        escribirStr("\n") ;
+        printf("\n") ;
     }
 }
 
 void formato ( void )
 {
 //  escribirStrIntenso(" formato: DMP [ SSSS:DDDD [ num ] | -h ]") ;
-    escribirStr(" formato: DMP [ SSSS:DDDD [ num ] | -h ]") ;
+    printf(" formato: DMP [ SSSS:DDDD [ num ] | -h ]") ;
 }
 
 void help ( void )
 {
-    escribirStr("\n\n formato: DMP [ SSSS:DDDD [ num ] | -h ]\n") ;
-    escribirStr("\n volcado de memoria a partir de la direccion SSSS:DDDD \n") ;
-    escribirStr("\n SSSS : segmento de memoria   (hexadecimal) ") ;
-    escribirStr("\n DDDD : desplazamiento        (hexadecimal) ") ;
-    escribirStr("\n num  : numero de bytes a mostrar (decimal) ") ;
-    escribirStr("\n        por defecto num = 64 bytes        \n") ;
+    printf(
+	    ""                                                               "\n"
+	    ""                                                               "\n"
+	    " formato: DMP [ SSSS:DDDD [ num ] | -h ]"                       "\n"
+        ""                                                               "\n"
+  	    " volcado de memoria a partir de la direccion SSSS:DDDD"         "\n"
+        ""                                                               "\n"
+	    " SSSS : segmento de memoria   (hexadecimal)"                    "\n"
+	    " DDDD : desplazamiento        (hexadecimal)"                    "\n"
+	    " num  : numero de bytes a mostrar (decimal)"                    "\n"
+	    "        por defecto num = 64 bytes"                             "\n"
+	) ;
 }
 
-void dmp ( void )
+int dmp ( void )
 {
 
     pointer_t ptr ;
@@ -203,7 +192,7 @@ void dmp ( void )
             {
                 obtenCar() ;
                 if ((('0' <= car) && (car <= '9')) ||
-                        (('A' <= car) && (car <= 'F')))
+                    (('A' <= car) && (car <= 'F')))
                 {
                     numHex() ;
                     if (simb == s_numero)
@@ -214,64 +203,77 @@ void dmp ( void )
                         if ((simb == s_numero) || (simb == s_numeroLargo))
                         {
                             volcar(ptr, numLargo) ;
-                            return ;
+                            return(0) ;
                         }
                         else if (simb == s_fin)
                         {
                             volcar(ptr, 64) ;
-                            return ;
+                            return(0) ;
                         }
                     }
                     else if (simb == s_numeroLargo)
                     {
-                        escribirStr("\n\n") ;
+                        printf("\n\n") ;
                         formato() ;
-                        escribirStr("\n\n el numero de desplazamiento (off = ") ;
-                        escribirLHex(numLargo, 4) ;
-                        escribirStr(") debe ser <= FFFF \n") ;
-                        return ;
+                        printf(
+						    "\n"
+							"\n"
+							" el numero de desplazamiento (off = %08lX) debe ser <= FFFF \n",
+							numLargo
+						) ;
+                        return(2) ;
                     }
                 }
             }
         }
         else if (simb == s_numeroLargo)
         {
-            escribirStr("\n\n") ;
+            printf("\n\n") ;
             formato() ;
-            escribirStr("\n\n el numero de segmento (seg = ") ;
-            escribirLHex(numLargo, 1) ;
-            escribirStr(") debe ser <= FFFF \n") ;
-            return ;
+            printf(
+			    "\n"
+				"\n"
+				" el numero de segmento (seg = %08lX) debe ser <= FFFF \n",
+				numLargo
+			) ;
+            return(3) ;
         }
     }
     formato() ;
+	return(5) ;
 }
 
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
 
     int i, j, k ;
-
+    int error ; 
+	
     if (argc <= 1)                              /* al menos dos argumentos */
     {
         formato() ;
-        return ;
+        return(1) ;
     }
+	
     if ((argc == 2) && (iguales(argv[1], "-h") || iguales(argv[1], "-H")))
     {
         help() ;
-        return ;
+        return(0) ;
     }
+	
     k = 0 ;                              /* comando es una variable global */
     for ( i = 1 ; i < argc ; i ++ )
     {
-        for ( j = 0 ; argv[i][j] != (char)0 ; j++ )
+        for ( j = 0 ; argv[i][j] != '\0' ; j++ )
             comando[0][k++] = mayuscula(argv[i][j]) ;
         comando[0][k++] = ' ' ;
     }
-    comando[0][k--] = (char)0 ;
+    comando[0][k--] = '\0' ;
 
-    dmp() ;
+    error = dmp() ;
+
+    getchar() ;
+    return(error) ;	
 
 }
 

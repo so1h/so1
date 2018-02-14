@@ -3,7 +3,7 @@ Copyright 2002-2015 DOSBox Team, published under GNU GPL.
 ---
 GUI: Press Ctrl-F10 to capture/release mouse.
      Save your configuration and restart DOSBox if your settings do not take effect.
-CONFIG:Loading primary settings from config file C:\Users\Boss\AppData\Local\DOSBox\dosbox-SVN-Daum.conf
+CONFIG:Loading primary settings from config file C:\Users\Boss_\AppData\Local\DOSBox\dosbox-SVN-Daum.conf
 A20: fast remapping (64KB+1MB) DOSBox style
 ROM BIOS range: 0xe0000-0xFFFFF
 ROM BIOS range, final: 0xe0000-0xFFFFF
@@ -30,59 +30,6 @@ DOS_AllocateMemory(blocks=0x000b) = 0x0171-0x017b
 DOS_AllocateMemory(blocks=0x9e82) = 0x017d-0x9ffe
 DOS_AllocateMemory(blocks=0x000b) = 0x0171-0x017b
 DOS_AllocateMemory(blocks=0x9e82) = 0x017d-0x9ffe
-DOS_AllocateMemory(blocks=0x0c3a) = 0x0238-0x0e71
-DOSBox switched to max cycles, because of the setting: cycles=auto. If the game runs too fast try a fixed cycles amount in DOSBox's options.
-DOS_AllocateMemory(blocks=0x000b) = 0x03f9-0x0403
-DOS_AllocateMemory(blocks=0x9bfa) = 0x0405-0x9ffe
-DOS_AllocateMemory(blocks=0x0281) = 0x9d7e-0x9ffe
-DOS_AllocateMemory(blocks=0x021d) = 0xd001-0xd21d
-DOS_AllocateMemory(blocks=0x882d) = 0x05b0-0x8ddc
-DOS_AllocateMemory(blocks=0x0020) = 0x07ec-0x080b
-DOS_AllocateMemory(blocks=0x85f2) = 0x080d-0x8dfe
-DOS_FreeMemory(seg=0x080d)
-DOS_AllocateMemory(blocks=0x0020) = 0x080d-0x082c
-DOS_AllocateMemory(blocks=0x85f2) = 0x082e-0x8e1f
-DOS_FreeMemory(seg=0x082e)
-DOS_AllocateMemory(blocks=0x0020) = 0x082e-0x084d
-DOS_AllocateMemory(blocks=0x85f2) = 0x084f-0x8e40
-DOS_FreeMemory(seg=0x084f)
-DOS_AllocateMemory(blocks=0x1000) = 0x084f-0x184e
-DOS_FreeMemory(seg=0x084f)
-DOS_AllocateMemory(blocks=0x85f2) = 0x084f-0x8e40
-DOS_FreeMemory(seg=0x084f)
-DOS_AllocateMemory(blocks=0x000b) = 0x084f-0x0859
-DOS_AllocateMemory(blocks=0x9522) = 0x085b-0x9d7c
-DOS_FreeMemory(seg=0x084f)
-DOS_FreeMemory(seg=0x085b)
-DOS_AllocateMemory(blocks=0x85f2) = 0x084f-0x8e40
-DOS_FreeMemory(seg=0x07ec)
-DOS_FreeMemory(seg=0x080d)
-DOS_FreeMemory(seg=0x082e)
-DOS_FreeMemory(seg=0x084f)
-DOS_FreeMemory(seg=0x05b0)
-DOS_AllocateMemory(blocks=0x000b) = 0x0171-0x017b
-DOS_AllocateMemory(blocks=0x9e82) = 0x017d-0x9ffe
-DOS_AllocateMemory(blocks=0x0c3a) = 0x0238-0x0e71
-DOS_AllocateMemory(blocks=0x000b) = 0x03f9-0x0403
-DOS_AllocateMemory(blocks=0x9bfa) = 0x0405-0x9ffe
-DOS_AllocateMemory(blocks=0x0281) = 0x9d7e-0x9ffe
-DOS_AllocateMemory(blocks=0x021d) = 0xd001-0xd21d
-DOS_AllocateMemory(blocks=0x882d) = 0x05b0-0x8ddc
-DOS_AllocateMemory(blocks=0x0020) = 0x07ec-0x080b
-DOS_AllocateMemory(blocks=0x85f2) = 0x080d-0x8dfe
-DOS_FreeMemory(seg=0x080d)
-DOS_AllocateMemory(blocks=0x0020) = 0x080d-0x082c
-DOS_AllocateMemory(blocks=0x85f2) = 0x082e-0x8e1f
-DOS_FreeMemory(seg=0x082e)
-DOS_AllocateMemory(blocks=0x0020) = 0x082e-0x084d
-DOS_AllocateMemory(blocks=0x85f2) = 0x084f-0x8e40
-DOS_FreeMemory(seg=0x084f)
-DOS_AllocateMemory(blocks=0x1000) = 0x084f-0x184e
-DOS_FreeMemory(seg=0x084f)
-DOS_AllocateMemory(blocks=0x85f2) = 0x084f-0x8e40
-DOS_FreeMemory(seg=0x084f)
-DOS_AllocateMemory(blocks=0x000b) = 0x084f-0x0859
-DOS_AllocateMemory(blocks=0x9522) = 0x085b-0x9d7c
 INT 15h mouse initialized to 3-byte protocol
 INT 15h mouse initialized to 3-byte protocol
 ROMBIOS memory dump:

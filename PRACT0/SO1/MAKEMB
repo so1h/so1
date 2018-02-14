@@ -22,8 +22,8 @@ mbclean:
 #         y calcular sizeof(multiboot_header))
 # AJMBEXE representa AJMB mas el tamaño de la cabecera de so1.exe (ejecutar
 #         \PRGTOOLS\BIN\EXE2BIN.EXE -c so1.exe o tdump so1.exe)
-AJMB    = 242            # 0xB2 + 8*8 = 178 + 64 = 242
-AJMBEXE = 290            # 242 + 48 = 290
+AJMB    = 240            # 0xC0 + 12*4 = 192 + 48 = 240
+AJMBEXE = 288            # AJMB + 48 = 240 + 48 = 288
 
 # En MBOOT.C debe estar ajustado tamFichBin con el tamaño del fichero so1.bin,
 # con el fin de inicializar correctamente la cabecera multiboot.

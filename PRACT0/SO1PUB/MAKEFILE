@@ -16,17 +16,16 @@ OBJS = ajustusr.obj  biosdata.obj  bios_0.obj    \
        pantalla.obj  puertos.obj   colores.obj   \
        escribir.obj  interpre.obj  msdos.obj     \
        nop.obj       pic.obj       printgen.obj  \
-       printvid.obj \
+       printvid.obj  \
        saludos.obj   scanner.obj   strings.obj   \
        tipos.obj     put.obj       crthw.obj     \
        bios_crt.obj  memvideo.obj  debug.obj     \
        bios_rat.obj  telon.obj     leercmd.obj   \
        ll_s_exc.lib  ll_s_so1.lib  \
-       stdio.obj    \
+       stdio.obj     vsprintf.obj  \
+       usrdbg.obj
 #      startcode.obj startdata.obj startbss.obj  \
 #      fincode.obj   findata.obj   finbss.obj    \
-#      vprinter.obj  \
-#      usrdbg.obj
 
 all: $(OBJS)
   @if not exist LIB mkdir LIB

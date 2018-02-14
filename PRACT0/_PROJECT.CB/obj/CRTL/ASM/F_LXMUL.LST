@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
+Turbo Assembler	 Version 5.4	    12-01-17 01:31:19	    Page 1
 ..\CRTL\ASM\F_LXMUL.ASM
 
 
@@ -60,7 +60,7 @@ Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
      55	0010			     nohi2:
      56	0010  96				     xchg    ax,si
      57	0011  F7 E3				     mul     bx		     ; lo1 * lo2
-Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 2
+Turbo Assembler	 Version 5.4	    12-01-17 01:31:19	    Page 2
 ..\CRTL\ASM\F_LXMUL.ASM
 
 
@@ -71,7 +71,7 @@ Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
      61	0017			     LXMUL@	     ENDP
      62	0017			     _TEXT   ENDS
      63					     END
-Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 3
+Turbo Assembler	 Version 5.4	    12-01-17 01:31:19	    Page 3
 Symbol Table
 
 
@@ -79,9 +79,9 @@ Symbol Table
 
 Symbol Name		Type   Value			   Cref	(defined at #)
 
-??date			Text   "08-28-17"
+??date			Text   "12-01-17"
 ??filename		Text   "F_LXMUL	"
-??time			Text   "13:03:16"
+??time			Text   "01:31:19"
 ??version		Number 0504
 @Cpu			Text   0101H
 @FileName		Text   F_LXMUL

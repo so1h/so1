@@ -2,13 +2,13 @@
 /*                                  clock.c                                */
 /* ----------------------------------------------------------------------- */
 /*                programa que muestra continuamente la hora               */
+/*                      (leyendola del fichero TIMER)                      */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\caracter.h>                           /* dig, mayuscula */
 #include <so1pub.h\strings.h>                                   /* iguales */
-#include <so1pub.h\stdio.h>                               /* printf, getch */
-#include <so1pub.h\escribir.h>                              /* escribirDec */
+#include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 
 int dfReloj ;
 
@@ -20,17 +20,17 @@ void formato ( void )
 void help ( void )
 {
     printf(
-        "\n"
-        "\n"
-        " formato : CLOCK [ -n | -b | -h ]         \n"
-        "\n"
-        " muestra continuamente la hora actual     \n"
-        "\n"
-        " opciones: (por defecto -n)               \n"
-        "\n"
-        "      -n : escribe HH:MM:SS               \n"
-        "      -b : borra y centra HH:MM:SS        \n"
-        "      -h : muestra este help              \n"
+        ""                                                               "\n"
+        ""                                                               "\n"
+        " formato : CLOCK [ -n | -b | -h ]"                              "\n"
+        ""                                                               "\n"
+        " muestra continuamente la hora actual"                          "\n"
+        ""                                                               "\n"
+        " opciones: (por defecto -n)"                                    "\n"
+        ""                                                               "\n"
+        "      -n : escribe HH:MM:SS"                                    "\n"
+        "      -b : borra y centra HH:MM:SS"                             "\n"
+        "      -h : muestra este help"                                   "\n"
     ) ;
 }
 
@@ -39,8 +39,7 @@ void help ( void )
 void borrarCentrar ( word_t tamWin )
 {
 //  word_t lineas, columnas ;
-//  escribirCar(FF) ;
-    printf("\f") ;
+    putchar('\f') ;                                   /* borra la pantalla */
 //  lineas = tamWin & 0x00FF ;
 //  columnas = tamWin >> 8 ;
 //  gotoXYWindow((columnas - 8)/2, lineas/2) ;
@@ -50,14 +49,7 @@ void borrarCentrar ( word_t tamWin )
 
 void escribirHora ( word_t horas, word_t minutos, word_t segundos )
 {
-    if (horas <= 9) printf("0") ;
-    escribirDec(horas, 1) ;
-    printf(":") ;
-    if (minutos <= 9) printf("0") ;
-    escribirDec(minutos, 1) ;
-    printf(":") ;
-    if (segundos <= 9) printf("0") ;
-    escribirDec(segundos, 1) ;
+    printf("%02u:%02u:%02u", horas, minutos, segundos) ;
 }
 
 void leerHora ( word_t * horas, word_t * minutos, word_t * segundos )
@@ -70,7 +62,7 @@ void leerHora ( word_t * horas, word_t * minutos, word_t * segundos )
     *segundos = (word_t)(10*(strHora[6] - '0') + (strHora[7] - '0')) ;
 }
 
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
 
     word_t horas, h_ant ;
@@ -86,7 +78,7 @@ void main ( int argc, char * argv [ ] )
     if (dfTimer < 0)
     {
         printf(" recurso TIMER no disponible ") ;
-        exit(-1) ;
+        return(-1) ;
     }
 
     dfReloj = open("RELOJ", O_RDONLY) ;
@@ -94,13 +86,13 @@ void main ( int argc, char * argv [ ] )
     if (dfReloj < 0)
     {
         printf(" recurso RELOJ no disponible ") ;
-        exit(-1) ;
+        return(-1) ;
     }
 
     if ((argc == 2) && (iguales(argv[1], "-h") || iguales(argv[1], "-H")))
     {
         help() ;
-        return ;
+        return(-1) ;
     }
     if ((argc == 2) &&
             (iguales(argv[1], "-b") || iguales(argv[1], "-B")))
@@ -116,12 +108,12 @@ void main ( int argc, char * argv [ ] )
               (!iguales(argv[1], "-n") && !iguales(argv[1], "-N"))))
     {
         formato() ;
-        return ;
+        return(-1) ;
     }
 
 //  ocultarCursor(TRUE) ;
 
-    printf(" ") ;
+    putchar(' ') ;
 
     leerHora((word_t *)&horas, (word_t *)&minutos, (word_t *)&segundos) ;
     escribirHora(horas, minutos, segundos) ;
@@ -159,7 +151,5 @@ void main ( int argc, char * argv [ ] )
 //  ocultarCursor(FALSE) ;
 
     close(dfTimer) ;
-
+    return(0) ;
 }
-
-

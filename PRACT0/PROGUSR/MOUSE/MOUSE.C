@@ -5,7 +5,7 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
+#include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 
 #include <so1pub.h\scanner.h>
 #include <so1pub.h\strings.h>
@@ -14,10 +14,10 @@
 
 void mostrarFormato ( void )
 {
-    escribirStr(
-        "\n"
-        "\n"
-        " formato: MOUSE [ -h | -p | -b ] \n"
+    printf(
+        ""                                                               "\n"
+        ""                                                               "\n"
+        " formato: MOUSE [ -h | -p | -b ]"                               "\n"
     ) ;
 }
 
@@ -30,15 +30,15 @@ void formato ( void )
 void help ( void )
 {
 	mostrarFormato() ;
-    escribirStr(
-        "\n"
-        " monitoriza la actividad del raton         \n"
-        "\n"
-        " opciones: (por defecto -b)                \n"
-        "\n"
-        "      -h : muestra este help               \n"
-        "      -p : polling mediante leerRatonListo \n"
-        "      -b : bloqueo mediante leerRaton      \n"		
+    printf(
+        ""                                                               "\n"
+        " monitoriza la actividad del raton"                             "\n"
+        ""                                                               "\n"
+        " opciones: (por defecto -b)"                                    "\n"
+        ""                                                               "\n"
+        "      -h : muestra este help"                                   "\n"
+        "      -p : polling mediante leerRatonListo"                     "\n"
+        "      -b : bloqueo mediante leerRaton"                          "\n"		
     ) ;
     exit(0) ;
 }
@@ -48,7 +48,7 @@ void mostrarEstado ( char opcion, word_t modo )
 
     bool_t nuevoEstado ;
     estadoRaton_t est ;
-    char car = (char)0 ;
+    char car = '\0' ;
     byte_t scanCode = (byte_t)0 ;
     int i ;
     int dfRaton ;
@@ -57,7 +57,7 @@ void mostrarEstado ( char opcion, word_t modo )
 
     if (dfRaton < 0)
     {
-        escribirStr("\n\n recurso RATON no disponible \n") ;
+        printf("\n\n recurso RATON no disponible \n") ;
         return ;
     }
 
@@ -72,21 +72,20 @@ void mostrarEstado ( char opcion, word_t modo )
     case 'B' :
         ;
     case 'F' :
-        escribirStr(" (clic en C = 0 F = 0 termina) ") ;
+        printf(" (clic en C = 0 F = 0 termina) ") ;
         break ;
     case 'C' :
-        escribirStr(" (Q o clic en C = 0 F = 0 termina) ") ;
+        printf(" (Q o clic en C = 0 F = 0 termina) ") ;
         break ;
     case 'T' :
-        escribirStr(" (Esc o clic en C = 0 F = 0 termina) ") ;
+        printf(" (Esc o clic en C = 0 F = 0 termina) ") ;
         break ;
     default  :
-        escribirStr(" opcion incorrecta ") ;
+        printf(" opcion incorrecta ") ;
         return ;
     }
 
-    escribirLn() ;
-    escribirLn() ;
+    printf("\n\n") ;
 
 //  ocultarCursor(TRUE) ;
 
@@ -110,58 +109,31 @@ void mostrarEstado ( char opcion, word_t modo )
 
     do
     {
-
         if ((nuevoEstado) || (opcion == 'F'))
         {
 
-            escribirCar('\r') ;
-//          escribirCar('\n') ;
+            printf(
+    			"\r [%02X, %02X, %02X] (", est.B0, est.B1, est.B2
+			) ;
 
-            escribirStr(" [") ;
-            escribirHex(est.B0, 2) ;
-            escribirStr(", ") ;
-            escribirHex(est.B1, 2) ;
-            escribirStr(", ") ;
-            escribirHex(est.B2, 2) ;
-            escribirStr("] ") ;
-
-            escribirStr(" (") ;
             if (est.incX < 0)
-            {
-                escribirStr("-") ;
-                escribirDec((~est.incX)+1, 3) ;
-            }
+                printf("-%3i", (~est.incX)+1) ;
             else
-                escribirDec(est.incX, 4) ;
-            escribirStr(",") ;
+                printf("%4i", est.incX) ;
+			
+            putchar(',') ;
+			
             if (est.incY < 0)
-            {
-                escribirStr("-") ;
-                escribirDec((~est.incY)+1, 3) ;
-            }
+                printf("-%3i", (~est.incY)+1) ;
             else
-                escribirDec(est.incY, 4) ;
-            escribirStr(") ") ;
+                printf("%4i", est.incY) ;
 
-            escribirStr(" (") ;
-            escribirDec(est.X, 3) ;
-            escribirStr(", ") ;
-            escribirDec(est.Y, 3) ;
-            escribirStr(") ") ;
-
-            escribirStr(" C = ") ;
-            escribirDec(est.C, 2) ;
-            escribirStr(" F = ") ;
-            escribirDec(est.F, 2) ;
-
-            escribirStr(" L = ") ;
-            escribirDec(est.botonIz, 1) ;
-            escribirStr(" R = ") ;
-            escribirDec(est.botonDe, 1) ;
-            escribirStr(" M = ") ;
-            escribirDec(est.botonMe, 1) ;
-            escribirDec(i++, 6) ;
-
+            printf(")  (%3i, %3i) C = %2i F = %2i L = %i R = %i M = %i%6i", 
+			    est.X, est.Y, 
+				est.C, est.F, 
+				est.botonIz, est.botonDe, est.botonMe, 
+                i++
+			) ;
         }
 
         switch (opcion)
@@ -181,7 +153,7 @@ void mostrarEstado ( char opcion, word_t modo )
             }
             break ;
         default  :
-            escribirStr(" opcion incorrecta ") ;
+            printf(" opcion incorrecta ") ;
             return ;
         }
 
@@ -189,13 +161,13 @@ void mostrarEstado ( char opcion, word_t modo )
     while (((est.F != 0) || (est.C != 0) || (est.botonIz == 0)) &&
             (mayuscula(car) != 'Q') && (scanCode != Esc)) ;
 
-    escribirLn() ;
+    printf("\n") ;
 
 //  ocultarCursor(FALSE) ;
 
 }
 
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
 
     char opcion ;
@@ -205,7 +177,7 @@ void main ( int argc, char * argv [ ] )
     else if (argc == 2)
         if (iguales(argv[1], "-h")) help() ;
         else if ((argv[1][0] == '-') &&
-                 (((argv[1][2] == (char)0)) || (argv[1][3] == (char)0)))          
+                 (((argv[1][2] == '\0')) || (argv[1][3] == '\0')))          
         {
             opcion = mayuscula(argv[1][1]) ;
             switch (opcion)                                    /* -px, -bx */
@@ -232,5 +204,6 @@ void main ( int argc, char * argv [ ] )
         }
         else formato() ;
     else formato() ;
+	return(0) ;
 }
 

@@ -1,6 +1,6 @@
 !include "..\..\MKF0"
 
-PROGSUSR =   \
+PROGS =   \
 # programas de usuario "normales":
 # --------------------------------
   atexit/   \
@@ -12,16 +12,13 @@ PROGSUSR =   \
   dmp/      \
   dp/       \
   dr/       \
-  ecodf0_1/ \
-  e_cursor/ \
   exec/     \
   fork/     \
-  fake86/   \
   hello/    \
   hello2/   \
   help/     \
-  inic/     \
   info/     \
+  inic/     \
   kill/     \
   leetimer/ \
   login/    \
@@ -30,26 +27,24 @@ PROGSUSR =   \
   mouse/    \
   ps/       \
   sh/       \
-  testsegs/ \
   time/     \
   ver_args/ \
             \
 # drivers:
 # -------
   consola/  \
-  conrat/   \
   raton/    \
   reloj/    \
   retardo/  \
-  timer/
+  timer/    \
 
-DIRS          = $(PROGSUSR:/=)
-DIRS.clean    = $(PROGSUSR:/=.clean)
-DIRS.pule     = $(PROGSUSR:/=.pule)
-DIRS.disquete = $(PROGSUSR:/=.disquete)
-DIRS.show     = $(PROGSUSR:/=.show)
-DIRS.hide     = $(PROGSUSR:/=.hide)
-DIRS.delsrc   = $(PROGSUSR:/=.delsrc)
+DIRS          = $(PROGS:/=)
+DIRS.clean    = $(PROGS:/=.clean)
+DIRS.pule     = $(PROGS:/=.pule)
+DIRS.disquete = $(PROGS:/=.disquete)
+DIRS.show     = $(PROGS:/=.show)
+DIRS.hide     = $(PROGS:/=.hide)
+DIRS.delsrc   = $(PROGS:/=.delsrc)
 
 do: $(DIRS:help=)
   cd help
@@ -143,7 +138,7 @@ rundosboxdbg:
 
 
 
-DIRS.otrocomando = $(PROGSUSR:/=.otrocomando)
+DIRS.otrocomando = $(PROGS:/=.otrocomando)
 
 otrocomando: $(DIRS.otrocomando)
 

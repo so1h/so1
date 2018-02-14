@@ -14,11 +14,11 @@
 
 /* Original PX/XT Keyboard */
 
-/* Si la tecla se pulsa el codigo de exploracion (scan code) es un numero  */
-/* en binario del tipo 0XXXXXXX. Al soltarse el codigo de exploreacion es  */
-/* igual pero con un 1 en el bit de mayor peso: 1XXXXXXX.                  */
+/* Al pulsarse la tecla el codigo de exploracion (scan code) es un numero  */
+/* en binario del tipo 0XXXXXXX. Al soltarse, el codigo de exploracion es  */
+/* el mismo, pero con un 1 en el bit de mayor peso: 1XXXXXXX.              */
 
-/* tomados del TecHelp 6.0 (corresponden al teclado US */
+/* tomados del TecHelp 6.0 (corresponden al teclado US) */
 
 #define CS_Nulo   0x00
 #define CS_Esc    0x01 /* Esc         */
@@ -118,7 +118,7 @@
 #define CS_F12    0x58 /* F12         */
 #define CS_AltPS  0x54 /* Alt Print S */
 
-/* otras teclas producen una secuencia de 2, 4 o 6 cosdigos de exploracion */
+/* otras teclas producen una secuencia de 2, 4 o 6 codigos de exploracion  */
 
 /* En el teclado español el Back Slash se corresponde con el 0x29 */
 

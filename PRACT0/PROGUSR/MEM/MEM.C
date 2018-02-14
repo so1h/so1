@@ -1,13 +1,12 @@
 /* ----------------------------------------------------------------------- */
 /*                                  mem.c                                  */
 /* ----------------------------------------------------------------------- */
-/*                                                                         */
+/*     comando para conocer los bloques de memoria asignados y libres      */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
-
-#include <so1pub.h\strings.h>
+#include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
+#include <so1pub.h\strings.h>                                   /* iguales */
 
 descProceso_t descProceso[maxProcesos] ;
 
@@ -21,66 +20,64 @@ word_t tamBlqMax ;
 
 void mostrarParticion ( pindx_t pindx )
 {
-    escribirHex(descProceso[pindx].CSProc, 4) ;
-    escribirStr(":0000 ") ;
-    escribirHex(descProceso[pindx].tam, 4) ;
-    escribirStr(" Ps ocupada ") ;
-    escribirDec(pindx, 3) ;
-    escribirDec(descProceso[pindx].pid, 4) ;
-    escribirStr(" ") ;
-    escribirStrHasta(descProceso[pindx].programa, 12, TRUE) ;
-    escribirStr(" ") ;
-    escribirStrHasta(descProceso[pindx].comando, 25, TRUE) ;
+	printf(
+	    "%04X:0000 %04X Ps ocupada %3i%4i %-12s %-25s",
+        descProceso[pindx].CSProc,
+        descProceso[pindx].tam,
+        pindx, 
+		descProceso[pindx].pid,
+		descProceso[pindx].programa,
+        descProceso[pindx].comando
+	) ;
 }
 
 void mostrarHueco ( ptrBloque_t ptrBloque )
 {
-    escribirHex(seg((pointer_t)ptrBloque), 4) ;
-    escribirStr(":") ;
-    escribirHex(off((pointer_t)ptrBloque), 4) ;
-    escribirStr(" ") ;
-    escribirHex(ptrBloque->tam, 4) ;
-    escribirStr(" Ps") ;
-    escribirStr(" libre ") ;
+	printf(
+        "%04X:%04X %04X Ps libre ",
+        seg((pointer_t)ptrBloque),
+		off((pointer_t)ptrBloque),
+		ptrBloque->tam
+	) ;
 }
 
 void mostrarOtroBloqueOcupado( word_t segmento, word_t tam )
 {
-    escribirHex(segmento, 4) ;
-    escribirStr(":") ;
-    escribirHex(0x0000, 4) ;
-    escribirStr(" ") ;
-    escribirHex(tam, 4) ;
-    escribirStr(" Ps") ;
-    escribirStr(" ocupado ") ;
+	printf(
+	    "%04X:0000 %04X Ps ocupado ", segmento, tam
+	) ;
 }
 
 void formato ( void )
 {
-    escribirStr(
+    printf(
         " formato: MEM [ -l | -h ] "
     ) ;
 }
 
 void help ( void )
 {
-    escribirStr(
-        "\n"
-        "\n"
-        " formato: MEM [ -l | -h ]                   \n"
-        "\n"
-        " muestra el estado de la memoria gestionada \n"
-        " como una lista de bloques libres ordenados \n"
-        " por direccion (segmento:0000). opciones:   \n"
-        "\n"
-        "   -l : muestra solo los bloques libres     \n"
-        "   -h : muestra este help                   \n"
+    printf(
+        ""                                                               "\n"
+        ""                                                               "\n"
+	) ;
+	formato() ;
+	printf(
+        ""                                                               "\n"
+        ""                                                               "\n"
+        " muestra el estado de la memoria gestionada"                    "\n"
+        " como una lista de bloques libres ordenados"                    "\n"
+        " por direccion (segmento:0000)."                                "\n"
+		""                                                               "\n"
+		" opciones:"                                                     "\n"
+        ""                                                               "\n"
+        "   -l : muestra solo los bloques libres"                        "\n"
+        "   -h : muestra este help"                                      "\n"
     ) ;
 }
 
 void mem ( bool_t mostrarTodos )
 {
-
     int i = 0 ;
     pindx_t pindx = 0 ;
     ptrBloque_t ptrBloque ;
@@ -97,44 +94,33 @@ void mem ( bool_t mostrarTodos )
     tam = descProceso[pindx].tam ;
     segmento = descProceso[pindx].CSProc ;
 
-    escribirStr(" (mayor bloque libre: ") ;
-    escribirHex(tamBlqMax, 4) ;
-    escribirStr(" Ps = ") ;
-    escribirDec(tamBlqMax/64, 1) ;
-    escribirStr(" KB)") ;
-
-    escribirStr(
-        "\n"
-        "\n"
-        " part inicio    tam     estado  ind pid programa     comando\n"
-        " ---- --------- ------- ------- --- --- ------------ ------------------------"
+    printf(
+	    " (mayor bloque libre: %04X Ps = %i KB)"                                     "\n"
+        ""                                                                           "\n"
+        " part inicio    tam     estado  ind pid programa     comando"               "\n"
+        " ---- --------- ------- ------- --- --- ------------ ------------------------\n",
+		tamBlqMax, tamBlqMax/64
     ) ;
 
     if (!mostrarTodos)
     {
         while (seg((pointer_t)ptrBloque) != seg((pointer_t)listaLibres))
         {
-            escribirStr("\n ") ;
-            escribirDec(i++, 4) ;
-            escribirStr(" ") ;
+            printf(" %4i ", i++) ;
             mostrarHueco(ptrBloque) ;
             ptrBloque = (ptrBloque_t)pointer(ptrBloque->sig, 0x0000) ;
+			printf("\n") ;
         }
-        escribirLn() ;
         return ;
     }
 
-    escribirStr("\n ") ;
-    escribirDec(i++, 4) ;
-    escribirStr(" ") ;
+    printf("\n %4i ", i++) ;
     mostrarParticion(pindx) ;
     pindx = c2cPFR[POrdenados].e[pindx].sig ;
 
     while ((segmento + tam) != seg((pointer_t)listaLibres))
     {
-        escribirStr("\n ") ;
-        escribirDec(i++, 4) ;
-        escribirStr(" ") ;
+        printf("\n %4i ", i++) ;
         if ((segmento + tam) == seg((pointer_t)ptrBloque))
         {
             mostrarHueco(ptrBloque) ;
@@ -178,11 +164,11 @@ void mem ( bool_t mostrarTodos )
         }
     }
 
-    escribirLn() ;
-
+    printf("\n") ;
+	
 }
 
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
     if (argc == 1) mem(TRUE) ;
     else if (argc == 2)
@@ -190,4 +176,6 @@ void main ( int argc, char * argv [ ] )
         else if (iguales(argv[1], "-l")) mem(FALSE) ;
         else formato() ;
     else formato() ;
+//	getchar() ;
+	return(0) ;
 }

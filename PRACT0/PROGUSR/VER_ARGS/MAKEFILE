@@ -15,6 +15,8 @@ $(PROGRAMA).obj,                 \
 ..\..\so1pub\obj\put.obj,        \
 ..\..\so1pub\obj\escribir.obj,   \
 #..\..\so1pub\obj\scanner.obj,    \
+..\..\so1pub\obj\stdio.obj,      \
+..\..\so1pub\obj\vsprintf.obj,   \
 ..\..\so1pub\obj\strings.obj,    \
 ..\..\so1pub\obj\msdos.obj,      \
 ..\..\crtl\obj\h_ldiv.obj,       \
@@ -24,9 +26,9 @@ $(PROGRAMA).obj,                 \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (DATA = 763 BSS = 1579 total: 1CDC < 1FFF)
+#puntero de pila inicial (finBSS = 956 < BFE)
 
-SPINICIAL = 03FE
+SPINICIAL = BFE
 
 !include "..\..\MKFILE0"
 !include "..\MAKEUSR"

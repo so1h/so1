@@ -1,93 +1,81 @@
 /* ----------------------------------------------------------------------- */
 /*                                   dr.c                                  */
 /* ----------------------------------------------------------------------- */
-/*                         descriptores de recurso                         */
+/*               comando para ver los descriptores de recurso              */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
+#include <so1pub.h\stdio.h>                             /* printf, getchar */
 
 #include <so1pub.h\strings.h>                                   /* iguales */
 #include <so1pub.h\scanner.h>
-#include <so1pub.h\carsctrl.h>                                      /* BEL */
+#include <so1pub.h\caracter.h>                                /* minuscula */
 
 #include <so1pub.h\ptrc2c.h>                                   /* ptrC2c_t */
 
-#define eS(str)                                                              \
-  escribirStr(str)
+void formato ( void )
+{
+    printf(
+        ""                                                               "\n"
+        ""                                                               "\n"
+        " formato: DR [ rindx | -a | -h ] "                              "\n"                     
+    ) ;
+}
 
-#define eSH(str, ancho, bool)                                                \
-  escribirStrHasta(str, ancho, bool)
-
-#define eH(num, ancho)                                                       \
-  escribirHex(num, ancho)
-
-#define eLH(num, ancho)                                                      \
-  escribirLHex(num, ancho)
-
-#define eD(num, ancho)                                                       \
-  escribirDec(num, ancho)
-
-#define eLD(num, ancho)                                                      \
-  escribirLDec(num, ancho)
-
-#define eI(num, ancho)                                                       \
-  escribirInt(num, ancho)
-
-#define eP(ptr)                                                              \
-  escribirPtr((pointer_t)ptr)
-
-#define eC(rindx)                                                            \
-  eS("\n descRecurso[") ;                                                    \
-  eD(rindx, 1) ;                                                             \
-  eS("].") ;
+void help ( void )
+{
+    formato() ;
+    printf(
+        ""                                                               "\n"
+        " muestra los campos del descriptor de recurso rindx"            "\n"
+        ""                                                               "\n"
+        " opciones: (por defecto -a)"                                    "\n"
+        ""                                                               "\n"
+        "   rindx : muestra en detalle solo ese recurso"                 "\n"
+        "      -a : muestra todos los recursos"                          "\n"
+        "      -h : muestra este help"                                   "\n"
+    ) ;
+}
 
 void ePC2c ( ptrC2c_t ptrC2c )
 {
-    int i, j, numElem, primero, cabecera ;
+    int i, j ;
+	int numElem ;
+	int primero ;
+//	int cabecera ;
     numElem = ptrC2c->numElem ;
     primero = ptrC2c->primero ;
-    cabecera = ptrC2c->cabecera ;
-    eI(numElem,1 ) ;
-    eS(" ") ;
-    eI(primero,1 ) ;
-    eS(" ") ;
-    eI(cabecera,1 ) ;
-    eS(" ") ;
-    eS("[ ") ;
+//  cabecera = ptrC2c->cabecera ;
+//  printf("%i %i %i ", numElem, primero, cabecera) ;
+    printf("[ ") ;
     i = primero ;
     for ( j = 0 ; j < numElem ; j++ )
     {
-        eI(i, 1) ;
-        /* eD(descProceso[i].pid, 1) ; */
-        escribirCar(' ') ;
+        printf("%i ", i) ;
         i = ptrC2c->e[i].sig ;
     }
-    eS("] ") ;
+    printf("] ") ;
 }
+
 
 void eCcb ( ccb_t ccb )
 {
     int i, j ;
-    eI(ccb->num, 1) ;
-    eS(" ") ;
-    eI(ccb->in, 1) ;
-    eS(" ") ;
-    eI(ccb->out, 1) ;
-    eS(" ") ;
-    eI(ccb->max, 1) ;
-    eS(" ") ;
-    eP(ccb->arg) ;
-    eS(" ") ;
-    eS("[ ") ;
+	printf(
+	    " %i %i %i %04X:%04X [ ", 
+		ccb->num, ccb->in, ccb->out, ccb->max, 
+		seg((pointer_t)ccb->arg), off((pointer_t)ccb->arg)
+	) ;
     j = ccb->in ;
     for ( i = 0 ; i < ccb->num ; i ++ )
     {
-        eP(ccb->callBack[j]) ;
-        eS(" ") ;
+     	printf(
+	        "%04X:%04X ", 
+		    seg((pointer_t)ccb->callBack[j]), off((pointer_t)ccb->callBack[j])
+	    ) ;
         j = (j + 1) % ccb->max ;
     }
-    eS("] ") ;
+    printf("] ") ;
 }
 
 char strTipoRecurso [ ] [ 13 ] =
@@ -119,135 +107,124 @@ void mostrarDescRecurso ( rindx_t rindx )
     byte_t numVI = descRecurso[rindx].numVI ;
     int i ;
 
-    eC(rindx) ;
-    eS("nombre     = ") ;
-    eS("\"") ;
-    eS(descRecurso[rindx].nombre) ;
-    eS("\"") ;
-    eC(rindx) ;
-    eS("tipo       = ") ;
-    eS(strTipoRecurso[tipo]) ;
-    eS(" (") ;
-    eI(tipo, 1) ;
-    eS(")") ;
-    eC(rindx) ;
-    eS("ccb        = ") ;
+    printf(
+	    ""                                                               "\n"
+		" descRecurso[%i].nombre     = \"%s\""                           "\n" 
+		" descRecurso[%i].tipo       = %s (%i)"                          "\n"
+		" descRecurso[%i].ccb        = ",
+		rindx, descRecurso[rindx].nombre,
+		rindx, strTipoRecurso[tipo], tipo,
+        rindx
+	) ;
     eCcb(descRecurso[rindx].ccb) ;
-    eC(rindx) ;
-    eS("pindx      = ") ;
-    eI(descRecurso[rindx].pindx, 1) ;
-    eC(rindx) ;
-    eS("c2cFichRec = ") ;
+	
+    printf(
+	    ""                                                               "\n"
+		" descRecurso[%i].pindx      = %i"                               "\n" 
+		" descRecurso[%i].c2cFichRec = ",                                 
+        rindx, descRecurso[rindx].pindx, 
+		rindx
+	) ;
     ePC2c(&descRecurso[rindx].c2cFichRec) ;
-    eC(rindx) ;
-    eS("numVI      = ") ;
-    eI(numVI, 1) ;
-    for ( i = 0 ; i < numVI ; i++ )
-    {
-        eC(rindx) ;
-        eS("nVInt[") ;
-        eI(i, 1) ;
-        eS("]   = ") ;
-        eH(descRecurso[rindx].nVInt[0], 2) ;
-        eC(rindx) ;
-        eS("irq[") ;
-        eI(i, 1) ;
-        eS("]     = ") ;
-        eI(descRecurso[rindx].irq[0], 1) ;
-        eC(rindx) ;
-        eS("isr[") ;
-        eI(i, 1) ;
-        eS("]     = ") ;
-        eP(descRecurso[rindx].isr[0]) ;
-    }
-    eS("\n ") ;
-    eC(rindx) ;
-    eS("open       = ") ;
-    eP(descRecurso[rindx].open) ;
-    eC(rindx) ;
-    eS("release    = ") ;
-    eP(descRecurso[rindx].release) ;
-    eC(rindx) ;
-    eS("read       = ") ;
-    eP(descRecurso[rindx].read) ;
-    eC(rindx) ;
-    eS("aio_read   = ") ;
-    eP(descRecurso[rindx].aio_read) ;
-    eC(rindx) ;
-    eS("write      = ") ;
-    eP(descRecurso[rindx].write) ;
-    eC(rindx) ;
-    eS("aio_write  = ") ;
-    eP(descRecurso[rindx].aio_write) ;
-    eC(rindx) ;
-    eS("lseek      = ") ;
-    eP(descRecurso[rindx].lseek) ;
-    eC(rindx) ;
-    eS("fcntl      = ") ;
-    eP(descRecurso[rindx].fcntl) ;
-    eC(rindx) ;
-    eS("ioctl      = ") ;
-    eP(descRecurso[rindx].ioctl) ;
-    eS("\n ") ;
-    eC(rindx) ;
-    eS("eliminar   = ") ;
-    eP(descRecurso[rindx].eliminar) ;
-    eS("\n ") ;
 
+    printf(
+	    ""                                                               "\n"
+		" descRecurso[%i].numVI      = %i"                               "\n",
+        rindx, numVI
+	) ;
+		
+    for ( i = 0 ; i < numVI ; i++ )
+    printf(
+        ""                                                               "\n"
+     	" descRecurso[%i].nVInt[%i]   = %02X"                            "\n"
+     	" descRecurso[%i].irq[%i]     = %i"                              "\n"
+     	" descRecurso[%i].isr[%i]     = %i"                              "\n",
+	    rindx, i, descRecurso[rindx].nVInt[i], 
+		rindx, i, descRecurso[rindx].irq[i], 
+		rindx, i, descRecurso[rindx].isr[i]
+    ) ;
+	
+    printf(
+     	" descRecurso[%i].open       = %04X:%04X"                        "\n"
+     	" descRecurso[%i].release    = %04X:%04X"                        "\n"
+     	" descRecurso[%i].read       = %04X:%04X"                        "\n"
+     	" descRecurso[%i].aio_read   = %04X:%04X"                        "\n"
+     	" descRecurso[%i].write      = %04X:%04X"                        "\n"
+     	" descRecurso[%i].aio_write  = %04X:%04X"                        "\n"
+     	" descRecurso[%i].lseek      = %04X:%04X"                        "\n"
+     	" descRecurso[%i].fcntl      = %04X:%04X"                        "\n"
+     	" descRecurso[%i].ioctl      = %04X:%04X"                        "\n"
+        ""                                                               "\n"
+     	" descRecurso[%i].eliminar   = %04X:%04X"                        "\n",
+        rindx, 
+		  seg((pointer_t)descRecurso[rindx].open), 
+		  off((pointer_t)descRecurso[rindx].open), 
+        rindx, 
+		  seg((pointer_t)descRecurso[rindx].release), 
+		  off((pointer_t)descRecurso[rindx].release), 
+        rindx, 
+		  seg((pointer_t)descRecurso[rindx].read), 
+		  off((pointer_t)descRecurso[rindx].read), 
+        rindx, 
+		  seg((pointer_t)descRecurso[rindx].aio_read), 
+		  off((pointer_t)descRecurso[rindx].aio_read), 
+        rindx, 
+		  seg((pointer_t)descRecurso[rindx].write), 
+		  off((pointer_t)descRecurso[rindx].write), 
+        rindx, 
+		  seg((pointer_t)descRecurso[rindx].aio_write), 
+		  off((pointer_t)descRecurso[rindx].aio_write), 
+        rindx, 
+		  seg((pointer_t)descRecurso[rindx].lseek), 
+		  off((pointer_t)descRecurso[rindx].lseek), 
+        rindx, 
+		  seg((pointer_t)descRecurso[rindx].fcntl), 
+		  off((pointer_t)descRecurso[rindx].fcntl), 
+        rindx, 
+		  seg((pointer_t)descRecurso[rindx].ioctl), 
+		  off((pointer_t)descRecurso[rindx].ioctl), 
+        rindx, 
+		  seg((pointer_t)descRecurso[rindx].eliminar),
+		  off((pointer_t)descRecurso[rindx].eliminar)
+	) ;
 }
 
 void mostrarRecursos ( void )
 {
     int rindx ;
     int i ;
-    eS("\n ") ;
-    eS("\n rindx nombre       tp pindx   open    V0 irq0   isr 0   V1 irq1   isr 1   ") ;
-    eS("\n ----- ------------ -- ----- --------- -- ---- --------- -- ---- --------- ") ;
+    printf(
+	    ""                                                                         "\n"
+        ""                                                                         "\n"
+		" rindx nombre       tp pindx   open    V0 irq0   isr 0   V1 irq1   isr 1   \n"
+        " ----- ------------ -- ----- --------- -- ---- --------- -- ---- --------- \n"
+	) ;
     for ( rindx = 0 ; rindx < maxRecursos ; rindx++ )
         if (descRecurso[rindx].pindx >= 0)
         {
-            eS("\n ") ;
-            eD(rindx, 5) ;
-            eS(" ") ;
-            eSH(descRecurso[rindx].nombre, 12, TRUE) ;
-            eI(descRecurso[rindx].tipo, 3) ;
-            eI(descRecurso[rindx].pindx, 6) ;
-            eS(" ") ;
-            eP(descRecurso[rindx].open) ;
-            eS(" ") ;
+	        printf(
+	            " %5i %-12s%3i%6i %04X:%04X ", 
+                rindx, 
+                descRecurso[rindx].nombre,
+                descRecurso[rindx].tipo, 
+                descRecurso[rindx].pindx, 
+                seg((pointer_t)descRecurso[rindx].open),
+                off((pointer_t)descRecurso[rindx].open)
+	        ) ;
             for ( i = 0 ; i < descRecurso[rindx].numVI ; i++ )
             {
-                eH(descRecurso[rindx].nVInt[i], 2) ;
-                eS(" ") ;
-                eI(descRecurso[rindx].irq[i], 4) ;
-                eS(" ") ;
-                eP(descRecurso[rindx].isr[i]) ;
-                eS(" ") ;
+				printf("%02X %4i %04X:%04X ",
+                    descRecurso[rindx].nVInt[i], 
+                    descRecurso[rindx].irq[i], 
+                    seg((pointer_t)descRecurso[rindx].isr[i]),
+                    off((pointer_t)descRecurso[rindx].isr[i])
+                ) ;					
             }
+	        printf("\n") ;
         }
-    eS("\n ") ;
 }
 
-void formato ( void )
-{
-//  escribirStrIntenso(" formato: DR [ rindx | -a | -h ] ") ;
-    escribirStr(" formato: DR [ rindx | -a | -h ] ") ;
-}
-
-void help ( void )
-{
-    escribirLn() ;
-    escribirLn() ;
-    escribirStr(" formato : DR [ rindx | -a | -h ]              \n\n") ;
-    escribirStr(" muestra los campos del descriptor de recurso  \n") ;
-    escribirStr(" rindx (descRecurso[rindx])                    \n\n") ;
-    escribirStr(" opciones: (por defecto -a)                    \n\n") ;
-    escribirStr("   rindx : muestra solo ese recurso en detalle \n") ;
-    escribirStr("      -a : muestra todos los recursos          \n") ;
-    escribirStr("      -h : muestra este help                   \n") ;
-}
-
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
 
     rindx_t rindx ;
@@ -269,11 +246,10 @@ void main ( int argc, char * argv [ ] )
             obtenSimb() ;
             if (simb != s_numero)
             {
-                escribirCar(BEL) ;
+                putchar('\a') ;
                 formato() ;
-                escribirStr("\n error: rindx debe ser un numero y no \"") ;
-                escribirStr(argv[1]) ;
-                escribirStr("\"\n") ;
+                printf("\n error: rindx debe ser un numero y no \"%s\"\n", argv[1]) ;
+				return(1) ;
             }
             else
             {
@@ -281,18 +257,18 @@ void main ( int argc, char * argv [ ] )
                 if ((0 <= rindx) && (rindx < maxRecursos))
                     if (descRecurso[rindx].tipo != rLibre)
                     {
-                        escribirLn() ;
+                        printf("\n") ;
                         mostrarDescRecurso(rindx) ;
                     }
                     else
                     {
-//                      escribirStrIntenso(" descriptor de recurso no utilizado ") ;
-                        escribirStr(" descriptor de recurso no utilizado ") ;
+                        printf(" descriptor de recurso no utilizado ") ;
+						return(2) ;
                     }
                 else
                 {
-//                  escribirStrIntenso(" rindx erroneo ") ;
-                    escribirStr(" rindx erroneo ") ;
+                    printf(" rindx erroneo ") ;
+					return(3) ;
                 }
             }
         }
@@ -300,5 +276,7 @@ void main ( int argc, char * argv [ ] )
         mostrarRecursos() ;
     else
         formato() ;
+//	getchar() ;
+	return(0) ;
 }
 

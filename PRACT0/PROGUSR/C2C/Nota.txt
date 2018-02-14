@@ -1,4 +1,4 @@
-El nombre del programa que debería haber sido C2C se ha cambiado
+El nombre del programa, que debería haber sido C2C, se ha cambiado
 a C2CPRG.C para evitar conflictos entre los ficheros objetos de
 X:\SO\PRACT0\SO1PUB\C2C.C y X:\SO\PRACT0\PROGUSR\C2CPRG.C.
 El conflicto se produce al compilar el proyecto SO1.IDE de

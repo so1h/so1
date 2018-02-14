@@ -1,7 +1,8 @@
 
 PROGRAMA = INIC
 
-# primer fichero objeto (..\so1pub\obj\ajustusr.obj)
+# primer fichero objeto (..\..\so1pub\lib\startlib.lib)
+# segundo fichero objeto (..\..\so1pub\obj\ajustusr.obj)
 # ultimo fichero objeto (..\so1pub\obj\fincode.obj)
 
 OBJS2LINK =                      \
@@ -16,9 +17,10 @@ $(PROGRAMA).obj,                 \
 ..\..\so1pub\obj\put.obj,        \
 ..\..\so1pub\obj\escribir.obj,   \
 ..\..\so1pub\obj\stdio.obj,      \
+..\..\so1pub\obj\vsprintf.obj,   \
+..\..\so1pub\obj\strings.obj,    \
 ..\..\so1pub\obj\scanner.obj,    \
 ..\..\so1pub\obj\leercmd.obj,    \
-..\..\so1pub\obj\strings.obj,    \
 ..\..\so1pub\obj\interpre.obj,   \
 ..\..\so1pub\obj\saludos.obj,    \
 ..\..\so1pub\obj\msdos.obj,      \
@@ -33,13 +35,13 @@ $(PROGRAMA).obj,                 \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (finBSS = E78 < 13FF)
+#puntero de pila inicial (finBSS = 1912 < 1BFE)
 
-SPINICIAL = 14FE
+SPINICIAL = 1BFE
 
 inicio: ..\..\so1\obj\iniccode.obj ..\..\DISQUETE\$(PROGRAMA).bin
 
-..\..\so1\obj\iniccode.obj:
+..\..\so1\obj\iniccode.obj: 
   @echo.
   cd ..\..\so1
   $(MAKE) obj\iniccode.obj > NUL

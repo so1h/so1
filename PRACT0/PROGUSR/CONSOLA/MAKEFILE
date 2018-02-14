@@ -40,6 +40,3 @@ SPINICIAL = 23FE
 
 !include "..\..\MKFILE0"
 !include "..\MAKEUSR"
-
-
-

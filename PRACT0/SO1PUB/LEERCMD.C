@@ -9,17 +9,17 @@
 #include <so1pub.h\caracter.h>                                /* mayuscula */
 #include <so1pub.h\strings.h>             /* iguales(SalvoMayusculas)Hasta */
 #include <so1pub.h\ll_s_so1.h>                   /* STDIN, leer, leerListo */
-#include <so1pub.h\escribir.h>                 /* escribirCar, escribirStr */
+#include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 #include <so1pub.h\scanner.h>       /* nMaxComandos, tamComando, simb, ... */
 
 #define AutoCCInt TRUE      /* Auto Completado ('\t') de Comandos Internos */
 #define AutoCCExt TRUE      /* Auto Completado ('\t') de Comandos Externos */
 
 #if (AutoCCExt)
-#include <so1pub.h\msdos.h>                                    /* ffblk */
+#include <so1pub.h\msdos.h>                                       /* ffblk */
 #endif
 
-char carAnt = (char)0 ;                    /* caracter leido anteriormente */
+char carAnt = '\0' ;                       /* caracter leido anteriormente */
 int comBusqueda = 0 ;              /* comienzo de busqueda autocompletando */
 int iAnt = 0 ;                      /* posicio del anterior autocompletado */
 int unidadLogica ;
@@ -38,29 +38,29 @@ struct ffblk fcb ;
 /* escribir.                                                               */
 
 void borrarUltimoCaracter ( int i ) {          /* borra el ultimo caracter */
-  escribirCar('\b') ; escribirCar(' ') ; escribirCar('\b') ; /* en consola */
-  comando[inCmd][i-1] = (char)0 ;                         /* en el comando */
+  putchar('\b') ; putchar(' ') ; putchar('\b') ;             /* en consola */
+  comando[inCmd][i-1] = '\0' ;                            /* en el comando */
 }
 
 void borrarCaracter ( int i ) {            /* borra un caracter intermedio */
   int j = i ;
   int k ;
-  while (comando[inCmd][j] != (char)0) j++ ;
-  escribirCar('\b') ;
+  while (comando[inCmd][j] != '\0') j++ ;
+  putchar('\b') ;
   for ( k = i ; k < j ; k++ ) {
-    escribirCar(comando[inCmd][k]) ;
+    putchar(comando[inCmd][k]) ;
     comando[inCmd][k-1] = comando[inCmd][k] ;
   }
-  escribirCar(' ') ;
-  escribirCar('\b') ;
-  comando[inCmd][j-1] = (char)0 ;
+  putchar(' ') ;
+  putchar('\b') ;
+  comando[inCmd][j-1] = '\0' ;
   for ( k = i ; k < j ; k++ )
-    escribirCar('\b') ;
+    putchar('\b') ;
 }
 
 void borrarLineaDeComando ( int i ) {             /* borra todo el comando */
-  while (comando[inCmd][i] != (char)0) {          /* respentando el prompt */
-    escribirCar(comando[inCmd][i]) ;
+  while (comando[inCmd][i] != '\0') {          /* respentando el prompt */
+    putchar(comando[inCmd][i]) ;
     i++ ;
   }
   while (i > 0) {
@@ -73,12 +73,12 @@ void borrarLineaDeComando ( int i ) {             /* borra todo el comando */
 
 int copiarComando ( int iC, int inCmd ) {
   int i = 0 ;
-  while (comando[iC][i] != (char)0) {
+  while (comando[iC][i] != '\0') {
     comando[inCmd][i] = comando[iC][i] ;
-    escribirCar(comando[inCmd][i]) ;
+    putchar(comando[inCmd][i]) ;
     i++ ;
   }
-  comando[inCmd][i] = (char)0 ;
+  comando[inCmd][i] = '\0' ;
   return(i) ;
 }
 
@@ -95,8 +95,8 @@ int autocompletarCInt ( int   i ) {
 #define volverTabAnterior() { \
   if (carAnt == '\t') {  /* acababa de realizarse un autocompletado previo */\
     for ( j = iAnt ; j < i ; j++ ) {     /* volver a la situacion anterior */\
-      comando[inCmd][j] = (char)0 ;                                          \
-      escribirCar('\b') ;                                                    \
+      comando[inCmd][j] = '\0' ;                                          \
+      putchar('\b') ;                                                    \
     }                                                                        \
     i = iAnt ;                                                               \
   }                                                                          \
@@ -119,11 +119,11 @@ int autocompletarCInt ( int   i ) {
           for ( n = j ; n < (j + largo) ; n++ )
             comando[inCmd][n] = simbCmd[k].str[n - j] ;
           for ( n = 0 ; n < (i - j) ; n++ )
-            escribirCar('\b') ;
-          escribirStr(simbCmd[k].str) ;
+            putchar('\b') ;
+          printf(simbCmd[k].str) ;
           iAnt = i ;
           i = j + largo ;
-          comando[inCmd][i] = (char)0 ;
+          comando[inCmd][i] = '\0' ;
           comBusqueda = (k + 1) % numCmds ;
           break ;
         }
@@ -151,14 +151,12 @@ int autocompletarCExt ( int i ) {
       if ((carAnt != '\t') || (findNext(&ffblk) != 0))
         if (findFirst(unidadLogica, &ffblk) != 0) return(i) ;
       do {
-//      escribirStr("\n fichero = ") ;
-//      escribirStr(ffblk.ff_name) ;
+//      printf("\n fichero = %s", ffblk.ff_name) ;
         k = 1 ;
         while ((ffblk.ff_name[k] != ' ') &&
                (ffblk.ff_name[k] != '.')) k++ ;
         largo = k ;
-//      escribirStr("largo = ") ;
-//      escribirDec(largo, 1) ;
+//      printf("largo = %i", largo) ;
         if ((i - j) < largo) {
           if (igualesSalvoMayusculasHasta(
                (char far *)&comando[inCmd][j],
@@ -166,11 +164,11 @@ int autocompletarCExt ( int i ) {
             for ( n = j ; n < (j + largo) ; n++ )
               comando[inCmd][n] = ffblk.ff_name[n - j] ;
             for ( n = 0 ; n < (i - j) ; n++ )
-              escribirCar('\b') ;
-            escribirStrHasta(ffblk.ff_name, largo, FALSE) ;
+              putchar('\b') ;
+		    printf("%-*s", largo, ffblk.ff_name) ;
             iAnt = i ;
             i = j + largo ;
-            comando[inCmd][i] = (char)0 ;
+            comando[inCmd][i] = '\0' ;
             return(i) ;
           }
         }
@@ -180,20 +178,16 @@ int autocompletarCExt ( int i ) {
     else {
       copiarStr((char *)&comando[inCmd][j], prefijo) ;
       copiarStr("*.BIN", (char *)&prefijo[i-j]) ;
-//    escribirStr("\n prefijo = ") ;
-//    escribirStr(prefijo) ;
-//    escribirLn() ;
+//    printf("\n prefijo = %s\n", prefijo) ;
       if ((carAnt != '\t') || (findnextDOS((struct ffblk *)&fcb) != 0))
         if (findfirstDOS((char *)prefijo, (struct ffblk *)&fcb, FA_ARCH) == -1) return(i) ;
       do {
-//      escribirStr("\n fichero = ") ;
-//      escribirStr(fcb.ff_name) ;
+//      printf("\n fichero = %s", fcb.ff_name) ;
         k = 1 ;
         while ((fcb.ff_name[k] != ' ') &&
                (fcb.ff_name[k] != '.')) k++ ;
         largo = k ;
-//      escribirStr("largo = ") ;
-//      escribirDec(largo, 1) ;
+//      printf("largo = %i", largo) ;
         if ((i - j) < largo) {
           if (igualesSalvoMayusculasHasta(
                (char far *)&comando[inCmd][j],
@@ -201,11 +195,11 @@ int autocompletarCExt ( int i ) {
             for ( n = j ; n < (j + largo) ; n++ )
               comando[inCmd][n] = fcb.ff_name[n - j] ;
             for ( n = 0 ; n < (i - j) ; n++ )
-              escribirCar('\b') ;
-            escribirStrHasta(fcb.ff_name, largo, FALSE) ;
+              putchar('\b') ;
+		    printf("-*s", largo, fcb.ff_name) ;
             iAnt = i ;
             i = j + largo ;
-            comando[inCmd][i] = (char)0 ;
+            comando[inCmd][i] = '\0' ;
             return(i) ;
           }
         }
@@ -218,8 +212,8 @@ int autocompletarCExt ( int i ) {
 
 /* ----------------------------- leerComando ----------------------------- */
 
-/* leeComando lee el siguiente comando en comando[inCmd] permitiendo en    */
-/* parte su edicion. Los parametros autCcompletado y enmascarado sirven    */
+/* leerComando lee el siguiente comando en comando[inCmd] permitiendo en   */
+/* parte su edicion. Los parametros autoCompletado y enmascarado sirven    */
 /* para cambiar el comportamiento de leerComando para autocompletar los    */
 /* comandos (con nombres de comandos internos o de ficheros ejecutables    */
 /* .BIN), o tambien para enmascarar los caracteres introducidos con el     */
@@ -227,7 +221,7 @@ int autocompletarCExt ( int i ) {
 
 void leerComando ( bool_t autoCompletado, bool_t enmascarado ) {
 
-  char car = (char)0 ;                            /* ultimo caracter leido */
+  char car = '\0' ;                               /* ultimo caracter leido */
   byte_t scanCode ;
   bool_t sobreEscritura = FALSE ;
   int iC ;
@@ -237,9 +231,9 @@ void leerComando ( bool_t autoCompletado, bool_t enmascarado ) {
 //word_t linea1 ;
 //word_t linea2 ;
 //getCursor((word_t far *)&linea1, (word_t far *)&linea2) ;
-//escribirDec(linea1, 3) ; escribirDec(linea2, 3) ; */
+//printf("%3i%3i", linea1, linea2) ; */
 
-  if ((nComandos == 0) || (comando[inCmd][0] != (char)0)) {
+  if ((nComandos == 0) || (comando[inCmd][0] != '\0')) {
     inCmd = (inCmd + 1) % nMaxComandos ;            /* array/cola circular */
     if (nComandos < nMaxComandos)
       nComandos++ ;                                /* habra un comando mas */
@@ -249,11 +243,11 @@ void leerComando ( bool_t autoCompletado, bool_t enmascarado ) {
 
   iC = inCmd ;
 
-  comando[inCmd][0] = (char)0 ;        /* nuevo comando inicialmente vacio */
+  comando[inCmd][0] = '\0' ;           /* nuevo comando inicialmente vacio */
 
   while (TRUE) {
     carAnt = car ;                       /* guardamos el caracter anterior */
-    if (((car = leer(STDIN)) == '\r') || (car == '\n'))       /* fin linea */
+    if (((car = getchar()) == '\r') || (car == '\n'))       /* fin linea */
       break ;
 
     if (car == '\b')                                           /* bakspace */
@@ -261,28 +255,27 @@ void leerComando ( bool_t autoCompletado, bool_t enmascarado ) {
         borrarCaracter(i) ;
         i-- ;
       }
-      else escribirCar('\a') ;          /* pitido si el comando esta vacio */
-    else if (car == (char)0) {                 /* caracter ascii extendido */
-      scanCode = (byte_t)leer(STDIN) ;
-//    escribirStr("\n scanCode = 0x") ;
-//    escribirHex(scanCode, 2) ;
+      else putchar('\a') ;              /* pitido si el comando esta vacio */
+    else if (car == '\0') {                 /* caracter ascii extendido */
+      scanCode = (byte_t)getchar() ;
+//    printf("\n scanCode = 0x%02X", scanCode) ;
       switch (scanCode) {
       case Del :                                                   /* Supr */
-        if (comando[inCmd][i] != (char)0) {
-          escribirCar(comando[inCmd][i]) ;
+        if (comando[inCmd][i] != '\0') {
+          putchar(comando[inCmd][i]) ;
           borrarCaracter(i+1) ;
         }
-        else escribirCar('\a') ;
+        else putchar('\a') ;
         break ;
       case Home :                                                /* Inicio */
         while (i > 0) {
-          escribirCar('\b') ;
+          putchar('\b') ;
           i-- ;
         }
         break ;
       case End :                                                    /* Fin */
-        while (comando[inCmd][i] != (char)0) {
-          escribirCar(comando[inCmd][i]) ;
+        while (comando[inCmd][i] != '\0') {
+          putchar(comando[inCmd][i]) ;
           i++ ;
         }
         break ;
@@ -295,13 +288,13 @@ void leerComando ( bool_t autoCompletado, bool_t enmascarado ) {
         break ;
       case FlIz :                                      /* Flecha izquierda */
         if (i > 0) {
-          escribirCar('\b') ;
+          putchar('\b') ;
           i-- ;
         }
         break ;
       case FlDe :                                        /* Flecha derecha */
-        if ((i < (tamComando-1)) && (comando[inCmd][i] != (char)0))
-          escribirCar(comando[inCmd][i++]) ;
+        if ((i < (tamComando-1)) && (comando[inCmd][i] != '\0'))
+          putchar(comando[inCmd][i++]) ;
         break ;
       case FlUp :                                         /* Flecha arriba */
         if (iC != outCmd) {
@@ -329,7 +322,7 @@ void leerComando ( bool_t autoCompletado, bool_t enmascarado ) {
     }
     else if (car == ESC) {                                          /* ESC */
       borrarLineaDeComando(i) ;
-      comando[inCmd][0] = (char)0 ;
+      comando[inCmd][0] = '\0' ;
       i = 0 ;
     }
     else if (car == '\t') {          /* '\t' (tabulador ==> autocompletar) */
@@ -339,7 +332,7 @@ void leerComando ( bool_t autoCompletado, bool_t enmascarado ) {
       }
     }
     else if (car == '\f') {         /* '\f' (formfeed ==> borrar pantalla) */
-	  escribirCar(car) ; 
+	  putchar(car) ; 
       car = '\r' ;                                     /* retorno de carro */
       break ;
     }
@@ -348,43 +341,42 @@ void leerComando ( bool_t autoCompletado, bool_t enmascarado ) {
       if (i < (tamComando-1)) {
         if ((' ' <= car) /* && (car <= '~') */) {
           if (!enmascarado)
-            escribirCar(car) ;
+            putchar(car) ;
           else
-            escribirCar('*') ;
+            putchar('*') ;
           if (!sobreEscritura) {
             j = i ;
-            while (comando[inCmd][j] != (char)0) {
-              escribirCar(comando[inCmd][j]) ;
+            while (comando[inCmd][j] != '\0') {
+              putchar(comando[inCmd][j]) ;
               j++ ;
             }
-            comando[inCmd][j+1] = (char)0 ;
+            comando[inCmd][j+1] = '\0' ;
             while (j > i) {
               comando[inCmd][j] = comando[inCmd][j-1] ;
-              escribirCar('\b') ;
+              putchar('\b') ;
               j-- ;
             }
           }
           comando[inCmd][i++] = car ;
         }
       }
-      else escribirCar('\a') ;
+      else putchar('\a') ;
     }
   }                                                       /* fin del while */
 
   if ((car == '\r') && (leerListo(STDIN) == '\n'))          /* '\r' + '\n' */
-    leer(STDIN) ;                                             /* leer '\n' */
+    getchar() ;                                               /* leer '\n' */
 
-  while (comando[inCmd][i] != (char)0) {
-    escribirCar(comando[inCmd][i]) ;
+  while (comando[inCmd][i] != '\0') {
+    putchar(comando[inCmd][i]) ;
     i++ ;
   }
   i-- ;
   while ((i >= 0) && (comando[inCmd][i] == ' ')) {    /* eliminar ' ' izda */
-    comando[inCmd][i] = (char)0 ;
+    comando[inCmd][i] = '\0' ;
     i-- ;
   }
 
 //getCursor((word_t far *)&linea1, (word_t far *)&linea2) ;
 
 }
-

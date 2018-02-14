@@ -1,43 +1,13 @@
 /* ----------------------------------------------------------------------- */
 /*                                  dfs.c                                  */
 /* ----------------------------------------------------------------------- */
-/*                   descriptores de fichero del sistema                   */
+/*             muestra los descriptores de fichero del sistema             */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
-
+#include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */ 
 #include <so1pub.h\strings.h>                                   /* iguales */
-#include <so1pub.h\scanner.h>
-
-#define eS(str)                                                              \
-  escribirStr(str)
-
-#define eSH(str, ancho, bool)                                                \
-  escribirStrHasta(str, ancho, bool)
-
-#define eH(num, ancho)                                                       \
-  escribirHex(num, ancho)
-
-#define eLH(num, ancho)                                                      \
-  escribirLHex(num, ancho)
-
-#define eD(num, ancho)                                                       \
-  escribirDec(num, ancho)
-
-#define eLD(num, ancho)                                                      \
-  escribirLDec(num, ancho)
-
-#define eI(num, ancho)                                                       \
-  escribirInt(num, ancho)
-
-#define eP(ptr)                                                              \
-  escribirPtr((pointer_t)ptr)
-
-#define eC(dfs)                                                              \
-  eS("\n descFichero[") ;                                                    \
-  eD(dfs, 1) ;                                                               \
-  eS("].") ;
+#include <so1pub.h\scanner.h>                    /* inicScanner, obtenSimb */
 
 #define lMaxStrTipo 14
 
@@ -63,90 +33,84 @@ void mostrarDescFichero ( dfs_t dfs )
 
     tipoFichero_t tipo = descFichero[dfs].tipo ;
 
-    eC(dfs) ;
-    eS("nombre    = ") ;
-    eS("\"") ;
-    eS(descFichero[dfs].nombre) ;
-    eS("\"") ;
-    eC(dfs) ;
-    eS("tipo      = ") ;
-    eSH(strTipo[tipo], lMaxStrTipo-1, TRUE) ;
-    eS(" (") ;
-    eI(tipo, 1) ;
-    eS(")") ;
-    eC(dfs) ;
-    eS("rindx     = ") ;
-    eI(descFichero[dfs].rindx, 1) ;
-    eC(dfs) ;
-    eS("menor     = ") ;
-    eI(descFichero[dfs].menor, 1) ;
-    eC(dfs) ;
-    eS("shareMode = ") ;
-    eH(descFichero[dfs].shareMode, 4) ;
-    eC(dfs) ;
-    eS("contAp_L  = ") ;
-    eI(descFichero[dfs].contAp_L, 1) ;
-    eC(dfs) ;
-    eS("contAp_E  = ") ;
-    eI(descFichero[dfs].contAp_E, 1) ;
-
-    eS("\n ") ;
+	printf(
+        ""                                                               "\n"
+		" descFichero[%d].nombre    = \"%s\""                            "\n"
+		" descFichero[%d].tipo      = %*s (%i)"                          "\n"
+		" descFichero[%d].rindx     = %i"                                "\n"
+		" descFichero[%d].menor     = %i"                                "\n"
+		" descFichero[%d].shareMode = %04X"                              "\n"
+		" descFichero[%d].contAp_L  = %i"                                "\n"
+		" descFichero[%d].contAp_E  = %i"                                "\n",
+	    dfs, descFichero[dfs].nombre, 
+		dfs, lMaxStrTipo-1, strTipo[tipo], tipo,
+		dfs, descFichero[dfs].rindx, 
+		dfs, descFichero[dfs].menor,
+		dfs, descFichero[dfs].shareMode,
+		dfs, descFichero[dfs].contAp_L,
+		dfs, descFichero[dfs].contAp_E
+	) ;
 }
 
 void mostrarFicheros ( void )
 {
     int dfs ;
     tipoFichero_t tipo ;
-    eS("\n ") ;
-    eS("\n dfs nombre       tipo          rindx menor shareM cAp_L cAp_E ") ;
-    eS("\n --- ------------ ------------- ----- ----- ------ ----- ----- ") ;
-    for ( dfs = 0 ; dfs < dfsMax ; dfs++ )
+	
+	printf(
+        ""                                                               "\n "
+        ""                                                               "\n"
+		" dfs nombre       tipo          rindx menor shareM cAp_L cAp_E ""\n"
+        " --- ------------ ------------- ----- ----- ------ ----- ----- "
+	) ;
+    
+	for ( dfs = 0 ; dfs < dfsMax ; dfs++ )
     {
         tipo = descFichero[dfs].tipo ;
         if (tipo != flibre)
         {
-            eS("\n ") ;
-            eD(dfs, 3) ;
-            eS(" ") ;
-            eSH(descFichero[dfs].nombre, 12, TRUE) ;
-            eS(" ") ;
-            eSH(strTipo[tipo], lMaxStrTipo-1, TRUE) ;
-            eS(" ") ;
-            eI(descFichero[dfs].rindx, 5) ;
-            eS(" ") ;
-            eI(descFichero[dfs].menor, 5) ;
-            eS("  ") ;
-            eH(descFichero[dfs].shareMode, 4) ;
-            eS("  ") ;
-            eI(descFichero[dfs].contAp_L, 5) ;
-            eS(" ") ;
-            eI(descFichero[dfs].contAp_E, 5) ;
-            eS(" ") ;
+            printf(
+			    "\n"
+				" %3d %-12s %*s %5i %5i %4X %5i %5i ",
+			    dfs, 
+				descFichero[dfs].nombre, 
+//				13, strTipo[tipo],  
+				lMaxStrTipo-1, strTipo[tipo],  
+			    descFichero[dfs].rindx, 
+				descFichero[dfs].menor, 
+				descFichero[dfs].shareMode, 
+				descFichero[dfs].contAp_L, 
+				descFichero[dfs].contAp_E
+			) ;			
         }
     }
-    eS("\n ") ;
+    printf("\n") ;
 }
 
 void formato ( void )
 {
 //  escribirStrIntenso(" formato: DFS [ dfs | -a | -h ] ") ;
-    escribirStr(" formato: DFS [ dfs | -a | -h ] ") ;
+    printf(" formato: DFS [ dfs | -a | -h ] ") ;
 }
 
 void help ( void )
 {
-    escribirLn() ;
-    escribirLn() ;
-    escribirStr(" formato : DFS [ dfs | -a | -h ]               \n\n") ;
-    escribirStr(" muestra los campos del descriptor de fichero  \n") ;
-    escribirStr(" dfs (descFichero[dfs])                        \n\n") ;
-    escribirStr(" opciones: (por defecto -a)                    \n\n") ;
-    escribirStr("     dfs : muestra solo ese fichero en detalle \n") ;
-    escribirStr("      -a : muestra todos los ficheros          \n") ;
-    escribirStr("      -h : muestra este help                   \n") ;
+    printf(
+	    ""                                                               "\n"
+		""                                                               "\n"
+        " formato : DFS [ dfs | -a | -h ]"                               "\n"
+		""                                                               "\n"
+        " muestra los campos del descriptor de fichero dfs"              "\n"
+		""                                                               "\n"
+        " opciones: (por defecto -a)"                                    "\n"
+		""                                                               "\n"
+        "     dfs : muestra solo ese fichero en detalle"                 "\n"
+        "      -a : muestra todos los ficheros"                          "\n"
+        "      -h : muestra este help"                                   "\n"
+	) ;
 }
 
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
 
     dfs_t dfs ;
@@ -156,6 +120,7 @@ void main ( int argc, char * argv [ ] )
                   (e2PFR_t far *)&e2PFR,
                   (c2c_t far *)&c2cPFR
                  ) ;
+				 
     if (argc == 2)
         if (iguales(argv[1], "-h") || iguales(argv[1], "-H"))
             help() ;
@@ -168,11 +133,17 @@ void main ( int argc, char * argv [ ] )
             obtenSimb() ;
             if (simb != s_numero)
             {
-                escribirCar('\a') ;
+                putchar('\a') ;
+				printf(
+				    "\n"
+				    "\n"
+				) ;
                 formato() ;
-                escribirStr("\n error: dfs debe ser un numero y no \"") ;
-                escribirStr(argv[1]) ;
-                escribirStr("\"\n") ;
+				printf(
+				    "\n"
+				    "\n"
+                    " error: dfs debe ser un numero y no \"%s\"\n", argv[1] 
+				) ;
             }
             else
             {
@@ -180,18 +151,18 @@ void main ( int argc, char * argv [ ] )
                 if ((0 <= dfs) && (dfs < dfsMax))
                     if (descFichero[dfs].tipo != flibre)
                     {
-                        escribirLn() ;
+                        printf("\n") ;
                         mostrarDescFichero(dfs) ;
                     }
                     else
                     {
 //                      escribirStrIntenso(" descriptor de fichero no utilizado ") ;
-                        escribirStr(" descriptor de fichero no utilizado ") ;
+                        printf(" descriptor de fichero no utilizado ") ;
                     }
                 else
                 {
 //                  escribirStrIntenso(" dfs erroneo ") ;
-                    escribirStr(" dfs erroneo ") ;
+                    printf(" dfs erroneo ") ;
                 }
             }
         }
@@ -199,5 +170,7 @@ void main ( int argc, char * argv [ ] )
         mostrarFicheros() ;
     else
         formato() ;
+//	getchar() ;
+	return(0) ;
 }
 

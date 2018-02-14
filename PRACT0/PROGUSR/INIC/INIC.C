@@ -8,15 +8,13 @@
 #include <so1pub.h\stdio.h>                                      /* printf */
 
 #include <so1pub.h\strings.h>
-#include <so1pub.h\scanner.h>
+//#include <so1pub.h\scanner.h>
 
 #include <so1.h\iniccode.h>
 
 void formato ( void )
 {
-    printf(
-        " formato: INIT [ -h ] "
-    ) ;
+    printf(" formato: INIC [ -h ] ") ;
 }
 
 void help ( void )
@@ -33,17 +31,17 @@ void help ( void )
     ) ;
 }
 
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
-    if (argc == 1) exit(inic()) ;
+    if (argc == 1) return(inic()) ;
     else if ((argc == 2) && (iguales(argv[1], "-h")))
     {
         if (getpid() != 1) help() ;
-        exit(0) ;
+        return(0) ;
     }
     else
     {
         if (getpid() != 1) formato() ;
-        exit(-1) ;
+        return(-1) ;
     }
 }

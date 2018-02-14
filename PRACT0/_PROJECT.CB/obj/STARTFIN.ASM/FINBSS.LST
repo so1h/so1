@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
+Turbo Assembler	 Version 5.4	    12-01-17 01:31:19	    Page 1
 ..\STARTFIN.ASM\FINBSS.ASM
 
 
@@ -21,7 +21,7 @@ Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
      16	0000			     _BSS ends
      17
      18				     END
-Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 2
+Turbo Assembler	 Version 5.4	    12-01-17 01:31:19	    Page 2
 Symbol Table
 
 
@@ -29,9 +29,9 @@ Symbol Table
 
 Symbol Name		Type   Value			   Cref	(defined at #)
 
-??date			Text   "08-28-17"
+??date			Text   "12-01-17"
 ??filename		Text   "FINBSS	"
-??time			Text   "13:03:16"
+??time			Text   "01:31:19"
 ??version		Number 0504
 @Cpu			Text   0101H
 @FileName		Text   FINBSS

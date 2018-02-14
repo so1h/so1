@@ -9,6 +9,8 @@
 
 #include <so1pub.h\tipos.h>
 
+int strlen ( const char far * str ) ;
+
 void copiarStr ( const char far * origen, char far * destino ) ;
 
 void copiarStrHasta ( const char far * origen, char far * destino, word_t n ) ;

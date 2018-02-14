@@ -8,7 +8,7 @@
 #define AJUSTUSR_H
 
 #include <so1pub.h\fincode.h>                                   /* finCode */
-#include <so1pub.h\startdata.h>                               /* startSata */
+#include <so1pub.h\startdata.h>                               /* startData */
 #include <so1pub.h\findata.h>                                   /* finData */
 #include <so1pub.h\finbss.h>                                    /* finBSS  */
 
@@ -41,12 +41,12 @@
 #define valor_SPInicial *((word_t far *)pointer(_CS, offset_SPInicial))
 
 #define atexit( finish ) {                                                   \
-  manejador_t far * manejador =                                              \
+  manejador_t far * ptrManejadorAtExit =                                     \
     (manejador_t far *)pointer(                                              \
        _DS,                                                                  \
-       valor_SPInicial-6                                    /* SPInicial-6 */\
+       valor_SPInicial-2             /* ver crearProceso en SO1\PROCESOS.C */\
     ) ;                                                                      \
-  *manejador = finish ;                                                      \
+  *ptrManejadorAtExit = (manejador_t)finish ;                                \
 }
 
 #endif /* AJUSTUSR_H */

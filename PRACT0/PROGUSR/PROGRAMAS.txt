@@ -1,0 +1,36 @@
+Lista de programas de SO1 presentes en X:\SO\PRACT0\PROGUSR
+===========================================================
+
+  - ATEXIT   ilustra el uso de la macro atexit
+  - AYUDA    informa sobre los comandos basicos de SO1 
+  - C2C      muestra informacion sobre las colas de SO1
+  - CLOCK    muestra continuamente la hora actual
+  - DATE     muestra la fecha actual y termina
+  - DFS      muestra los descriptores de fichero del sistema
+  - DMP      muestra el contenido de la memoria en hexadecimal
+  - DP       muestra los descriptores de los proceso existentes
+  - DR       muestra los descriptores de los recursos gestionados
+  - EXEC     ilustra la llamada al sistema exec 
+  - FORK     ilustra la llamada al sistema fork
+  - HELLO    programa hola mundo
+  - HELLO2   programa hola mundo de Andrea Righi
+  - HELP     breve resumen de los comandos internos/externos
+  - INFO     muestra informacion del sistema (memoria, COMs, LPTs, ...)
+  - INIC     programa correspondiente al proceso inicial 
+  - KILL     comando para matar procesos
+  - LEETIMER ilustra como leer del fichero TIMER 
+  - LOGIN    programa de entrada a sistema (login: "usuario" pwd: "alumno")
+  - MEAPILA  permite calcular el espacio de pila libre de un proceso
+  - MEM      muestra el uso de la memoria (bloques libres y ocupados)
+  - MOUSE    ilustra el acceso al dispositivo de raton (fichero RATON)
+  - PS       muestra el estado de los procesos existentes
+  - SH       interprete de comandos de SO1
+  - TIME     muestra la hora actual y termina
+
+drivers:  
+  
+  - CONSOLA  driver de la pantalla/teclado (fichero CONSOLA)
+  - RATON    driver del raton (fichero RATON) 
+  - RELOJ    driver del reloj en tiempo real (fichero RELOJ) 
+  - RETARDO  driver para producir retardos activos (fichero RETARDO)
+  - TIMER    driver del temporizador (fichero TIMER)

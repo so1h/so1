@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
+Turbo Assembler	 Version 5.4	    12-01-17 01:31:19	    Page 1
 ..\CRTL\ASM\H_LDIV.ASM
 
 
@@ -60,7 +60,7 @@ Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
      55
      56	0017			     N_LUMOD@:
      57	0017  59			     pop     cx			     ;fix up far return
-Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 2
+Turbo Assembler	 Version 5.4	    12-01-17 01:31:19	    Page 2
 ..\CRTL\ASM\H_LDIV.ASM
 
 
@@ -122,7 +122,7 @@ Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
     112	004D  83 CF 0C			     or	     di,0Ch
     113	0050			     onepos:
     114	0050  0B C9			     or	     cx,cx		     ; test sign of divisor
-Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 3
+Turbo Assembler	 Version 5.4	    12-01-17 01:31:19	    Page 3
 ..\CRTL\ASM\H_LDIV.ASM
 
 
@@ -184,7 +184,7 @@ Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
     169	0088  8B C6			     mov     ax,si
     170	008A  8B D7			     mov     dx,di		     ; use remainder
     171	008C  D1 EB			     shr     bx,1		     ; shift in	the remainder sign bit
-Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 4
+Turbo Assembler	 Version 5.4	    12-01-17 01:31:19	    Page 4
 ..\CRTL\ASM\H_LDIV.ASM
 
 
@@ -215,7 +215,7 @@ Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 1
     195
     196	00AE			     _TEXT   ends
     197					     end
-Turbo Assembler	 Version 5.4	    08-28-17 13:03:16	    Page 5
+Turbo Assembler	 Version 5.4	    12-01-17 01:31:19	    Page 5
 Symbol Table
 
 
@@ -223,9 +223,9 @@ Symbol Table
 
 Symbol Name		Type   Value			   Cref	(defined at #)
 
-??date			Text   "08-28-17"
+??date			Text   "12-01-17"
 ??filename		Text   "H_LDIV	"
-??time			Text   "13:03:16"
+??time			Text   "01:31:19"
 ??version		Number 0504
 @Cpu			Text   0101H
 @FileName		Text   H_LDIV

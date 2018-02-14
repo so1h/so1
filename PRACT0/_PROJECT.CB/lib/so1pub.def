@@ -3,34 +3,34 @@ Publics by module
 BIOSDATA	size = 8
 	_ptrBiosArea                      _ptrFechaBios
 
-BIOS_0  	size = 2267
-	_connectApmBIOS                   _cpuBusyBIOS
-	_cpuIdleBIOS                      _disconnectApmBIOS
-	_enviarBIOS                       _esperarTicsBIOS
-	_establecerModoDeVideo            _establecerPaginaActiva
-	_goToXYBIOS                       _goToXYPag
-	_hayApmBIOS                       _leerTeclaBIOS
-	_leerTeclaExtBIOS                 _leerTeclaListaBDA
-	_memBIOS                          _modoDeVideo
-	_numPagsVideo                     _ocultaCursorBIOS
-	_paginaActiva                     _printBinBIOS
-	_printCadBIOS                     _printCarAtrPagBIOS
-	_printCarBIOS                     _printCarPagBIOS
-	_printCarRawBIOS                  _printDecBIOS
-	_printHexBIOS                     _printIntBIOS
-	_printLBinBIOS                    _printLDecBIOS
-	_printLHexBIOS                    _printLIntBIOS
-	_printLnBIOS                      _printPtrBIOS
-	_printStrBIOS                     _printStrHastaBIOS
-	_printWordBIOS                    _readXYBIOS
-	_readXYPagBIOS                    _rebootLegacy
-	_recibirBIOS                      _scrollBIOS
-	_scrollPagBDA                     _scrollPagBIOS
-	_setCursorBIOS                    _teclaListaBDA
-	_teclaListaBIOS                   _tipoOrdenador
-	_tipoTeclado                    
+BIOS_0  	size = 2341
+	_cambiarTeclaListaBDA             _connectApmBIOS
+	_cpuBusyBIOS                      _cpuIdleBIOS
+	_disconnectApmBIOS                _enviarBIOS
+	_esperarTicsBIOS                  _establecerModoDeVideo
+	_establecerPaginaActiva           _goToXYBIOS
+	_goToXYPag                        _hayApmBIOS
+	_leerTeclaBIOS                    _leerTeclaExtBIOS
+	_leerTeclaListaBDA                _memBIOS
+	_modoDeVideo                      _numPagsVideo
+	_ocultaCursorBIOS                 _paginaActiva
+	_printBinBIOS                     _printCadBIOS
+	_printCarAtrPagBIOS               _printCarBIOS
+	_printCarPagBIOS                  _printCarRawBIOS
+	_printDecBIOS                     _printHexBIOS
+	_printIntBIOS                     _printLBinBIOS
+	_printLDecBIOS                    _printLHexBIOS
+	_printLIntBIOS                    _printLnBIOS
+	_printPtrBIOS                     _printStrBIOS
+	_printStrHastaBIOS                _printWordBIOS
+	_readXYBIOS                       _readXYPagBIOS
+	_rebootLegacy                     _recibirBIOS
+	_scrollBIOS                       _scrollPagBDA
+	_scrollPagBIOS                    _setCursorBIOS
+	_teclaListaBDA                    _teclaListaBIOS
+	_tipoOrdenador                    _tipoTeclado
 
-BIOS_CRT	size = 1534
+BIOS_CRT	size = 1530
 	_comprobarAdaptador               _finBiosCrt
 	_fontSize                         _getFilas
 	_getFontSize                      _inicBiosCrt
@@ -92,7 +92,7 @@ ESCRIBIR	size = 373
 	_escribirStr                      _escribirStrHasta
 	_establecerLineas                 _leerCursor
 
-INTERPRE	size = 6277
+INTERPRE	size = 6427
 	_cambiarPromptDOS                 _controlarFinYFilas
 	_entreComillas                    _escribirPtos
 	_interpretarComandos              _interpretar_cd
@@ -108,7 +108,7 @@ INTERPRE	size = 6277
 	_prompt                           _redirigirSTDIO
 	_tratarError                    
 
-LEERCMD 	size = 2445
+LEERCMD 	size = 2466
 	_autocompletarCExt                _autocompletarCInt
 	_borrarCaracter                   _borrarLineaDeComando
 	_borrarUltimoCaracter             _carAnt
@@ -223,11 +223,11 @@ PUT     	size = 381
 	_putPtr                           _putStr
 	_putStrHasta                    
 
-SALUDOS 	size = 217
+SALUDOS 	size = 153
 	_mostrarSaludo                    _mostrarSaludoGrande
 	_printStrRojo                   
 
-SCANNER 	size = 2165
+SCANNER 	size = 2257
 	_car                              _comando
 	_identificador                    _inCmd
 	_inicScanner                      _nComandos

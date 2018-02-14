@@ -5,8 +5,8 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
-
+#include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
+ 
 #include <so1pub.h\strings.h>
 #include <so1pub.h\biosdata.h>
 #include <so1pub.h\msdos.h>
@@ -22,17 +22,17 @@ ptrBloque_t listaLibres ;
 
 word_t tamBlqMax ;
 
+word_t numPuertosCom = 0 ;
+
 typedef word_t far * ptrComAdr_t ;
 
 ptrComAdr_t ptrComAdr = (ptrComAdr_t)MK_FP(0x0000, 0x0400) ;
 
-word_t numPuertosCom = 0 ;
+word_t numPuertosPar = 0 ;
 
 typedef word_t far * ptrParAdr_t ;
 
 ptrParAdr_t ptrParAdr = (ptrParAdr_t)MK_FP(0x0000, 0x0408) ;
-
-word_t numPuertosPar = 0 ;
 
 info_t informacion ;
 
@@ -83,44 +83,45 @@ void info ( void )
     word_t BSS_SO1 ;
     word_t version ;
     word_t menor, mayor ;
-//word_t tipo, irq ;
-//word_t numBotones ;
+//  word_t tipo, irq ;
+//  word_t numBotones ;
     dword_t nVueltasRetardo ;
     word_t ticsPorRodaja ;
     int dfTimer ;
     word_t i ;
 
     CS_SO1 = descProceso[0].CSProc ;
-    DS_SO1 = seg((pointer_t)descProceso[0].trama) ;               /* DS == SS */
+    DS_SO1 = seg((pointer_t)descProceso[0].trama) ;            /* DS == SS */
     BSS_SO1 = descProceso[0].desplBSS ;
 
-    escribirLn() ;
-    escribirLn() ;
+	printf(
+	    ""                                                               "\n"
+		""                                                               "\n"
+	) ;
     dfTimer = open("TIMER", O_RDONLY) ;
     if (dfTimer < 0)
-        escribirStr(" Rodaja de cpu no establecida ") ;
+        printf(" Rodaja de cpu no establecida ") ;
     else
     {
         lseek(dfTimer, 10, SEEK_SET) ;
         aio_read(dfTimer, (pointer_t)&ticsPorRodaja, 2) ;
         close(dfTimer) ;
-        escribirStr(" Rodaja de cpu = ") ;
-        escribirDec(ticsPorRodaja, 1) ;
-        escribirStr(" tic") ;
-        if (ticsPorRodaja > 1) escribirCar('s') ;
-        escribirStr(" (") ;
-        escribirDec(55*ticsPorRodaja, 1) ;
-        escribirStr(" milisegundos) ") ;
+
+        printf(" Rodaja de cpu = %i tic", ticsPorRodaja) ;
+        if (ticsPorRodaja > 1) putchar('s') ;
+        printf(" (%i milisegundos) ", 55*ticsPorRodaja) ;
     }
-    escribirLn() ;
+    printf("\n") ;
 
     if (informacion.modoSO1 == modoSO1_Bin)
     {
-        escribirStr("\n Arranque desde el BIOS") ;
-        escribirStr(" memoria total = ") ;
-        escribirDec(memBIOS(), 1) ;
-        /*  escribirDec(ptrBiosArea->basemem_K, 1) ; */
-        escribirStr(" KB\n\n") ;
+        printf(
+		    ""                                                           "\n"
+			" Arranque desde el BIOS memoria total = %i KB"              "\n"
+			""                                                           "\n", 
+			memBIOS()
+		) ;
+/*      printf("%i", ptrBiosArea->basemem_K) ; */
     }
     else
     {
@@ -128,37 +129,26 @@ void info ( void )
         mayor = version & 0x00FF ;
         menor = version >> 8 ;
         if ((mayor == 7) && (menor == 10))
-            escribirStr("\n Arranque bajo Windows 98") ;
+            printf("\n Arranque bajo Windows 98") ;
         else if (valorMSDOS("OS")[0] == 'W')
-            escribirStr("\n Arranque bajo Windows XP") ;
+            printf("\n Arranque bajo Windows XP/7/8/10") ;
         else
-        {
-            escribirStr("\n Arranque bajo MSDOS ") ;
-            escribirDec(mayor, 1) ;
-            escribirCar('.') ;
-            escribirDec(menor/10, 1) ;
-            escribirDec(menor%10, 1) ;
-        }
-        escribirStr(" memoria total = ") ;
-        escribirDec((0xA000-descProceso[0].trama->DS)/64, 1) ;
-        escribirStr(" KB\n\n") ;
+            printf("\n Arranque bajo MSDOS %i.%02i", mayor, menor) ;
+        printf(
+		    " memoria total = %i KB\n\n", 
+			(0xA000-descProceso[0].trama->DS)/64
+		) ;
     }
 
-    escribirStr(" CS = ") ;
-    escribirHex(CS_SO1, 4) ;
-    escribirStr(" DS = ") ;
-    escribirHex(DS_SO1, 4) ;
-    escribirStr(" BSS = DS:") ;
-    escribirHex(BSS_SO1, 4) ;
-    escribirStr(" a DS:") ;
-    escribirHex(descProceso[0].desplPila, 4) ;
+    printf(
+	    " CS = %04X DS = %04X BSS = DS:%04X a DS:%04X\n\n", 
+	    CS_SO1, DS_SO1, BSS_SO1, descProceso[0].desplPila
+	) ;
 
-    escribirLn() ;
-    escribirLn() ;
-    escribirStr(" Pilas: consola => DS:") ;
-    escribirHex(informacion.SP0, 4) ;
-    escribirStr(" sistema => DS:") ;
-    escribirHex(informacion.SP0_So1, 4) ;
+    printf(
+	    " Pilas: consola => DS:%04X sistema => DS:%04X", 
+	    informacion.SP0, informacion.SP0_So1
+	) ;
 
     for ( i = 0 ; i < 4 ; i++ )
         if (ptrComAdr[i] != 0)
@@ -166,16 +156,9 @@ void info ( void )
 
     if (numPuertosCom > 0)
     {
-        escribirStr("\n\n numero de puertos serie ") ;
-        escribirDec(numPuertosCom, 1) ;
-        escribirCar(':') ;
+        printf("\n\n numero de puertos serie %i:", numPuertosCom) ;
         for ( i = 0 ; i < numPuertosCom ; i++ )
-        {
-            escribirStr(" COM") ;
-            escribirDec(i+1, 1) ;
-            escribirStr(" = ") ;
-            escribirHex(ptrComAdr[i], 3) ;
-        }
+            printf(" COM%i = %03X", i+1, ptrComAdr[i]) ;
     }
 
     for ( i = 0 ; i < 3 ; i++ )
@@ -184,65 +167,44 @@ void info ( void )
 
     if (numPuertosPar > 0)
     {
-        escribirStr("\n\n numero de puertos paralelos ") ;
-        escribirDec(numPuertosPar, 1) ;
-        escribirCar(':') ;
+        printf("\n\n numero de puertos paralelos %i:", numPuertosPar) ;
         for ( i = 0 ; i < numPuertosPar ; i++ )
-        {
-            escribirStr(" LPT") ;
-            escribirDec(i+1, 1) ;
-            escribirStr(" = ") ;
-            escribirHex(ptrParAdr[i], 3) ;
-        }
+            printf(" LPT%i = %03X", i+1, ptrParAdr[i]) ;
     }
 
-    escribirStr("\n\n") ;
+    printf("\n\n") ;
     nVueltasRetardo = retardoActivo(1) ;
     if (nVueltasRetardo != (dword_t)-1)
-    {
-        escribirStr(" retardoActivo = ") ;
-        escribirLDec(nVueltasRetardo, 1) ;
-    }
+        printf(" retardoActivo = %li", nVueltasRetardo) ;
 
-    escribirStr(" IMR Inicial = ") ;
-    escribirHex(informacion.IMR, 4) ;
+    printf(" IMR Inicial = %04X", informacion.IMR) ;
     if (informacion.IMR != valorIMR())
-    {
-        escribirStr(" ==> ") ;
-        escribirHex(valorIMR(), 4) ;
-    }
-    escribirStr(" =") ;
+        printf(" ==> %04X", valorIMR()) ;
+    printf(" =") ;
     for ( i = 0 ; i < 16 ; i++ )
     {
-        if ((i % 4) == 0) escribirCar(' ') ;
-        escribirCar('0'+ ((valorIMR() & (0x8000 >> i)) != 0)) ;
+        if ((i % 4) == 0) putchar(' ') ;
+        putchar('0'+ ((valorIMR() & (0x8000 >> i)) != 0)) ;
     }
 
-    escribirLn() ;
+    printf("\n") ;
 
-    /*
-      resetRatonBIOS(&numBotones) ;
-      if (!hayRatonBIOS())
-        escribirStr("\n raton: no hay driver bios int33h") ;
-      else {
-        versionRatonBIOS(&mayor, &menor, &tipo, &irq) ;
-        escribirStr("\n raton: driver v") ;
-        escribirDec(mayor, 1) ;
-        escribirCar('.') ;
-        escribirDec(menor/10, 1) ;
-        escribirDec(menor % 10, 1) ;
-        escribirCar(' ') ;
-        escribirStr(strTipo[tipo]) ;
-        if (irq > 0) {
-          escribirStr(" IRQ") ;
-          escribirDec(irq, 1) ;
-        }
-      }
-      escribirLn() ;
-    */
+/*
+    resetRatonBIOS(&numBotones) ;
+       if (!hayRatonBIOS())
+           printf("\n raton: no hay driver bios int33h") ;
+       else 
+	   {
+           versionRatonBIOS(&mayor, &menor, &tipo, &irq) ;
+           printf("\n raton: driver v%i.%02i %s", mayor, menor, strTipo[tipo]) ;
+           if (irq > 0) 
+               printf(" IRQ%i", irq) ;
+       }
+       escribirLn() ;
+*/
 }
 
-void main ( void )
+int main ( void )
 {
     obtenInfoMEM((descProceso_t far *)&descProceso,
                  (e2PFR_t far *)&e2PFR,
@@ -250,6 +212,10 @@ void main ( void )
                  (ptrBloque_t *)&listaLibres,
                  (word_t *)&tamBlqMax) ;
     obtenInfoINFO((info_t far *)&informacion) ;
+
     info() ;
+
+//	getchar() ;
+	return(0) ;
 }
 

@@ -1,11 +1,12 @@
 /* ----------------------------------------------------------------------- */
 /*                                   dp.c                                  */
 /* ----------------------------------------------------------------------- */
-/*                         descriptores de proceso                         */
+/*            comando para ver los descriptores de los procesos            */
+/*                    version extendida del comando ps                     */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
+#include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 
 #include <so1pub.h\strings.h>                                   /* iguales */
 #include <so1pub.h\scanner.h>
@@ -13,57 +14,51 @@
 
 #include <so1pub.h\ptrc2c.h>                                   /* ptrC2c_t */
 
-#define eS(str)                                                              \
-  escribirStr(str)
+void formato ( void )
+{
+    printf(
+        ""                                                               "\n"
+        ""                                                               "\n"
+        " formato : DP ( px [ -p | -f ] | -a | -h ) "                    "\n"                     
+    ) ;
+}
 
-#define eSH(str, ancho, bool)                                                \
-  escribirStrHasta(str, ancho, bool)
-
-#define eH(num, ancho)                                                       \
-  escribirHex(num, ancho)
-
-#define eLH(num, ancho)                                                      \
-  escribirLHex(num, ancho)
-
-#define eD(num, ancho)                                                       \
-  escribirDec(num, ancho)
-
-#define eLD(num, ancho)                                                      \
-  escribirLDec(num, ancho)
-
-#define eI(num, ancho)                                                       \
-  escribirInt(num, ancho)
-
-#define eP(ptr)                                                              \
-  escribirPtr((pointer_t)ptr)
-
-#define eC(pindx)                                                            \
-  eS("\n descProceso[") ;                                                    \
-  eD(pindx, 1) ;                                                             \
-  eS("].") ;
+void help ( void )
+{
+    formato() ;
+    printf(
+        ""                                                               "\n"
+        " muestra los campos del descriptor de proceso"                  "\n"
+        ""                                                               "\n"
+        " opciones (px = indice del descriptor del proceso):"            "\n"
+        ""                                                               "\n"
+        "   px    : muestra todos los campos del proceso px"             "\n"
+        "   px -p : muestra los principales campos de px"                "\n"
+        "   px -f : muestra su tabla de ficheros abiertos"               "\n"
+        "      -a : muestra todos los procesos"                          "\n"
+        "      -h : muestra este help"                                   "\n"
+    ) ;
+}
 
 void ePC2c ( ptrC2c_t ptrC2c )
 {
-    int i, j, numElem, primero, cabecera ;
+    int i, j ;
+	int numElem ;
+	int primero ;
+//	int cabecera ;
     numElem = ptrC2c->numElem ;
     primero = ptrC2c->primero ;
-    cabecera = ptrC2c->cabecera ;
-    eI(numElem,1 ) ;
-    eS(" ") ;
-    eI(primero,1 ) ;
-    eS(" ") ;
-    eI(cabecera,1 ) ;
-    eS(" ") ;
-    eS("[ ") ;
+//  cabecera = ptrC2c->cabecera ;
+//  printf("%i %i %i ", numElem, primero, cabecera) ;
+    printf("[ ") ;
     i = primero ;
     for ( j = 0 ; j < numElem ; j++ )
     {
-        eI(i, 1) ;
-        /* eD(descProceso[i].pid, 1) ; */
-        escribirCar(' ') ;
+        printf("%i ", i) ;
+//      printf("%i ", descProceso[i].pid) ; 
         i = ptrC2c->e[i].sig ;
     }
-    eS("] ") ;
+    printf("] ") ;
 }
 
 void eNibble ( word_t w )
@@ -73,10 +68,22 @@ void eNibble ( word_t w )
     for ( i = 0 ; i < 4 ; i++ )
     {
         masc = masc >> 1 ;
-        if ((masc & w) != 0) eS("1") ;
-        else eS("0") ;
+        if ((masc & w) != 0) putchar('1') ;
+        else putchar('0') ;
     }
 }
+
+void eFlags ( word_t flags ) 
+{
+	word_t mascara ;
+    for ( mascara = 0x8000 ; mascara > 0 ; mascara >>= 1 ) 
+	{
+        if ((flags & mascara) != 0)
+            putchar('1') ;
+        else
+            putchar('0') ;
+	}
+}	
 
 word_t miIP ( void )
 {
@@ -95,46 +102,46 @@ word_t miIP ( void )
         pop ax ;
         push ax ;
     }
-//  return(_AX) ;
+    return(_AX) ;
 #endif
 }
 
-#define longMaxStrEstado 13
+#define lMaxStrEstado 13
 
-char strEstado[ ][13] = { "libre",
-                          "preparado",
-                          "ejecutandose",
-                          "bloqueado"
-                        } ;
+char strEstado[ ][lMaxStrEstado] = { "libre",
+                                     "preparado",
+                                     "ejecutandose",
+                                     "bloqueado"
+                                   } ;
 
 char carRecurso [ ] =
 {
     '!',
-    'H', /* rec_hijo            (rindx_t)(- 1) */
-    'Z', /* rec_zombie          (rindx_t)(- 2) */
-    'D', /* rec_desinstalacion  (rindx_t)(- 3) */
-    'S', /* rec_semaforo        (rindx_t)(- 4) */
-    'B', /* rec_buzon           (rindx_t)(- 5) */
-    'C', /* rec_serie           (rindx_t)(- 6) */
-    'R', /* rec_raton           (rindx_t)(- 7) */
-    'r', /* rec_ratonRaw        (rindx_t)(- 8) */
-    'A', /* rec_tecladoRaton    (rindx_t)(- 9) */
-    'a', /* rec_tecladoRawRaton (rindx_t)(-10) */
+    'H', /* rec_hijo                                        (rindx_t)(- 1) */
+    'Z', /* rec_zombie                                      (rindx_t)(- 2) */
+    'D', /* rec_desinstalacion                              (rindx_t)(- 3) */
+    'S', /* rec_semaforo                                    (rindx_t)(- 4) */
+    'B', /* rec_buzon                                       (rindx_t)(- 5) */
+    'C', /* rec_serie                                       (rindx_t)(- 6) */
+    'R', /* rec_raton                                       (rindx_t)(- 7) */
+    'r', /* rec_ratonRaw                                    (rindx_t)(- 8) */
+    'A', /* rec_tecladoRaton                                (rindx_t)(- 9) */
+    'a', /* rec_tecladoRawRaton                             (rindx_t)(-10) */
 } ;
 
 char strRecurso [ ] [20] =
 {
     "!",
-    "rec_hijo",              /* (rindx_t)(- 1) */
-    "rec_zombie",            /* (rindx_t)(- 2) */
-    "rec_desinstalacion",    /* (rindx_t)(- 3) */
-    "rec_semaforo",          /* (rindx_t)(- 3) */
-    "rec_buzon",             /* (rindx_t)(- 4) */
-    "rec_serie",             /* (rindx_t)(- 5) */
-    "rec_raton",             /* (rindx_t)(- 6) */
-    "rec_ratonRaw",          /* (rindx_t)(- 7) */
-    "rec_tecladoRaton",      /* (rindx_t)(- 8) */
-    "rec_tecladoRawRaton"    /* (rindx_t)(- 9) */
+    "rec_hijo",                                          /* (rindx_t)(- 1) */
+    "rec_zombie",                                        /* (rindx_t)(- 2) */
+    "rec_desinstalacion",                                /* (rindx_t)(- 3) */
+    "rec_semaforo",                                      /* (rindx_t)(- 3) */
+    "rec_buzon",                                         /* (rindx_t)(- 4) */
+    "rec_serie",                                         /* (rindx_t)(- 5) */
+    "rec_raton",                                         /* (rindx_t)(- 6) */
+    "rec_ratonRaw",                                      /* (rindx_t)(- 7) */
+    "rec_tecladoRaton",                                  /* (rindx_t)(- 8) */
+    "rec_tecladoRawRaton"                                /* (rindx_t)(- 9) */
 } ;
 
 #define tamCarRec (sizeof(carRecurso)/sizeof(char))
@@ -151,22 +158,16 @@ c2c_t c2cPFR [ numColasPFR ] ;
 
 info_t info ;
 
-ptrBloque_t listaLibres ;
-
-word_t tamBlqMax ;
-
 void mostrarProcesos ( void )
 {
-
-//char car ;
     int i, j ;
     int ind ;
     word_t flags ;
     rindx_t esperandoPor ;
 
-    escribirStr(" cola de preparados: ") ;
+    printf(" cola de preparados: ") ;
     ePC2c((ptrC2c_t)&c2cPFR[PPreparados]) ;
-    escribirStr(
+    printf(
         "\n"
         "\n"
         " pindx pid comando       estado   rec CS   IP   DS   FBSS SP    NnpODITSZ A P C\n"
@@ -176,200 +177,165 @@ void mostrarProcesos ( void )
     {
         if (descProceso[i].estado != libre)
         {
-            escribirStr("\n ") ;
-            escribirDec(i, 5) ;
-            escribirCar(' ') ;
-            escribirDec(descProceso[i].pid, 3) ;
-            escribirCar(' ') ;
-            escribirStrHasta(descProceso[i].comando, 13, TRUE) ;
-            escribirCar(' ') ;
+            printf(
+			  "\n"
+			  " %5i %3i %-13.13s ", 
+			  i, descProceso[i].pid, descProceso[i].comando
+			) ;
             if (descProceso[i].estado == bloqueado)
             {
-                escribirStr("bloqueado") ;
+		       /* chapuza para que funcione en Fake86, porque Fake86 tiene */
+			   /* error al acceder a las variables locales poniendo a cero */
+			   /* el byte alto de las palabras. Ej: (word)(-1) ==> 255.    */
+			   /* pasando a (signed char) se soluciona para valores entre  */
+			   /* -128 y 127, pero fallaría en el resto de casos.          */ 
+			   
+#define CHAPUZA_FAKE86 int                     /* no funcionaria en Fake86 */
+//#define CHAPUZA_FAKE86 signed char        /* para que funcione en Fake86 */		   
+			   
+                printf("bloqueado(") ;
+#if (TRUE)	
+                if ((CHAPUZA_FAKE86)descProceso[i].esperandoPor >= 0)    /**/
+					printf("%i", descProceso[i].esperandoPor) ;
+                else {
+                    ind = -(CHAPUZA_FAKE86)descProceso[i].esperandoPor ; /**/
+                    if (ind < tamCarRec) putchar(carRecurso[ind]) ;
+                    else putchar('#') ;
+				}
+#else 
                 esperandoPor = descProceso[i].esperandoPor ;
-                escribirCar('(') ;
                 ind = (-1)*esperandoPor ;
                 if (ind > 0)
-                    if (ind < tamCarRec) escribirCar(carRecurso[ind]) ;
-                    else escribirCar('#') ;
+                    if (ind < tamCarRec) putchar(carRecurso[ind]) ;
+                    else putchar('#') ;
                 else
-                    escribirDec(esperandoPor, 1) ;
-                escribirCar(')') ;
+                    printf("%i", esperandoPor) ;
+#endif				
+                putchar(')') ;
             }
             else
-                escribirStrHasta(strEstado[descProceso[i].estado], longMaxStrEstado-1, TRUE) ;
+				printf("%-*.*s", lMaxStrEstado-1, lMaxStrEstado-1, 
+			                    strEstado[descProceso[i].estado]) ;
             if ((descProceso[i].estado == bloqueado) && (descProceso[i].esperandoPor == rec_zombie))
                 continue ;
 
             if (descProceso[i].pid != getpid())
             {
-                escribirCar(' ') ;
-                escribirHex(descProceso[i].trama->CS, 4) ;
-                escribirCar(' ') ;
-                escribirHex(descProceso[i].trama->IP, 4) ;
-                escribirCar(' ') ;
-                escribirHex(descProceso[i].trama->DS, 4) ;
-                escribirCar(' ') ;
-                escribirHex(descProceso[i].desplPila, 4) ;
-                escribirCar(' ') ;
-                escribirHex(off((pointer_t)descProceso[i].trama), 4) ;
-                escribirCar(' ') ;
-                flags = descProceso[i].trama->Flags ;
-                for ( j = 0 ; j < 16 ; j++)
-                {
-                    escribirDec(flags/0x8000, 1) ;
-                    flags = flags << 1 ;
-                }
+				printf(
+				    " %04X %04X %04X %04X %04X ", 
+					descProceso[i].trama->CS, 
+					descProceso[i].trama->IP,
+					descProceso[i].trama->DS,
+					descProceso[i].desplPila, 
+					off((pointer_t)descProceso[i].trama)
+				) ;
+                eFlags(descProceso[i].trama->Flags) ;
             }
             else
             {
-                escribirCar(' ') ;
-                escribirHex(_CS, 4) ;
-                escribirCar(' ') ;
-                escribirHex(miIP(), 4) ;
-                escribirCar(' ') ;
-                escribirHex(_DS, 4) ;
-                escribirCar(' ') ;
-                escribirHex(descProceso[i].desplPila, 4) ;
-                escribirCar(' ') ;
-                escribirHex(_SP, 4) ;
-                escribirCar(' ') ;
-                asm pushf
-                asm pop ax
-                asm mov flags,ax
-                for ( j = 0 ; j < 16 ; j++)
-                {
-                    escribirDec(flags/0x8000, 1) ;
-                    flags = flags << 1 ;
-                }
+                printf(
+				    " %04X %04X %04X %04X %04X ", 
+					_CS, 
+					miIP(), 
+					_DS, 
+					descProceso[i].desplPila, 
+					_SP
+				) ;
+                asm pushf ;
+                asm pop ax ;
+                asm mov flags,ax ;
+                eFlags(flags) ;
             }
-/*
-            escribirCar(' ') ;
-            escribirDec(descProceso[i].teclado->ncar, 2) ;
-
-            escribirCar(' ') ;
-            if (descProceso[i].teclado->ncar > 0)
-            {
-                escribirStr("\n           bufer del teclado = \"") ;
-                for ( j = descProceso[i].teclado->out ;
-                      j != descProceso[i].teclado->in ;
-                      j = ((j + 1) % tamBTeclado) )
-                {
-                    car = descProceso[i].teclado->bufer[j] ;
-                    if ((' ' <= car) && (car <= '~')) escribirCar(car) ;
-                    else escribirCar('.') ;
-                }
-                escribirCar('\"') ;
-            }
-*/
         }
     }
-
-    escribirLn() ;
-
+//	getchar() ;	
+    printf("\n") ;
 }
 
 void mostrarCamposPrincipales ( pindx_t ind )
 {
-
     word_t Flgs ;
     word_t regIP ;
     estado_t estado ;
     rindx_t esperandoPor ;
 
-    eC(ind) ;
-    eS("pid          = ") ;
-    eI(descProceso[ind].pid, 1) ;
-    eS(" (pindx = ") ;
-    eI(ind, 1) ;
-    eS(")") ;
-    eC(ind) ;
-    eS("ppindx       = ") ;
-    eI(descProceso[ind].ppindx, 1) ;
-    eC(ind) ;
-    eS("uid          = ") ;
-    eI(descProceso[ind].uid, 1) ;
-    eC(ind) ;
-    eS("gid          = ") ;
-    eI(descProceso[ind].gid, 1) ;
+	char espacio [2] ;     /* para que no se muevan los Flags si ind >= 10 */
+	
+	espacio[1] = '\0' ;
+	if (ind < 10) 
+		espacio[0] = ' ' ;                                /* espacio = " " */
+	else 
+		espacio[0] = '\0' ;                                /* espacio = "" */
+	
     estado = descProceso[ind].estado ;
-    eC(ind) ;
-    eS("estado       = ") ;
-    eS(strEstado[estado]) ;
-    eS(" (") ;
-    eI(estado, 1) ;
-    eS(")") ;
-    if (estado == 3 /* bloqueado */)
+
+	printf(
+	    ""                                                               "\n"
+        " descProceso[%i].pid          = %i  (pindx = %i)"               "\n"
+        " descProceso[%i].ppindx       = %i"                             "\n"
+        " descProceso[%i].uid          = %i"                             "\n"
+        " descProceso[%i].gid          = %i"                             "\n"
+        " descProceso[%i].estado       = %s (%i)",
+        ind, descProceso[ind].pid, ind,
+        ind, descProceso[ind].ppindx,
+        ind, descProceso[ind].uid,
+        ind, descProceso[ind].gid,
+        ind, strEstado[estado], estado
+    ) ;		
+
+    if (estado == 3)                                          /* bloqueado */
     {
         esperandoPor = descProceso[ind].esperandoPor ;
-        eC(ind) ;
-        eS("esperandoPor = ") ;
+		
+        printf("\n descProceso[%i].esperandoPor = ", ind) ;
+		
         if (esperandoPor >= 0)
-        {
-            eS("\"") ;
-            eS(descRecurso[esperandoPor].nombre) ;
-            eS("\"") ;
-        }
+            printf("\"%s\"", descRecurso[esperandoPor].nombre) ;
         else
-            eS(strRecurso[-esperandoPor]) ;
-        eS(" (") ;
-        eI(esperandoPor, 1) ;
-        eS(")") ;
+            printf(strRecurso[-esperandoPor]) ;
+        
+		printf(" (%i)", esperandoPor) ;
+		
         switch (esperandoPor)
         {
         case rec_hijo   :
-            eC(ind) ;
-            eS("hpindx       = ") ;
-            eI(descProceso[ind].hpindx, 1) ;
+	        printf("\n descProceso[%i].hpindx       = %i", ind, descProceso[ind].hpindx) ;
             break ;
         case rec_zombie :
-            eC(ind) ;
-            eS("noStatus     = ") ;
-            if (descProceso[ind].noStatus) eS("TRUE") ;
-            else eS("FALSE") ;
-            eC(ind) ;
-            eS("status       = ") ;
-            eI(descProceso[ind].status, 1) ;
+	        printf("\n descProceso[%i].noStatus     = ", ind) ;
+            if (descProceso[ind].noStatus) 
+				printf("TRUE") ;
+            else 
+				printf("FALSE") ;
+	        printf("\n descProceso[%i].status       = %i", ind, descProceso[ind].status) ;
             break ;
         default :
             ;
         }
     }
-    eC(ind) ;
-    eS("c2cHijos     = ") ;
-    ePC2c((ptrC2c_t)&descProceso[ind].c2cHijos) ;
-//  eC(ind) ; eS("  numElem    = ") ; eD(descProceso[ind].c2cHijos.numElem, 1) ;
-//  eC(ind) ; eS("  primero    = ") ; eD(descProceso[ind].c2cHijos.primero, 1) ;
-//  eC(ind) ; eS("  cabecera   = ") ; eD(descProceso[ind].c2cHijos.cabecera, 1) ;
-    eC(ind) ;
-    eS("tamFichero   = ") ;
-    eLH(descProceso[ind].tamFichero, 4) ;
-    eS(" = ") ;
-    eLD(descProceso[ind].tamFichero, 1) ;
+	
+	printf("\n descProceso[%i].c2cHijos     = ", ind) ;
+	ePC2c((ptrC2c_t)&descProceso[ind].c2cHijos) ;
+    printf("\n descProceso[%i].tamFichero   = %04lX = %li", 
+	    ind, (dword_t)descProceso[ind].tamFichero, (dword_t)descProceso[ind].tamFichero, 1
+	) ;
     if ((info.modoSO1 == modoSO1_Exe) && (ind == 0))
-        eS(" (+ cabecera EXE) ") ;
-
-    eC(ind) ;
-    eS("programa     = ") ;
-    eS("\"") ;
-    eS(descProceso[ind].programa) ;
-    eS("\"") ;
-    eC(ind) ;
-    eS("comando      = ") ;
-    eS("\"") ;
-    eS(descProceso[ind].comando) ;
-    eS("\"") ;
-
-    eC(ind) ;
-    eS("tamCodigo    = ") ;
-    eH(descProceso[ind].tamCodigo, 1) ;
-    eC(ind) ;
-    eS("desplBSS     = ") ;
-    eH(descProceso[ind].desplBSS, 4) ;
-    eC(ind) ;
-    eS("desplPila    = ") ;
-    eH(descProceso[ind].desplPila, 4) ;
-
+        printf(" (+ cabecera EXE) ") ;
+    
+	printf("\n") ;
+    printf(
+	    " descProceso[%i].programa     = \"%s\""                         "\n" 
+	    " descProceso[%i].comando      = \"%s\""                         "\n"
+	    " descProceso[%i].tamCodigo    = %X"                             "\n"
+	    " descProceso[%i].desplBSS     = %04X"                           "\n"
+	    " descProceso[%i].desplPila    = %04X"                           "\n",
+     	ind, descProceso[ind].programa,
+        ind, descProceso[ind].comando,
+		ind, descProceso[ind].tamCodigo,
+		ind, descProceso[ind].desplBSS, 
+		ind, descProceso[ind].desplPila
+	) ;
+	
     if (descProceso[ind].estado == ejecutandose)      /* apilamos 26 bytes */
     {
         regIP = miIP() ;
@@ -382,62 +348,53 @@ void mostrarCamposPrincipales ( pindx_t ind )
         descProceso[ind].trama = (trama_t far *)pointer(_SS, _SP) ;
     }
 
-    eC(ind) ;
-    eS("trama        = ") ;
-    eP((pointer_t)descProceso[ind].trama) ;
-    eS("       Flags:  0Nnp  ODIT  SZ0A  0P1C ") ;
-    eC(ind) ;
-    eS("CSProc       = ") ;
-    eH(descProceso[ind].CSProc, 4) ;
-    eS("                    ----  ----  ----  ---- ") ;
-    eC(ind) ;
-    eS("tam          = ") ;
-    eH(descProceso[ind].tam, 4) ;
-    eS(" Ps ") ;
+    printf(
+	    " descProceso[%i].trama        = %04X:%04X", 
+		ind, seg((pointer_t)descProceso[ind].trama), 
+		off((pointer_t)descProceso[ind].trama)
+	) ;
+	
+    printf("%s      Flags:  0Nnp  ODIT  SZ0A  0P1C \n", espacio) ;
+    printf(
+	    " descProceso[%i].CSProc       = %04X    %s               ----  ----  ----  ---- \n"
+	    " descProceso[%i].tam          = %04X Ps %s",
+        ind, descProceso[ind].CSProc, espacio,
+	    ind, descProceso[ind].tam, espacio
+    ) ;
+		
     Flgs = descProceso[ind].trama->Flags ;
-    eS("                ") ;
+	printf("               ") ;
     eNibble((Flgs >> 12) & 0x000F) ;
-    eS("  ") ;
+    printf("  ") ;
     eNibble((Flgs >> 8) & 0x000F) ;
-    eS("  ") ;
+    printf("  ") ;
     eNibble((Flgs >> 4) & 0x000F) ;
-    eS("  ") ;
+    printf("  ") ;
     eNibble(Flgs & 0x000F) ;
-    eS("\n ") ;
-    eS("\n  DS    ES    DI    SI    BP    SP    BX    DX    CX    AX    IP    CS   Flgs ") ;
-    eS("\n ----  ----  ----  ----  ----  ----  ----  ----  ----  ----  ----  ----  ---- ") ;
-    eS("\n ") ;
-    eH(descProceso[ind].trama->DS, 4) ;
-    eS("  ") ;
-    eH(descProceso[ind].trama->ES, 4) ;
-    eS("  ") ;
-    eH(descProceso[ind].trama->DI, 4) ;
-    eS("  ") ;
-    eH(descProceso[ind].trama->SI, 4) ;
-    eS("  ") ;
-    eH(descProceso[ind].trama->BP, 4) ;
-    eS("  ") ;
-    eH(descProceso[ind].trama->SP, 4) ;
-    eS("  ") ;
-    eH(descProceso[ind].trama->BX, 4) ;
-    eS("  ") ;
-    eH(descProceso[ind].trama->DX, 4) ;
-    eS("  ") ;
-    eH(descProceso[ind].trama->CX, 4) ;
-    eS("  ") ;
-    eH(descProceso[ind].trama->AX, 4) ;
-    eS("  ") ;
-    eH(descProceso[ind].trama->IP, 4) ;
-    eS("  ") ;
-    eH(descProceso[ind].trama->CS, 4) ;
-    eS("  ") ;
-    eH(descProceso[ind].trama->Flags, 4) ;
+    printf("\n\n") ;
+	printf(
+   	    "  DS    ES    DI    SI    BP    SP    BX    DX    CX    AX    IP    CS   Flgs \n"
+        " ----  ----  ----  ----  ----  ----  ----  ----  ----  ----  ----  ----  ---- \n"
+        " %04X  %04X  %04X  %04X  %04X  %04X  %04X  %04X  %04X  %04X  %04X  %04X  %04X \n",
+        descProceso[ind].trama->DS,
+		descProceso[ind].trama->ES,
+		descProceso[ind].trama->DI,
+		descProceso[ind].trama->SI,
+		descProceso[ind].trama->BP,
+		descProceso[ind].trama->SP, 
+		descProceso[ind].trama->BX, 
+		descProceso[ind].trama->DX,
+		descProceso[ind].trama->CX,
+		descProceso[ind].trama->AX, 
+		descProceso[ind].trama->IP, 
+		descProceso[ind].trama->CS, 
+		descProceso[ind].trama->Flags
+	) ;
 
     if (descProceso[ind].estado == ejecutandose)   /* desapilamos 26 bytes */
     {
-        asm add sp,26
+        asm add sp,26 ;
     }
-
 }
 
 void mostrarTablaDeFicherosAbiertos ( pindx_t ind )
@@ -446,26 +403,21 @@ void mostrarTablaDeFicherosAbiertos ( pindx_t ind )
     int df ;
     int dfs ;
 
-    eS("\n ") ;
-    eC(ind) ;
-    eS("nfa          = ") ;
-    eD(descProceso[ind].nfa, 1) ;
+    printf("\n descProceso[%i].nfa = %i", 
+	       ind, descProceso[ind].nfa) ;
+
+	if (descProceso[ind].nfa > 0) printf("\n") ;	   
+		   
     for ( df = 0 ; df < dfMax ; df++ )
         if (descProceso[ind].tfa[df].dfs >= 0)
         {
-            eC(ind) ;
-            eS("tfa[") ;
-            eD(df, 1) ;
             dfs = descProceso[ind].tfa[df].dfs ;
-            eS("]       = ( dfs: ") ;
-            eI(dfs, 2) ;
-            eS(" modoAp: ") ;
-            eH(descProceso[ind].tfa[df].modoAp, 4) ;
-            eS(" pos: ") ;
-            eLD(descProceso[ind].tfa[df].pos, 5) ;
-            eS(" \"") ;
-            eS(descFichero[dfs].nombre) ;
-            eS("\" ) ") ;
+            printf("\n descProceso[%i].tfa[%i] = ( dfs: %2i modoAp: %04X pos: %5lu \"%s\" ) ", 
+	            ind, df, dfs, 
+				descProceso[ind].tfa[df].modoAp, 
+				descProceso[ind].tfa[df].pos, 
+				descFichero[dfs].nombre
+			) ;
         }
 
 }
@@ -475,92 +427,67 @@ void mostrarDescProceso ( pindx_t pindx, char opcion )
 
     if ((opcion == ' ') || (opcion == 'p'))
     {
-        eS("\n") ;
+        printf("\n") ;
         mostrarCamposPrincipales(pindx) ;
         if (opcion == ' ')
-            leer(STDIN) ; /* while (leerListo(STDIN) == (char)0) ; */
+            getchar() ;    
         else if (opcion == 'p')
-        {
-            eS("\n ") ;
             return ;
-        }
     }
 
     if ((opcion == ' ') || (opcion == 'f'))
     {
+        if (opcion == 'f') printf("\n") ;			
         mostrarTablaDeFicherosAbiertos(pindx) ;
         if (opcion == 'f')
         {
-            eS("\n ") ;
+            printf("\n ") ;
             return ;
         }
     }
-    eS("\n ") ;
+    printf("\n ") ;
 }
 
-void formato ( void )
-{
-    escribirStr(
-        "\n"
-        "\n"
-        " formato : DP ( px [ -p | -f ] | -a | -h ) \n"
-    ) ;
-}
-
-void help ( void )
-{
-    formato() ;
-    escribirStr(
-        "\n"
-        " muestra los campos del descriptor de proceso        \n"
-        "\n"
-        " opciones:                                           \n"
-        "\n"
-        "   px    : muestra todos los campos del proceso px   \n"
-        "   px -p : muestra los principales campos de px      \n"
-        "   px -f : muestra su tabla de ficheros abiertos     \n"
-        "      -a : muestra todos los procesos                \n"
-        "      -h : muestra este help                         \n"
-    ) ;
-}
-
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
 
     pindx_t pindx ;
     char opcion ;
+	
     obtenInfoPFR ((descProceso_t far *)&descProceso,
                   (descFichero_t far *)&descFichero,
                   (descRecurso_t far *)&descRecurso,
                   (e2PFR_t far *)&e2PFR,
                   (c2c_t far *)&c2cPFR
                  ) ;
+				 
     obtenInfoINFO((info_t far *)&info) ;
+	
     if (argc == 1)
     {
         formato() ;
-        return ;
+        return(0) ;
     }
     else if (argc > 3)
     {
-        escribirCar('\a') ;
+        putchar('\a') ;
         formato() ;
-        exit(-1) ;
+        return(1) ;
     }
     if ((argc == 2) &&
             (argv[1][0] == '-') &&
-            (argv[1][2] == (char)0))
+            (argv[1][2] == '\0'))
     {
         opcion = minuscula(argv[1][1]) ;
         if (opcion == 'h')
         {
             help() ;
-            return ;
+            return(0) ;
         }
         else if (opcion == 'a')
         {
             mostrarProcesos() ;
-            return ;
+            return(0) ;
         }
     }
     copiarStr(argv[1], comando[0]) ;
@@ -568,12 +495,10 @@ void main ( int argc, char * argv [ ] )
     obtenSimb() ;
     if (simb != s_numero)
     {
-        escribirCar('\a') ;
+        putchar('\a') ;
         formato() ;
-        escribirStr("\n error: pindx debe ser un numero y no \"") ;
-        escribirStr(argv[1]) ;
-        escribirStr("\"\n") ;
-        exit(-2) ;
+        printf("\n error: pindx debe ser un numero y no \"%s\"\n", argv[1]) ;
+        return(2) ;
     }
     else
     {
@@ -593,37 +518,30 @@ void main ( int argc, char * argv [ ] )
                         mostrarDescProceso(pindx, opcion) ;
                     else
                     {
-                        escribirCar('\a') ;
-//                      escribirStrIntenso(" opcion \"") ;
-                        escribirStr(" opcion \"") ;
-//                      escribirStrIntenso(argv[2]) ;
-                        escribirStr(argv[2]) ;
-//                      escribirStrIntenso("\" incorrecta ") ;
-                        escribirStr("\" incorrecta ") ;
-                        exit(-3) ;
+                        putchar('\a') ;
+                        printf(" opcion \"%s\" incorrecta ", argv[2]) ;
+                        return(3) ;
                     }
                 }
                 else
                 {
-                    escribirCar('\a') ;
+                    putchar('\a') ;
                     formato() ;
-                    exit(-4) ;
+                    return(4) ;
                 }
             }
             else
             {
-                escribirCar('\a') ;
-//              escribirStrIntenso(" descriptor no utilizado ") ;
-                escribirStr(" descriptor no utilizado ") ;
-                exit(-5) ;
+                putchar('\a') ;
+                printf(" descriptor no utilizado ") ;
+                return(5) ;
             }
         else
         {
-            escribirCar('\a') ;
-//          escribirStrIntenso(" pindx erroneo ") ;
-            escribirStr(" pindx erroneo ") ;
-            exit(-6) ;
+            putchar('\a') ;
+            printf(" pindx erroneo ") ;
+            return(6) ;
         }
     }
+	return(0) ;
 }
-

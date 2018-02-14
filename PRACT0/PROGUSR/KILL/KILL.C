@@ -1,30 +1,34 @@
 /* ----------------------------------------------------------------------- */
 /*                                  kill.c                                 */
 /* ----------------------------------------------------------------------- */
-/*                       Un primer sistema operativo                       */
+/*                       comando para matar procesos                       */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
+#include <so1pub.h\stdio.h>                             /* printf, getchar */
 
-#include <so1pub.h\scanner.h>
-#include <so1pub.h\strings.h>
+#include <so1pub.h\scanner.h>    /* inicScanner, obtenSimb, simb, s_numero */
+#include <so1pub.h\strings.h>                                   /* iguales */
 
 void formato ( void )
 {
-//  escribirStrIntenso(" formato: KILL [ pid | -a | -h ] ") ;
-    escribirStr(" formato: KILL [ pid | -a | -h ] ") ;
+    printf(" formato: KILL [ pid | -a | -h ] ") ;
 }
 
 void help ( void )
 {
-    escribirLn() ;
-    escribirLn() ;
-    escribirStr(" formato: KILL [ pid | -a | -h ]    \n\n") ;
-    escribirStr(" mata al proceso pid o a todos (-a) \n") ;
+    printf(
+	    ""                                                               "\n"
+	    ""                                                               "\n"
+    ) ;
+	formato() ;
+    printf(
+    	""                                                               "\n"
+        " mata al proceso pid o a todos (-a)"                            "\n"
+	) ;
 }
 
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
     int i = 0 ;
     if (argc != 2) formato() ;
@@ -45,16 +49,21 @@ void main ( int argc, char * argv [ ] )
             switch (kill(num))
             {
             case -1 :
-//              escribirStrIntenso(" no se permite matar al proceso 0 ") ;
-                escribirStr(" no se permite matar al proceso 0 ") ;
-                break ;
+                printf(" no se permite matar al proceso 0 ") ;
+				return(-1) ;
+//              break ;
             case -2 :
-//              escribirStrIntenso(" no existe ningun proceso con ese pid ") ;
-                escribirStr(" no existe ningun proceso con ese pid ") ;
-                break ;
+                printf(" no existe ningun proceso con ese pid ") ;
+				return(-2) ;
+//              break ;
             }
         }
-        else formato() ;
+        else { 
+		    formato() ;
+			return(1) ;
+		}
     }
+//	getchar() ;
+	return(0) ;
 }
 

@@ -5,6 +5,7 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>         /* exec, waitpid, getpid, open, ... */
+#include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 #include <so1pub.h\escribir.h>            /* escribirStr, escribirDec, ... */
 #include <so1pub.h\put.h>                 /* putCar, putLn, putStr, putDec */
 #include <so1pub.h\saludos.h>                       /* mostrarSaludoGrande */
@@ -18,14 +19,12 @@
 #include <so1pub.h\interpre.h>                      /* interpretarComandos */
 
 #include <so1.h\iniccode.h>                                        /* inic */
-/* valor normal */
-#define TIMER   TRUE       /*    TRUE      */
-//#define TIMER   FALSE    /*    FALSE     */
-#define CONRAT  FALSE      /*    FALSE     */
-#define RETARDO TRUE       /*    TRUE      */ 
-#define RELOJ   TRUE       /*    TRUE      */ 
-#define RATON   TRUE       /*    TRUE      */ 
-//#define RATON   FALSE    /*    FALSE     */ 
+//                                                         /* valor normal */
+#define TIMER   TRUE                                       /*    TRUE      */
+#define CONRAT  FALSE                                      /*    FALSE     */
+#define RETARDO TRUE                                       /*    TRUE      */ 
+#define RELOJ   TRUE                                       /*    TRUE      */ 
+#define RATON   TRUE                                       /*    TRUE      */ 
 
 #define numConsolas 6
 
@@ -265,7 +264,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
 //while ((car = (char)leerTeclaListaBDA()) != 'F') {        /* no lee nada */ /* problema */
 //while ((car = leerListo(STDIN)) != 'F') {                 /* no lee nada */
 //while ((car = leer(STDIN)) != 'F') {              /* el programa termina */
-            if (car != (char)0)
+            if (car != '\0')
                 printCarBIOS(car) ;
         }
     }
@@ -278,15 +277,15 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
         for ( i = 20 ; i < 60 ; i++ )
         {
      		lseek(STDOUT, 21*80+i, SEEK_SET) ;              	
-			escribirCar(0xFE) ;                             /* cuadrado pequenio */
+			putchar(0xFE) ;                                 /* cuadrado pequenio */
 //          pantallazo(ptrPant, 50, (char)254, atrNormal, 21, 20, 21, i) ;
 #if (TRUE)                 /* FALSE para que funcione no se cuelgue Takeda */
             leer(df) ;     /* permite las interrupciones mientras esta bloqueado */
             car = leerListo(STDIN);
-            if (car != (char)0)
+            if (car != '\0')
             {
                 if (car == ESC) break ;
-                car = leer(STDIN) ;
+                car = getchar() ;
                 if (car == ESC) break ;
             }
 #endif
@@ -294,50 +293,44 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
         close(df) ;
     }
     else
-        printStrBIOS("\a\n fallo al abrir el fichero TIMER") ;
-    escribirCar('\f') ;
-    /*
-      cursorF = 0 ;
-      cursorC = 0 ;
-    */
+        printf("\a\n fallo al abrir el fichero TIMER") ;
+    putchar('\f') ;
+
     mostrarSaludoGrande() ;
 
-    if ((pid = createProcess("INFO", "info")) > 0)                     /* GP */
-        waitpid(pid, (int far *)&status) ;                               /* GP */
+    if ((pid = createProcess("INFO", "info")) > 0)                   /* GP */
+        waitpid(pid, (int far *)&status) ;                           /* GP */
     else
-        escribirLn() ;
+        printf("\n") ;
 
-    escribirStr("\n flags = ") ;
-    escribirHex(valorFlags(), 4) ;
+    printf("\n flags = %04X", valorFlags()) ;
     if (getpid() != 0)
     {
-        escribirLn() ;
-        asm sti ;                             /* permitimos las interrupsiones */
+        printf("\n") ;
+        asm sti ;                         /* permitimos las interrupsiones */
     }
     else
     {
-        escribirStr(" se van a permitir las interrupciones ... \n") ;
+        printf(" se van a permitir las interrupciones ... \n") ;
         assert((valorFlags() & 0x0200) == 0x0000,
                "\n so1(): ERROR ints. no inhibidas") ;
-        asm sti ;                             /* permitimos las interrupsiones */
-        escribirStr("\n flags = ") ;
-        escribirHex(valorFlags(), 4) ;
-        escribirStr(" interrupciones permitidas \n") ;
+        asm sti ;                         /* permitimos las interrupsiones */
+        printf("\n flags = %04X interrupciones permitidas \n", valorFlags()) ;
         assert((valorFlags() & 0x0200) == 0x0200,
                "\a\n so1(): ERROR ints. no permitidas") ;
     }
 
-    if ((pid = createProcess("CONSOLA", "consola -c 1")) > 0)                     /* GP */
-        waitpid(pid, (int far *)&status) ;                               /* GP */
+    if ((pid = createProcess("CONSOLA", "consola -c 1")) > 0)        /* GP */
+        waitpid(pid, (int far *)&status) ;                           /* GP */
     else
-        escribirLn() ;
+        printf("\n") ;
 
-    status = interpretarComandos() ;                                /* shell */
+    status = interpretarComandos() ;                              /* shell */
 
-    /* enviamos a todas las consolas el mensaje de terminacion inminente */
+//    /* enviamos a todas las consolas el mensaje de terminacion inminente */
 
     timeout = status ;
-    close(STDOUT) ;             /* no se va a usar mas por parte del proceso */
+    close(STDOUT) ;           /* no se va a usar mas por parte del proceso */
 
     if (timeout >= 0)
     {
@@ -351,7 +344,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
                 putStr(dfCon, "\n El sistema se cerrara en ") ;
                 putDec(dfCon, timeout, 1) ;
                 putStr(dfCon, " segundos ") ;
-                close(dfCon) ;                          /* luego se vuelve a abrir */
+                close(dfCon) ;                  /* luego se vuelve a abrir */
             }
         }
         for ( j = 0 ; j < timeout ; j++ )

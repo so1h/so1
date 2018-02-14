@@ -1,7 +1,8 @@
 
 PROGRAMA = PS
 
-# primer fichero objeto (..\so1pub\obj\ajustusr.obj)
+# primer fichero objeto (..\..\so1pub\lib\startlib.lib)
+# segundo fichero objeto (..\..\so1pub\obj\ajustusr.obj)
 # ultimo fichero objeto (..\so1pub\obj\fincode.obj)
 
 OBJS2LINK =                      \
@@ -9,23 +10,19 @@ OBJS2LINK =                      \
 ..\..\so1pub\obj\ajustusr.obj,   \
 $(PROGRAMA).obj,                 \
 ..\..\so1pub\lib\ll_s_so1.lib,   \
-..\..\so1pub\obj\caracter.obj,   \
-..\..\so1pub\obj\printgen.obj,   \
 ..\..\so1pub\obj\tipos.obj,      \
-..\..\so1pub\obj\put.obj,        \
-..\..\so1pub\obj\escribir.obj,   \
-#..\..\so1pub\obj\scanner.obj,    \
-#..\..\so1pub\obj\strings.obj,    \
+..\..\so1pub\obj\stdio.obj,      \
+..\..\so1pub\obj\vsprintf.obj,   \
 ..\..\crtl\obj\h_ldiv.obj,       \
-..\..\crtl\obj\h_lursh.obj,      \
-..\..\crtl\obj\h_llsh.obj,       \
-..\..\crtl\obj\f_lxmul.obj,      \
-..\..\crtl\obj\n_lxmul.obj,      \
+#..\..\crtl\obj\h_lursh.obj,      \
+#..\..\crtl\obj\h_llsh.obj,       \
+#..\..\crtl\obj\f_lxmul.obj,      \
+#..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (finBSS = 12AE < 17FE)
+#puntero de pila inicial (finBSS = 1B46 < 17FE)
 
-SPINICIAL = 13FE
+SPINICIAL = 17FE
 
 !include "..\..\MKFILE0"
 !include "..\MAKEUSR"

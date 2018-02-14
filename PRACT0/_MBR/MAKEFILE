@@ -1,129 +1,69 @@
-!include "..\..\PRACT0\MKFILE0"
+!include "\SO\MKF0"
 
-# Makefile para la obtencion de MBR.mbr
-#
-# Si existe MBR.C se compila, ensambla y enlaza
-# Si no existe MBR.C pero existe _OCULTOS\MBR.obj se enlaza
-#
+DIRS = mbr/      \
+#	   mbr_2/    \
+	   
+DIRS.do       = $(DIRS:/=.do)
+DIRS.clean    = $(DIRS:/=.clean)
+DIRS.show     = $(DIRS:/=.show)
+DIRS.hide     = $(DIRS:/=.hide)
+DIRS.delsrc   = $(DIRS:/=.delsrc)
 
-#.autodepend
+disquete: $(DIRS.do)
 
-.path.obj = .;_OCULTOS
+$(DIRS.do):
+  cd $*
+# @"$(MAKE) " | extraer +l 1
+  @"$(MAKE) "
+  @cd ..
 
-PROGRAMA = MBR
+clean: $(DIRS.clean) 
+  @if exist stderr.txt erase stderr.txt
+  @if exist stdout.txt erase stdout.txt
 
-$(PROGRAMA).mbr: $(PROGRAMA).bin TPART.tp
-  @echo.
-  EXTENDER $(PROGRAMA).bin 512
-  EXTRAER $(PROGRAMA).bin 0 512 $(PROGRAMA).mbr
-  PARCHEAR $(PROGRAMA).bin 440 12345678 0000
-  PARCHEAR $(PROGRAMA).bin 446 -f TPART.tp
-# PARCHEAR $(PROGRAMA).bin 446 80 01 01 04 20 10 04 0000003F 0000FFC1
-# PARCHEAR $(PROGRAMA).bin 462 00 00 00 00 00 00 00 00000000 00000000
-# PARCHEAR $(PROGRAMA).bin 478 00 00 00 00 00 00 00 00000000 00000000
-# PARCHEAR $(PROGRAMA).bin 494 00 00 00 00 00 00 00 00000000 00000000
-  PARCHEAR $(PROGRAMA).bin 510 55 AA -d $(PROGRAMA).mbr
-  @echo.
-  @echo ------- xxd -g 1 -c 16 $(PROGRAMA).mbr
-  @echo.
-  @$(UTMP):\PRGTOOLS\BIN\XXD\xxd -g 1 -c 16 $(PROGRAMA).mbr
+$(DIRS.clean):
+  cd $*
+  @"$(MAKE) clean" | extraer +l 1
+  @cd ..
 
-TPART.tp: TPART.bin
-  @echo.
-  copy TPART.bin TPART.tp
-  @echo.
-  @echo ------- xxd -g 1 -c 16 TPART.tp
-  @echo.
-  @$(UTMP):\PRGTOOLS\BIN\XXD\xxd -g 1 -c 16 TPART.tp
+pule: 
+  cd MBR
+  @"$(MAKE) pule" | extraer +l 1
+  @cd ..
+  
+show: $(DIRS.show)
 
-#$(PROGRAMA).bin: $(PROGRAMA).obj
-.obj.bin:
-  @if not exist $(PROGRAMA).obj. @copy _OCULTOS\$(PROGRAMA).obj . > NUL
-  @echo.
-# $(LINKER) $(OPCIONES_LR) $(OBJS2LINK) name $(PROGRAMA).bin
-  @copy &&|
-$(OPCIONES_LR) \
-$&.obj
-name
-| ops.lnk > nul
-  $(LINKER) @ops.lnk $&.bin
-  @if exist ops.lnk erase ops.lnk
+$(DIRS.show):
+  cd $*
+  @"$(MAKE) show" | extraer +l 1
+  @cd ..
 
-#$(PROGRAMA).obj::
+hide: $(DIRS.hide)
 
-#$(PROGRAMA).obj: $(PROGRAMA).asm
-.asm.obj:
-!if $(AS) == TASM32
-  @copy &&|
-$(AFLAGS)
-| ops.ens > nul
-  @copy &&|
-, $&.obj, $&.lst
-| of.ens > nul
-  $(AS) @ops.ens $&.asm @of.ens
-  @if exist ops.ens erase ops.ens
-  @if exist of.ens erase of.ens
-!elif $(AS) == JWASM
-  $(AS) $(AFLAGS) -Fl $&.asm
-# $(AS) $(AFLAGS) $&.asm
-!else
-!message
-!error la macro AS tiene un valor distinto de TASM32 y de JWASM
-!message
-!endif
+$(DIRS.hide):
+  cd $*
+  @"$(MAKE) hide" | extraer +l 1
+  @cd ..
 
-#$(PROGRAMA).asm: $(PROGRAMA).c MBR.h
-.c.asm:
-  @echo.
-  @copy &&|
-$(CFLAGS) -S
-| ops.cmp > nul
-  $(CC) @ops.cmp $&.c
-  @if exist ops.cmp erase ops.cmp
-  @echo.
+delsrc: $(DIRS.delsrc)
 
-clean: mbr tp pule
+$(DIRS.delsrc):
+  cd $*
+  @"$(MAKE) delsrc" | extraer +l 1
+  @cd ..
 
-pule: bin exe obj asm lst map tp
-  @if exist *.ens erase *.ens
-
-mbr bs tp bin exe obj asm lst map err:
-  @if exist $(PROGRAMA).$& erase $(PROGRAMA).$&
-  @if exist TPART.$& erase TPART.$&
-
-build: clean $(PROGRAMA).mbr
-
-show:
-  @if exist SOURCE\*.C move SOURCE\*.C .
-
-hide:
-  @if not exist SOURCE mkdir SOURCE
-  @if exist *.C move *.C SOURCE
-  @if not exist _OCULTOS mkdir _OCULTOS
-  @if exist *.OBJ move /Y *.OBJ _OCULTOS
-
-delsrc:
-  @if exist SOURCE\*.C del SOURCE\*.C
+build: clean disquete
 
 help:
 # echo off & color 07 & title help & msg * "Hola"
   @"echo."
   @"echo    relacion de objetivos disponibles:"
   @"echo."
-  @"echo    make            genera MBR.mbr con una unica particion FAT16 (activa)"
-  @"echo    make pule       borra todo salvo MBR.mbr, MBR.C y el fichero MAKEFILE"
-  @"echo    make clean      borra todo salvo MBR.C y el fichero MAKEFILE"
-  @"echo    make build      borra todo y genera de nuevo (make clean + make)"
-  @"echo    make show       mueve los ficheros .C de los directorios SOURCE"
-  @"echo    make hide       mueve los ficheros .C a los directorios SOURCE"
-  @"echo                    y guarda los .OBJ en los directorios _OCULTOS"
-  @"echo    make help       muestra esta ayuda sobre los objetivos disponibles"
-
-
-
-
-
-
-
-
-
+  @"echo    make           genera SO1.BIN y SO1.EXE y los copia en DISQUETE"
+  @"echo    make clean     borra todo salvo los fuentes y ficheros MAKEFILE"
+  @"echo    make build     borra todo y genera de nuevo (make clean + make)"
+  @"echo    make disquete  copia SO1.BIN y SO1.EXE en el directorio DISQUETE"
+  @"echo    make show      mueve los ficheros .C de los directorios SOURCE"
+  @"echo    make hide      mueve los ficheros .C a los directorios SOURCE"
+  @"echo                   y guarda los .OBJ en los directorios _OCULTOS"
+  @"echo    make help      muestra esta ayuda sobre los objetivos disponibles"

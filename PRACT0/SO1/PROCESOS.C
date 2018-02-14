@@ -394,6 +394,7 @@ pindx_t crearProceso (       word_t     segmento,
                  (carCmd != '|')                                   /* pipes */
         ; j++ )
     descProceso[i].comando[j] = carCmd ;
+	
   descProceso[i].comando[j] = (char)0 ;
   descProceso[i].comando[j+1] = carCmd ; /* truco para saber si &, >, < o | */
 
@@ -403,6 +404,7 @@ pindx_t crearProceso (       word_t     segmento,
 
 //return(-105) ;                                             /* depuracion */  
 
+  *(--ptrPila) = 0x0000 ;     /* apilo 0x0000: ver finish y (macro) atexit */
   *(--ptrPila) = offArgv ;                         /* apilo parametro argv */
   *(--ptrPila) = argc ;                            /* apilo parametro argc */
   *(--ptrPila) = cabecera->desplFinish ; /* apilo dir. de retorno a finish */
