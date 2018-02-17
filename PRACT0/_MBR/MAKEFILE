@@ -1,7 +1,7 @@
 !include "\SO\MKF0"
 
-DIRS = mbr/      \
-#	   mbr_2/    \
+DIRS = mbr_32mb/      \
+#	   mbr_64mb/    \
 	   
 DIRS.do       = $(DIRS:/=.do)
 DIRS.clean    = $(DIRS:/=.clean)

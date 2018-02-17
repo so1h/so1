@@ -45,4 +45,6 @@ int leerCursor ( byte_t * F, byte_t * C ) ;
 
 int establecerLineas ( int lineas ) ;
 
+int numeroDeLineas ( void ) ;
+
 #endif /* ESCRIBIR_H */

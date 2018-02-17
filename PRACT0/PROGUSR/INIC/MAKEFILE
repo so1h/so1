@@ -25,7 +25,6 @@ $(PROGRAMA).obj,                 \
 ..\..\so1pub\obj\saludos.obj,    \
 ..\..\so1pub\obj\msdos.obj,      \
 ..\..\so1pub\obj\bios_0.obj,     \
-..\..\so1pub\obj\biosdata.obj,   \
 ..\..\so1pub\obj\pantalla.obj,   \
 ..\..\so1pub\obj\debug.obj,      \
 ..\..\crtl\obj\h_ldiv.obj,       \
@@ -35,12 +34,13 @@ $(PROGRAMA).obj,                 \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (finBSS = 1912 < 1BFE)
+#puntero de pila inicial (finBSS = 19A0 < 1FFE)
 
-SPINICIAL = 1BFE
+SPINICIAL = 1FFE
 
 inicio: ..\..\so1\obj\iniccode.obj ..\..\DISQUETE\$(PROGRAMA).bin
 
+#$(PROGRAMA).obj:: ..\..\so1\obj\iniccode.obj 
 ..\..\so1\obj\iniccode.obj: 
   @echo.
   cd ..\..\so1

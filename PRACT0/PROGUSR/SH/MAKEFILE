@@ -29,7 +29,7 @@ $(PROGRAMA).obj,                 \
 
 #puntero de pila inicial (finBSS = 1734 < 1BFE)
 
-SPINICIAL = 1734
+SPINICIAL = 1BFE
 
 !include "..\..\MKFILE0"
 !include "..\MAKEUSR"

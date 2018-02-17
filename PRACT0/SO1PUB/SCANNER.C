@@ -4,9 +4,9 @@
 /*  funciones para el analisis de los comandos del interprete de comandos  */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\caracter.h>                             /* mayuscula */
-#include <so1pub.h\strings.h>          /* iguales(SalvoMayusculas)Hasta */
-#include <so1pub.h\scanner.h>    /* nMaxComandos, tamComando, simb, ... */
+#include <so1pub.h\caracter.h>                                /* mayuscula */
+#include <so1pub.h\strings.h>             /* iguales(SalvoMayusculas)Hasta */
+#include <so1pub.h\scanner.h>       /* nMaxComandos, tamComando, simb, ... */
 
 //#include <so1pub.h\escribir.h>               /* escribirCar, escribirStr */
 

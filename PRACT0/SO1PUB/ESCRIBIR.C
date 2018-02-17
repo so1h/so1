@@ -8,6 +8,7 @@
 #include <so1pub.h\printgen.h>
 #include <so1pub.h\put.h>                                        /* putCar */
 #include <so1pub.h\escribir.h>
+#include <so1pub.h\biosdata.h>                              /* ptrBiosData */
 
 int escribirCar ( char car ) {
     return(putCar(STDOUT, car)) ;
@@ -76,3 +77,7 @@ int leerCursor ( byte_t * F, byte_t * C ) {
 int establecerLineas ( int lineas ) {
 	return(ioctl(STDOUT, 0x0003, lineas)) ;
 }	
+
+int numeroDeLineas ( void ) {
+	return(ptrBiosArea->VIDEO_lastrow + 1) ;
+}

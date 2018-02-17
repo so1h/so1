@@ -59,7 +59,6 @@ $(OBJSConComa:.obj=.obj,)      \
 #..\so1pub\lib\ll_s_so1.lib,    \
 ..\so1pub\lib\ll_s_exc.lib,    \
 ..\so1pub\obj\msdos.obj,       \
-..\so1pub\obj\biosdata.obj,    \
 ..\so1pub\obj\puertos.obj,     \
 ..\so1pub\obj\bios_0.obj,      \
 ..\so1pub\obj\telon.obj,       \

@@ -1,0 +1,124 @@
+!include "..\..\PRACT0\MKFILE0"
+
+# Makefile para la obtencion de PBRFAT16.bs
+#
+# Si existe PBRFAT16.C se compila, ensambla y enlaza
+# Si no existe PBRFAT16.C pero existe _OCULTOS\PBRFAT16.obj se enlaza
+#
+
+#.autodepend
+
+.path.obj = .;_OCULTOS
+
+PROGRAMA = PBRFAT16
+
+$(PROGRAMA).bs: $(PROGRAMA).bin
+
+.bin.bs:
+  @echo.
+  copy $(PROGRAMA).bin $(PROGRAMA).bs
+
+$(PROGRAMA).bin: $(PROGRAMA).obj _BPBFAT16\BPBFAT16.obj  
+#.obj.bin:
+  @if not exist $(PROGRAMA).obj. @copy _OCULTOS\$(PROGRAMA).obj . > NUL
+  @echo.
+  @copy &&|  
+format dos output raw offset=0x0000 op v, start=_startBin, map, quiet, stack = 0x007A disable 1014 \
+file $(PROGRAMA).obj
+name
+| ops.lnk > nul
+  $(LINKER) @ops.lnk $(PROGRAMA).bin
+  @if exist ops.lnk erase ops.lnk
+  @echo.
+  @echo ------- xxd -g 1 -c 16 $(PROGRAMA).bin   
+  @echo.
+  PARCHEAR $(PROGRAMA).bin 0 -f _BPBFAT16\BPBFAT16.bs
+# PARCHEAR $(PROGRAMA).bin 0 EB 3C 90 "BPB HD  " 0200 01 0001 02 0200 FFC1 F8 00FE 003F 00FF \
+# 0000003F 00000000 80 00 29 00000000 "ETIQUETA   " "FAT16   " 
+  PARCHEAR $(PROGRAMA).bin 510 55 AA
+# EXTRAER $(PROGRAMA).bin 0 512 $(PROGRAMA).bin
+  @$(UTMP):\PRGTOOLS\BIN\XXD\xxd -g 1 -c 16 $(PROGRAMA).bin     
+
+_BPBFAT16\BPBFAT16.obj: 
+  cd _BPBFAT16
+  make   
+  cd ..
+  
+.asm.obj:
+!if $(AS) == TASM32
+  @copy &&|
+$(AFLAGS) 
+| ops.ens > nul
+  @copy &&|
+, $&.obj, $&.lst
+| of.ens > nul
+  $(AS) @ops.ens $&.asm @of.ens
+  @if exist ops.ens erase ops.ens  
+  @if exist of.ens erase of.ens  
+!elif $(AS) == JWASM   
+  $(AS) $(AFLAGS) -Fl $&.asm
+!else
+!message 
+!error la macro AS tiene un valor distinto de TASM32 y de JWASM
+!message 
+!endif
+  
+.c.asm:
+  @echo.
+  @copy &&|
+$(CFLAGS) -mt -S
+| ops.cmp > nul
+  $(CC) @ops.cmp $&.c
+  @if exist ops.cmp erase ops.cmp
+  @echo.
+
+clean: bs pule
+  @if exist _BPBFAT16\BPBFAT16.bs erase _BPBFAT16\BPBFAT16.bs
+  @if exist _BPBFAT16\BPBFAT16.obj erase _BPBFAT16\BPBFAT16.obj
+  
+pule: bin exe obj asm lst map err
+  @if exist ops erase ops
+  @if exist ops.lnk erase ops.lnk
+  @cd _BPBFAT16
+  @make pule > NUL  
+  @cd ..
+
+mbr bs bin exe obj asm lst map err: 
+  @if exist $(PROGRAMA).$& erase $(PROGRAMA).$&
+
+build: clean $(PROGRAMA).bs
+
+show:
+  @if exist SOURCE\*.C move SOURCE\*.C .
+
+hide:
+  @if exist *.C move *.C SOURCE 
+  @if exist *.OBJ move /Y *.OBJ _OCULTOS 
+
+delsrc:
+  @if exist SOURCE\*.C del SOURCE\*.C  
+  
+help: 
+# echo off & color 07 & title help & msg * "Hola"
+  @"echo."
+  @"echo    relacion de objetivos disponibles:"
+  @"echo."
+  @"echo    make            genera el sector de arranque PBRFAT16.bs destinado"
+  @"echo                    a ser utilizado en una particion FAT16."
+  @"echo                    Este sector de arranque carga el fichero que ocupa"
+  @"echo                    los primeros sectores de datos, cargandose a partir"
+  @"echo                    de la direccion 0x600 tantos sectores como indique"
+  @"echo                    el tamanyo de la primera de las entradas del directorio"
+  @"echo                    raiz."
+  @"echo    make pule       borra todo salvo PBRFAT16.BS, PBRFAT16.C y MAKEFILEs"
+  @"echo    make clean      borra todo salvo PBRFAT16.C y los ficheros MAKEFILE"
+  @"echo    make build      borra todo y genera de nuevo (make clean + make)"
+  @"echo    make imagen     genera a partir de PBRFAT16.bs una imagen de disco duro"
+  @"echo                    de 32MB con el nombre %utmp%:hdPBRFAT16.img"
+  @"echo    make start      arranca la imagen %utmp%:hdPBRFAT16.img con qemu"
+  @"echo    make show       mueve los ficheros .C de los directorios SOURCE" 
+  @"echo    make hide       mueve los ficheros .C a los directorios SOURCE" 
+  @"echo                    y guarda los .OBJ en los directorios _OCULTOS"
+  @"echo    make help       muestra esta ayuda sobre los objetivos disponibles"
+
+!include "MKIMG"

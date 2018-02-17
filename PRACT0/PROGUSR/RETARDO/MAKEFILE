@@ -16,7 +16,6 @@ $(PROGRAMA).obj,                 \
 ..\..\so1pub\obj\escribir.obj,   \
 ..\..\so1pub\obj\scanner.obj,    \
 ..\..\so1pub\obj\strings.obj,    \
-..\..\so1pub\obj\biosdata.obj,   \
 ..\..\crtl\obj\h_ldiv.obj,       \
 ..\..\crtl\obj\h_lursh.obj,      \
 ..\..\crtl\obj\h_llsh.obj,       \

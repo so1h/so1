@@ -1,0 +1,105 @@
+Sobre la escritura del MBR y PBR como programas
+en C (PROG.C).
+
+Tanto en el MBR como en el PBR hay mezcla de
+código y datos, por lo que la ubicación estándar
+de los segmentos de código y de datos por parte
+del linker normalmente no es apropiada (primero
+poner el segmento de código, seguido por el
+segmento de datos inicializados para terminar
+con los datos no inicializados en tiempo de carga):
+
+  TEXT DATA BSS STACK
+
+Esto es cierto tanto para el modelo TINY como para
+el SMALL, ya que el modelo solo determina si las
+direcciones de los datos son relativas al principio
+del segmento de código (modelo TINY) en vez de
+respecto al final del segmento de código (SMALL).
+
+Una forma de simplificar el problema es considerar
+que todas las variables están en el BSS y que aquellas
+que estarían en la DATA podrían ser inicializadas
+en el fichero binario obtenido de la compilacion
+PROG.BIN mediante parches (programa PARCHEAR).
+
+  PARCHEAR PROG.BIN pos_1 -f FIXUP_1.BIN -d PROG.BIN
+  PARCHEAR PROG.BIN pos_2 -f FIXUP_2.BIN -d PROG.BIN
+
+  PARCHEAR PROG.BIN pos_n -f FIXUP_n.BIN -d PROG.BIN
+
+Ejemplos claros de parches son el BPB del PBR, la tabla
+de particiones del MBR y la signatura 0xAA55
+
+  PARCHEAR PROG.BIN 510 55 AA -d PROG.BIN
+
+En el caso del BPB y de la tabla de particiones los
+ficheros binarios con los datos necesarios pueden
+obtenerse fácilmente compilando programas en C
+sencillos compuestos por declaraciones de variables
+globales. En el caso del BPB pueden darse algunas
+complicaciones debido al alineamiento de los datos
+(por ejemplo al tener que declarar una palabra en
+una direccion impar). No obstante el problema puede
+solucionarse recurriendo a trucos sencillos como
+la insercion de directivas del ensamblador como
+asm db ...
+
+Con esta simplificación el programa PROG.C puede
+suponerse compuesto tan solo por código y datos,
+yendo al principio el código.
+
+En esta situacion debe escribirse el codigo dejando
+libre la ubicacion de las variables que van a ser
+inicializadas mediante alguno de los parches.
+Por su parte las variables (formando parte ahora
+todas ellas del BSS) deben declararse con la
+declaración de variables de relleno de los sitios
+ocupados por el codigo con la intencion de que
+en el momento de la ejecucion se asigne al registro
+de segmento de datos (DS) el mismo valor que al
+registro de segmento de código (CS). De acuerdo
+con esto el modelo de programacion debe ser SMALL,
+de manera que por la asignacion de CS a DS se
+identifiquen (superpongan) los segmentos de codigo
+y datos.
+
+ código |                           bss | variables
+        |                               | byte relleno [x] ;
+        | org x (para esquivar datos)   |
+        |                               | variables
+
+Un caso particular de variables globales inicializadas
+son las cadenas de caracteres o strings. En este caso
+es conveniente a veces su ubicacion en el segmento
+de codigo (como funciones), pero sin tener que modificar
+su direccionamiento (ya que DS = CS).
+
+Es posible pensar en escribir registros como el MBR y
+PBR donde el código se extienda sobre varios sectores
+consecutivos sin que esto afecte a la estructura
+del programa PROG.C y sin necesidad de fraccionar la
+carga de este programa grande en varias fases de
+arranque. Habría que aprovechar en el BPB la posibilidad
+de tener sectores reservados adicionales para el PBR,
+así como el que en los discos se reserve normalmente
+una pista completa antes de la primera partición,
+cuyos sectores puede aprovechar el MBR.
+
+Una consideracion a tener en cuenta es que el direccionamiento
+de variables globales (o locales estaticas) requiere
+menos bytes de codigo que el direccionamiento de variables locales.
+Normalmente tambien es preferible (o no) al direccionamiento
+inmediato de constantes declaradas mediante la directiva
+#define.
+
+Ejercicio: escribir MBR y PBR que hagan todo el trabajo
+(con todo lujo de mensajes, detección de todos los errores
+posibles, recorrido de la FAT, paso a modo protegido/largo,
+...).
+
+2016-08-31.
+
+
+
+

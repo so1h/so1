@@ -16,7 +16,6 @@ $(PROGRAMA).obj,                 \
 ..\..\so1pub\obj\vsprintf.obj,   \
 ..\..\so1pub\obj\bios_0.obj,     \
 ..\..\so1pub\obj\printgen.obj,   \
-..\..\so1pub\obj\biosdata.obj,   \
 ..\..\so1pub\obj\caracter.obj,   \
 ..\..\crtl\obj\h_ldiv.obj,       \
 ..\..\crtl\obj\h_lursh.obj,      \

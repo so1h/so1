@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------- */
 /*                                biosdata.h                               */
 /* ----------------------------------------------------------------------- */
-/*                                                                         */
+/*         acceso a la informacion disponible en la bios data area         */
 /* ----------------------------------------------------------------------- */
 
 #ifndef BIOSDATA_H
@@ -260,9 +260,9 @@ typedef struct {
 
 } BIOSAREA_t ;                  /* sizeof(BIOSAREA) = 1024+256 = 1280 */
 
-extern volatile BIOSAREA_t far * ptrBiosArea ;
+#define ptrBiosArea ((BIOSAREA_t far *)0x00000000L) 
 
-extern pointer_t ptrFechaBios ;
+#define ptrFechaBios ((pointer_t)0xFFFF0005L) 
 
 #endif /* BIOSDATA_H */
 

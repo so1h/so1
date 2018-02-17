@@ -1,0 +1,19 @@
+Para obtener esta imagen he creado una imagen
+con WinImage de 0x4000000 bytes (64 MB).
+Luego he metido como MBR el MBR.mbr.
+Luego la he abierto con Knoppix y la he formateado
+con el comando:
+
+# mkfs -t vfat /dev/sdb1
+
+Para comprobar que esta formateada (con clusters) de
+2 sectores la he montado con 
+
+# mount /dev/sdb1
+
+quedando montada en /media/sdb1
+
+Todo bien.  
+
+Finalmente he salvado el PBR de la particion en el fichero
+PBRFAT16_2.bs para programar PBRFAT16_2.C.

@@ -1,7 +1,8 @@
 /* ----------------------------------------------------------------------- */
 /*                                  usrdbg.c                               */
 /* ----------------------------------------------------------------------- */
-/*                                                                         */
+/*    funcion llamarAlPuntoDeParadaSO1 para facilitar la depuracion de     */
+/*                            programas de usuario                         */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\tipos.h>            /* byte_t, word_t, address_t, MK_FP */
@@ -13,7 +14,23 @@
 /* direccion de memoria correspondiente a la funcion del sistema SO1       */
 /* puntoDeParadaSO1, la cual se obtiene juntando el segmento de carga de   */
 /* SO1 con el desplazamiento de la funcion puntoDeParadaSO1, el cual       */
-/* puede obtenerse inspeccionando el fichero SO1.MAP.                      */
+/* puede obtenerse inspeccionando el fichero SO1.MAP:                      */
+/*                                                                         */
+/* ...                                                                     */
+/* Module: obj\so1dbg.obj(so1dbg.c)                                        */
+/* 0000:00b2*     _puntoDeParadaSO1 <----------- CS_SO1:00B2               */
+/* 0000:00c5      _inicTeclado                                             */
+/* 0000:00e6*     _leerScancodeListo                                       */ 
+/* 0000:00e9      _leerScancode                                            */
+/*                                                                         */
+/* Si como es habitual SO1 esta cargado en la direccion 0060:0000, la      */
+/* direccion segmentada efectiva de puntoDeParadaSO1 seria: 0060:00B2, y   */
+/* la direccion lineal: 0x006B2.                                           */
+/*                                                                         */
+/* La idea es poner ese punto de parada en el depurador (comando b 0x006B2 */
+/* por ejemplo en Bochs) de manera que cuando se ejecute puntoDeParadaSO1  */
+/* la ejecución se detenga en 0x006B2, desde donde continuando paso a paso */
+/* con la ejecucion se retornaria a la siguiente intruccion a esa llamada. */
 
 #define OFFSET_PuntoDeParadaSO1 0x00B2        /* tomar el valor de SO1.MAP */
                                                /* funcion puntoDeParadaSO1 */
@@ -36,7 +53,6 @@ __continuar: ;           /* que luego devuelve el control a CS:__continuar */
   }
 }
 
-void limiteSuperior ( void ) 
+void limiteSuperior ( void )                                  /* no borrar */
 {
 }
-

@@ -1,0 +1,60 @@
+Al compilar el programa MBR.C hay que compilarlo dos veces.
+
+El problema es que la tabla de particiones y la signatura deben
+ocupar los ultimos bytes de los 512 bytes que se deben generar
+al compilar MBR.C. Para conseguir eso lo primero es que 
+las variables locales descParticion (tabla de particiones) y 
+la signatura (signatura 55 AA), deben ser las dos últimas 
+variables locales declaradas en MBR.C. 
+
+En segundo lugar, dado que el compilador pone el segmento de 
+datos a continuación del segmento de codigo, hay que hacer que 
+el segmento de codigo rellene completamente los bytes que no
+corresponden al segmento de  datos dentro de los 512 bytes 
+totales disponibles. Con ese fin la ultima de las funciones 
+debe contener una directiva org posicion
+
+void ultimaFuncion ( ) {
+  ...
+  asm org posicion                           /* <----------- */
+}
+
+de manera que posicion + los dos bytes finales que hay en toda
+función (debido al retorno) + el tamaño del segmento de datos
+sumen en total los 512 bytes requeridos.
+
+En conclusión debemos primero compilar MEM.C para saber (mirando
+en el fichero MEM.MAP) cual es el tamaño del segmento datos (DATA).
+Tras eso hay que echar unas sencillas cuentas para conocer el
+valor adecuado para posicion.
+
+Las cuentas son las siguientes:
+
+#define tamDATA XXXX          /* tamaño del segmento de datos */
+
+void ultimaFuncion ( ) {
+  ...
+  asm org 512-(tamDATA+2)                     /* <----------- */
+}
+
+26/03/2015
+
+-----------------------------------------------------------------
+
+Otro aspecto a tener en cuenta es que el BIOS deja en DL el 
+numero de la unidad de la que se arranca, por lo que hay que 
+salvar ese valor en una variable global unidadBIOS cuyo valor
+habra que utilizar para leer (int 13h) el PBR (Partition 
+Boot Record) de la particion activa. Además hay que volver 
+a dejar ese valor en DL antes de ceder el control al PBR.
+Es necesario tener cuidado ya que el MBR se reubica a la 
+direccion 0060:0000 con CS = 0060 pero DS = SS = 07C0,
+por lo que tras la carga del PBR la variable DS:unidadBIOS
+se ve sobreescrita por el PBR. En ese caso hay que cambiar
+DS = 0060 y utilizar el valor de la variable reubicada.
+
+06/04/2015
+
+----------------------------------------------------------------- 
+
+

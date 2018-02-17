@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="PBRFAT16" />
+		<Option platforms="Windows;" />
+		<Option pch_mode="2" />
+		<Option compiler="borland_c_502_so_2016" />
+		<Option virtualFolders="ENTRYBIN\;" />
+		<Build>
+			<Target title="entrybpb">
+				<Option platforms="Windows;" />
+				<Option output="lib/entrybpb" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj" />
+				<Option type="2" />
+				<Option compiler="borland_c_502_so_2016" />
+				<Option createDefFile="1" />
+			</Target>
+			<Target title="entrybin">
+				<Option platforms="Windows;" />
+				<Option output="lib/entrybin" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj" />
+				<Option type="2" />
+				<Option compiler="borland_c_502_so_2016" />
+				<Option createDefFile="1" />
+			</Target>
+			<Target title="bpbfat16.bs">
+				<Option platforms="Windows;" />
+				<Option output="../BPBFAT16" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj" />
+				<Option type="1" />
+				<Option compiler="borland_c_502_so_2016" />
+				<Option use_console_runner="0" />
+				<Linker>
+					<Add option="-Tde -m -l -c -k" />
+					<Add option="obj\_PBRFAT16\_BPBFAT16\BPBFAT16.obj" />
+					<Add library="lib/entrybpb.lib" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="$(UTMP):\bc5\bin\exe2bin.exe $exe_output $exe_dir\bpbfat16.bs" />
+					<Add after="cmd /C $(UTMP):\BC5\BIN\XXD\xxd.exe -g 1 -c 16 $exe_dir\bpbfat16.bs" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+			<Target title="pbrfat16.bs">
+				<Option platforms="Windows;" />
+				<Option output="../PBRFAT16.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir=".." />
+				<Option object_output="obj" />
+				<Option type="1" />
+				<Option compiler="borland_c_502_so_2016" />
+				<Option use_console_runner="0" />
+				<Linker>
+					<Add option="-Tde -m -l -c -k" />
+					<Add library="lib/entrybin.lib" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="$(UTMP):\bc5\bin\exe2bin.exe $exe_output $exe_dir\pbrfat16.bs" />
+					<Add after="cmd /C $(UTMP):\BC5\BIN\XXD\xxd.exe -g 1 -c 16 $exe_dir\pbrfat16.bs" />
+					<Add after="cmd /C $(UTMP):\BC5\BIN\PARCHEAR $exe_dir\pbrfat16.bs 0 -f $exe_dir\bpbfat16.bs" />
+					<Add after="cmd /C $(UTMP):\BC5\BIN\PARCHEAR $exe_dir\pbrfat16.bs 510 55 AA" />
+					<Add after="cmd /C $(UTMP):\BC5\BIN\XXD\xxd.exe -g 1 -c 16 $exe_dir\pbrfat16.bs" />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="Debug" targets="entrybpb;entrybin;bpbfat16.bs;pbrfat16.bs;" />
+			<Add alias="Release" targets="entrybpb;entrybin;bpbfat16.bs;pbrfat16.bs;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-w" />
+			<Add option="-1" />
+			<Add option="-v-" />
+			<Add option="-a1" />
+			<Add option="-k-" />
+			<Add option="-r-" />
+			<Add option="-y-" />
+			<Add option="-g20" />
+			<Add option="-j20" />
+			<Add option="-DIDE=CODEBLOCK" />
+			<Add directory="$$(UUSB):/SO/PRACT0" />
+		</Compiler>
+		<Unit filename="../../STARTFIN.ASM/ENTRYBIN.ASM">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="ENTRYBIN/" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="tasm.exe /la /c /ml /zn $file, $object, $objects_output_dir" />
+			<Option target="entrybin" />
+		</Unit>
+		<Unit filename="../../STARTFIN.ASM/ENTRYBPB.ASM">
+			<Option compilerVar="CC" />
+			<Option virtualFolder="ENTRYBIN/" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="tasm.exe /la /c /ml /zn $file, $object, $objects_output_dir" />
+			<Option target="entrybpb" />
+		</Unit>
+		<Unit filename="../PBRFAT16.C">
+			<Option compilerVar="CC" />
+			<Option link="0" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="bcc.exe -1 -v- -a1 -k- -r- -y- -g20 -j20 -I$(UUSB):\SO\PRACT0 -DTASM32 -S -o..\PBRFAT16.asm ..\PBRFAT16.C\ntasm.exe /la /c /ml /zn ..\PBRFAT16.asm, ..\PBRFAT16.obj,..\PBRFAT16.lst\ncmd /C copy ..\PBRFAT16.obj obj\_PBRFAT16\PBRFAT16.obj\ncmd /C echo se usa ulink ya que tlink falla (en 32 bits) por ser _PBRFAT16 un nombre largo \nulink -Tde -m -l -c -w-stk -e_startBin PBRFAT16.obj,..\PBRFAT16.exe,,lib\entrybin.lib,," />
+			<Option target="pbrfat16.bs" />
+		</Unit>
+		<Unit filename="../_BPBFAT16/BOOTCODE.C">
+			<Option compilerVar="CC" />
+			<Option link="0" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="bcc.exe -1 -v- -a1 -k- -r- -y- -g20 -j20 -DTASM32 -S -o..\_BPBFAT16\BOOTCODE.ASM ..\_BPBFAT16\BOOTCODE.C \ntasm.exe /la /c /ml /zn ..\_BPBFAT16\BOOTCODE.asm, ..\_BPBFAT16\BOOTCODE.obj, ..\_BPBFAT16\BOOTCODE.lst\ncmd /C copy ..\_BPBFAT16\BOOTCODE.obj obj\_PBRFAT16\_BPBFAT16\BOOTCODE.obj" />
+			<Option target="bpbfat16.bs" />
+		</Unit>
+		<Unit filename="../_BPBFAT16/BPBFAT16.C">
+			<Option compilerVar="CC" />
+			<Option link="0" />
+			<Option compiler="borland_c_502_so_2016" use="1" buildCommand="bcc.exe -1 -v- -a1 -k- -r- -y- -g60 -j60 -I$(UUSB):\SO\PRACT0 -DTASM32 -S -o..\_BPBFAT16\BPBFAT16.asm ..\_BPBFAT16\BPBFAT16.C\ntasm.exe /la /c /ml /zn ..\_BPBFAT16\BPBFAT16.asm, ..\_BPBFAT16\BPBFAT16.obj,..\_BPBFAT16\BPBFAT16.lst\ncmd /C copy ..\_BPBFAT16\BPBFAT16.obj obj\_PBRFAT16\_BPBFAT16\BPBFAT16.obj\ncmd /C echo se usa ulink ya que tlink enlaza mal (produce EB 3B) \nulink -Tde -m -l -c -w-stk -e_startBPB obj\_PBRFAT16\_BPBFAT16\BPBFAT16.obj  obj\_PBRFAT16\_BPBFAT16\BOOTCODE.obj,..\BPBFAT16.exe,,lib\entrybpb.lib,, \n" />
+			<Option target="bpbfat16.bs" />
+		</Unit>
+		<Unit filename="../_BPBFAT16/BPBFAT16.H">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

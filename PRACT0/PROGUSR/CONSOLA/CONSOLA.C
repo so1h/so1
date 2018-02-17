@@ -351,12 +351,12 @@ long int far lseekConsola ( int dfs, long int pos, word_t whence )
 
     con = ptrDescFichero[dfs].menor ;
 
-	if (whence == SEEK_CUR) 
-	{
-		posActual = cursorF*80+cursorC ;
+	posActual = cursorF*80+cursorC ;
+
+	if (whence == SEEK_CUR)                                    /* SEEK_CUR */
         pos = posActual + pos ;
-	}		
-	if (whence != SEEK_END) {                        /* SEEK_END, SEEK_CUR */
+	
+	if (whence != SEEK_END) {                        /* SEEK_SET, SEEK_CUR */
    	    if (goToXYConsola(con, pos/80, pos%80) == 0) 
 		    res = pos ;
 	    else 
@@ -474,7 +474,6 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
         }
 		
     }
-
     asm pop ds
     return(res) ;
 #endif

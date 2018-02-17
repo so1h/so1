@@ -1,0 +1,58 @@
+
+
+ Base Offset   Length Name               Class
+ 0000:0000     003E   _DATA              DATA    
+
+
+ Address        Publics by Name                             File|Module
+
+ 0000:0003 Idle _OEM                                        BPBFAT16.obj
+ 0000:0036 Idle _SF                                         BPBFAT16.obj
+ 0000:003E      _bootCode                                   BOOTCODE.obj
+ 0000:000B Idle _bytesPorSector                             BPBFAT16.obj
+ 0000:001A Idle _cabezas                                    BPBFAT16.obj
+ 0000:0011 Idle _entradasDirRaiz                            BPBFAT16.obj
+ 0000:002B Idle _etiqueta                                   BPBFAT16.obj
+ 0000:0010 Idle _numeroDeFATs                               BPBFAT16.obj
+ 0000:0027 Idle _numeroDeSerie                              BPBFAT16.obj
+ 0000:001C Idle _primerSector                               BPBFAT16.obj
+ 0000:0025 Idle _relleno                                    BPBFAT16.obj
+ 0000:0020 Idle _sectores                                   BPBFAT16.obj
+ 0000:0013 Idle _sectores16                                 BPBFAT16.obj
+ 0000:000D Idle _sectoresPorCluster                         BPBFAT16.obj
+ 0000:0016 Idle _sectoresPorFAT                             BPBFAT16.obj
+ 0000:0018 Idle _sectoresPorPista                           BPBFAT16.obj
+ 0000:000E Idle _sectoresReservados                         BPBFAT16.obj
+ 0000:0026 Idle _signatura                                  BPBFAT16.obj
+ 0000:0000      _startBPB                                   BPBFAT16.obj
+ 0000:0015 Idle _tipoDeMedio                                BPBFAT16.obj
+ 0000:0024 Idle _unidad                                     BPBFAT16.obj
+
+
+ Address        Publics by Value                            File|Module
+
+ 0000:0000      _startBPB                                   BPBFAT16.obj
+ 0000:0003 Idle _OEM                                        BPBFAT16.obj
+ 0000:000B Idle _bytesPorSector                             BPBFAT16.obj
+ 0000:000D Idle _sectoresPorCluster                         BPBFAT16.obj
+ 0000:000E Idle _sectoresReservados                         BPBFAT16.obj
+ 0000:0010 Idle _numeroDeFATs                               BPBFAT16.obj
+ 0000:0011 Idle _entradasDirRaiz                            BPBFAT16.obj
+ 0000:0013 Idle _sectores16                                 BPBFAT16.obj
+ 0000:0015 Idle _tipoDeMedio                                BPBFAT16.obj
+ 0000:0016 Idle _sectoresPorFAT                             BPBFAT16.obj
+ 0000:0018 Idle _sectoresPorPista                           BPBFAT16.obj
+ 0000:001A Idle _cabezas                                    BPBFAT16.obj
+ 0000:001C Idle _primerSector                               BPBFAT16.obj
+ 0000:0020 Idle _sectores                                   BPBFAT16.obj
+ 0000:0024 Idle _unidad                                     BPBFAT16.obj
+ 0000:0025 Idle _relleno                                    BPBFAT16.obj
+ 0000:0026 Idle _signatura                                  BPBFAT16.obj
+ 0000:0027 Idle _numeroDeSerie                              BPBFAT16.obj
+ 0000:002B Idle _etiqueta                                   BPBFAT16.obj
+ 0000:0036 Idle _SF                                         BPBFAT16.obj
+ 0000:003E      _bootCode                                   BOOTCODE.obj
+
+
+ Program entry point: 0000:0000  { _startBPB }
+

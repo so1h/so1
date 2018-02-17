@@ -1,0 +1,17 @@
+imagen: $(PROGRAMA).bs
+  @echo.
+  EXTENDER ..\_MBR\MBR.mbr 33554432 $(UTMP):\hd$(PROGRAMA).img
+  @echo.
+  PARCHEAR $(UTMP):\hd$(PROGRAMA).img 32256 -f $(PROGRAMA).bs
+
+start: $(UTMP):\hd$(PROGRAMA).img
+  @start $(UUSB):\Interno\qemu-2.4.0\qemu-system-i386w.exe \
+    -L $(UUSB):\Interno\qemu-2.4.0\Bios \
+    -vga std \
+    -soundhw es1370,sb16,adlib,pcspk \
+    -rtc base=localtime,clock=host \
+    -name "qemu" \
+    -hda $(UTMP):\hd$(PROGRAMA).img \
+    -net nic,model=ne2k_pci -net user \
+    -no-acpi -no-hpet -no-reboot \
+    -m 128 -boot a
