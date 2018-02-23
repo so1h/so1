@@ -145,7 +145,7 @@ void readXYBIOS ( byte_t far * fila,
    /* Las siguientes funciones permiten enviar y recibir caracteres por el */
    /* puerto COM1. Hay que tener en cuenta que el BIOS permite las         */
    /* interrupciones durante la ejecucion de esas llamadas, por lo que no  */
-   /* deben ser utilizadas desde el sistema operativo propiamente dicho.   */
+   /* deben utilizarse desde el sistema operativo propiamente dicho.       */
 
 /* Memoria (int 12h) */
                                          /* tambien en BIOS AREA 0000:0413 */

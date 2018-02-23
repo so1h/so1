@@ -173,7 +173,7 @@ void rebootBIOS ( void ) {
 byte_t error ;
 
 #if (FALSE)
-byte_t resetControler ( void ) {         /* innecesario, ya lo hace el MBR */
+byte_t resetController ( void ) {        /* innecesario, ya lo hace el MBR */
   asm {
     mov ah,00H          /* 00H -> reset del controlador                    */
 	mov error,ah ;
@@ -325,7 +325,7 @@ void reubicado ( void ) {
   }
 #endif
   
-//resetControler() ;               /* se supone ya hecho por parte del MBR */
+//resetController() ;              /* se supone ya hecho por parte del MBR */
 
               /* Cargar el S.O. a partir de la dirección 0600H escribiendo */
               /* un punto tras la lectura de cada sector                   */

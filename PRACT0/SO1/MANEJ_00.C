@@ -17,7 +17,7 @@
 /* AX = 0x0009 setuid(uid)                                                 */
 /* AX = 0x000a getgid()                                                    */
 /* AX = 0x000b setuid(gid)                                                 */
-/* AX = 0x000c kill                                                        */
+/* AX = 0x000c killpid                                                     */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\tipos.h>                              /* pid_t, pindx_t */
@@ -256,7 +256,7 @@ void so1_manejador_00 ( void ) {                      /* ah = 00 ; int SO1 */
       descProceso[indProcesoActual].gid = tramaProceso->BX ;
       break ;
                                                                  /* 0x000c */
-    case 0x0c :                                                    /* kill */
+    case 0x0c :                                                 /* killpid */
       pid = (pid_t)tramaProceso->DX ;
       if (pid >= 0) {                              /* matar el proceso pid */
         i = indice(pid) ;

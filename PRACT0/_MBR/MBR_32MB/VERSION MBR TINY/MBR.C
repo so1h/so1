@@ -116,7 +116,7 @@ char leerTecla ( void ) {
 #define reboot()                               /* reiniciamos el ordenador */\
   asm int 0x19 ;                                         /* BIOS bootstrap */
 
-int resetControler ( void ) {
+int resetController ( void ) {
   asm {
     mov ah,00H ;        /* 00H -> reset del controlador                    */
     int 13h ;           /* BIOS: E/S de disco                              */
@@ -223,7 +223,7 @@ void reubicado ( void ) {
       mostrarInfo() ;
 #endif
       printStr((char *)msg_Load) ;
-      resetControler() ;                 /* Hacer un reset del controlador */
+      resetController() ;                /* Hacer un reset del controlador */
       leerPrimerSector(i, unidadBIOS, MK_FP(0x0000, 0x7C00)) ; /* leer PBR */
       asm {
         mov ax,cs ;

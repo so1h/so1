@@ -45,7 +45,7 @@ typedef struct {                                     /* master boot record */
 #define signaturaMBR { 0x55, 0xAA }
 
 #define offsetTPart \
-  (tamCodigoMBR + sizeof(signatura) + sizeof(word_t))       /* 446 = 0x1BE */
+  (tamCodigoMBR + sizeof(dword_t) + sizeof(word_t))         /* 446 = 0x1BE */
 
 typedef struct {                          /* Bloque de Parametros del BIOS */
   word_t  bytesPorSector ;
@@ -87,7 +87,7 @@ typedef struct {                   /* plantilla para el sector de arranque */
 
 #define signaturaBR { 0x55, 0xAA }
 
-#define maxUL 10                      /* maximo numero de unidades fisicas */
+#define maxUL 10                      /* maximo numero de unidades logicas */
 
 typedef struct {                                    /* unidad logica (BPB) */
   int ufindx ;
@@ -96,7 +96,7 @@ typedef struct {                                    /* unidad logica (BPB) */
   BPB_t BPB ;
 } descUnidadLogica_t ;
 
-#define maxUF 4                       /* maximo numero de unidades logicas */
+#define maxUF 4                       /* maximo numero de unidades fisicas */
 
 typedef struct {                                          /* unidad fisica */
   int unidadBIOS ;

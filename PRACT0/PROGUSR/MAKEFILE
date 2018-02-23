@@ -19,7 +19,7 @@ PROGS =   \
   help/     \
   info/     \
   inic/     \
-  kill/     \
+  killpid/  \
   leetimer/ \
   login/    \
   meapila/  \

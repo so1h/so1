@@ -8,7 +8,7 @@
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 #include <so1pub.h\carsctrl.h>                                      /* ESC */
 
-void pause ( void ) ;                     /* espera que se pulse una tecla */
+void pausa ( void ) ;                     /* espera que se pulse una tecla */
 
 void ayuda ( void )
 {
@@ -34,7 +34,7 @@ void ayuda ( void )
         "   SHUTDOWN  (i) detencion y salida del sistema SO1"                "\n"
     ) ;
 
-    pause() ;
+    pausa() ;
 
     printf(
         "         otros comandos de SO1 (externos):"                         "\n"
@@ -56,7 +56,7 @@ void ayuda ( void )
         "   CLOCK  (e) muestra la hora actual de forma continua"             "\n"
     ) ;
 
-    pause() ;
+    pausa() ;
 
     printf(
         "         manejo de la interfaz multiscreen de SO1:"                 "\n"
@@ -73,7 +73,7 @@ void ayuda ( void )
         "   Alt + \'-\'  modificacion ciclica del numero de lineas"          "\n"
     ) ;
 
-    pause() ;
+    pausa() ;
 
     printf(
         "         autocompletado de comandos de SO1:"                        "\n"
@@ -88,7 +88,7 @@ void ayuda ( void )
     ) ;
 }
 
-void pause ( void )
+void pausa ( void )
 {
     int i ;
 	

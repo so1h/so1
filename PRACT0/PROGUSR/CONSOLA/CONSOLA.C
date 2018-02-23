@@ -137,8 +137,13 @@ int printCarConsola ( byte_t con, char car )
             printCarBIOS(car) ;
             break ;
         default  :
+#if (TRUE)					
+		    if (C < 80)	                     /* ptrBiosArea->VIDEO-width */
+                pantalla->t[F][C].car = car ;
+            descConsola[con].C++ ;
+#else
             pantalla->t[F][C].car = car ;
-            if (++descConsola[con].C == 80)
+     		if (++descConsola[con].C == 80)  /* ptrBiosArea->VIDEO-width */
             {
                 descConsola[con].C = 0 ;
                 if (++descConsola[con].F == numFilas)
@@ -149,6 +154,7 @@ int printCarConsola ( byte_t con, char car )
 //              if (descConsola[con].F > descConsola[con].maxF) 
 //	    	        descConsola[con].maxF = descConsola[con].F ; 						
             }
+#endif				
         }
     }
     return(0) ;
@@ -157,7 +163,7 @@ int printCarConsola ( byte_t con, char car )
 int goToXYConsola ( byte_t con, byte_t F, byte_t C )
 {
     if (F >= numFilas) return(-1) ;
-    if (C >= 80) return(-1) ;
+    if (C >= 80) return(-1) ;                /* ptrBiosArea->VIDEO-width */
     if (con == consolaDeSuperficie)
     {
         /*    goToXYHw(F, C) ; */
@@ -325,7 +331,8 @@ int far writeConsola ( int dfs, pointer_t dir, word_t nbytes )
         printCarConsola(con, car) ;
     }
     if (con == consolaDeSuperficie)
-        goToXYHw(cursorF, cursorC) ;
+        if (cursorC < 80)                   /* ptrBiosArea->VIDEO-width */
+			goToXYHw(cursorF, cursorC) ;
 
     asm pop ds
     return(nbytes) ;

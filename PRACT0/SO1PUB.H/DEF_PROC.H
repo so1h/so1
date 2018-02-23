@@ -88,19 +88,20 @@ typedef enum {
   rTuberia,
   rGP,
   rGM,
+  rDB,
   rSF,
   rOtro
 } tipoRecurso_t ;
 
-typedef int      far ( far * open_t ) ( int dfs, modoAp_t modo ) ;
-typedef int      far ( far * release_t ) ( int dfs ) ;
-typedef int      far ( far * read_t ) ( int dfs, pointer_t dir, word_t nbytes ) ;
-typedef int      far ( far * aio_read_t ) ( int dfs, pointer_t dir, word_t nbytes ) ;
-typedef int      far ( far * write_t ) ( int dfs, pointer_t dir, word_t nbytes ) ;
+typedef int      far ( far * open_t      ) ( int dfs, modoAp_t modo ) ;
+typedef int      far ( far * release_t   ) ( int dfs ) ;
+typedef int      far ( far * read_t      ) ( int dfs, pointer_t dir, word_t nbytes ) ;
+typedef int      far ( far * aio_read_t  ) ( int dfs, pointer_t dir, word_t nbytes ) ;
+typedef int      far ( far * write_t     ) ( int dfs, pointer_t dir, word_t nbytes ) ;
 typedef int      far ( far * aio_write_t ) ( int dfs, pointer_t dir, word_t nbytes ) ;
-typedef long int far ( far * lseek_t ) ( int dfs, long int pos, word_t whence ) ;
-typedef int      far ( far * fcntl_t ) ( int dfs, word_t cmd, word_t arg ) ;
-typedef int      far ( far * ioctl_t ) ( int dfs, word_t request, word_t arg ) ;
+typedef long int far ( far * lseek_t     ) ( int dfs, long int pos, word_t whence ) ;
+typedef int      far ( far * fcntl_t     ) ( int dfs, word_t cmd, word_t arg ) ;
+typedef int      far ( far * ioctl_t     ) ( int dfs, word_t request, word_t arg ) ;
 
 typedef int      far ( far * eliminar_t ) ( pindx_t pindx ) ;
 
@@ -159,7 +160,9 @@ typedef struct {                        /* ver startUserCode en AJUSTUSR.C */
   byte_t relleno2[5] ;                            /* debe ser el byte 0xC3 */
   word_t desplMain ;
   byte_t relleno3[2] ;                    /* deben ser los bytes 0x53 0xBA */
-  word_t desplFinish ;
+  word_t desplFinish ;               /* funcion de terminacion por defecto */
+  byte_t relleno4[2] ;                         /* deben ser los bytes 0xBA */  
+  word_t desplDSig ;                          /* direccion de __sighandler */
 } cabecera_t ;                           /* cabecera de fichero ejecutable */
 
 typedef struct {

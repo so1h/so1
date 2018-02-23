@@ -1,1 +1,0 @@
--Tde -m -l -c -k  -LY:\BC5\LIB obj\_MBR\MBR.obj,..\mbr.exe,,lib\entrybin.lib,, 

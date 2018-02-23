@@ -163,19 +163,19 @@ int setgid ( gid_t gid ) {                                   /* ax = 000bh */
 }
 
 /* ----------------------------------------------------------------------- */
-/* int kill(pid)                                                           */
+/* int killpid(pid)                                                        */
 /* ----------------------------------------------------------------------- */
 /* Si pid > 0 y corresponde al identificador de un proceso del sistema,    */
 /* esta llamada destruye al proceso cuyo identificador de proceso es pid y */
 /* retorna como resultado un 0.                                            */
 /* Si pid = -1 esta llamada destruye todos los procesos menos el proceso   */
-/* con pid 0 que corresponde a la consola del sistema SO1.                 */
+/* con pid 0 que corresponde al sistema SO1 (nucleo).                      */
 /* Si pid = 0 la llamada simplemente retorna el valor -1, ya que no se     */
-/* permite matar al proceso consola.                                       */
+/* permite matar al proceso 0.                                             */
 /* En cualquier otro caso la llamada al sistema retorna el valor -2.       */
 /* ----------------------------------------------------------------------- */
 
-int kill ( int pid ) {                                         /* ah = 0ch */
+int killpid ( int pid ) {  /* mata directamente sin enviar señal. ah = 0ch */                    
   int codRetorno ;
   asm {
     mov dx,pid ;

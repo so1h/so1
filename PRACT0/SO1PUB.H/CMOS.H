@@ -51,6 +51,7 @@
 #define CFD_144MB    4
 #define CFD_288MB    5
 
+#define CHD_NO_DRIVE 0
 
 #define disableNMI() \
     outportb(PORT_CMOS_INDEX, inportb(PORT_CMOS_INDEX) | NMI_DISABLE_BIT) ; \

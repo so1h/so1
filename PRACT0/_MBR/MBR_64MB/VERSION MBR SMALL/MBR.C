@@ -123,7 +123,7 @@ char leerTecla ( void ) {
 #define reboot()                               /* reiniciamos el ordenador */\
   asm int 0x19 ;                                         /* BIOS bootstrap */
 
-int resetControler ( void ) {
+int resetController ( void ) {
   asm {
     mov ah,00H ;        /* 00H -> reset del controlador                    */
     int 13h ;           /* BIOS: E/S de disco                              */

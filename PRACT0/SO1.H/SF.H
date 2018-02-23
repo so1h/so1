@@ -63,9 +63,9 @@ int inicSF ( byte_t unidadBIOS ) ;           /* asigna memoria para la FAT */
 
 extern int numFichAbiertos ;
 
-extern word_t segBuferSO1 ;        /* bufer para leer sectores de disquete */
+//extern word_t segBuferSO1 ;        /* bufer para leer sectores de disquete */
 
-extern pointer_t ptrBuferSO1 ;
+//extern pointer_t ptrBuferSO1 ;
 
 int leerSectorSO1 ( dword_t sectorLogico, byte_t unidadLogica, pointer_t dir ) ;
 

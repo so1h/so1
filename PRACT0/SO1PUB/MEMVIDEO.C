@@ -52,14 +52,21 @@ int printCarVideo ( char car ) {
     case HT  : car = ' ' ; break ;                            /* Tabulador */
     case BEL : printCarBIOS(BEL) ;
                break ;
-    default  : ptrPant->t[cursorF][cursorC].car = car ;
-               if (++cursorC == 80) {
+    default  : 
+#if (TRUE)
+               if (cursorC < 80)               /* ptrBiosArea->VIDEO-width */
+	               ptrPant->t[cursorF][cursorC].car = car ;
+               cursorC++ ;
+#else	
+	           ptrPant->t[cursorF][cursorC].car = car ;
+               if (++cursorC == 80) {          /* ptrBiosArea->VIDEO-width */
                  cursorC = 0 ;
                  if (++cursorF == numFilas) {
                    scrollCPantalla(ptrPant, numFilas) ;
                    cursorF = numFilas-1 ;
                  }
                }
+#endif
     }
   return(0) ;
 }

@@ -30,6 +30,7 @@ OBJS0 = obj\ajustes.obj  \
 #       =======          \
         obj\gm.obj       \
 #       obj\gp.obj       \
+        obj\db.obj       \
         obj\minifs.obj
 
 !if $(CON_PROCESO_INICIAL) == TRUE
@@ -72,6 +73,7 @@ $(OBJSConComa:.obj=.obj,)      \
 
 !if $(CON_PROCESO_INICIAL) == TRUE
 OBJS2LINK = $(OBJS2LINK0)    \
+..\so1pub\obj\cmos.obj,      \
 ..\startfin\lib\finlib.lib
 !else
 OBJS2LINK = $(OBJS2LINK0)    \

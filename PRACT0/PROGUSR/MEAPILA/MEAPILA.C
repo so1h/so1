@@ -145,23 +145,23 @@ int espacioLibre ( pid_t pid )
                 asm sti
 
                 printf(
-				    ""                                                               "\n"
-					""                                                               "\n"
-					" informacion sobre la pila del proceso con pid = %i (SS = DS = ) \n"
-					""                                                               "\n"
-					"   desplData SS:0000"                                           "\n"
-                    ""                                                               "\n"
-					"   desplBSS  SS:%04X"                                           "\n"
-                    ""                                                               "\n"
-					"   desplPila SS:%04X <----   | espacio libre"                   "\n"
-					"                             |"                                 "\n"
-					"   desplCima SS:%04X <---- ^"                                   "\n"
-                    "                           |"                                   "\n"
-					"   desplBase SS:%04X <---- |"                                   "\n"
-                    ""                                                               "\n"
-					" espacio libre en la pila:"                                     "\n"
-                    ""                                                               "\n"
-					"   desde SS:%04X hasta SS:%04X inclusive (%04X = %i bytes libres)\n",
+				    ""                                                                   "\n"
+					""                                                                   "\n"
+					" informacion sobre la pila del proceso con pid = %i (SS = DS = %04X) \n"
+					""                                                                   "\n"
+					"   desplData SS:0000"                                               "\n"
+                    ""                                                                   "\n"
+					"   desplBSS  SS:%04X"                                               "\n"
+                    ""                                                                   "\n"
+					"   desplPila SS:%04X <----   | espacio libre"                       "\n"
+					"                             |"                                     "\n"
+					"   desplCima SS:%04X <---- ^"                                       "\n"
+                    "                           |"                                       "\n"
+					"   desplBase SS:%04X <---- |"                                       "\n"
+                    ""                                                                   "\n"
+					" espacio libre en la pila:"                                         "\n"
+                    ""                                                                   "\n"
+					"   desde SS:%04X hasta SS:%04X inclusive (%04X = %i bytes libres)"  "\n",
                     pid, 
 					ptrDescProceso[i].trama->DS, 
 					ptrDescProceso[i].desplBSS, 

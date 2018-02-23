@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------- */
 /*                                 dokill.c                                */
 /* ----------------------------------------------------------------------- */
-/*    codigo comun de la llamadas kill y de cerrar ventana con el raton    */
+/*  codigo comun de las llamadas killpid y de cerrar ventana con el raton  */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\tipos.h>

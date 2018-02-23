@@ -8,6 +8,7 @@
 #include <so1pub.h\ll_s_so1.h>                          /* terminarProceso */
 #include <so1pub.h\ajustusr.h>                            /* startUserCode */
 
+
 #define SPInicial 0x7FFE         /* puntero de pila "a priori" del proceso */
                                                      /* podria redefinirse */
 #define maxArgs 20
@@ -34,10 +35,11 @@ void startBin ( void ) {    /* Inicializacion de los registros de segmento */
   asm mov bx,OFFSET main                                  /* jmp near main */
   asm push bx                                                  /* apilamos */
   asm mov dx,OFFSET finish        /* para que figure finish en la cabecera */
+  asm mov dx,OFFSET __sighandler  /* para que figure tambien __sighandler  */
 }                                                                   /* ret */
 
-void finish ( void ) {                          /* main debe retornar aqui */
-                                   /* no cambiar (crearProceso) despl 0022 */
+void finish ( void ) {                    /* por defecto main retorna aqui */
+
   manejador_t far * ptrManejadorAtExit ;
   
   asm push ax ;                       /* AX = resultado retornado por main */

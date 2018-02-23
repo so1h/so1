@@ -272,7 +272,7 @@ int main ( int argc, char * argv [ ] )
 
     error = dmp() ;
 
-    getchar() ;
+//  getchar() ;
     return(error) ;	
 
 }

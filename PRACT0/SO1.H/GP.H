@@ -22,7 +22,7 @@ pid_t k_getpid ( void ) ;
 
 pindx_t k_getpindx ( void ) ;
 
-int k_kill ( int pid ) ;
+int k_killpid ( int pid ) ;
 
 extern rindx_t rec_gp ;
 

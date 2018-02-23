@@ -106,6 +106,8 @@ void main ( void )                             /* interrupciones inhibidas */
 
     E(inicGM()) ;         /* asigna memoria para el proceso 0. rec_gm "GM" */
 
+    E(inicDB()) ;                                           /* rec_db "DM" */
+
     if ((modoSO1() == modoSO1_Bin) || (modoSO1() == modoSO1_Bs))
     {
         printStrBIOS("\n unidadBIOS = 0x") ;
@@ -257,10 +259,10 @@ void tirarSistema ( word_t loQueHay, int timeout )
             escribirInt(pindx, 1) ;
             escribirStr(" pid = ") ;
             escribirInt(pid, 1) ;
-            escribirStr(" --> kill(") ;
+            escribirStr(" --> killpid(") ;
             escribirInt(pid, 1) ;
             escribirStr(") ") ;
-            if (kill(pid) == 0)
+            if (killpid(pid) == 0)
                 escribirStr(" Ok ") ;
             escribirLn() ;
             if (timeout > 0) esperarTicsBIOS(18) ;
@@ -299,7 +301,7 @@ void tirarSistema ( word_t loQueHay, int timeout )
             if ((pid = createProcess(descProceso[pindx].programa, strComando)) > 0)
             {
                 waitpid(pid, (int far *)NULL) ;
-                kill(descProceso[pindx].pid) ;
+                killpid(descProceso[pindx].pid) ;
                 escribirLn() ;
             }
         }

@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------- */
-/*                                  kill.c                                 */
+/*                                killpid.c                                */
 /* ----------------------------------------------------------------------- */
-/*                       comando para matar procesos                       */
+/*       comando para matar procesos (directamente sin enviar senial)      */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
@@ -12,7 +12,7 @@
 
 void formato ( void )
 {
-    printf(" formato: KILL [ pid | -a | -h ] ") ;
+    printf(" formato: KILLPID [ pid | -a | -h ] ") ;
 }
 
 void help ( void )
@@ -33,7 +33,7 @@ int main ( int argc, char * argv [ ] )
     int i = 0 ;
     if (argc != 2) formato() ;
     else if (iguales(argv[1], "-h")) help() ;
-    else if (iguales(argv[1], "-a")) kill(-1) ;
+    else if (iguales(argv[1], "-a")) killpid(-1) ;
     else
     {
         while (argv[1][i] != (char)0)
@@ -46,7 +46,7 @@ int main ( int argc, char * argv [ ] )
         obtenSimb() ;
         if (simb == s_numero)
         {
-            switch (kill(num))
+            switch (killpid(num))
             {
             case -1 :
                 printf(" no se permite matar al proceso 0 ") ;

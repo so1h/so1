@@ -66,19 +66,6 @@ pid_t waitpid ( pid_t pid, int far * statloc ) ;
 /* el pid del proceso hijo terminado.                                      */
 /* ----------------------------------------------------------------------- */
 
-int kill ( int pid ) ;                         /* declarada en ll_s_exec.h */
-
-/* ----------------------------------------------------------------------- */
-/* Si pid > 0 y corresponde al identificador de un proceso del sistema,    */
-/* esta llamada destruye al proceso cuyo identificador de proceso es pid y */
-/* retorna como resultado un 0.                                            */
-/* Si pid = -1 esta llamada destruye todos los procesos menos el proceso   */
-/* con pid 0 que corresponde a la consola del sistema SO1.                 */
-/* Si pid = 0 la llamada simplemente retorna el valor -1, ya que no se     */
-/* permite matar al proceso consola.                                       */
-/* En cualquier otro caso la llamada al sistema retorna el valor -2.       */
-/* ----------------------------------------------------------------------- */
-
 void exit ( int status ) ;
 
 /* ----------------------------------------------------------------------- */
@@ -93,28 +80,28 @@ void exit ( int status ) ;
 /* el padre haga el waitpid correspondiente.                               */
 /* ----------------------------------------------------------------------- */
 
-int setuid ( uid_t uid ) ;                     /* declarada en ll_s_exec.h */
+int setuid ( uid_t uid ) ;              
 
 /* ----------------------------------------------------------------------- */
 /* Esta llamada al sistema establece el uid del proceso que la ejecuta.    */
 /* ----------------------------------------------------------------------- */
 
-int setgid ( gid_t gid ) ;                     /* declarada en ll_s_exec.h */
+int setgid ( gid_t gid ) ;              
 
 /* ----------------------------------------------------------------------- */
 /* Esta llamada al sistema establece el gid del proceso que la ejecuta.    */
 /* ----------------------------------------------------------------------- */
 
-int kill ( int pid ) ;                         /* declarada en ll_s_exec.h */
+int killpid ( int pid ) ;            /* mata directamente sin enviar señal */                    
 
 /* ----------------------------------------------------------------------- */
 /* Si pid > 0 y corresponde al identificador de un proceso del sistema,    */
 /* esta llamada destruye al proceso cuyo identificador de proceso es pid y */
 /* retorna como resultado un 0.                                            */
 /* Si pid = -1 esta llamada destruye todos los procesos menos el proceso   */
-/* con pid 0 que corresponde a la consola del sistema SO1.                 */
+/* con pid 0 que corresponde al sistema SO1 (nucleo).                      */
 /* Si pid = 0 la llamada simplemente retorna el valor -1, ya que no se     */
-/* permite matar al proceso consola.                                       */
+/* permite matar al proceso 0.                                             */
 /* En cualquier otro caso la llamada al sistema retorna el valor -2.       */
 /* ----------------------------------------------------------------------- */
 

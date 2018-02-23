@@ -1,5 +1,5 @@
 
-PROGRAMA = KILL
+PROGRAMA = KILLPID
 
 # primer fichero objeto (..\..\so1pub\lib\startlib.lib)
 # segundo fichero objeto (..\..\so1pub\obj\ajustusr.obj)

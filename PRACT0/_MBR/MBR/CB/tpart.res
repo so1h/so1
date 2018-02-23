@@ -1,1 +1,0 @@
--Tde -m -l -c -k  -LY:\BC5\LIB obj\_MBR\TPART.obj,..\tpart.exe,,lib\entrybin.lib,, 

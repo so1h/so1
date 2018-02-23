@@ -50,7 +50,7 @@ pindx_t k_getpindx ( void ) {
 
 #pragma option -w-par            /* omitir warning parameter is never used */
 
-int k_kill ( int pid ) {
+int k_killpid ( int pid ) {
   return(0) ;
 }
 

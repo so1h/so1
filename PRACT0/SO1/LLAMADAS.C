@@ -23,7 +23,7 @@
 extern void so1_manejador_00 ( void ) ;        /* 0: createProcess 1: fork */
 //                                           /* 2: exec 3: waitpid 4: exit */
 //                                     /* 5: getpid 6: getpindx 7: getppid */
-//                      /* 8: getuid 9: setuid a: getgid b: setgid c: kill */
+//                   /* 8: getuid 9: setuid a: getgid b: setgid c: killpid */
 
 extern void so1_manejador_01 ( void ) ;                /* 0: open 1: close */
 //                                      /* 2: leer 3: leerListo 4: leerRaw */

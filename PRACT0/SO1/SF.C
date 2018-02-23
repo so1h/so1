@@ -13,6 +13,7 @@
 #include <so1.h\bios.h>                    /* leerSectorCSH, leerSectorLBA */
 #include <so1.h\gm.h>
 #include <so1.h\procesos.h>
+#include <so1.h\db.h>                                       /* ptrBuferSO1 */
 #include <so1.h\sf.h>
 
 /* ----------------- descriptores de unidades logicas -------------------- */
@@ -49,47 +50,16 @@ dword_t tamFAT ;
 dword_t entradasFAT ;
 dword_t clusteres ;
 word_t far * FAT ;               /* representa la tabla FAT desempaquetada */
-/* se inicializa en inicSF apuntando a un segmento lejano */
-/* con el fin de no gastar memoria del segmento de datos */
+//               /* se inicializa en inicSF apuntando a un segmento lejano */
+//                /* con el fin de no gastar memoria del segmento de datos */
 
 /* ----------------------------------------------------------------------- */
 
-word_t segBuferSO1 ;   /* bufer para leer sectores de disquete con el BIOS */
-pointer_t ptrBuferSO1 ;         /* de forma segura (ver error 0x09 int 13) */
-/* ==> codigo no reentrante */
 int numFichAbiertos ;
 
 descriptor_de_fichero_t tablaFichAbiertos [ maxFichAbiertos ] ;
 
 static victimaASustituir = 0 ;          /* para la politica de sustitucion */
-
-word_t segBuferSeguro ( void )                        /* seguro con el DMA */
-{
-    word_t segB ;
-    word_t segBufer ;                     /* 512 bytes = 512/16 paragrafos */
-//segB = ll_buscarBloque(512/16) ;         /* primer segmento tras la pila */
-    segB = k_buscarBloque(512/16) ;        /* primer segmento tras la pila */
-    segBufer = segB ;
-#if (FALSE)
-    if ((segB & 0xF000) != ((segB + 512/16 -1) & 0xF000))/* atraviesa 64 K */
-    {
-        segBufer = (segB + 512/16) & 0xF000 ;
-//  ll_devolverBloque(segB, 512/16) ;                                /* GM */
-        k_devolverBloque(segB, 512/16) ;                             /* GM */
-//  ll_buscarBloque(segBufer + 512/16 - segB) ;                      /* GM */
-        k_buscarBloque(segBufer + 512/16 - segB) ;                   /* GM */
-    }
-#endif
-    if ((segB % (512/16)) != 0)                    /* multiplo de (512/16) */
-    {
-        segBufer = ((segB & 0xFFE0) + 512/16) ;
-//  ll_devolverBloque(segB, 512/16) ;                                /* GM */
-        k_devolverBloque(segB, 512/16) ;                             /* GM */
-//  ll_buscarBloque(segBufer + 512/16 - segB) ;                      /* GM */
-        k_buscarBloque(segBufer + 512/16 - segB) ;                   /* GM */
-    }
-    return(segBufer) ;
-}
 
 /* leerSector de una unidad logica cualquiera (disquete o disco duro) */
 
@@ -175,8 +145,8 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
     /* Se necesita un bufer de 512 bytes para la lectura segura de los     */ 
 	/* sectores mediante la INT13 (DMA).                                   */
 
-    segBuferSO1 = segBuferSeguro() ;                                 /* GM */
-    ptrBuferSO1 = MK_FP(segBuferSO1, 0x0000) ;
+//    segBuferSO1 = segBuferSeguro() ;                                 /* GM */
+//    ptrBuferSO1 = MK_FP(segBuferSO1, 0x0000) ;
     printStrBIOS("\n ptrBuferSO1 = 0x") ;
     printPtrBIOS(ptrBuferSO1) ;
 

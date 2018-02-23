@@ -4,7 +4,7 @@
 /*            busqueda, carga y ejecucion de comandos externos             */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\tipos.h>                              /* pid_t, pindx_t */
+#include <so1pub.h\tipos.h>  /* pid_t, pindx_t, word_t, dword_t, pointer_t */ /* MK_FP */
 #include <so1pub.h\def_proc.h>
 #include <so1pub.h\scanner.h>                                /* tamComando */
 #include <so1pub.h\msdos.h>                  /* lssekMSDOS, SEEK_SET_MSDOS */
@@ -13,7 +13,8 @@
 #include <so1pub.h\copia.h>                                  /* copiaLarga */
 #include <so1pub.h\ptrc2c.h>         /* ptrC2c_t, desencolarPC2c, inicPC2c */ /* encolarPC2c */
 #include <so1.h\gm.h>                  /* k_buscarBloque, k_devolverBloque */
-#include <so1.h\procesos.h>
+#include <so1.h\procesos.h>       /* indProcesoActual, descProceso, c2cPFR */
+//                                    /* DPOcupados, DPLibres, maxProcesos */
 #include <so1.h\ajustes.h>
 #include <so1.h\sf.h>
 

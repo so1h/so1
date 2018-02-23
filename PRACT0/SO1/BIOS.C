@@ -12,13 +12,9 @@
 #include <so1.h\plot.h>
 #include <so1.h\bios.h>
 
-/* Disco (int 13h) */
+//                                                      /* Disco (int 13h) */
 
-#define cmd_reset        0x00
-#define cmd_read_sector  0x02
-#define cmd_write_sector 0x03
-
-int resetControlerBIOS ( void ) {
+int resetControllerBIOS ( void ) {
   int error = 0 ;
   asm {
     mov ah,cmd_reset ;                            /* reset del controlador */
@@ -52,19 +48,19 @@ int escribirSectorLBA ( dword_t sectorLogico, byte_t unidadBIOS, pointer_t dir )
 
 int opSectorCSH ( CSH_t * CSH, byte_t unidadBIOS, pointer_t dir, byte_t cmd ) {
 
-  word_t IMR ;
   byte_t CHS_h = CSH->h ;                                      /* hhhhhhhh */
   word_t CHS_cs = CSH->cs ;                            /* ccccccccCCssssss */
                                         /* el sector fisico no puede ser 0 */
   byte_t error = 0 ;
 
-  IMR = valorIMR() ;
-
-  establecerIMR(~((1 << IRQ_TIMER) |
-                  (1 << IRQ_DISQUETE))) ;
+//word_t IMR ;
+//IMR = valorIMR() ;
+//establecerIMR(~((1 << IRQ_TIMER) |
+//                (1 << IRQ_DISQUETE))) ;
+//asm pushf ;
 //asm { @: jmp @ ; }
+
   asm {
-    pushf ;
     les bx,dir ;                   /* pone en ES:BX la direccion del bufer */
     mov dl,unidadBIOS ;
     mov dh,CHS_h ;
@@ -76,9 +72,11 @@ int opSectorCSH ( CSH_t * CSH, byte_t unidadBIOS, pointer_t dir, byte_t cmd ) {
     mov error,ah ;               /* codigo de error retornado por la INT13 */
 
 lecturaOk:
-    popf ;
   }
-  establecerIMR(IMR) ;
+  
+//asm popf ;
+//establecerIMR(IMR) ;
+
   return((int)error) ;
 }
 

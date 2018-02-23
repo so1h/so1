@@ -11,7 +11,7 @@
 
 #define dfMax 10   /* numero maximo de descriptores de fichero del proceso */
 
-#define dfsMax 20  /* numero maximo de descriptores de fichero del sistema */
+#define dfsMax 25  /* numero maximo de descriptores de fichero del sistema */
 
 #define maxRecursos 14                        /* numero maximo de recursos */
 
