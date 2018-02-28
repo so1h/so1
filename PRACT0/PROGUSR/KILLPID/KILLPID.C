@@ -6,9 +6,8 @@
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                             /* printf, getchar */
-
 #include <so1pub.h\scanner.h>    /* inicScanner, obtenSimb, simb, s_numero */
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\strings.h>                                   /* strcmpu */
 
 void formato ( void )
 {
@@ -32,8 +31,8 @@ int main ( int argc, char * argv [ ] )
 {
     int i = 0 ;
     if (argc != 2) formato() ;
-    else if (iguales(argv[1], "-h")) help() ;
-    else if (iguales(argv[1], "-a")) killpid(-1) ;
+    else if (!strcmpu(argv[1], "-h")) help() ;
+    else if (!strcmpu(argv[1], "-a")) killpid(-1) ;
     else
     {
         while (argv[1][i] != (char)0)

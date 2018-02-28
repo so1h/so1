@@ -5,7 +5,7 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_exc.h>  /* createProcess, waitpid, exit, open, ... */
-#include <so1pub.h\strings.h>                /* copiarStr, igualesHastaFar */
+#include <so1pub.h\strings.h>                           /* strcpy, strlcpy */
 #include <so1pub.h\escribir.h>     /* escribirStr, escribirInt, escribirLn */
 #include <so1pub.h\biosdata.h>                             /* ptrFechaBios */
 #include <so1pub.h\msdos.h>                    /* finProgDOS, hayWindowsNT */
@@ -17,6 +17,7 @@
 #include <so1.h\llamadas.h>                                     /* isr_SO1 */
 #include <so1.h\gm.h>          /* inicGM, k_buscarBloque, k_devolverBloque */
 //#include <so1.h\gp.h>                                        /* k_inicGP */
+#include <so1.h\db.h>                                            /* inicDB */
 #include <so1.h\recursos.h>                   /* inicRecursos, destruirRec */
 #include <so1.h\procesos.h>      /* descProceso, descRecurso, inicProcesos */ /* c2cPFR */
 //#include <so1.h\main.h>                                          /* main */
@@ -282,7 +283,7 @@ void tirarSistema ( word_t loQueHay, int timeout )
         if ((descProceso[pindx].estado == bloqueado) &&
                 (descProceso[pindx].esperandoPor == rec_desinstalacion))
         {
-            copiarStrHasta(descProceso[pindx].programa, strComando, 8) ;
+            strlcpy(strComando, descProceso[pindx].programa, 8) ;
             for ( i = 0 ; i < 8 ; i++ )
                 if ((strComando[i] == (char)0) || (strComando[i] == '.'))
                 {

@@ -6,10 +6,9 @@
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
-
 #include <so1pub.h\scanner.h>
-#include <so1pub.h\strings.h>
-#include <so1pub.h\caracter.h>                                /* mayuscula */
+#include <so1pub.h\strings.h>                                   /* strcmpu */
+#include <so1pub.h\ctype.h>                                     /* toupper */
 #include <so1pub.h\def_scan.h>                                      /* Esc */
 
 void mostrarFormato ( void )
@@ -159,7 +158,7 @@ void mostrarEstado ( char opcion, word_t modo )
 
     }
     while (((est.F != 0) || (est.C != 0) || (est.botonIz == 0)) &&
-            (mayuscula(car) != 'Q') && (scanCode != Esc)) ;
+            (toupper(car) != 'Q') && (scanCode != Esc)) ;
 
     printf("\n") ;
 
@@ -175,17 +174,17 @@ int main ( int argc, char * argv [ ] )
 
     if (argc == 1) mostrarEstado('B', 2) ;
     else if (argc == 2)
-        if (iguales(argv[1], "-h")) help() ;
+        if (!strcmpu(argv[1], "-h")) help() ;
         else if ((argv[1][0] == '-') &&
                  (((argv[1][2] == '\0')) || (argv[1][3] == '\0')))          
         {
-            opcion = mayuscula(argv[1][1]) ;
+            opcion = toupper(argv[1][1]) ;
             switch (opcion)                                    /* -px, -bx */
             {
             case 'P' :
                 ;
             case 'B' :
-                switch (mayuscula(argv[1][2]))
+                switch (toupper(argv[1][2]))
                 {
                 case 'L' :                                     /* -pl, -bl */
                     modo = 1 ;

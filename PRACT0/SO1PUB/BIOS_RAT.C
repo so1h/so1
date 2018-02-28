@@ -4,7 +4,6 @@
 /*                                                                         */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\caracter.h>
 #include <so1pub.h\pantalla.h>
 #include <so1pub.h\pic.h>
 #include <so1pub.h\bios_rat.h>

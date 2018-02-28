@@ -40,6 +40,4 @@ int printGenLBin ( dword_t num, word_t l, printCar_t p ) ;
 
 int printGenPtr ( pointer_t ptr, printCar_t p ) ;
 
-int printfGen ( const char * formato, printCar_t p, ... ) ;
-
 #endif /* PRINTGEN_H */

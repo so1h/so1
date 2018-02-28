@@ -9,7 +9,7 @@ OBJS2LINK =                      \
 ..\..\so1pub\obj\ajustusr.obj,   \
 $(PROGRAMA).obj,                 \
 ..\..\so1pub\lib\ll_s_so1.lib,   \
-..\..\so1pub\obj\caracter.obj,   \
+..\..\so1pub\obj\ctype.obj,      \
 ..\..\so1pub\obj\printgen.obj,   \
 ..\..\so1pub\obj\tipos.obj,      \
 ..\..\so1pub\obj\put.obj,        \
@@ -17,6 +17,7 @@ $(PROGRAMA).obj,                 \
 ..\..\so1pub\obj\scanner.obj,    \
 ..\..\so1pub\obj\strings.obj,    \
 ..\..\so1pub\obj\ptrc2c.obj,     \
+..\..\so1pub\obj\memory.obj,     \
 ..\..\so1pub\obj\pantalla.obj,   \
 ..\..\so1pub\obj\ccb.obj,        \
 ..\..\crtl\obj\h_ldiv.obj,       \

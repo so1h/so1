@@ -6,11 +6,8 @@
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                                      /* printf */
-
-#include <so1pub.h\strings.h>
-//#include <so1pub.h\scanner.h>
-
-#include <so1.h\iniccode.h>
+#include <so1pub.h\strings.h>                                   /* strcmpu */
+#include <so1.h\iniccode.h>                                        /* inic */
 
 void formato ( void )
 {
@@ -34,7 +31,7 @@ void help ( void )
 int main ( int argc, char * argv [ ] )
 {
     if (argc == 1) return(inic()) ;
-    else if ((argc == 2) && (iguales(argv[1], "-h")))
+    else if ((argc == 2) && (!strcmpu(argv[1], "-h")))
     {
         if (getpid() != 1) help() ;
         return(0) ;

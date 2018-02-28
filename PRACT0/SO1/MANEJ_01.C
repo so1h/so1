@@ -31,20 +31,20 @@
 /* (callbacks) para que se ejecuten desde la isr(s) asociada(s) al driver. */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\strings.h>
+#include <so1pub.h\strings.h>                           /* strcmp, strncmp */
 #include <so1pub.h\tipos.h>
 #include <so1pub.h\fcntl.h>
 #include <so1pub.h\def_proc.h>
 #include <so1.h\procesos.h>
 #include <so1.h\recursos.h>
-#include <so1.h\minifs.h>                                     /* rec_sf */
+#include <so1.h\minifs.h>                                        /* rec_sf */
 #include <so1.h\bios.h>
 
 int indiceTFAS ( const char far * nombre ) { /* se puede mejorar con la cola c2c de ficheros */
   int dfs ;
   dfs = c2cPFR[DFOcupados].primero ;                   /* ver si existe ya */
   while (dfs != c2cPFR[DFOcupados].cabecera) {
-    if (iguales(descFichero[dfs].nombre, nombre)) return(dfs) ;
+    if (!strcmp(descFichero[dfs].nombre, nombre)) return(dfs) ;
     dfs = c2cPFR[DFOcupados].e[dfs].sig ;
   }
   return(-1) ;
@@ -54,7 +54,7 @@ int indiceTFA ( const char far * nombre ) {
   int df, dfs ;
   for ( df = 0 ; df < dfMax ; df++ ) {
     if (((dfs = descProceso[indProcesoActual].tfa[df].dfs) != -1) &&
-        (igualesHasta(descFichero[dfs].nombre, nombre, 8)))
+        (!strncmp(descFichero[dfs].nombre, nombre, 8)))
       return(df) ;
   }
   return(-1) ;

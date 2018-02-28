@@ -1,7 +1,8 @@
 
 PROGRAMA = CONSOLA
 
-# primer fichero objeto (..\so1pub\obj\ajustusr.obj)
+# primer fichero objeto (..\..\so1pub\lib\startlib.lib)
+# segundo fichero objeto (..\..\so1pub\obj\ajustusr.obj)
 # ultimo fichero objeto (..\so1pub\obj\fincode.obj)
 
 OBJS2LINK =                      \
@@ -11,12 +12,13 @@ OBJS2LINK =                      \
 $(PROGRAMA).obj,                 \
 ..\..\so1pub\obj\debug.obj,      \
 ..\..\so1pub\lib\ll_s_so1.lib,   \
-..\..\so1pub\obj\caracter.obj,   \
+..\..\so1pub\obj\ctype.obj,      \
 ..\..\so1pub\obj\printgen.obj,   \
 ..\..\so1pub\obj\tipos.obj,      \
 ..\..\so1pub\obj\put.obj,        \
 ..\..\so1pub\obj\escribir.obj,   \
 ..\..\so1pub\obj\scanner.obj,    \
+..\..\so1pub\obj\memory.obj,     \
 ..\..\so1pub\obj\strings.obj,    \
 ..\..\so1pub\obj\cmos.obj,       \
 ..\..\so1pub\obj\puertos.obj,    \

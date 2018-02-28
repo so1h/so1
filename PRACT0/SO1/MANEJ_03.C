@@ -5,13 +5,13 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\tipos.h>
-#include <so1pub.h\copia.h>
+#include <so1pub.h\memory.h>                                     /* memcpy */
 #include <so1pub.h\strings.h>
 #include <so1pub.h\ll_s_so1.h>
-#include <so1.h\dbgword.h>                                 /* debugWord */
+#include <so1.h\dbgword.h>                                    /* debugWord */
 #include <so1.h\ajustsp.h>
 #include <so1.h\ajustes.h>
-#include <so1.h\gm.h>                      /* listaLibres, tamBloqueMax */
+#include <so1.h\gm.h>                         /* listaLibres, tamBloqueMax */
 #include <so1.h\procesos.h>
 #include <so1.h\sf.h>
 #include <so1.h\llamadas.h>
@@ -20,10 +20,7 @@ static void copiarDescProcesos ( bloquePFR_t far * ptrPFR ) {
   int i ;
   descProceso_t far * dP = ptrPFR->descProceso ;
   for ( i = 0 ; i < maxProcesos ; i++ ) {
-    copia((pointer_t)&descProceso[i],
-          (pointer_t)(&(dP[i])),
-          sizeof(descProceso_t)
-    ) ;
+    memcpy(&dP[i], &descProceso[i], sizeof(descProceso_t)) ;
     if (descProceso[i].estado != libre)
       dP[i].c2cHijos.e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2Hijos) ;
   }
@@ -32,21 +29,15 @@ static void copiarDescProcesos ( bloquePFR_t far * ptrPFR ) {
 static void copiarDescFicheros ( bloquePFR_t far * ptrPFR ) {
   int i ;
   descFichero_t far * dF = ptrPFR->descFichero ;
-  for ( i = 0 ; i < dfsMax ; i++ )
-    copia((pointer_t)&descFichero[i],
-          (pointer_t)(&(dF[i])),
-          sizeof(descFichero_t)
-    ) ;
+  for ( i = 0 ; i < dfsMax ; i++ )  
+    memcpy(&dF[i], &descFichero[i], sizeof(descFichero_t)) ;
 }
 
 static void copiarDescRecursos ( bloquePFR_t far * ptrPFR ) {
   int i ;
   descRecurso_t far * dR = ptrPFR->descRecurso ;
   for ( i = 0 ; i < maxRecursos ; i++ ) {
-    copia((pointer_t)&descRecurso[i],
-          (pointer_t)(&(dR[i])),
-          sizeof(descRecurso_t)
-    ) ;
+    memcpy(&dR[i], &descRecurso[i], sizeof(descRecurso_t)) ;
     if (descRecurso[i].tipo != rLibre)
       dR[i].c2cFichRec.e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2FichRec) ;
   }
@@ -54,8 +45,8 @@ static void copiarDescRecursos ( bloquePFR_t far * ptrPFR ) {
 
 static void transferirBPFR ( bloquePFR_t far * ptrPFR, byte_t regAL ) {
 
-  copia((pointer_t)&e2PFR, (pointer_t)(ptrPFR->e2PFR), sizeof(e2PFR_t)) ;
-  copia((pointer_t)&c2cPFR, (pointer_t)(ptrPFR->c2cPFR), numColasPFR*sizeof(c2c_t)) ;
+  memcpy(ptrPFR->e2PFR, &e2PFR, sizeof(e2PFR_t)) ;
+  memcpy(ptrPFR->c2cPFR, &c2cPFR, numColasPFR*sizeof(c2c_t)) ;
 
   copiarDescProcesos(ptrPFR) ;                           /* requiere e2PFR */
   if (regAL == 0x02) {
@@ -98,9 +89,7 @@ void so1_manejador_03 ( void ) {                       /* ah = 3 ; int SO1 */
       df = (descriptor_de_fichero_t far *)                 /* obtenInfoFAB */
               pointer(tramaProceso->ES, tramaProceso->BX) ;
       if (df != (descriptor_de_fichero_t far *)NULL)
-        copia((pointer_t)&tablaFichAbiertos,
-              (pointer_t)df,
-              sizeof(tablaFichAbiertos)) ;
+        memcpy(df, &tablaFichAbiertos, sizeof(tablaFichAbiertos)) ;
       else
         inicTablaFichAbiertos() ;             /* borramos la tabla de f.a. */
       break ;

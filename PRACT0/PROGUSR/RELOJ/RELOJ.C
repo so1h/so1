@@ -8,8 +8,7 @@
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>
 #include <so1pub.h\carsctrl.h>                                       /* FF */
-#include <so1pub.h\caracter.h>                           /* dig, mayuscula */
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
 #include <so1pub.h\scanner.h>
 #include <so1pub.h\puertos.h>
 #include <so1pub.h\cmos.h>                                     /* leerCmos */
@@ -226,7 +225,7 @@ int integrarReloj ( bool_t conMensajes )
     descRecurso_t dR ;
 
     dR.tipo = rDCaracteres ;
-    copiarStr("RELOJ", dR.nombre) ;
+    strcpy(dR.nombre, "RELOJ") ;
     dR.ccb = (ccb_t)&descCcbRL ;
     dR.ccb->arg = NULL ;
     dR.pindx = getpindx() ;
@@ -342,10 +341,10 @@ void main ( int argc, char * argv [ ] )
     int res ;
     if (argc > 2) formato() ;
     else if (argc == 1) exit(instalarReloj(TRUE)) ;
-    else if (iguales(argv[1], "-h") || iguales(argv[1], "-H")) help() ;
-    else if (iguales(argv[1], "-i") || iguales(argv[1], "-I")) exit(instalarReloj(TRUE)) ;
-    else if (iguales(argv[1], "-q") || iguales(argv[1], "-Q")) exit(instalarReloj(FALSE)) ;
-    else if (iguales(argv[1], "-u") || iguales(argv[1], "-U"))
+    else if (!strcmpu(argv[1], "-h")) help() ;
+    else if (!strcmpu(argv[1], "-i")) exit(instalarReloj(TRUE)) ;
+    else if (!strcmpu(argv[1], "-q")) exit(instalarReloj(FALSE)) ;
+    else if (!strcmpu(argv[1], "-u"))
     {
         res = destruirRecurso("RELOJ") ;
         switch (res)

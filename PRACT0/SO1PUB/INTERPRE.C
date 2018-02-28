@@ -5,7 +5,7 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\carsctrl.h>                                      /* ESC */
-#include <so1pub.h\caracter.h>                                /* mayuscula */
+#include <so1pub.h\ctype.h>                                     /* toupper */
 #include <so1pub.h\scanner.h>           /* tamComando, car, simb, num, str */
                                 /* saltarBlancos, obtenSimb, obtenCar, ... */
 #include <so1pub.h\leercmd.h>                               /* leerComando */
@@ -14,7 +14,7 @@
                              /* getpid, getppid, getpindx, leerAsciiListo, */
                                             /* retardoActivo, activarTraza */
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
-#include <so1pub.h\strings.h>                        /* copiarStr, iguales */
+#include <so1pub.h\strings.h>                            /* strcpy, strcmp */
 #include <so1pub.h\msdos.h>         /* hayMSDOS, MAXPATH, FA_DIREC, ffblk, */
                                              /* findfirstDOS, findnextDOS, */
                                                 /* getdiskDOS, setdiskDOS, */
@@ -140,7 +140,7 @@ void escribirPtos ( void ) {
   carPtos = str[0] ;
   if ((carPtos <= ' ') || ('~' < carPtos))
     carPtos = '.' ;
-  else if ((carPtos == '-') && (mayuscula(str[1]) == 'V')) {
+  else if ((carPtos == '-') && (toupper(str[1]) == 'V')) {
     opcion = 'V' ;
     carPtos = '1' ;
   }
@@ -208,13 +208,13 @@ void listarDirectorioHost ( char * camino, char opcion ) ;
 
 void interpretar_dir ( bool_t host, int unidadLogica ) {
   char camino [ tamComando ] ; 
-  bool_t esCmdDir = (mayuscula(str[0]) == 'D') ;
+  bool_t esCmdDir = (toupper(str[0]) == 'D') ;
 //escribirStr(" ** str = \"") ; escribirStr(str) ; escribirStr("\"") ;
   if (!host) {                                        /* (dir|ls) [/W|-l] */ 
     obtenStr() ;
-	if (esCmdDir && (str[0] == '/') && (mayuscula(str[1]) == 'W') && (str[2] == (char)0))
+	if (esCmdDir && (str[0] == '/') && (toupper(str[1]) == 'W') && (str[2] == (char)0))
       listarDirectorio(unidadLogica, 'W') ;
-    else if (!esCmdDir && (str[0] == '-') && (mayuscula(str[1]) == 'L') && (str[2] == (char)0))
+    else if (!esCmdDir && (str[0] == '-') && (toupper(str[1]) == 'L') && (str[2] == (char)0))
       listarDirectorio(unidadLogica, ' ') ;
     else {
 	  if (esCmdDir) 
@@ -225,19 +225,19 @@ void interpretar_dir ( bool_t host, int unidadLogica ) {
   }
   else {                             /* (dir|ls) [camino] [/w|-l] [camino] */
     obtenStr() ;
-    copiarStr(str, camino) ;
-	if (esCmdDir && (str[0] == '/') && (mayuscula(str[1]) == 'W') && (str[2] == (char)0)) {
+    strcpy(camino, str) ;
+	if (esCmdDir && (str[0] == '/') && (toupper(str[1]) == 'W') && (str[2] == (char)0)) {
 	  obtenStr() ;
       listarDirectorioHost((char *)str, 'W') ;
 	}
-    else if (!esCmdDir && (str[0] == '-') && (mayuscula(str[1]) == 'L') && (str[2] == (char)0)) {
+    else if (!esCmdDir && (str[0] == '-') && (toupper(str[1]) == 'L') && (str[2] == (char)0)) {
 	  obtenStr() ;
       listarDirectorioHost((char *)str, ' ') ;
 	}
     else {
 	  obtenStr() ;
 	  if (esCmdDir) {
-	    if ((str[0] == '/') && (mayuscula(str[1]) == 'W') && (str[2] == (char)0)) 
+	    if ((str[0] == '/') && (toupper(str[1]) == 'W') && (str[2] == (char)0)) 
           listarDirectorioHost((char *)camino, 'W') ;
 	    else 
           listarDirectorioHost((char *)camino, ' ') ;
@@ -325,7 +325,7 @@ void interpretar_host ( bool_t * host, int unidad, bool_t hayDOS ) {
 /* --------- interpretacion del comando nohost --------------------------- */
 
 void interpretar_nohost ( bool_t * host ) {
-  copiarStr("SO1> ", prompt) ;
+  strcpy(prompt, "SO1> ") ;
   *host = FALSE ;
 }
 
@@ -697,9 +697,9 @@ void listarDirectorioHost ( char * camino, char opcion ) {
 
   atr = FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_LABEL | FA_DIREC | FA_ARCH ;
 
-  if (camino[0] == (char)0) copiarStr("*.*", fspath) ;
-  else if (iguales(camino, ".")) copiarStr("*.*", fspath) ;
-  else if (iguales(camino, "..")) copiarStr("..\\*.*", fspath) ;
+  if (camino[0] == (char)0) strcpy(fspath, "*.*") ;
+  else if (!strcmp(camino, ".")) strcpy(fspath, "*.*") ;
+  else if (!strcmp(camino, "..")) strcpy(fspath, "..\\*.*") ;
   else {
     for ( i = 0 ; camino[i] != (char)0 ; i++ ) ;
     switch (camino[i-1]) {
@@ -710,7 +710,7 @@ void listarDirectorioHost ( char * camino, char opcion ) {
                   camino[i++] = '*' ;
                   camino[i++] = (char)0 ;
     }
-    copiarStr(camino, fspath) ;
+    strcpy(fspath, camino) ;
   }
 
   if (findfirstDOS((char *)&fspath, (struct ffblk *)&fcb, atr) == -1) return ;

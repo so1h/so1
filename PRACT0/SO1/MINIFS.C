@@ -6,7 +6,7 @@
 
 #include <so1pub.h\def_proc.h>                            /* fedCaracteres */
 #include <so1pub.h\bios_0.h>                /* leerTeclaBIOS, printCarBIOS */
-#include <so1pub.h\strings.h>                                 /* copiarStr */
+#include <so1pub.h\strings.h>                                    /* strcpy */
 #include <so1pub.h\msdos.h>                         /* getDiskDOS, readDOS */
 #include <so1pub.h\fcntl.h>                                     /* O_CREAT */
 #include <so1.h\ajustes.h>                                       /* CS_SO1 */
@@ -95,7 +95,7 @@ int inicMinisfMSDOS ( void ) {
     descRecurso_t dR ;
 
     dR.tipo = rSF ;
-    copiarStr("SF", dR.nombre) ;
+    strcpy(dR.nombre, "SF") ;
     dR.ccb = (ccb_t)&descCcbSF ;
     dR.pindx = indProcesoActual ;
     dR.numVI = 0 ;

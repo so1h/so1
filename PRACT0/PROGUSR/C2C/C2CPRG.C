@@ -7,7 +7,7 @@
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
 #include <so1pub.h\scanner.h>                    /* inicScanner, obtenSimb */
 
 #include <so1pub.h\ptrc2c.h>                                   /* ptrC2c_t */
@@ -68,6 +68,7 @@ void help ( void )
         ""                                                                  "\n"
         ""                                                                  "\n"
         " formato : COLA [ num | -n | -e | -h ]"                            "\n"
+        ""                                                                  "\n"
         "      -n : muestra todas las colas sin mas detalles"               "\n"
         "      -e : muestra ademas numElen, primero y cabecera"             "\n"
         "      -h : muestra este help"                                      "\n"
@@ -177,15 +178,15 @@ int main ( int argc, char * argv [ ] )
                  ) ;
 				 
     if (argc == 2)
-        if (iguales(argv[1], "-h") || iguales(argv[1], "-H"))
+        if (!strcmpu(argv[1], "-h"))            /* argv[1] == "-h" o "-H" */ 
             help() ;
-        else if (iguales(argv[1], "-n") || iguales(argv[1], "-N"))
+        else if (!strcmpu(argv[1], "-n"))       /* argv[1] == "-n" o "-N" */
             colas('n', 0) ;
-        else if (iguales(argv[1], "-e") || iguales(argv[1], "-E"))
+        else if (!strcmpu(argv[1], "-e"))       /* argv[1] == "-e" o "-E" */
             colas('e', 0) ;
         else
         {
-            copiarStr(argv[1], comando[0]) ;
+            strcpy(comando[0], argv[1]) ;
             inicScanner() ;
             obtenSimb() ;
             if (simb != s_numero)

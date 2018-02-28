@@ -6,7 +6,7 @@
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\strings.h>                                   /* strcmpu */
 
 descProceso_t descProceso[maxProcesos] ;
 
@@ -172,8 +172,8 @@ int main ( int argc, char * argv [ ] )
 {
     if (argc == 1) mem(TRUE) ;
     else if (argc == 2)
-        if (iguales(argv[1], "-h")) help() ;
-        else if (iguales(argv[1], "-l")) mem(FALSE) ;
+        if (!strcmpu(argv[1], "-h")) help() ;
+        else if (!strcmpu(argv[1], "-l")) mem(FALSE) ;
         else formato() ;
     else formato() ;
 //	getchar() ;

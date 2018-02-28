@@ -6,8 +6,7 @@
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
-#include <so1pub.h\caracter.h>                           /* dig, mayuscula */
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
 
 void formato ( void )
 {
@@ -127,8 +126,7 @@ int main ( int argc, char * argv [ ] )
 
     if (argc <= 2)
     {
-        if ((argc == 2) &&
-                (iguales(argv[1], "-h") || iguales(argv[1], "-H")))
+        if ((argc == 2) && !strcmpu(argv[1], "-h"))
         {
             help() ;
             return(0) ;
@@ -136,7 +134,7 @@ int main ( int argc, char * argv [ ] )
         if (argc == 1) nTics = 1 ;
         else
         {
-            copiarStr(argv[1], comando[0]) ;
+            strcpy(comando[0], argv[1]) ;
             inicScanner() ;
             obtenSimb() ;
             if (simb != s_numero)

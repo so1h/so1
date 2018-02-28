@@ -8,7 +8,6 @@
 //                                                            /* pointer_t */
 #include <so1pub.h\const.h>                                 /* maxProcesos */
 #include <so1pub.h\def_proc.h>                                 /* estado_t */
-#include <so1pub.h\caracter.h>
 #include <so1pub.h\msdos.h>
 #include <so1pub.h\ccb.h>
 #include <so1.h\procesos.h>                                  

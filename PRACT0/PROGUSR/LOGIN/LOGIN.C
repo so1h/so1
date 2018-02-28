@@ -9,7 +9,7 @@
 #include <so1pub.h\saludos.h>                       /* mostrarSaludoGrande */
 #include <so1pub.h\scanner.h>                     /* inicScanner, obtenStr */
 #include <so1pub.h\leerCmd.h>                                   /* leerCmd */
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\strings.h>                                    /* strcmp */
 
 int main ( void )
 {
@@ -42,14 +42,14 @@ int main ( void )
             password[i] = comando[inCmd][i] ;
 //      printf("\n comando[inCmd] = %s password = %s", comando[inCmd], password) ;
 
-        if (iguales(login, "usuario") && iguales(password, "alumno"))
+        if (!strcmp(login, "usuario") && !strcmp(password, "alumno"))
         {
             setuid(1) ;
             setgid(1) ;
             putchar('\f') ;                           /* borra la pantalla */
             exec("SH", "sh") ;
         }
-        else if (iguales(login, "root") && iguales(password, "toor"))
+        else if (!strcmp(login, "root") && !strcmp(password, "toor"))
         {
             setuid(0) ;
             setgid(0) ;

@@ -7,7 +7,7 @@
 #include <so1pub.h\comundrv.h>                /* dirDescSO1, segDatos, ... */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>            /* escribirStr, escribirDec, ... */
-#include <so1pub.h\strings.h>                        /* copiarStr, iguales */
+#include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
 #include <so1pub.h\scanner.h>  /* inicScanner, obtenCar, comando, car, pos */
 #include <so1pub.h\biosdata.h>                              /* ptrBiosArea */
 
@@ -187,13 +187,13 @@ void mostrarFormato ( void )
     ) ;
 }
 
-void formato ( void )
+int formato ( void )
 {
     mostrarFormato() ;
-    exit(-1) ;
+    return(-1) ;
 }
 
-void help ( void )
+int help ( void )
 {
     escribirStr(
         "\n"
@@ -212,7 +212,7 @@ void help ( void )
         "      -u : desintala el driver                  \n"
         "      -h : muestra este help                    \n"
     ) ;
-    exit(0) ;
+    return(0) ;
 }
 
 descProceso_t descProceso [ maxProcesos ] ;
@@ -263,7 +263,7 @@ int integrarRetardo ( bool_t conMensajes )
     descRecurso_t dR ;
 
     dR.tipo = rDCaracteres ;
-    copiarStr("RETARDO", dR.nombre) ;
+    strcpy(dR.nombre, "RETARDO") ;
     dR.ccb = (ccb_t)&descCcbRT ;
     dR.ccb->arg = NULL ;
     dR.pindx = getpindx() ;
@@ -386,15 +386,15 @@ int instalarRetardo ( bool_t conMensajes )
     return(res) ;
 }
 
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
     int res ;
-    if (argc > 2) formato() ;
+    if (argc > 2) return(formato()) ;
     else if (argc == 1) exit(instalarRetardo(TRUE)) ;
-    else if (iguales(argv[1], "-h") || iguales(argv[1], "-H")) help() ;
-    else if (iguales(argv[1], "-i") || iguales(argv[1], "-I")) exit(instalarRetardo(TRUE)) ;
-    else if (iguales(argv[1], "-q") || iguales(argv[1], "-Q")) exit(instalarRetardo(FALSE)) ;
-    else if (iguales(argv[1], "-u") || iguales(argv[1], "-U"))
+    else if (!strcmpu(argv[1], "-h")) return(help()) ;
+    else if (!strcmpu(argv[1], "-i")) return(instalarRetardo(TRUE)) ;
+    else if (!strcmpu(argv[1], "-q")) return(instalarRetardo(FALSE)) ;
+    else if (!strcmpu(argv[1], "-u"))
     {
         res = destruirRecurso("RETARDO") ;
         switch (res)
@@ -414,7 +414,7 @@ void main ( int argc, char * argv [ ] )
         default :
             escribirStr(" RETARDO no ha podido desinstalarse") ;
         }
-        exit(res) ;
+        return(res) ;
     }
-    else formato() ;
+    else return(formato()) ;
 }

@@ -4,8 +4,8 @@
 /*  funciones para el analisis de los comandos del interprete de comandos  */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\caracter.h>                                /* mayuscula */
-#include <so1pub.h\strings.h>             /* iguales(SalvoMayusculas)Hasta */
+#include <so1pub.h\ctype.h>                                     /* toupper */
+#include <so1pub.h\strings.h>                                  /* strncmpu */
 #include <so1pub.h\scanner.h>       /* nMaxComandos, tamComando, simb, ... */
 
 //#include <so1pub.h\escribir.h>               /* escribirCar, escribirStr */
@@ -61,7 +61,7 @@ void inicScanner ( void ) {             /* prepara el analisis del comando */
 
 void obtenCar ( void ) {       /* obtiene el siguiente caracter a analizar */
   if ((pos < tamComando) && (car != (char)0))
-    car = mayuscula(comando[inCmd][pos++]) ;
+    car = toupper(comando[inCmd][pos++]) ;
   else
     car = (char)0 ;
 //escribirLn() ;
@@ -166,13 +166,13 @@ void identificador ( void ) {          /* analizar siguiente identificador */
   }
   for ( i = 0 ; i < numCmds ; i++ ) {
     if ((pos - pos0 -1 == simbCmd[i].largo) &&
-        (igualesHasta(simbCmd[i].str,
-                      &cmdEnMayusculas[pos0],
-                      simbCmd[i].largo))) {
+        (!strncmpu(simbCmd[i].str,     /* iguales (hasta) salvo mayusculas */
+                   &cmdEnMayusculas[pos0],
+                   simbCmd[i].largo))) {
       simb = simbCmd[i].simb ;
       j = 0 ;
       for ( i = pos0 ; i < pos-1 ; i++ )
-        str[j++] = mayuscula(comando[inCmd][i]) ;
+        str[j++] = toupper(comando[inCmd][i]) ;
       str[j] = (char)0 ;
       return ;
     }
@@ -185,7 +185,7 @@ void identificador ( void ) {          /* analizar siguiente identificador */
   }
   j = 0 ;
   for ( i = pos0 ; i < pos-1 ; i++ )
-    str[j++] = mayuscula(comando[inCmd][i]) ;
+    str[j++] = toupper(comando[inCmd][i]) ;
   str[j] = (char)0 ;
   simb = s_ident ;
 //escribirStr(" ident = \"") ; escribirStr(str) ; escribirStr("\"\n") ;

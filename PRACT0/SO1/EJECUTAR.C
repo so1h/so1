@@ -8,9 +8,9 @@
 #include <so1pub.h\def_proc.h>
 #include <so1pub.h\scanner.h>                                /* tamComando */
 #include <so1pub.h\msdos.h>                  /* lssekMSDOS, SEEK_SET_MSDOS */
-#include <so1pub.h\strings.h>
+#include <so1pub.h\strings.h>                   /* strcpy, strncpy, strcmp */
 #include <so1pub.h\bios_0.h>
-#include <so1pub.h\copia.h>                                  /* copiaLarga */
+#include <so1pub.h\memory.h>                          /* memcpy, memcpy_fd */
 #include <so1pub.h\ptrc2c.h>         /* ptrC2c_t, desencolarPC2c, inicPC2c */ /* encolarPC2c */
 #include <so1.h\gm.h>                  /* k_buscarBloque, k_devolverBloque */
 #include <so1.h\procesos.h>       /* indProcesoActual, descProceso, c2cPFR */
@@ -35,14 +35,14 @@ pid_t kk_fork ( void ) {
 
   origen = MK_FP(descProceso[indProcesoActual].CSProc, 0x0000) ;
   destino = MK_FP(segmento, 0x0000) ;
-  copiaLarga(origen, destino, (dword_t)16*(dword_t)tam) ;
+  memcpy_fd(destino, origen, 16UL*(dword_t)tam) ;
 
   pindx = desencolarPC2c((ptrC2c_t)&c2cPFR[DPLibres]) ;
   encolarPC2c(pindx, (ptrC2c_t)&c2cPFR[DPOcupados]) ;
 
   origen = (pointer_t)&descProceso[indProcesoActual] ;
   destino = (pointer_t)&descProceso[pindx] ;
-  copia(origen, destino, sizeof(descProceso_t)) ;
+  memcpy(destino, origen, sizeof(descProceso_t)) ;
 
   SS_NuevoProceso = segmento
     + (seg((pointer_t)descProceso[indProcesoActual].trama)
@@ -121,8 +121,8 @@ pindx_t preEjecutar ( const char far * nombre,
   printHexBIOS(pindx, 4) ;
 #endif 
 
-  copiarStrHasta(nombre, nombreBackup, 12) ;
-  copiarStrHasta(comando, comandoBackup, tamComando) ;
+  strncpy(nombreBackup, nombre, 12) ;
+  strncpy(comandoBackup, comando, tamComando) ;
 
 #if (FALSE)
 //if (pindx != -1) {                                               /* exec */
@@ -157,9 +157,9 @@ pindx_t preEjecutar ( const char far * nombre,
   }
   nombreCompleto[i] = (char)0 ;
 
-  if (iguales(&nombreFormateado[8], "   ")) {     /* extension por defecto */
-    copiarStr(".BIN", &nombreCompleto[i]) ;
-    copiarStr("BIN", &nombreFormateado[8]) ;
+  if (!strcmp(&nombreFormateado[8], "   ")) {     /* extension por defecto */
+    strcpy(&nombreCompleto[i], ".BIN") ;
+    strcpy(&nombreFormateado[8], "BIN") ;
   }
 
 #if (FALSE)
@@ -170,7 +170,7 @@ pindx_t preEjecutar ( const char far * nombre,
   printStrBIOS("\"") ;
 #endif
 
-  if (!iguales(&nombreFormateado[8], "BIN"))
+  if (strcmp(&nombreFormateado[8], "BIN"))
     return(-2) ;
 
   if (unidadLogicaActual >= 0) {

@@ -14,8 +14,8 @@
 #include <so1pub.h\comundrv.h>       /* segDatos, ptrIndProcesoActual, ... */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>                 /* escribirStr, escribirDec */
-#include <so1pub.h\caracter.h>                                /* mayuscula */
-#include <so1pub.h\strings.h>                        /* copiarStr, iguales */
+#include <so1pub.h\ctype.h>                                     /* toupper */
+#include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
 #include <so1pub.h\bios_0.h>            /* printCarBIOS, leerTeclaListaBDA */
 #include <so1pub.h\bios_crt.h>      /* inicBiosCrt, ptrPant, numFilas, ... */
 #include <so1pub.h\crthw.h>                         /* inicCrtHw, goToXYHw */
@@ -1073,7 +1073,7 @@ int integrarConsola ( byte_t numConsolas, bool_t conMensajes )
     }
 
     dR.tipo = rDCaracteres ;
-    copiarStr("CONSOLA", dR.nombre) ;
+    strcpy(dR.nombre, "CONSOLA") ;
     dR.ccb = (ccb_t)&descCcbConsola ;
     dR.ccb->arg = NULL ;
     dR.pindx = getpindx() ;
@@ -1098,8 +1098,7 @@ int integrarConsola ( byte_t numConsolas, bool_t conMensajes )
 
     if (rec_consola >= 0)
     {
-
-        copiarStr("CON ", nomFich) ;
+        strcpy(nomFich, "CON ") ;
         for ( con = 0 ; con < maxConsolas ; con++ )
         {
             nomFich[3] = '0' + con ;
@@ -1231,7 +1230,7 @@ int main ( int argc, char * argv [ ] )
     else if (argc == 2)
     {
         if (argv[1][0] != '-') formato() ;
-        switch (mayuscula(argv[1][1]))
+        switch (toupper(argv[1][1]))
         {
         case 'H' :
             help() ;
@@ -1251,7 +1250,7 @@ int main ( int argc, char * argv [ ] )
                 if (res < 0) escribirStr(" error al consultar la consola actual ") ;
                 else
                 {
-                    if (mayuscula(argv[1][2]) != 'Q') /* (-nq no muestra mensaje) */
+                    if (toupper(argv[1][2]) != 'Q') /* (-nq no muestra mensaje) */
 					{
 						escribirStr(" la consola actual es CON") ;
                         escribirDec(res, 1) ;
@@ -1285,12 +1284,11 @@ int main ( int argc, char * argv [ ] )
     }
     if ((argc == 2) ||
             ((argc == 3) &&
-             (iguales(argv[1], "-i") || iguales(argv[1], "-I") ||
-              iguales(argv[1], "-q") || iguales(argv[1], "-Q"))
+             (!strcmpu(argv[1], "-i") || !strcmpu(argv[1], "-q"))
             )
        )
-    {
-        copiarStr(argv[argc-1], comando[0]) ;
+    {		
+        strcpy(comando[0], argv[argc-1]) ;
         inicScanner() ;
         obtenSimb() ;
         if (simb == s_numero)
@@ -1300,13 +1298,13 @@ int main ( int argc, char * argv [ ] )
                 escribirStr("\n\n el numero de consolas debe ser > 0 \n") ;
                 return(-1) ;
             }
-            else return(instalarConsola(num, (mayuscula(argv[1][1]) == 'Q'))) ;
+            else return(instalarConsola(num, (toupper(argv[1][1]) == 'Q'))) ;
         }
     }
     else if (argc == 3)
-        if (iguales(argv[1], "-c") || iguales(argv[1], "-C"))
+        if (!strcmpu(argv[1], "-c"))
         {
-            copiarStr(argv[argc-1], comando[0]) ;
+            strcpy(comando[0], argv[argc-1]) ;
             inicScanner() ;
             obtenSimb() ;
             if (simb == s_numero)
@@ -1326,9 +1324,9 @@ int main ( int argc, char * argv [ ] )
                 return(0) ;
             }
         }
-        else if (iguales(argv[1], "-l") || iguales(argv[1], "-L"))
+        else if (!strcmpu(argv[1], "-l")) 
         {
-            copiarStr(argv[argc-1], comando[0]) ;
+            strcpy(comando[0], argv[argc-1]) ;
             inicScanner() ;
             obtenSimb() ;
             if (simb == s_numero)

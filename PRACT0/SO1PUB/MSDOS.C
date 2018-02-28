@@ -4,9 +4,9 @@
 /*                                                                         */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\tipos.h>
+#include <so1pub.h\tipos.h>                                   /* address_t */
+#include <so1pub.h\strings.h>                                    /* strcmp */
 #include <so1pub.h\msdos.h>
-#include <so1pub.h\strings.h>
 
 void finProgDOS ( int exitCode ) {
   signed char code = (signed char)exitCode ;
@@ -167,7 +167,7 @@ bool_t hayDOSBox ( void ) {
   if (LINEAL(VIDos) == 0x000F14A0)
       return (TRUE) ;            /* !!!! DOSBox tiene el vector 0x000F14A0 */
   if (!hayMSDOS()) return(FALSE) ;
-  return (iguales((char far *)valorMSDOS("DOSBOX"), "DOSBOX")) ;
+  return (!strcmp((char far *)valorMSDOS("DOSBOX"), "DOSBOX")) ;
 
 }
 
@@ -236,7 +236,7 @@ bool_t hayWindowsNT ( void ) {
     return(FALSE) ;                                          /* Windows 98 */
   if ((mayor == 5) && (menor == 0)) {
     /* return(valorMSDOS("OS")[0] == 'W') ; */
-    return (iguales((char far *)valorMSDOS("OS"), "Windows_NT")) ;
+    return (!strcmp((char far *)valorMSDOS("OS"), "Windows_NT")) ;
   }
   return(FALSE) ;
 }

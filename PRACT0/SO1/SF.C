@@ -6,15 +6,15 @@
 
 #include <so1pub.h\tipos.h>                                      /* incPtr */
 #include <so1pub.h\carsctrl.h>
-#include <so1pub.h\copia.h>
-#include <so1pub.h\strings.h>
+#include <so1pub.h\memory.h>                          /* memcpy, memcpy_fd */
+#include <so1pub.h\strings.h>                /* strlcpy, strncmp, strncmpu */
 #include <so1pub.h\msdos.h>
 #include <so1.h\ajustes.h>                                   /* unidadBIOS */
 #include <so1.h\bios.h>                    /* leerSectorCSH, leerSectorLBA */
 #include <so1.h\gm.h>
 #include <so1.h\procesos.h>
 #include <so1.h\db.h>                                       /* ptrBuferSO1 */
-#include <so1.h\sf.h>
+#include <so1.h\sf.h>                                 /* strncmp, strncmpu */
 
 /* ----------------- descriptores de unidades logicas -------------------- */
 
@@ -124,7 +124,7 @@ int leerSectorSO1 ( dword_t sectorLogico, byte_t unidadLogica, pointer_t dir )
     if (err == 0x09)
     {
         err = leerSectorUL(sectorLogico, unidadLogica, ptrBuferSO1) ;
-        copia(ptrBuferSO1, dir, 512) ;
+        memcpy_fd(dir, ptrBuferSO1, 512) ;
     }
     return(err) ;
 }
@@ -217,11 +217,10 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
     } ;
     if ((boot->instJMP[0] != 0xEB) || (boot->instJMP[1] < 0x3C) || (boot->instNOP != 0x90) ||
             (boot->signaturaExt != 0x29))       /* debe tratarse de un MBR */
-    {
-        copia(                         /* copiamos la tabla de particiones */
-            (pointer_t)&mbr->descParticion,
-            (pointer_t)&descUnidadFisica[unidadFisicaActual].descParticion,
-            4*sizeof(descParticion_t)
+	{                                  /* copiamos la tabla de particiones */
+        memcpy(&descUnidadFisica[unidadFisicaActual].descParticion,
+               &mbr->descParticion,
+               4*sizeof(descParticion_t)
         ) ;
         for ( i = 0 ; i < maxParticiones ; i++ )
         {
@@ -270,8 +269,8 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
             leerTeclaBIOS() ;
             rebootBIOS() ;
         }
-        if ((!igualesHasta(boot->SF, "FAT12   ", 8) && (tipo == 0x01)) ||
-                (!igualesHasta(boot->SF, "FAT16   ", 8) && (tipo == 0x04)))
+        if ((strncmp(boot->SF, "FAT12   ", 8) && (tipo == 0x01)) ||
+            (strncmp(boot->SF, "FAT16   ", 8) && (tipo == 0x04)))
         {
             printStrBIOS("\n el tipo de sistema de ficheros no corresponde a \"") ;
             for ( i = 0 ; i < 8 ; i++ ) printCarBIOS(boot->SF[i]) ;
@@ -287,8 +286,8 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
         for ( i = 1 ; i < maxParticiones ; i++ )
             descUnidadFisica[unidadFisicaActual].descParticion[i].tipo = 0x00 ;
         descUnidadLogica[unidadLogicaActual].indParticion = 1 ;
-        if (igualesHasta(boot->SF, "FAT12   ", 8)) tipo = 0x01 ;
-        else if (igualesHasta(boot->SF, "FAT16   ", 8)) tipo = 0x04 ;
+        if (!strncmp(boot->SF, "FAT12   ", 8)) tipo = 0x01 ;
+        else if (!strncmp(boot->SF, "FAT16   ", 8)) tipo = 0x04 ;
         else
         {
             printStrBIOS("\n error: tipo de particion no soportado 0x") ;
@@ -304,11 +303,8 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
         leerTeclaBIOS() ;
         rebootBIOS() ;
     }
-    copia(                             /* copiamos la tabla de particiones */
-        (pointer_t)&boot->BPB,
-        (pointer_t)&descUnidadLogica[unidadLogicaActual].BPB,
-        sizeof(BPB_t)
-    ) ;
+                                       /* copiamos la tabla de particiones */
+    memcpy(&descUnidadLogica[unidadLogicaActual].BPB, &boot->BPB, sizeof(BPB_t)) ;
 
     sectoresPorPista = descUnidadLogica[unidadLogicaActual].BPB.sectoresPorPista ;
 
@@ -432,33 +428,33 @@ int unidadLogicaListaSo1 ( int unidadLogica )
             (boot->signatura[0] != 0x55) || (boot->signatura[1] != 0xAA)) return(-3) ;
 
     if ((boot->BPB.bytesPorSector != 512) ||
-            (boot->BPB.sectoresPorCluster != 1) ||
-//    (boot->BPB.sectoresReservados != 1) ||
-            (boot->BPB.numeroDeFATs != 2) ||
-//    (boot->BPB.entradasDirRaiz != 224) ||
-//    (boot->BPB.sectores16 != 2880) ||
-//    (boot->BPB.tipoDeMedio != 0xF0) ||
-//    (boot->BPB.sectoresPorFAT != 9) ||
-//    (boot->BPB.sectoresPorPista != 18) ||
-//    (boot->BPB.cabezas != 2) ||
-//    (boot.BPB.primerSector != 0) ||
-            (boot->BPB.sectores != 0) ||
-            (!(igualesHasta((char far *)&(boot->SF), "FAT12   ", 8) ||
-               igualesHasta((char far *)&(boot->SF), "FAT16   ", 8))))
+        (boot->BPB.sectoresPorCluster != 1) ||
+//      (boot->BPB.sectoresReservados != 1) ||
+        (boot->BPB.numeroDeFATs != 2) ||
+//      (boot->BPB.entradasDirRaiz != 224) ||
+//      (boot->BPB.sectores16 != 2880) ||
+//      (boot->BPB.tipoDeMedio != 0xF0) ||
+//      (boot->BPB.sectoresPorFAT != 9) ||
+//      (boot->BPB.sectoresPorPista != 18) ||
+//      (boot->BPB.cabezas != 2) ||
+//      (boot.BPB.primerSector != 0) ||
+        (boot->BPB.sectores != 0) ||
+        (strncmp((char far *)&(boot->SF), "FAT12   ", 8) &&
+         strncmp((char far *)&(boot->SF), "FAT16   ", 8)))
     {
 
 //   printStrBIOS("\n Formato de disquete no esperado") ;
         return(-4) ;
     }
 
-//   copia((pointer_t)&boot->BPB, (pointer_t)&BPB[unidadLogica], sizeof(BPB_t)) ;
+//  memcpy(&BPB[unidadLogica], &boot->BPB, sizeof(BPB_t)) ;
 
-    copiarStrHasta((char far *)&(boot->SF), (char far *)&strSF, 8) ;
-    if (igualesHasta((char far *)&strSF, "FAT12   ", 8))
+    strlcpy((char far *)&strSF, (char far *)&(boot->SF), 8) ;
+    if (!strncmp((char far *)&strSF, "FAT12   ", 8))
     {
         if (cargaFAT12_Ok(unidadLogica) != 0) return (-5) ;
     }
-    else if (igualesHasta((char far *)&strSF, "FAT16   ", 8))
+    else if (!strncmp((char far *)&strSF, "FAT16   ", 8))
     {
         if (cargaFAT16_Ok(unidadLogica) != 0) return (-6) ;
     }
@@ -624,9 +620,9 @@ int abrirFichero ( const char far * nombre, byte_t unidadLogica )
     for ( i = 0 ; i < maxFichAbiertos ; i++ )
         if ((!tablaFichAbiertos[i].libre) &&
                 (tablaFichAbiertos[i].unidadLogica == unidadLogica) &&
-                /*      (igualesHasta(tablaFichAbiertos[i].entrada.nombre, (char *)&nombreFormateado, 11))) */
-                (igualesSalvoMayusculasHasta((char far *)tablaFichAbiertos[i].entrada.nombre,
-                                             (char far *)&nombreFormateado, 11)))
+//              (!strncmp(tablaFichAbiertos[i].entrada.nombre, (char *)&nombreFormateado, 11))) 
+                (!strncmpu((char far *)tablaFichAbiertos[i].entrada.nombre,
+                           (char far *)&nombreFormateado, 11)))
             return(i) ;
 
     if (numFichAbiertos == maxFichAbiertos)
@@ -645,13 +641,13 @@ int abrirFichero ( const char far * nombre, byte_t unidadLogica )
                     (entrada[j].nombre[0] != 0xE5) &&
                     ((entrada[j].atr & 0x08) == 0x00) &&   /* no etiqueta de volumen */
                     ((entrada[j].atr & 0x10) != 0x10) &&                  /* fichero */
-                    (igualesSalvoMayusculasHasta((char far *)entrada[j].nombre,
-                                                 (char far *)&nombreFormateado, 11)))
+                    (!strncmpu((char far *)entrada[j].nombre,
+                               (char far *)&nombreFormateado, 11)))
             {
                 k = 0 ;
                 while (!tablaFichAbiertos[k].libre) k++ ;
                 tablaFichAbiertos[k].libre = FALSE ;
-                copia((pointer_t)&entrada[j], (pointer_t)&tablaFichAbiertos[k].entrada, sizeof(entrada_t)) ;
+                memcpy(&tablaFichAbiertos[k].entrada, &entrada[j], sizeof(entrada_t)) ;
                 tablaFichAbiertos[k].unidadLogica = unidadLogica ;
                 tablaFichAbiertos[k].sectorLogico = (word_t)sectorLogico ;
                 tablaFichAbiertos[k].numEntrada = j ;
@@ -714,19 +710,19 @@ word_t tamProceso ( int df )
         leerSectorSO1(tablaFichAbiertos[df].sectorLogico,
                       tablaFichAbiertos[df].unidadLogica,
                       (pointer_t)&entrada) ;
-        if (!igualesHasta((char far *)tablaFichAbiertos[df].entrada.nombre,
-                          (char far *)entrada[tablaFichAbiertos[df].numEntrada].nombre,
-                          11))
+        if (strncmp((char far *)tablaFichAbiertos[df].entrada.nombre,
+                    (char far *)entrada[tablaFichAbiertos[df].numEntrada].nombre,
+                    11))
             return(0x0000) ;
-//printStrBIOS("\n tamProceso B") ;
-//printStrBIOS("\n (pointer_t)&entrada = ") ;
-//printPtrBIOS((pointer_t)&entrada) ;
-//printStrBIOS("\n sectorLogico = ") ;
-//printDecBIOS(tablaFichAbiertos[df].sectorLogico, 1) ;
-//printStrBIOS("\n unidadLogica = 0x") ;
-//printHexBIOS(tablaFichAbiertos[df].unidadLogica, 4) ;
-//printStrBIOS("\n numEntrada = ") ;
-//printDecBIOS(tablaFichAbiertos[df].numEntrada, 1) ;
+//      printStrBIOS("\n tamProceso B") ;
+//      printStrBIOS("\n (pointer_t)&entrada = ") ;
+//      printPtrBIOS((pointer_t)&entrada) ;
+//      printStrBIOS("\n sectorLogico = ") ;
+//      printDecBIOS(tablaFichAbiertos[df].sectorLogico, 1) ;
+//      printStrBIOS("\n unidadLogica = 0x") ;
+//      printHexBIOS(tablaFichAbiertos[df].unidadLogica, 4) ;
+//      printStrBIOS("\n numEntrada = ") ;
+//      printDecBIOS(tablaFichAbiertos[df].numEntrada, 1) ;
         if (tablaFichAbiertos[df].entrada.primerCluster !=
                 entrada[tablaFichAbiertos[df].numEntrada].primerCluster)
             return(0x0000) ;
@@ -737,11 +733,11 @@ word_t tamProceso ( int df )
     }
 
     cabecera = (cabecera_t far *)&entrada ;
-    if (!igualesHasta((char far *)cabecera->magicbyte,
-                      (char far *)ptrMagicByteUsr, 3))          /* AJUSTES */
+    if (strncmp((char far *)cabecera->magicbyte,
+                (char far *)ptrMagicByteUsr, 3))          /* AJUSTES */
     {
-        if (!igualesHasta((char far *)cabecera->magicbyte,
-                          (char far *)ptrMagicByteSO1, 3))
+        if (strncmp((char far *)cabecera->magicbyte,
+                    (char far *)ptrMagicByteSO1, 3))
             return(0x0000) ;                        /* cabecera incorrecta */
         cabecera = (cabecera_t far *)((pointer_t)&entrada + desplCab()) ;
     }
@@ -781,8 +777,8 @@ int cargaFicheroAbierto_Ok ( int df, word_t segmento )
                  tablaFichAbiertos[df].unidadLogica,
                  (pointer_t)entrada) ;
 
-    if (!igualesHasta((char far *)tablaFichAbiertos[df].entrada.nombre,
-                      (char far *)entrada[tablaFichAbiertos[df].numEntrada].nombre,
+    if (strncmp((char far *)tablaFichAbiertos[df].entrada.nombre,
+                (char far *)entrada[tablaFichAbiertos[df].numEntrada].nombre,
                       11))
         return(FALSE) ;
 
@@ -877,8 +873,8 @@ int cargaFichero_Ok ( char * nombre, byte_t unidad, word_t segmento )
                     (entrada[j].nombre[0] != 0xE5) &&
                     ((entrada[j].atr & 0x08) == 0x00) &&   /* no etiqueta de volumen */
                     ((entrada[j].atr & 0x10) != 0x10) &&                  /* fichero */
-                    (igualesHasta((char far *)entrada[j].nombre,
-                                  (char far *)&nombreFormateado, 11)))
+                    (!strncmp((char far *)entrada[j].nombre,
+                              (char far *)&nombreFormateado, 11)))
             {
                 k = 0 ;
                 cluster = entrada[j].primerCluster ;

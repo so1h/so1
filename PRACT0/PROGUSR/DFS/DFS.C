@@ -6,7 +6,7 @@
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */ 
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
 #include <so1pub.h\scanner.h>                    /* inicScanner, obtenSimb */
 
 #define lMaxStrTipo 14
@@ -122,13 +122,13 @@ int main ( int argc, char * argv [ ] )
                  ) ;
 				 
     if (argc == 2)
-        if (iguales(argv[1], "-h") || iguales(argv[1], "-H"))
+        if (!strcmpu(argv[1], "-h"))
             help() ;
-        else if (iguales(argv[1], "-a") || iguales(argv[1], "-A"))
+        else if (!strcmpu(argv[1], "-a"))
             mostrarFicheros() ;
         else
         {
-            copiarStr(argv[1], comando[0]) ;
+            strcpy(comando[0], argv[1]) ;
             inicScanner() ;
             obtenSimb() ;
             if (simb != s_numero)

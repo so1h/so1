@@ -5,8 +5,7 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\tipos.h>  /* word_t, dword_t, bool_t, NULL, FALSE, TRUE */
-                                                               /* seg, off */
-//                                            /* pointer_t, pointer, MK_FP */
+//                                  /* pointer_t, pointer, MK_FP, seg, off */
 #include <so1pub.h\const.h>     /* maxProcesos, dfsMax, maxRecursos, dfMax */
 #include <so1pub.h\c2c.h>                          /* c2c_t, dobleEnlace_t */
 #include <so1pub.h\ccb.h>                                 /* ccb_t, cbNulo */
@@ -23,11 +22,10 @@
 #include <so1pub.h\scanner.h>                                /* tamComando */
 #include <so1pub.h\fcntl.h>                /* modoAp_t, O_RDONLY, O_WRONLY */
 #include <so1pub.h\puertos.h>                            /* contadorTimer0 */
-#include <so1pub.h\strings.h>                   /* copiarStr, igualesHasta */
-#include <so1pub.h\copia.h>                           /* copia, copiaLarga */
+#include <so1pub.h\strings.h>                           /* strcpy, strncmp */
+#include <so1pub.h\memory.h>                          /* memcpy, memcpy_fd */
 #include <so1pub.h\startbss.h>                                 /* startBSS */
 #include <so1pub.h\finbss.h>                                     /* finBSS */
-#include <so1pub.h\caracter.h>                                      /* dig */
 #include <so1pub.h\bios_0.h>                           /* printStrBIOS ... */
 
 #include <so1.h\procesos.h>                            /* descProcesoExt_t */
@@ -218,32 +216,6 @@ void salvarTareaInterrumpida ( void ) {          /* indProcesoActual != -1 */
     (trama_t far *)pointer(SS_Tarea, SP_Tarea) ;
 }
 
-void ponerNumeroHex ( word_t num, char * * str ) {              /* num > 0 */
-  word_t d = 0x1000 ;
-  if (num == 0) *(*str)++ = '0' ;
-  else {
-    while (num/d == 0) d = (d >> 4) ;
-    while (d > 0) {
-      *(*str)++ = dig[num/d] ;
-      num = num % d ;
-      d = (d >> 4) ;
-    }
-  }
-}
-
-void ponerNumero ( word_t num, char * * str ) {                 /* num > 0 */
-  word_t d = 10000 ;
-  if (num == 0) *(*str)++ = '0' ;
-  else {
-    while (num/d == 0) d = d/10 ;
-    while (d > 0) {
-      *(*str)++ = '0' + (num/d) ;
-      num = num % d ;
-      d = d/10 ;
-    }
-  }
-}
-
 static int ponerArgs ( pindx_t pindx, word_t DSProc, word_t offDATADS, word_t far * offArgv ) {
   int i = 0 ;
   int argc = 0 ;
@@ -254,7 +226,7 @@ static int ponerArgs ( pindx_t pindx, word_t DSProc, word_t offDATADS, word_t fa
   ptrCmdLine = pointer(DSProc, offDATADS + 1) ;
   *offArgv = offDATADS + 1 + tamComando ;      /* offset respecto DS pindx */
   ptrArgv = (char * far *)pointer(DSProc, offDATADS + 1 + tamComando) ;
-  copiaLarga((pointer_t)&descProceso[pindx].comando, ptrCmdLine, tamComando) ;
+  memcpy(ptrCmdLine, &descProceso[pindx].comando, tamComando) ;
   while ((car = ptrCmdLine[i]) != (char)0) {
     switch (estadoBlanco) {
     case TRUE  : if (car != ' ') {
@@ -318,10 +290,10 @@ pindx_t crearProceso (       word_t     segmento,
 
   if ((pindx < 0) && (c2cPFR[DPOcupados].numElem == maxProcesos)) return(-1) ;
   cabecera = (cabecera_t far *)pointer(segmento, 0x0000) ;
-  if (!igualesHasta((char far *)cabecera->magicbyte,
-                    (char far *)ptrMagicByteUsr, 3)) {          /* AJUSTES */
-    if (!igualesHasta((char far *)cabecera->magicbyte,
-                      (char far *)ptrMagicByteSO1, 3))
+  if (strncmp((char far *)cabecera->magicbyte,
+              (char far *)ptrMagicByteUsr, 3)) {                /* AJUSTES */
+    if (strncmp((char far *)cabecera->magicbyte,
+                (char far *)ptrMagicByteSO1, 3))
       return(-1) ;                                  /* cabecera incorrecta */
     cabecera = (cabecera_t far *)pointer(segmento, desplCab()) ;
   }
@@ -361,7 +333,7 @@ pindx_t crearProceso (       word_t     segmento,
 
   descProceso[i].tam = tam ;
 
-  copiarStr(programa, descProceso[i].programa) ;
+  strcpy(descProceso[i].programa, programa) ;
 
   if (pindx == -1) {                                      /* createProcess */
     descProceso[i].pid = nuevoPid() ;
@@ -564,18 +536,18 @@ void inicProcesos ( void ) {
 
   switch (modoSO1()) {
   case modoSO1_Bin:                                      /* so1.bin (boot) */
-    copiarStr(comandoSo1a, descProceso[0].comando) ;
+    strcpy(descProceso[0].comando, comandoSo1a) ;
     break ;
   case modoSO1_Com:
   case modoSO1_Exe:
-    copiarStr(comandoSo1b, descProceso[0].comando) ;
+    strcpy(descProceso[0].comando, comandoSo1b) ;
     break ;
 //case modoSO1_Bs :                             /* so1.bin (boot) SYSLINUX */
-//  copiarStr(comandoSo1c, descProceso[0].comando) ;
+//  strcpy(descProceso[0].comando, comandoSo1c) ;
 //  break ;
   default : ;
   }
-  copiarStr(strSo1[modoSO1()-1], descProceso[0].programa) ;
+  strcpy(descProceso[0].programa, strSo1[modoSO1()-1]) ;
 
   indProcesoActual = 0 ;
   indProcesoDeSuperficie = 0 ;

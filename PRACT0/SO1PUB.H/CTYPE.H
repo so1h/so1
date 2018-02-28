@@ -1,17 +1,17 @@
 /* ----------------------------------------------------------------------- */
-/*                               caracter.h                                */
+/*                                 ctype.h                                 */
 /* ----------------------------------------------------------------------- */
 /*                                                                         */
 /* ----------------------------------------------------------------------- */
 
-#ifndef CARACTER_H
-#define CARACTER_H
+#ifndef CTYPE_H
+#define CTYPE_H
 
-extern char dig[17] ;
+int tolower ( int car ) ;
 
-char mayuscula ( char letra ) ;
+int toupper ( int car ) ; 
 
-char minuscula ( char letra ) ;
+int isprint ( int car ) ;
 
-#endif /* CARACTER_H */
+#endif /* CTYPE_H */
 

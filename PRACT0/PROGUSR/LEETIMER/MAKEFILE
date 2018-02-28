@@ -15,7 +15,7 @@ $(PROGRAMA).obj,                 \
 ..\..\so1pub\obj\vsprintf.obj,   \
 ..\..\so1pub\obj\scanner.obj,    \
 ..\..\so1pub\obj\strings.obj,    \
-..\..\so1pub\obj\caracter.obj,   \
+..\..\so1pub\obj\ctype.obj,      \
 ..\..\crtl\obj\h_ldiv.obj,       \
 ..\..\crtl\obj\h_lursh.obj,      \
 ..\..\crtl\obj\h_llsh.obj,       \

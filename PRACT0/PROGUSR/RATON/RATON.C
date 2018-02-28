@@ -10,11 +10,12 @@
 
 #include <so1pub.h\tipos.h>          /* byte_t, word_t, pointer_t, rindx_t */ /* TRUE, FALSE */
 #include <so1pub.h\c2c.h>                          /* c2c_t, dobleEnlace_t */
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\ctype.h>                                     /* toupper */
+#include <so1pub.h\strings.h>                  /* strcpy, strcmpu, strncmp */
 #include <so1pub.h\scanner.h>
 #include <so1pub.h\biosdata.h>               /* ptrBiosArea, VIDEO_lastrow */
 #include <so1pub.h\bios_0.h>
-#include <so1pub.h\copia.h>                                       /* copia */
+#include <so1pub.h\memory.h>                                     /* memcpy */
 #include <so1pub.h\pantalla.h>                    /* maxFilas, maxColumnas */
 #include <so1pub.h\memvideo.h>                             /* printCarBIOS */
 #include <so1pub.h\def_tecl.h>                                /* teclado_t */
@@ -132,8 +133,7 @@ void inicEstadoRaton ( void )
 
 bool_t leerEstadoRaton ( estadoRaton_t far * estado )
 {
-
-    copia((pointer_t)&er, (pointer_t)estado, sizeof(estadoRaton_t)) ;
+    memcpy(estado, &er, sizeof(estadoRaton_t)) ;
     if (huboInt)
     {
         huboInt = FALSE ;
@@ -172,7 +172,7 @@ int far readRaton ( int dfs, pointer_t dir, word_t nbytes )
         nbARetornar = nbytes ;
     else
         nbARetornar = sizeof(estadoRaton_t) ;
-    copia((pointer_t)&er, dir, nbARetornar) ;
+    memcpy(dir, (pointer_t)&er, nbARetornar) ;
 
     nbytesProceso[indProcesoActual] = nbARetornar ; /* nbytes esperando leer */
     dirProceso[indProcesoActual] = dir ;
@@ -197,7 +197,7 @@ int far aio_readRaton ( int dfs, pointer_t dir, word_t nbytes )
         nbARetornar = nbytes ;
     else
         nbARetornar = sizeof(estadoRaton_t) ;
-    copia((pointer_t)&er, dir, nbARetornar) ;
+    memcpy(dir, &er, nbARetornar) ;
 
     asm pop ds
     return(nbARetornar) ;
@@ -651,8 +651,7 @@ void procesarColaBloqueadosRaton ( void )
 
         do
         {
-
-            copia((pointer_t)&er, dirProceso[pindx], nbytesProceso[pindx]) ;
+            memcpy(dirProceso[pindx], &er, nbytesProceso[pindx]) ;
 
 #if (FALSE)
 
@@ -991,7 +990,7 @@ void inicRaton ( tipoRaton_t * tipoRaton,
         ;
     } ;
 
-    hayDBox  = (bool_t)(igualesHasta((char far *)ptrFechaBios, "01/01/92", 8)) ;
+    hayDBox  = (bool_t)(!strncmp((char far *)ptrFechaBios, "01/01/92", 8)) ;
 
     if (conMensajes)
     {
@@ -1057,10 +1056,10 @@ void mostrarFormato ( void )
     escribirStr("\n\n formato: RATON [ [ -i | -q ] [ num ] | -u | -h ] \n") ;
 }
 
-void formato ( void )
+int formato ( void )
 {
     mostrarFormato() ;
-    exit(-1) ;
+    return(-1) ;
 }
 
 void help ( void )
@@ -1130,7 +1129,7 @@ int integrarRaton ( bool_t conMensajes )
               (bool_t)conMensajes) ;               /* tipoRaton != ninguno */
 
     dR.tipo = rDCaracteres ;
-    copiarStr("RATON", dR.nombre) ;
+    strcpy(dR.nombre, "RATON") ;
     dR.ccb = (ccb_t)&descCcbRaton ;
     dR.ccb->arg = NULL ;
     dR.pindx = getpindx() ;
@@ -1176,7 +1175,7 @@ int integrarRaton ( bool_t conMensajes )
     if (rec_raton >= 0)
     {
 
-        copiarStr("RATON", nomFich) ;
+        strcpy(nomFich, "RATON") ;
 
         dfs = crearFichero(nomFich, rec_raton, 0, fedCaracteres) ;
 
@@ -1307,19 +1306,17 @@ int instalarRaton ( bool_t conMensajes )
     return(res) ;
 }
 
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
     int res ;
-    if (argc > 3) formato() ;
-    else if (argc == 1) exit(instalarRaton(TRUE)) ;
+    if (argc > 3) return(formato()) ;
+    else if (argc == 1) return(instalarRaton(TRUE)) ;
     else if (argc == 2)
     {
-        if (iguales(argv[1], "-h") || iguales(argv[1], "-H")) help() ;
-        else if (iguales(argv[1], "-i") || iguales(argv[1], "-I"))
-            exit(instalarRaton(TRUE)) ;
-        else if (iguales(argv[1], "-q") || iguales(argv[1], "-Q"))
-            exit(instalarRaton(FALSE)) ;
-        else if (iguales(argv[1], "-u") || iguales(argv[1], "-U"))
+        if (!strcmpu(argv[1], "-h")) help() ;
+        else if (!strcmpu(argv[1], "-i")) return(instalarRaton(TRUE)) ;
+        else if (!strcmpu(argv[1], "-q")) return(instalarRaton(FALSE)) ;
+        else if (!strcmpu(argv[1], "-u"))
         {
             res = destruirRecurso("RATON") ;
             switch (res)
@@ -1339,17 +1336,17 @@ void main ( int argc, char * argv [ ] )
             default :
                 escribirStr(" RATON no ha podido desinstalarse") ;
             }
-            exit(res) ;
+            return(res) ;
         }
     }
     if ((argc == 2) ||
             ((argc == 3) &&
-             (iguales(argv[1], "-i") || iguales(argv[1], "-I") ||
-              iguales(argv[1], "-q") || iguales(argv[1], "-Q"))
+             (!strcmpu(argv[1], "-i") ||
+              !strcmpu(argv[1], "-q"))
             )
        )
     {
-        copiarStr(argv[argc-1], comando[0]) ;
+        strcpy(comando[0], argv[argc-1]) ;
         inicScanner() ;
         obtenSimb() ;
         if (simb == s_numero)
@@ -1357,29 +1354,13 @@ void main ( int argc, char * argv [ ] )
             if (num == 0)
             {
                 escribirStr("\n\n numConsolas debe ser > 0 \n") ;
-                exit(-1) ;
+                return(-1) ;
             }
-            else exit(instalarRaton((argv[1][1] == 'q') || (argv[1][1] == 'Q'))) ;
+            else return(instalarRaton(toupper(argv[1][1]) == 'Q')) ;
         }
     }
-    formato() ;
+    return(formato()) ;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /***************************************************************************/
 

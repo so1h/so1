@@ -6,7 +6,6 @@
 
 #include <so1pub.h\tipos.h>                                        /* retf */
 #include <so1pub.h\carsctrl.h>
-#include <so1pub.h\caracter.h>                                      /* dig */
 #include <so1pub.h\printgen.h>
 #include <so1pub.h\biosdata.h>
 #include <so1pub.h\bios_0.h>
@@ -169,7 +168,7 @@ int printCarRawBIOS ( char car, byte_t pag ) {
   asm mov bl,07h
   asm mov cx,1
   asm mov ah,09h        /* Llamada al BIOS: Escribir caracter por pantalla */
-  /* asm mov ah,0ah */       /* Llamada al BIOS: Escribir caracter por pantalla */
+  /* asm mov ah,0ah */  /* Llamada al BIOS: Escribir caracter por pantalla */
   asm int 10h
 }
 
@@ -273,6 +272,8 @@ int printPtrBIOS ( pointer_t ptr )
 {
   printGenPtr(ptr, printCarBIOS) ;
 }
+
+static char dig [17] = "0123456789ABCDEF" ;
 
 #pragma warn -par
 

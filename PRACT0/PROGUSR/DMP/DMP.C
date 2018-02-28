@@ -8,8 +8,8 @@
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */ 
 
-#include <so1pub.h\caracter.h>                                /* mayuscula */
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\ctype.h>                                     /* toupper */
+#include <so1pub.h\strings.h>                                   /* strcmpu */
 #include <so1pub.h\scanner.h>                    /* inicScanner, obtenSimb */ 
 #include <so1pub.h\msdos.h>                                /* versionMSDOS */
 
@@ -255,7 +255,7 @@ int main ( int argc, char * argv [ ] )
         return(1) ;
     }
 	
-    if ((argc == 2) && (iguales(argv[1], "-h") || iguales(argv[1], "-H")))
+    if ((argc == 2) && (!strcmpu(argv[1], "-h")))
     {
         help() ;
         return(0) ;
@@ -265,7 +265,7 @@ int main ( int argc, char * argv [ ] )
     for ( i = 1 ; i < argc ; i ++ )
     {
         for ( j = 0 ; argv[i][j] != '\0' ; j++ )
-            comando[0][k++] = mayuscula(argv[i][j]) ;
+            comando[0][k++] = toupper(argv[i][j]) ;
         comando[0][k++] = ' ' ;
     }
     comando[0][k--] = '\0' ;

@@ -9,7 +9,7 @@
 #include <so1pub.h\strings.h>
 #include <so1pub.h\ll_s_so1.h>
 #include <so1pub.h\escribir.h>
-#include <so1pub.h\copia.h>
+#include <so1pub.h\memory.h>                          /* memcpy, memcpy_fd */
 #include <so1.h\ajustes.h>
 #include <so1.h\recursos.h>
 #include <so1.h\procesos.h>
@@ -80,7 +80,7 @@ int far readGP ( int dfs, pointer_t dir, word_t nbytes ) {
     case sizeof(regParametros_t) :
       *pid = k_exec(regParam->nombre, regParam->comando) ; return(nbytes) ;
     case 2 :
-      switch (*ptrWord) {
+      switch (*ptrWord) { 
         case 0x0000 : *pid   = k_fork() ;     return(nbytes) ;
         case 0x0001 : *pid   = k_getpid() ;   return(nbytes) ;
         case 0x0002 : *pindx = k_getpindx() ; return(nbytes) ;
@@ -172,11 +172,16 @@ pid_t inicGP ( void ) {
 
   pindx = desencolarPC2c((ptrC2c_t)&c2cPFR[DPLibres]) ;
   encolarPC2c(pindx, (ptrC2c_t)&c2cPFR[DPOcupados]) ;
-  copia((pointer_t)&descProceso[0], (pointer_t)&descProceso[pindx], sizeof(descProceso_t)) ;
-  copiaLarga(
-    pointer(descProceso[0].CSProc, 0x0000),
+  memcpy(&descProceso[pindx], &descProceso[0], sizeof(descProceso_t)) ;
+//copiaLarga(
+//  pointer(descProceso[0].CSProc, 0x0000),
+//  pointer(descProceso[pindx].CSProc, 0x0000),
+//  sizeof(descProceso_t)
+//) ;
+  memcpy(
     pointer(descProceso[pindx].CSProc, 0x0000),
-    sizeof(descProceso_t)
+    pointer(descProceso[0].CSProc, 0x0000),
+    sizeof(descProceso_t)    /* ?????????????????????? */
   ) ;
   descProceso[pindx].pid = nuevoPid() ;
   descProceso[pindx].pid = preparado ;           /* realmente en ejecucion */

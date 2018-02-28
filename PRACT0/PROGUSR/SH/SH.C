@@ -9,7 +9,7 @@
 
 #include <so1pub.h\interpre.h>                      /* interpretarComandos */
 #include <so1pub.h\saludos.h>
-#include <so1pub.h\strings.h>
+#include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
 
 void formato ( void )
 {
@@ -45,14 +45,14 @@ int main ( int argc, char * argv [ ] )
 
     if (argc == 2)
     {
-        if (iguales(argv[1], "-h" ))
+        if (!strcmpu(argv[1], "-h" ))
         {
             help() ;
             return(0) ;
         }
         else
         {
-            copiarStr(argv[1], nombreDispositivo) ;
+            strcpy(nombreDispositivo, argv[1]) ;
             res = redirigirSTDIO((char *)nombreDispositivo) ;
             switch (res)
             {

@@ -8,9 +8,9 @@
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\strings.h>                           /* strcpy, iguales */
 #include <so1pub.h\scanner.h>
-#include <so1pub.h\caracter.h>                                /* minuscula */
+#include <so1pub.h\ctype.h>                                     /* tolower */
 
 #include <so1pub.h\ptrc2c.h>                                   /* ptrC2c_t */
 
@@ -478,7 +478,7 @@ int main ( int argc, char * argv [ ] )
             (argv[1][0] == '-') &&
             (argv[1][2] == '\0'))
     {
-        opcion = minuscula(argv[1][1]) ;
+        opcion = tolower(argv[1][1]) ;
         if (opcion == 'h')
         {
             help() ;
@@ -490,7 +490,7 @@ int main ( int argc, char * argv [ ] )
             return(0) ;
         }
     }
-    copiarStr(argv[1], comando[0]) ;
+    strcpy(comando[0], argv[1]) ;
     inicScanner() ;
     obtenSimb() ;
     if (simb != s_numero)
@@ -512,7 +512,7 @@ int main ( int argc, char * argv [ ] )
                          (argv[2][0] == '-') &&
                          (argv[2][2] == (char)0))
                 {
-                    opcion = minuscula(argv[2][1]) ;
+                    opcion = tolower(argv[2][1]) ;
                     if ((opcion == 'p') ||
                             (opcion == 'f'))
                         mostrarDescProceso(pindx, opcion) ;

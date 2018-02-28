@@ -6,8 +6,7 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\caracter.h>                           /* dig, mayuscula */
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\strings.h>                                  /* strncmpu */
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 
 int dfReloj ;
@@ -89,13 +88,12 @@ int main ( int argc, char * argv [ ] )
         return(-1) ;
     }
 
-    if ((argc == 2) && (iguales(argv[1], "-h") || iguales(argv[1], "-H")))
+    if ((argc == 2) && (!strcmpu(argv[1], "-h")))
     {
         help() ;
         return(-1) ;
     }
-    if ((argc == 2) &&
-            (iguales(argv[1], "-b") || iguales(argv[1], "-B")))
+    if ((argc == 2) && (!strcmpu(argv[1], "-b")))
     {
         mantenerCentrado = TRUE ;
 //      tamWin = tamWindow() ;
@@ -104,8 +102,7 @@ int main ( int argc, char * argv [ ] )
         borrarCentrar(tamWin) ;
     }
     else if ((argc != 1) &&
-             ((argc != 2) ||
-              (!iguales(argv[1], "-n") && !iguales(argv[1], "-N"))))
+             ((argc != 2) || (strcmpu(argv[1], "-n")))) /* argv[1] != "-N" */
     {
         formato() ;
         return(-1) ;

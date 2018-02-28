@@ -6,8 +6,7 @@
 
 #include <so1pub.h\def_scan.h>     /* Home, End, Ins, Del, Fl(Iz/De/Up/Dn) */
 #include <so1pub.h\carsctrl.h>                                      /* ESC */
-#include <so1pub.h\caracter.h>                                /* mayuscula */
-#include <so1pub.h\strings.h>             /* iguales(SalvoMayusculas)Hasta */
+#include <so1pub.h\strings.h>                          /* strcpy, strncmpu */
 #include <so1pub.h\ll_s_so1.h>                   /* STDIN, leer, leerListo */
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 #include <so1pub.h\scanner.h>       /* nMaxComandos, tamComando, simb, ... */
@@ -113,7 +112,7 @@ int autocompletarCInt ( int   i ) {
     for (ind = 0 ; ind < numCmds ; ind++ ) {
       largo = simbCmd[k].largo ;
       if ((i - j) < largo) {
-        if (igualesSalvoMayusculasHasta(
+        if (!strncmpu(
              (char far *)&comando[inCmd][j],
              (char far *)simbCmd[k].str, (i - j))) {
           for ( n = j ; n < (j + largo) ; n++ )
@@ -158,7 +157,7 @@ int autocompletarCExt ( int i ) {
         largo = k ;
 //      printf("largo = %i", largo) ;
         if ((i - j) < largo) {
-          if (igualesSalvoMayusculasHasta(
+          if (!strncmpu(
                (char far *)&comando[inCmd][j],
                (char far *)ffblk.ff_name, (i - j))) {
             for ( n = j ; n < (j + largo) ; n++ )
@@ -176,8 +175,8 @@ int autocompletarCExt ( int i ) {
       while (findNext(&ffblk) == 0) ;
     }
     else {
-      copiarStr((char *)&comando[inCmd][j], prefijo) ;
-      copiarStr("*.BIN", (char *)&prefijo[i-j]) ;
+      strcpy(prefijo, (char *)&comando[inCmd][j]) ;
+      strcpy((char *)&prefijo[i-j], "*.BIN") ;
 //    printf("\n prefijo = %s\n", prefijo) ;
       if ((carAnt != '\t') || (findnextDOS((struct ffblk *)&fcb) != 0))
         if (findfirstDOS((char *)prefijo, (struct ffblk *)&fcb, FA_ARCH) == -1) return(i) ;
@@ -189,7 +188,7 @@ int autocompletarCExt ( int i ) {
         largo = k ;
 //      printf("largo = %i", largo) ;
         if ((i - j) < largo) {
-          if (igualesSalvoMayusculasHasta(
+          if (!strncmpu(
                (char far *)&comando[inCmd][j],
                (char far *)fcb.ff_name, (i - j))) {
             for ( n = j ; n < (j + largo) ; n++ )

@@ -8,9 +8,9 @@
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\strings.h>                           /* strcpy, iguales */
 #include <so1pub.h\scanner.h>
-#include <so1pub.h\caracter.h>                                /* minuscula */
+#include <so1pub.h\ctype.h>                                     /* tolower */
 
 #pragma option -w-use /* (comundrv.h) warning: 'x' declared but never used */
 
@@ -286,7 +286,7 @@ void main ( int argc, char * argv [ ] )
         (argv[1][0] == '-') &&
         (argv[1][2] == (char)0))
     {
-        opcion = minuscula(argv[1][1]) ;
+        opcion = tolower(argv[1][1]) ;
         if (opcion == 'h')                                   /* MEAPILA -h */
         {
             help() ;
@@ -298,7 +298,7 @@ void main ( int argc, char * argv [ ] )
         }
     }
 
-    copiarStr(argv[1], comando[0]) ;
+    strcpy(comando[0], argv[1]) ;
     inicScanner() ;
     obtenSimb() ;
     if (simb != s_numero)                                         /* error */
@@ -313,7 +313,7 @@ void main ( int argc, char * argv [ ] )
         exit(meapila(pid, 0x20)) ;                          /* 0x20 == ' ' */
     }
 
-    copiarStr(argv[2], comando[0]) ;
+    strcpy(comando[0], argv[2]) ;
     inicScanner() ;
     saltarBlancos() ;
     if ((('0' <= car) && (car <= '9')) || (('A' <= car) && (car <= 'F')))
@@ -327,7 +327,7 @@ void main ( int argc, char * argv [ ] )
                 else
                     if ((argv[3][0] == '-') && (argv[3][2] == (char)0))
                     {
-                        opcion = minuscula(argv[3][1]) ;
+                        opcion = tolower(argv[3][1]) ;
                         if (opcion == 'c')           /* MEAPILA pid num -c */
                             exit(espacioNoUtilizado(pid, num)) ;
                         else                                      /* error */
@@ -349,7 +349,7 @@ void main ( int argc, char * argv [ ] )
     {
         if (argc == 3)
         {
-            opcion = minuscula(argv[2][1]) ;
+            opcion = tolower(argv[2][1]) ;
             if ((opcion != (char)0) && (argv[2][2] == (char)0))
             {
                 if (opcion == 'c')                       /* MEAPILA pid -c */

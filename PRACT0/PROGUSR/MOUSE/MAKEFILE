@@ -13,7 +13,7 @@ $(PROGRAMA).obj,                 \
 ..\..\so1pub\obj\tipos.obj,      \
 ..\..\so1pub\obj\stdio.obj,      \
 ..\..\so1pub\obj\vsprintf.obj,   \
-..\..\so1pub\obj\caracter.obj,   \
+..\..\so1pub\obj\ctype.obj,      \
 ..\..\so1pub\obj\strings.obj,    \
 ..\..\crtl\obj\h_ldiv.obj,       \
 ..\..\crtl\obj\h_lursh.obj,      \

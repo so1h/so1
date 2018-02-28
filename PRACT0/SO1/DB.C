@@ -4,28 +4,28 @@
 /*                         dispositivos de bloques                         */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\comundrv.h>       /* segDatos, ptrIndProcesoActual, ... */
+//#include <so1pub.h\comundrv.h>     /* segDatos, ptrIndProcesoActual, ... */
 #include <so1pub.h\bios_0.h>
 #include <so1pub.h\msdos.h>
-#include <so1pub.h\strings.h>
+#include <so1pub.h\strings.h>                                    /* strcpy */
 #include <so1.h\ajustsp.h>
 #include <so1.h\ajustes.h>
 #include <so1.h\recursos.h>
 
 #include <so1pub.h\def_sf.h>
 
-//#include <so1.h\procesos.h>
+#include <so1.h\procesos.h>
 
 #include <so1.h\gm.h>                  /* k_buscarBloque, k_devolverBloque */
 
 #include <so1.h\db.h>
 
 #include <so1.h\bios.h>                                   /* leerSectorLBA */
-#include <so1pub.h\copia.h>                                       /* copia */
+#include <so1pub.h\memory.h>                                  /* memcpy_fd */
 #include <so1pub.h\cmos.h>             /* leerCmos, CMOS_FLOPPY_DRIVE_TYPE */
 //                              /* CMOS_DISK_DATA, CFD_144MB, CFD_NO_DRIVE */
 
-rindx_t rec_db ;
+rindx_t rec_db ; 
 
 dfs_t dfs_db ;
 
@@ -43,6 +43,8 @@ static int far releaseDB ( int dfs )
 
 static int far readDB ( int dfs, pointer_t dir, word_t nbytes ) 
 {
+#if (FALSE)	
+	
     word_t DS_DB = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     pindx_t indProcesoActual ;
     modoAp_t modoAp ;
@@ -57,8 +59,6 @@ static int far readDB ( int dfs, pointer_t dir, word_t nbytes )
     indProcesoActual = *ptrIndProcesoActual ;
     df = (*ptrTramaProceso)->BX ;
     db = ptrDescFichero[dfs].menor ;
-	
-#if (FALSE)	
 	
 d_bloque[db].unidadBIOS
 	
@@ -145,13 +145,19 @@ static int far ioctlDB ( int dfs, word_t request, word_t arg )
 
 /* ----------------------------------------------------------------------- */
 
-#define paragrafosPorSector 512/16                                   /* 32 */
+#define paragrafosPorSector 512/16                          /* 32 = 0x0020 */
 
 bool_t posibleErr9EnOpBIOS ( word_t seg ) 
 {
-	if ((seg & 0xF000) != ((seg + (512/16)) & 0xF000)) return(TRUE) ;
+	if ((seg & 0xF000) != ((seg + ((512/16)-1)) & 0xF000)) return(TRUE) ;
 	else return(FALSE) ;
 }
+
+/* Para que funcione bien segBuferSeguro es necesario que la memoria este  */
+/* compactada con un unico bloque de memoria libre. Ademas no debe de      */
+/* mas procesos accediendo a la lista de bloques libres. Estas condiciones */
+/* se cumplen si se llama desde el main de SO1.C ya que se acaba de poner  */
+/* en marcha el gestor de memoria y las interrupciones esta inhibidas.     */  
 
 word_t segBuferSO1 ;           /* bufer para leer de forma segura sectores */
                                     /* con el BIOS (ver error 0x09 int 13) */
@@ -171,15 +177,15 @@ word_t segBuferSeguro ( void )                        /* seguro con el DMA */
 }
 
 typedef struct {
-    char nombre [ 5 ] ;
-	byte_t unidadBIOS ;
-	byte_t tipoUnidad ;
-    word_t bytesPorSector ;
-    byte_t sectoresPorPista ;
-    byte_t cabezas ;
-	byte_t cilindros ;
+    char nombre [ 5 ] ;                 /* FDA, FDB, HDA, HDA1, ... , HDB4 */
+	byte_t  unidadBIOS ;                         /* 0x00, 0x01, 0x80, 0x81 */
+	byte_t  tipoUnidad ;                          /* CMOS_DISK_DRIVE1_TYPE */
+    word_t  bytesPorSector ;                                        /* 512 */
+    byte_t  sectoresPorPista ;                    
+    byte_t  cabezas ;
+	word_t  cilindros ;
 	dword_t primerSector ;
-	dword_t numSectores ;
+	dword_t numSectores ;        /* numero de sectores del disco/particion */
 } d_bloque_t ;
 
 d_bloque_t d_bloque [ ] = {
@@ -209,20 +215,22 @@ void inicDB ( void ) {
 
     int i, j, k ;
 	byte_t tipoUnidad ;
-	byte_t cilindros ;
+	word_t bytesPorSector ;
+	byte_t sectoresPorPista ;
+	byte_t cabezas ;
+	word_t cilindros ;
     mbr_t far * mbr ;
     boot_t far * boot ;
 	word_t sectoresPorCilindro ;
-    CSH_t CSH ;
+    CSH_t CSH, CSHMax ;
 	int error ;
 	
     descRecurso_t dR ;
 
     dR.tipo = rDB ;
-    copiarStr("DB", dR.nombre) ;
+    strcpy(dR.nombre, "DB") ;
     dR.ccb = (ccb_t)&descCcbDB ;
-//  dR.pindx = indProcesoActual ;
-    dR.pindx = *ptrIndProcesoActual ;
+    dR.pindx = indProcesoActual ;
     dR.numVI = 0 ;
 
     dR.open      = (open_t     )pointer(_CS, (word_t)openDB) ;
@@ -241,29 +249,35 @@ void inicDB ( void ) {
 	
 //                                    	  /* CMOS_FLOPPY_DRIVE_TYPE = 0x10 */
 //                                                /* CMOS_DISK_DATA = 0x12 */
-    j = 0 ;   
-    cilindros = 0 ;	
+    j = 0 ;            /* contador de unidades 0:FDA, 1:FDB, 2:HDA y 3:HDB */
+    cilindros = 0 ;	                                  /* valor por defecto */
     mbr = (mbr_t far *)ptrBuferSO1 ;
     CSH.h = 0 ;                      /* sector logico 0 => sector fisico 1 */
     CSH.cs = 0x0001 ;                              /* C = 0, S = 1 y H = 0 */
-	for ( i = 0 ; i < 12 ; i++ ) {
-		if (d_bloque[i].nombre[3] == '\0') {
+	for ( i = 0 ; i < dbMax ; i++ ) {
+		if (d_bloque[i].nombre[3] == '\0') {         /* FDA, FDB, HDA, HDB */
 			tipoUnidad = (
 			    leerCmos(CMOS_FLOPPY_DRIVE_TYPE + (j & 2)) >> (4*(1-(j % 2)))
 			) & 0x0F ;
-			k = i + 1 ;
-			if ((j < 2) && (tipoUnidad != 0x00)) {
-				error = leerSectorCSH((CSH_t *)&CSH, d_bloque[i].unidadBIOS, (pointer_t)boot) ; 
+			k = i + 1 ; /* indice de la primera particion (3:HDA1, 8:HDB1) */
+			if ((j < 2) && (tipoUnidad != 0x00))          /* 0:FDA o 1:FDB */
+			{
+				error = leerSectorCSH((CSH_t *)&CSH,                /* PBR */ 
+				                      d_bloque[i].unidadBIOS, 
+									  (pointer_t)boot) ; 
 				if (error) tipoUnidad = 0x00 ;
-				else if ((boot->signatura[0] != 0x55) || (boot->signatura[1] != 0xAA)) 
-					tipoUnidad = 0x00 ;
 				else if ((boot->instJMP[0] != 0xEB) || (boot->instJMP[1] < 0x3C) || (boot->instNOP != 0x90) ||
-                         (boot->signaturaExt != 0x29))    
+                         (boot->signaturaExt != 0x29) ||
+						 (boot->signatura[0] != 0x55) || (boot->signatura[1] != 0xAA))    
+					tipoUnidad = 0x00 ;
+				else if (d_bloque[i].unidadBIOS != boot->unidad)
 					tipoUnidad = 0x00 ;
                 else {
 					sectoresPorCilindro = 
 					    (boot->BPB.cabezas)*(boot->BPB.sectoresPorPista) ;
-					if (sectoresPorCilindro != 0) { 	
+					if (sectoresPorCilindro == 0) tipoUnidad = 0x00 ;
+					else 
+					{ 	
          			    d_bloque[i].bytesPorSector = boot->BPB.bytesPorSector ;
          			    d_bloque[i].sectoresPorPista = boot->BPB.sectoresPorPista ;
          			    d_bloque[i].cabezas = boot->BPB.cabezas ;
@@ -271,27 +285,49 @@ void inicDB ( void ) {
 					        boot->BPB.sectores16/sectoresPorCilindro ;
          			    d_bloque[i].cilindros = cilindros ;
          			    d_bloque[i].numSectores = boot->BPB.sectores16 ;
-					}  
-                    else tipoUnidad = 0x00 ;					
+					}  			
                 }
 			}
-			else if ((j & 2) && (tipoUnidad != 0x00)) {      /* disco duro */
-	            if (tipoUnidad == 0x0F) 
+			else if ((j & 2) && (tipoUnidad != 0x00))     /* 2:HDA o 3:HDB */
+			{
+	            if (tipoUnidad == 0x0F) {
 					tipoUnidad = leerCmos(CMOS_DISK_DRIVE1_TYPE + (j % 2)) ;
-				cilindros = leerCmos(CMOS_DISK_DRIVE1_CYL+ (i%2)) ;
-				error = leerSectorCSH((CSH_t *)&CSH, d_bloque[i].unidadBIOS, (pointer_t)mbr) ; 
-				if (error) tipoUnidad = 0x00 ;
-				else if ((mbr->signatura[0] != 0x55) || (mbr->signatura[1] != 0xAA)) 
+#if (FALSE)			
+				    if ((j % 2) == 0) cilindros = leerCmos(CMOS_DISK_DRIVE1_CYL) ;
+					else cilindros = leerCmos(CMOS_DISK_DRIVE2_CYL) ;
+#endif 					
+                }				
+	            getDriveParams(d_bloque[i].unidadBIOS, (CSH_t *)&CSHMax) ;
+	            bytesPorSector = 512 ;
+				cabezas = CSHMax.h + 1 ;
+				sectoresPorPista = CSHMax.cs & 0x003F ;
+				cilindros = (((CSHMax.cs & 0x00C0) << 2) | (CSHMax.cs >> 8)) + 1 ;
+				error = leerSectorCSH((CSH_t *)&CSH,                /* MBR */
+				                      d_bloque[i].unidadBIOS, 
+									  (pointer_t)mbr) ; 
+				if (error || (mbr->signatura[0] != 0x55) || (mbr->signatura[1] != 0xAA)) 
 					tipoUnidad = 0x00 ;
-				if (tipoUnidad != 0x00) 
+				else 
+				{   
+      			    d_bloque[i].bytesPorSector = bytesPorSector ;
+			        d_bloque[i].cabezas = cabezas ;
+			        d_bloque[i].sectoresPorPista = sectoresPorPista ;
+					d_bloque[i].cilindros = cilindros ;
 					d_bloque[i].numSectores = 
 				        ((dword_t)cilindros)
-						    *((dword_t)d_bloque[i].sectoresPorPista)
-						    *((dword_t)d_bloque[i].cabezas) ; 
+						    *((dword_t)sectoresPorPista)
+						    *((dword_t)cabezas) ; 
+				}
 			}
 			j++ ;
         }
-		else if (mbr->descParticion[i-k].tipo != 0x00) { 
+		else if ((tipoUnidad != 0x00) && 
+		         (mbr->descParticion[i-k].tipo != 0x00))      /* particion */
+		{	
+		    d_bloque[i].bytesPorSector = bytesPorSector ;
+            d_bloque[i].cabezas = cabezas ;
+	        d_bloque[i].sectoresPorPista = sectoresPorPista ;
+			d_bloque[i].cilindros = cilindros ;
 			d_bloque[i].primerSector = mbr->descParticion[i-k].primerSector ;
 			d_bloque[i].numSectores = mbr->descParticion[i-k].sectores ;			
 		}
@@ -303,7 +339,7 @@ void inicDB ( void ) {
 	}
 	
 #if (TRUE)
-	for ( i = 0 ; i < 12 ; i++ ) {
+	for ( i = 0 ; i < dbMax ; i++ ) {
 		if (d_bloque[i].tipoUnidad != 0x00) {
 	        printStrBIOS(d_bloque[i].nombre) ;
             printCarBIOS(' ') ; 
@@ -312,7 +348,7 @@ void inicDB ( void ) {
 #endif	
 
 #if (TRUE) 	
-	for ( i = 0 ; i < 12 ; i++ ) {
+	for ( i = 0 ; i < dbMax ; i++ ) {
 		if (d_bloque[i].tipoUnidad != 0x00) {
 	        printStrBIOS("\n ") ;
 	        printStrBIOS(d_bloque[i].nombre) ;
@@ -328,11 +364,11 @@ void inicDB ( void ) {
 	        printStrBIOS(" ") ;
 	        printDecBIOS(d_bloque[i].cabezas, 2) ;
 	        printStrBIOS(" ") ;
-	        printDecBIOS(d_bloque[i].cilindros, 2) ;
+	        printDecBIOS(d_bloque[i].cilindros, 4) ;
 	        printStrBIOS(" 0x") ;
-	        printHexBIOS(d_bloque[i].primerSector, 8) ;
+	        printLHexBIOS(d_bloque[i].primerSector, 8) ;
 	        printStrBIOS(" 0x") ;
-	        printHexBIOS(d_bloque[i].numSectores, 8) ;
+	        printLHexBIOS(d_bloque[i].numSectores, 8) ;
 		}
 	}
 #endif
@@ -360,7 +396,7 @@ int opSectorDB ( dword_t sectorLogico, int db, pointer_t dir, byte_t cmd )
 	if (posibleErr9) { 
 	    dirAux = ptrBuferSO1 ;
 		if (cmd == cmd_write_sector) 
-			copia(dir, dirAux, 512) ;
+			memcpy_fd(dirAux, dir, 512) ;
 	}
 	if (unidadBIOS < 0x80) {
 		sectoresPorPista = d_bloque[db].sectoresPorPista ;
@@ -374,7 +410,7 @@ int opSectorDB ( dword_t sectorLogico, int db, pointer_t dir, byte_t cmd )
     }
     else err = opSectorLBA(sectorLogico, unidadBIOS, dirAux, cmd) ;
 	if ((!err) && (posibleErr9) && (cmd == cmd_read_sector)) 
-		copia(dirAux, dir, 512) ;
+		memcpy_fd(dir, dirAux, 512) ;
     return(err) ;
 }
 

@@ -9,14 +9,14 @@ OBJS2LINK =                      \
 ..\..\so1pub\obj\ajustusr.obj,   \
 $(PROGRAMA).obj,                 \
 ..\..\so1pub\lib\ll_s_so1.lib,   \
-..\..\so1pub\obj\caracter.obj,   \
+..\..\so1pub\obj\ctype.obj,      \
 ..\..\so1pub\obj\printgen.obj,   \
 ..\..\so1pub\obj\tipos.obj,      \
 ..\..\so1pub\obj\put.obj,        \
 ..\..\so1pub\obj\escribir.obj,   \
 ..\..\so1pub\obj\scanner.obj,    \
 ..\..\so1pub\obj\strings.obj,    \
-..\..\so1pub\obj\copia.obj,      \
+..\..\so1pub\obj\memory.obj,     \
 ..\..\so1pub\obj\cmos.obj,       \
 ..\..\so1pub\obj\puertos.obj,    \
 ..\..\so1pub\obj\pantalla.obj,   \

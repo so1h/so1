@@ -14,8 +14,7 @@
 /* AX: 0206H ==> eliminarCcbRecurso                                        */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\copia.h>
-#include <so1pub.h\strings.h>
+#include <so1pub.h\strings.h>                                    /* strcmp */
 #include <so1pub.h\ll_s_so1.h>
 #include <so1pub.h\ccb.h>
 #include <so1pub.h\bios_0.h>
@@ -104,7 +103,7 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
     int res ;
     rindx = c2cPFR[DROcupados].primero ;                  /* ver si existe */
     while (rindx != c2cPFR[DROcupados].cabecera) {
-      if (iguales(descRecurso[rindx].nombre,
+      if (!strcmp(descRecurso[rindx].nombre,
                   (char far *)pointer(tramaProceso->CX, tramaProceso->BX))) {
         enc = TRUE ;
         break ;                                          /* sale del bucle */

@@ -8,8 +8,7 @@
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>
 #include <so1pub.h\carsctrl.h>                                       /* FF */
-#include <so1pub.h\caracter.h>                           /* dig, mayuscula */
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
 #include <so1pub.h\scanner.h>
 #include <so1pub.h\biosdata.h>                              /* ptrBiosArea */
 #include <so1pub.h\puertos.h>
@@ -377,13 +376,13 @@ static void far isr_timer ( )
 /*                      seccion de programa de usuario                     */
 /* ----------------------------------------------------------------------- */
 
-static void formato ( void )
+int formato ( void )
 {
     escribirStr("\n\n formato: TIMER [ -i [ tpr ] | -u | -s | -c tpr | -h | tpr ] \n") ;
-    exit(-1) ;
+    return(-1) ;
 }
 
-static void help ( void )
+int help ( void )
 {
     escribirLn() ;
     escribirLn() ;
@@ -396,7 +395,7 @@ static void help ( void )
     escribirStr("      -s : muestra el estado del timer   \n") ;
     escribirStr("      -c : cambia los tics por rodaja    \n") ;
     escribirStr("      -h : muestra este help             \n") ;
-    exit(0) ;
+    return(0) ;
 }
 
 static descProceso_t descProceso [ maxProcesos ] ;
@@ -419,7 +418,7 @@ static int integrarTimer ( word_t ticsPR )
     }
 
     dR.tipo = rDCaracteres ;
-    copiarStr("TIMER", dR.nombre) ;
+    strcpy(dR.nombre, "TIMER") ;
     dR.ccb = (ccb_t)&descCcbTM ;
     dR.ccb->arg = pointer(_DS, (word_t)&argCbTimer) ;
     dR.pindx = getpindx() ;
@@ -538,7 +537,7 @@ static int instalarTimer ( word_t ticsPR )
     return(res) ;
 }
 
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
     int res ;
     int dfTimer ;
@@ -546,20 +545,20 @@ void main ( int argc, char * argv [ ] )
     dword_t contRodajas ;
     int contTicsRodaja ;
     word_t ticsPorRodaja ;
-    if (argc > 3) formato() ;
-    else if (argc == 1) exit(instalarTimer(ticsPorRodajaPorDefecto)) ;
+    if (argc > 3) return(formato()) ;
+    else if (argc == 1) return(instalarTimer(ticsPorRodajaPorDefecto)) ;
     else if (argc == 2)
     {
-        if (iguales(argv[1], "-h") || iguales(argv[1], "-H")) help() ;
-        else if (iguales(argv[1], "-i") || iguales(argv[1], "-I"))
-            exit(instalarTimer(ticsPorRodajaPorDefecto)) ;
-        else if (iguales(argv[1], "-s") || iguales(argv[1], "-S"))
+        if (!strcmpu(argv[1], "-h")) return(help()) ;
+        else if (!strcmpu(argv[1], "-i"))
+            return(instalarTimer(ticsPorRodajaPorDefecto)) ;
+        else if (!strcmpu(argv[1], "-s"))
         {
             dfTimer = open("TIMER", O_RDONLY) ;
             if (dfTimer < 0)
             {
                 escribirStr(" recurso TIMER todavia no instalado") ;
-                exit(-1) ;
+                return(-1) ;
             }
             else
             {
@@ -580,7 +579,7 @@ void main ( int argc, char * argv [ ] )
                 exit(0) ;
             }
         }
-        else if (iguales(argv[1], "-u") || iguales(argv[1], "-U"))
+        else if (!strcmpu(argv[1], "-u"))
         {
             res = destruirRecurso("TIMER") ;
             switch (res)
@@ -600,18 +599,16 @@ void main ( int argc, char * argv [ ] )
             default :
                 escribirStr(" TIMER no ha podido desinstalarse") ;
             }
-            exit(res) ;
+            return(res) ;
         }
     }
     if ((argc == 2) ||
-            ((argc == 3) &&
-             ((iguales(argv[1], "-i") || iguales(argv[1], "-I")) ||
-              (iguales(argv[1], "-c") || iguales(argv[1], "-C"))
-             )
-            )
+        ((argc == 3) &&
+         (!strcmpu(argv[1], "-i") || !strcmpu(argv[1], "-c"))
+		)		  
        )
     {
-        copiarStr(argv[argc-1], comando[0]) ;
+        strcpy(comando[0], argv[argc-1]) ;
         inicScanner() ;
         obtenSimb() ;
         if (simb == s_numero)
@@ -621,29 +618,29 @@ void main ( int argc, char * argv [ ] )
                 escribirStr(" ticsPorRodaja debe ser > 0") ;
                 exit(-1) ;
             }
-            else if (iguales(argv[1], "-c") || iguales(argv[1], "-C"))
+            else if (!strcmpu(argv[1], "-c"))
             {
                 dfTimer = open("TIMER", O_WRONLY) ;
                 if (dfTimer < 0)
                 {
                     escribirStr(" recurso TIMER todavia no instalado") ;
-                    exit(-1) ;
+                    return(-1) ;
                 }
                 else
                 {
                     if ((res = (int)lseek(dfTimer, 10, SEEK_SET)) == 10)
                         res = aio_write(dfTimer, (pointer_t)&num, sizeof(num)) ;
                     close(dfTimer) ;
-                    if (res < 0) exit(-1) ;
-                    else exit(0) ;
+                    if (res < 0) return(-1) ;
+                    else return(0) ;
                 }
             }
-            else exit(instalarTimer(num)) ;
+            else return(instalarTimer(num)) ;
         }
     }
-    else if (iguales(argv[1], "-c") || iguales(argv[1], "-C"))
+    else if (!strcmpu(argv[1], "-c"))
     {
-        copiarStr(argv[argc-1], comando[0]) ;
+        strcpy(comando[0], argv[argc-1]) ;
         inicScanner() ;
         obtenSimb() ;
         if (simb == s_numero)
@@ -651,28 +648,28 @@ void main ( int argc, char * argv [ ] )
             if (num == 0)
             {
                 escribirStr(" ticsPorRodaja debe ser > 0") ;
-                exit(-1) ;
+                return(-1) ;
             }
-            else if (iguales(argv[1], "-c") || iguales(argv[1], "-C"))
+            else if (!strcmpu(argv[1], "-c"))
             {
                 dfTimer = open("TIMER", O_WRONLY) ;
                 if (dfTimer < 0)
                 {
                     escribirStr(" recurso TIMER todavia no instalado") ;
-                    exit(-1) ;
+                    return(-1) ;
                 }
                 else
                 {
                     if ((res = (int)lseek(dfTimer, 10, SEEK_SET)) == 10)
                         res = aio_write(dfTimer, (pointer_t)&num, sizeof(num)) ;
                     close(dfTimer) ;
-                    if (res < 0) exit(-1) ;
-                    else exit(0) ;
+                    if (res < 0) return(-1) ;
+                    else return(0) ;
                 }
             }
-            else exit(instalarTimer(num)) ;
+            else return(instalarTimer(num)) ;
         }
     }
-    formato() ;
+    return(formato()) ;
 }
 

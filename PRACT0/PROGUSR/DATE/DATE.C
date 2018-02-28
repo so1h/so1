@@ -7,7 +7,7 @@
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                             /* printf, getchar */
-#include <so1pub.h\strings.h>                                   /* iguales */
+#include <so1pub.h\strings.h>                                   /* strcmpu */
 
 #include <so1pub.h\puertos.h>                   /* CMOS_RTC_DAY_MONTH, ... */
 #include <so1pub.h\cmos.h>                                     /* leerCmos */
@@ -71,20 +71,20 @@ int main ( int argc, char * argv [ ] )
     word_t anio ;
     word_t diaSemana ;
 
-    if ((argc == 2) && (iguales(argv[1], "-h") || iguales(argv[1], "-H")))
+    if ((argc == 2) && (!strcmpu(argv[1], "-h")))
     {
         help() ;
         return(0) ;
     }
     if ((argc == 1) ||
             ((argc == 2) &&
-             (iguales(argv[1], "-n") || iguales(argv[1], "-N") ||
-              iguales(argv[1], "-f") || iguales(argv[1], "-F"))))
+             (!strcmpu(argv[1], "-n")) ||
+              !strcmpu(argv[1], "-f")))
     {
         dia = leerCmos(CMOS_RTC_DAY_MONTH) ;
         mes = leerCmos(CMOS_RTC_MONTH) ;
         anio = leerCmos(CMOS_RTC_YEAR) ;
-        if (iguales(argv[1], "-f") || iguales(argv[1], "-F"))
+        if (!strcmpu(argv[1], "-f"))
         {
             diaSemana = leerCmos(CMOS_RTC_DAY_WEEK) ;
 			printf(

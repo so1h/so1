@@ -4,8 +4,7 @@
 /*                                                                         */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\caracter.h>
-#include <so1pub.h\strings.h>
+#include <so1pub.h\strings.h>                            /* strcpy, strcmp */
 #include <so1pub.h\pic.h>                                        /* ptrTVI */
 #include <so1pub.h\fcntl.h>                                   /* O_DENYALL */
 #include <so1pub.h\ptrc2c.h>            /* ptrC2c_t, inicPC2c, encolarPC2c */ /* apilarPC2c, desapilarPC2c, eliminarPC2c */
@@ -88,7 +87,7 @@ rindx_t crearRec ( descRecurso_t far * dR ) {
 
   rindx = c2cPFR[DROcupados].primero ;                 /* ver si existe ya */
   while (rindx != c2cPFR[DROcupados].cabecera) {
-    if (iguales(descRecurso[rindx].nombre, dR->nombre)) return(-3) ;
+    if (!strcmp(descRecurso[rindx].nombre, dR->nombre)) return(-3) ;
     rindx = c2cPFR[DROcupados].e[rindx].sig ;
   }
 
@@ -101,7 +100,7 @@ rindx_t crearRec ( descRecurso_t far * dR ) {
   apilarPC2c(rindx, (ptrC2c_t)&c2cPFR[DROcupados]) ;
 
   descRecurso[rindx].tipo = dR->tipo ;
-  copiarStr(dR->nombre, descRecurso[rindx].nombre) ;
+  strcpy(descRecurso[rindx].nombre, dR->nombre) ;
   descRecurso[rindx].ccb = dR->ccb ;
   descRecurso[rindx].pindx = dR->pindx ;
   inicPC2c(&descRecurso[rindx].c2cFichRec, &e2PFR.e2FichRec, dfsMax + rindx, TRUE) ;
@@ -150,7 +149,7 @@ dfs_t crearFich ( const char far * nombre,
 
   dfs = c2cPFR[DFOcupados].primero ;                   /* ver si existe ya */
   while (dfs != c2cPFR[DFOcupados].cabecera) {
-    if (iguales(descFichero[dfs].nombre, nombre)) return(-3) ;
+    if (!strcmp(descFichero[dfs].nombre, nombre)) return(-3) ;
     dfs = c2cPFR[DFOcupados].e[dfs].sig ;
   }
 
@@ -158,7 +157,7 @@ dfs_t crearFich ( const char far * nombre,
   dfs = desapilarPC2c((ptrC2c_t)&c2cPFR[DFLibres]) ;
   apilarPC2c(dfs, (ptrC2c_t)&c2cPFR[DFOcupados]) ;
   apilarPC2c(dfs, (ptrC2c_t)&descRecurso[rindx].c2cFichRec) ;
-  copiarStr(nombre, descFichero[dfs].nombre) ;
+  strcpy(descFichero[dfs].nombre, nombre) ;
   descFichero[dfs].rindx = rindx ;
   descFichero[dfs].menor = menor ;
   descFichero[dfs].tipo = tipo ;
@@ -203,7 +202,7 @@ int destruirRec ( const char far * nombre ) {
 
   r = c2cPFR[DROcupados].primero ;                     /* ver si existe ya */
   while (r != c2cPFR[DROcupados].cabecera) {
-    if (iguales(descRecurso[r].nombre, nombre)) {
+    if (!strcmp(descRecurso[r].nombre, nombre)) {
       rindx = r ;                                    /* recurso encontrado */
       break ;
     }

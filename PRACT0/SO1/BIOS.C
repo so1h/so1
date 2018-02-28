@@ -4,26 +4,50 @@
 /*                                                                         */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\caracter.h>
 #include <so1pub.h\pantalla.h>
 #include <so1pub.h\pic.h>                       /* valorIMR, establecerIMR */
 #include <so1.h\ajustes.h>
 #include <so1.h\procesos.h>
 #include <so1.h\plot.h>
-#include <so1.h\bios.h>
+#include <so1.h\bios.h>                           /* cmd_get_params, CSH_t */
 
 //                                                      /* Disco (int 13h) */
 
-int resetControllerBIOS ( void ) {
-  int error = 0 ;
-  asm {
-    mov ah,cmd_reset ;                            /* reset del controlador */
-    int 13h ;                                        /* BIOS: E/S de disco */
-    jnc resetOk ;
-    mov error,ah ;      /* el flag de acarreo C se activa en caso de error */
-  }
+int getDriveParams ( byte_t unidadBIOS, CSH_t * CSH ) 
+{
+    int error = 0 ;
+	word_t CSH_cs ;
+	byte_t CSH_h ;
+    asm 
+	{
+		mov ah,cmd_get_params ;
+		mov dl,unidadBIOS ;
+		int 13h ;		
+		jnc getOk ;
+        mov error,ah ;
+		jmp getEnd ;
+getOk:		
+		mov CSH_cs,cx ;
+		mov CSH_h,dh ;
+	}
+	CSH->cs = CSH_cs ;
+	CSH->h = CSH_h ;
+getEnd:	
+	return(error) ;
+}
+
+int resetControllerBIOS ( void ) 
+{
+    int error = 0 ;
+    asm 
+	{
+        mov ah,cmd_reset ;                        /* reset del controlador */
+        int 13h ;                                    /* BIOS: E/S de disco */
+        jnc resetOk ;
+        mov error,ah ;  /* el flag de acarreo C se activa en caso de error */
+    }
 resetOk:
-  return(error) ;
+    return(error) ;
 }
 
 int opSectorCSH ( CSH_t * CSH, byte_t unidadBIOS, pointer_t dir, byte_t cmd ) ;

@@ -5,7 +5,8 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\printgen.h>                               /* printCar_t */
-#include <so1pub.h\caracter.h>                                      /* dig */
+
+static char dig [17] = "0123456789ABCDEF" ;
 
 int printGenLn ( printCar_t p ) {
   p('\r') ;                                   /* retorno de carro (char)13 */
@@ -220,16 +221,3 @@ int printGenPtr ( pointer_t ptr, printCar_t p ) {
   printGenHex(off(ptr), 4, p) ;
   return(9) ;
 }
-
-//#include <so1pub.h\stdarg.h>                   /* va_arg, va_end, va_start */
-//#include <so1pub.h\varargs.h>         /* va_arg, va_end, va_start, va_list */
-
-#pragma warn -par
-int printfGen ( const char * formato, printCar_t p, ... ) {
-
-
-  return(0) ;
-}
-#pragma warn +par
-
-

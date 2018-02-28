@@ -9,7 +9,7 @@
 #include <so1pub.h\escribir.h>            /* escribirStr, escribirDec, ... */
 #include <so1pub.h\put.h>                 /* putCar, putLn, putStr, putDec */
 #include <so1pub.h\saludos.h>                       /* mostrarSaludoGrande */
-#include <so1pub.h\strings.h>                                 /* copiarStr */
+#include <so1pub.h\strings.h>                           /* strcpy, strncmp */
 #include <so1pub.h\carsctrl.h>                                      /* ESC */
 //#include <so1pub.h\pantalla.h>                             /* pantallazo */
 #include <so1pub.h\debug.h>            /* assert, valorFlags, mostrarFlags */
@@ -101,7 +101,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     printStrBIOS(") ... ticsPorRodaja = ") ;
     printDecBIOS(ticsPorRodaja, 1) ;
     printCarBIOS(' ') ;
-    copiarStr("TIMER X &", strArg) ;
+    strcpy(strArg, "TIMER X &") ;
 #if (ticsPorRodaja < 10)
     strArg[6] = '0' + ticsPorRodaja ;
 #else
@@ -136,12 +136,12 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     printStrBIOS(") ") ;
 
 #if (CONRAT)
-    copiarStr("CONRAT X &", strArg) ;
+    strcpy(strArg, "CONRAT X &") ;
     strArg[7] = '0' + numConsolas ;
     if ((pid = createProcess("CONRAT", "CONRAT&")) < 0)                /* GP */
     {
 #else
-    copiarStr("CONSOLA -q X &", strArg) ;
+    strcpy(strArg, "CONSOLA -q X &") ;
     strArg[11] = '0' + numConsolas ;
     if ((pid = createProcess("CONSOLA", strArg)) < 0)                  /* GP */
     {
@@ -152,7 +152,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
         ) ;
         printIntBIOS(pid, 1) ;
     }
-    copiarStr("CONX", nombre) ;
+    strcpy(nombre, "CONX") ;
     for ( i = 0 ; i < numConsolas ; i++ )
     {
         nombre[3] = '0' + i ;
@@ -191,7 +191,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     /* leer(STDIN) ; *//* permite las interrupciones mientras esta bloqueado */
 
     printStrBIOS("\n\n comandos: ") ;
-    copiarStr("CONX", nombre) ;
+    strcpy(nombre, "CONX") ;
     for ( i = 1 ; i <= numConsolas/2 ; i++ )
     {
         nombre[3] = '0' + i ;
@@ -201,7 +201,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
         open(nombre, O_RDONLY) ;
         open(nombre, O_WRONLY) ;
         open(nombre, O_WRONLY) ;
-        if ((pid = createProcess("LOGIN", "LOGIN")) < 0)                 /* GP */
+        if ((pid = createProcess("LOGIN", "LOGIN")) < 0)             /* GP */
         {
             printStrBIOS("\a\n fallo al arrancar LOGIN en ") ;
             printStrBIOS(nombre) ;
@@ -224,7 +224,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     open("CON0", O_WRONLY) ;
 
 #if (RELOJ)
-    if ((pid = createProcess("RELOJ", "RELOJ -q &")) < 0)              /* GP */
+    if ((pid = createProcess("RELOJ", "RELOJ -q &")) < 0)            /* GP */
     {
         printStrBIOS(
             "\a\n fallo al arrancar el reloj"
@@ -237,11 +237,11 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
 #endif
 
 #if (RATON)
-    if (!igualesHasta(
+    if (strncmp(
                 (char far *)ptrFechaBios,
-                (char far *)"01/01/99", 8))                           /* !hayVDos */
+                (char far *)"01/01/99", 8))                    /* !hayVDos */
     {
-        if ((pid = createProcess("RATON", "RATON -q &")) < 0)            /* GP */
+        if ((pid = createProcess("RATON", "RATON -q &")) < 0)        /* GP */
         {
             printStrBIOS(
                 "\a\n fallo al arrancar el raton"
@@ -334,7 +334,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
 
     if (timeout >= 0)
     {
-        copiarStr("CONX", nombre) ;
+        strcpy(nombre, "CONX") ;
         for ( i = 0 ; i < numConsolas ; i++ )
         {
             nombre[3] = '0' + i ;

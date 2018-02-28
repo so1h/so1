@@ -6,7 +6,7 @@
 
 #include <so1pub.h\bios_0.h>
 #include <so1pub.h\msdos.h>
-#include <so1pub.h\strings.h>
+#include <so1pub.h\strings.h>                                    /* strcpy */
 #include <so1.h\ajustsp.h>
 #include <so1.h\ajustes.h>
 #include <so1.h\recursos.h>
@@ -251,7 +251,7 @@ void inicGM ( void ) {                           /* 1 paragrafo = 16 bytes */
 //printPtrBIOS((pointer_t)ptrBloque) ;
 
   dR.tipo = rGM ;
-  copiarStr("GM", dR.nombre) ;
+  strcpy(dR.nombre, "GM") ;
   dR.ccb = (ccb_t)&descCcbGM ;
   dR.pindx = indProcesoActual ;
   dR.numVI = 0 ;
