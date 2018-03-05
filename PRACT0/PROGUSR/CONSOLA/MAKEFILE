@@ -35,7 +35,7 @@ $(PROGRAMA).obj,                 \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (DATA = A64 BSS = 1556 total: 1FBA < 2BFF)
+#puntero de pila inicial (finBSS = 20DE < 23FF)
 
 SPINICIAL = 23FE
 

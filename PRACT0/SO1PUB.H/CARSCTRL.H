@@ -1,13 +1,11 @@
 /* ----------------------------------------------------------------------- */
 /*                               carsctrl.h                                */
 /* ----------------------------------------------------------------------- */
-/*                                                                         */
+/*                      Caracteres de control ASCII                        */
 /* ----------------------------------------------------------------------- */
 
 #ifndef CARSCTRL_H
 #define CARSCTRL_H
-
-/* Caracteres de control ASCII */
 
 #define NUL   (char) 0  /* null (end string)    ^@ */                         /* '\000' */
 #define SOH   (char) 1  /* start of heading     ^A */                         /* '\001' */

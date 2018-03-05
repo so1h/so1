@@ -16,8 +16,8 @@
                        /* Turbo Assembler Version 5 Quick Reference pag 11 */
 
 #define startUserCode     /* solo se ejecuta en so1.bin, so1.com y so1.exe */\
-                                /* pero siempre es necesario como cabecera */\
-  asm {                                                                      \
+asm                             /* pero siempre es necesario como cabecera */\
+{                                                                            \
     mov ax,cs ;                                                              \
     mov bx,SEG(startData) ;  /* valor del segmento de datos (sin reubicar) */\
     mov cx,OFFSET(finData) ;                           /* tam. del la DATA */\
@@ -34,8 +34,40 @@
     mov bp,sp ;                                                              \
     push bx ;                                     /* restauramos los flags */\
     popf ;                                                                   \
-  }
+}
 
+#define valor_DS (_CS + ((cabecera_t far *)MK_FP(_CS, 0x0000))->segDatosSR) 
+   
+#define offSegDatosSR 3    
+   
+#define setraw_DS()                                                          \
+asm                                                                          \
+{                                                                            \
+    mov ax,word ptr cs:[3] ;       /* 3 es el desplazamiento de segDatosSR */\
+    mov dx,cs ;                                                              \
+    add ax,dx ;                                                              \
+    mov ds,ax ;                                                              \
+}
+
+#define set_DS()                                                             \
+{                                                                            \
+    asm { push ax ; push dx ; }                                              \
+    setraw_DS() ;                                                            \
+    asm { pop dx ; pop ax ; }                                                \
+}   
+
+#define save_DS0()                                                           \
+asm                                                                          \
+{                                                                            \
+    push ds ;                                                                \
+}
+
+#define restore_DS0()                                                        \
+asm                                                                          \
+{                                                                            \
+    pop ds ;                                                                 \
+}
+   
 #define offset_SPInicial 0x001A
 
 #define valor_SPInicial *((word_t far *)pointer(_CS, offset_SPInicial))
@@ -50,4 +82,3 @@
 }
 
 #endif /* AJUSTUSR_H */
-

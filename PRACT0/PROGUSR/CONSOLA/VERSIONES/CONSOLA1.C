@@ -17,7 +17,6 @@
 #include <so1pub.h\bios_0.h>                /* leerTeclaBIOS, printCarBIOS */
 #include <so1pub.h\biosdata.h>                              /* ptrBiosArea */
 #include <so1pub.h\strings.h>                                 /* copiarStr */
-#include <so1pub.h\carsctrl.h>                                   /* CR, LF */
 #include <so1pub.h\pic.h>                                   /* IRQ_TECLADO */
 #include <so1.h\ajustes.h>                   /* bloquearProcesoActual, ... */
 #include <so1.h\procesos.h>                            /* indProcesoActual */
@@ -160,7 +159,7 @@ static int far readConsola ( int dfs, pointer_t dir, word_t nbytes ) {
   if (nbytes <= teclado->ncar) {
     while (nbytes > 0) {
       car = sacar(teclado) ;
-      if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+      if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
       dir[i++] = car ;
       nbytes-- ;
     }
@@ -169,7 +168,7 @@ static int far readConsola ( int dfs, pointer_t dir, word_t nbytes ) {
   else {
     while (teclado->ncar > 0) {
       car = sacar(teclado) ;
-      if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+      if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
       dir[i++] = car ;
       nbytes-- ;
     }
@@ -196,7 +195,7 @@ static int far aio_readConsola ( int dfs, pointer_t dir, word_t nbytes ) {
   nbARetornar0 = nbARetornar ;
   while (nbARetornar > 0) {
     car = sacar(teclado) ;
-    if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+    if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
     dir[i++] = car ;
     nbARetornar-- ;
   }
@@ -212,11 +211,11 @@ static int far writeConsola ( int dfs, pointer_t dir, word_t nbytes ) {
     for ( i = 0 ; i < nbytes ; i++ ) {
       car = dir[i] ;
       switch (car) {
-      case FF : goToXYPag(0, 0, pag) ;
-                clrScrPagBDA(pag) ;                     /* clrScrBIOS () ; */
-                setCursorBIOS(12, 15 ) ;
-                break ;
-      default : printCarBIOS(car) ;
+      case '\f' : goToXYPag(0, 0, pag) ;
+                  clrScrPagBDA(pag) ;                     /* clrScrBIOS () ; */
+                  setCursorBIOS(12, 15 ) ;
+                  break ;
+      default   : printCarBIOS(car) ;
       }
     }
   }
@@ -227,19 +226,19 @@ static int far writeConsola ( int dfs, pointer_t dir, word_t nbytes ) {
     for ( i = 0 ; i < nbytes ; i++ ) {
       car = dir[i] ;
       switch (car) {
-      case FF  : borrarPantalla(pantalla) ;
-                 descConsola[con].cursorF = 0 ;
-                 descConsola[con].cursorC = 0 ;
-                 break ;
-      case CR  : descConsola[con].cursorC = 0 ;
-                 break ;
-      case LF  : if (++descConsola[con].cursorF == 25) {
-                   scrollPantalla(pantalla) ;
-                   descConsola[con].cursorF = 24 ;
-                 }
-                 break ;
-      case BEL : printCarBIOS(dir[i]) ;
-                 break ;
+      case '\f' : borrarPantalla(pantalla) ;
+                  descConsola[con].cursorF = 0 ;
+                  descConsola[con].cursorC = 0 ;
+                  break ;
+      case '\r' : descConsola[con].cursorC = 0 ;
+                  break ;
+      case '\n' : if (++descConsola[con].cursorF == 25) {
+                    scrollPantalla(pantalla) ;
+                    descConsola[con].cursorF = 24 ;
+                  }
+                  break ;
+      case '\a' : printCarBIOS(dir[i]) ;
+                  break ;
       default  :
         pantalla->t[cursorF][cursorC].car = dir[i] ;
         if (++descConsola[con].cursorC == 80) {
@@ -409,7 +408,7 @@ void far isr_consola ( void ) {
       nbytes = nbytesProceso[pindx] ;
       dir = dirProceso[pindx] ;
       nbytes-- ;
-      if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+      if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
       dir[0] = car ;                                                /* car */
       dir++ ;
       if (extendido) {

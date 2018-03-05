@@ -11,7 +11,8 @@
 /*       admite gran numero de consolas ya que la memoria necesaria        */
 /*         para las consolas se toma de un nuevo segmento de datos         */
 
-#include <so1pub.h\comundrv.h>       /* segDatos, ptrIndProcesoActual, ... */
+#include <so1pub.h\ajustusr.h>          /* save_DS0, setraw_DS, restore_DS */
+#include <so1pub.h\comundrv.h>                 /* ptrIndProcesoActual, ... */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>                 /* escribirStr, escribirDec */
 #include <so1pub.h\ctype.h>                                     /* toupper */
@@ -137,7 +138,7 @@ int printCarConsola ( byte_t con, char car )
             printCarBIOS(car) ;
             break ;
         default  :
-#if (TRUE)					
+#if (FALSE)					
 		    if (C < 80)	                     /* ptrBiosArea->VIDEO-width */
                 pantalla->t[F][C].car = car ;
             descConsola[con].C++ ;
@@ -220,8 +221,6 @@ int far releaseConsola ( int dfs )
 
 int far readConsola ( int dfs, pointer_t dir, word_t nbytes )
 {
-
-    word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     pindx_t indProcesoActual ;
     teclado_t far * teclado ;
     modoAp_t modoAp ;
@@ -231,9 +230,9 @@ int far readConsola ( int dfs, pointer_t dir, word_t nbytes )
     char car ;
     word_t con ;
 
-    asm push ds
-    asm mov ds,DS_Consola
-
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
+	
     indProcesoActual = *ptrIndProcesoActual ;
     df = (*ptrTramaProceso)->BX ;
     con = ptrDescFichero[dfs].menor ;
@@ -245,22 +244,22 @@ int far readConsola ( int dfs, pointer_t dir, word_t nbytes )
     {
         while (nbytes > 0)
         {
-//    car = sacar(teclado) ;
-//    car = tablaSP[sacar(teclado)] ;
+//          car = sacar(teclado) ;
+//          car = tablaSP[sacar(teclado)] ;
             car = tablaDeConversion[sacar(teclado)] ;
             if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
             dir[i++] = car ;
             nbytes-- ;
         }
-        asm pop ds                /* 2013-07-09: faltaba esto (sino CRASH) */
+        restore_DS0() ;                           /* restaura el DS de SO1 */
         return(nbytes0) ;
     }
     else
     {
         while (teclado->ncar > 0)
         {
-//    car = sacar(teclado) ;
-//    car = tablaSP[sacar(teclado)] ;
+//          car = sacar(teclado) ;
+//          car = tablaSP[sacar(teclado)] ;
             car = tablaDeConversion[sacar(teclado)] ;
             if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
             dir[i++] = car ;
@@ -272,13 +271,12 @@ int far readConsola ( int dfs, pointer_t dir, word_t nbytes )
         bloquearProcesoActual(rec_consola) ;      /* no se retorna de aqui */
     }
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(-1) ;
 }
 
 int far aio_readConsola ( int dfs, pointer_t dir, word_t nbytes )
 {
-    word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     pindx_t indProcesoActual ;
     teclado_t far * teclado ;
     modoAp_t modoAp ;
@@ -288,8 +286,8 @@ int far aio_readConsola ( int dfs, pointer_t dir, word_t nbytes )
     char car ;
     word_t con ;
 
-    asm push ds
-    asm mov ds,DS_Consola
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     indProcesoActual = *ptrIndProcesoActual ;
     df = (*ptrTramaProceso)->BX ;
@@ -310,19 +308,18 @@ int far aio_readConsola ( int dfs, pointer_t dir, word_t nbytes )
         nbARetornar-- ;
     }
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(nbARetornar0) ;
 }
 
 int far writeConsola ( int dfs, pointer_t dir, word_t nbytes )
 {
-    word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     int i ;
     char car ;
     word_t con ;
 
-    asm push ds
-    asm mov ds,DS_Consola
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     con = ptrDescFichero[dfs].menor ;
     for ( i = 0 ; i < nbytes ; i++ )
@@ -331,10 +328,10 @@ int far writeConsola ( int dfs, pointer_t dir, word_t nbytes )
         printCarConsola(con, car) ;
     }
     if (con == consolaDeSuperficie)
-        if (cursorC < 80)                   /* ptrBiosArea->VIDEO-width */
+        if (cursorC < 80)                      /* ptrBiosArea->VIDEO-width */
 			goToXYHw(cursorF, cursorC) ;
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(nbytes) ;
 }
 
@@ -345,16 +342,14 @@ int far aio_writeConsola ( int dfs, pointer_t dir, word_t nbytes )
 
 long int far lseekConsola ( int dfs, long int pos, word_t whence )
 {
-
     /* posicionar el cursor */
 
-    word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     word_t con ;
 	long int posActual ;
 	long int res ;
 
-    asm push ds
-    asm mov ds,DS_Consola
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     con = ptrDescFichero[dfs].menor ;
 
@@ -372,7 +367,7 @@ long int far lseekConsola ( int dfs, long int pos, word_t whence )
 	else                                                       /* SEEK_END */
 		res = posActual ;
 		
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
 }
 
@@ -383,8 +378,6 @@ int far fcntlConsola ( int dfs, word_t cmd, word_t arg )
 
 int far ioctlConsola ( int dfs, word_t request, word_t arg )
 {
-#if (TRUE)
-    word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     int res ;
     word_t nuevaConsola ;
 	byte_t con ;
@@ -393,8 +386,8 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
     int numFilasAnt ;
 //	byte_t maxF ; 
 	
-    asm push ds
-    asm mov ds,DS_Consola
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     res = 0 ;
     if (request == 0x0001)      /* cambiar la consola actual a la indicada */
@@ -423,12 +416,12 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
         {
 	     	numFilasAnt = numFilas ;
             numFilas = arg ;		
-//  printStrBIOS("\n numFilas = ") ;
-//  printDecBIOS(numFilas, 1) ;
-//  printStrBIOS(" numFilasAnt = ") ;
-//  printDecBIOS(numFilasAnt, 1) ;
-//  printStrBIOS(" cursorF = ") ;
-//  printDecBIOS(cursorF, 1) ;
+//          printStrBIOS("\n numFilas = ") ;
+//          printDecBIOS(numFilas, 1) ;
+//          printStrBIOS(" numFilasAnt = ") ;
+//          printDecBIOS(numFilasAnt, 1) ;
+//          printStrBIOS(" cursorF = ") ;
+//          printDecBIOS(cursorF, 1) ;
 //          maxF = descConsola[consolaDeSuperficie].maxF ;
 //          if (maxF >= numFilas)
             if (cursorF >= numFilas)
@@ -481,15 +474,18 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
         }
 		
     }
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
-#endif
 }
 
 int far eliminarConsola ( pindx_t pindx )
 {
     teclado_t far * teclado ;
     int i ;
+
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
+
     for ( i = 0 ; i < maxConsolas ; i++ )
     {
         teclado = (teclado_t far *)&descConsola[consolaDeSuperficie].teclado ;
@@ -499,6 +495,8 @@ int far eliminarConsola ( pindx_t pindx )
             break ;
         }
     }
+	
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(0) ;
 }
 
@@ -520,8 +518,6 @@ byte_t CtrlPulsada = FALSE ;
 
 void far isr_consola ( void )
 {
-
-    word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     word_t w ;
     char car ;
     word_t nbytes ;
@@ -538,8 +534,8 @@ void far isr_consola ( void )
     byte_t cursorFAux ;
     pantalla_t far * pantallaAux ;
 
-    asm push ds
-    asm mov ds,DS_Consola
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     scanCodeAnt = scanCode ;
     asm in al,60h       /* ¿solo debe leerse una vez el registro de datos? */
@@ -688,13 +684,13 @@ void far isr_consola ( void )
             }
         }
         w = leerTeclaListaBDA() ;                        /* /PP 2016-10-31 */
-        asm pop ds ;                                     /* /PP 2016-10-31 */
+        restore_DS0() ;                           /* restaura el DS de SO1 */
         return ;                                         /* /PP 2016-10-31 */
     }
 
     if (scanCode & 0x80)
     {
-        asm pop ds
+        restore_DS0() ;                           /* restaura el DS de SO1 */
         return ;
     }
 
@@ -795,7 +791,7 @@ void far isr_consola ( void )
         if (*info.ptrDebugWord == 0) while(TRUE) ;
     }
     */
-    asm pop ds
+    restore_DS0() ;                               /* restaura el DS de SO1 */
 }
 
 /* ----------------------------------------------------------------------- */
@@ -872,15 +868,14 @@ int printPtrConsola ( byte_t con, pointer_t ptr )
 
 int far cbForTimer ( void far * arg )                         /* call back */
 {
-    word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     byte_t F0 ;
     byte_t C0 ;
     byte_t congen0 ;
     byte_t visibilidadAnt ;
-//trama_t far * tramaProceso ;
+//  trama_t far * tramaProceso ;
 
-    asm push ds
-    asm mov ds,DS_Consola  /* peligro SS (Sistema Operativo) != DS (Consola) */
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
     /* punteros a pila (parametros/variables locales) */
     /*
       tramaProceso = (trama_t far *)pointer(*ptrSS_Proceso, *ptrSP_Proceso) ;
@@ -911,7 +906,7 @@ int far cbForTimer ( void far * arg )                         /* call back */
     goToXYHw(cursorF, cursorC) ;
     setCursorVisibilidad(visibilidadAnt) ;
 
-    asm pop ds
+    restore_DS0() ;                               /* restaura el DS de SO1 */
     return(1) ;
 }
 
@@ -1213,10 +1208,9 @@ int instalarConsola ( byte_t numConsolas, bool_t conMensajes )
     res = comprobarAmpersand() ;
     if (res != 0) return(res) ;
     obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */
-    *((word_t far *)pointer(_CS, (word_t)segDatos)) = _DS ;   /* guardo DS */
     res = integrarConsola(numConsolas, conMensajes) ;
     if (res != 0) return(res) ;
-    esperarDesinstalacion() ;                        /* bloquea el proceso */
+    esperarDesinstalacion(0) ;                       /* bloquea el proceso */
     res = desintegrarConsola() ;
     return(res) ;
 }
@@ -1283,9 +1277,9 @@ int main ( int argc, char * argv [ ] )
         }
     }
     if ((argc == 2) ||
-            ((argc == 3) &&
-             (!strcmpu(argv[1], "-i") || !strcmpu(argv[1], "-q"))
-            )
+        ((argc == 3) &&
+         (!strcmpu(argv[1], "-i") || !strcmpu(argv[1], "-q"))
+        )
        )
     {		
         strcpy(comando[0], argv[argc-1]) ;

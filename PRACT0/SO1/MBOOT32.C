@@ -15,9 +15,9 @@ typedef enum { FALSE, TRUE } bool_t ;               /* FALSE = 0, TRUE = 1 */
                                                      /* sizeof(bool_t) = 2 */
 typedef unsigned char byte_t ;                            /* byte (8 bits) */
                                                      /* sizeof(byte_t) = 1 */
-typedef unsigned short int word_t ;                   /* palabra (16 bits) */
+typedef unsigned short word_t ;                       /* palabra (16 bits) */
                                                      /* sizeof(word_t) = 1 */
-typedef unsigned long int dword_t ;             /* doble palabra (32 bits) */
+typedef unsigned long dword_t ;                 /* doble palabra (32 bits) */
                                                     /* sizeof(dword_t) = 1 */
 /* definiciones como so1pub.h\def_proc.h */
 

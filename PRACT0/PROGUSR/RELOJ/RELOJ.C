@@ -4,18 +4,17 @@
 /*          implementacion de recurso RELOJ (reloj en tiempo real)         */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\comundrv.h>                               /* dirDescSO1 */
+#include <so1pub.h\ajustusr.h>          /* save_DS0, setraw_DS, restore_DS */
+#include <so1pub.h\comundrv.h>                 /* ptrIndProcesoActual, ... */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>
-#include <so1pub.h\carsctrl.h>                                       /* FF */
+#include <so1pub.h\stdio.h>                                      /* printf */
 #include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
-#include <so1pub.h\scanner.h>
-#include <so1pub.h\puertos.h>
+#include <so1pub.h\scanner.h>       /* inicScanner, car, obtenCar, comando */
 #include <so1pub.h\cmos.h>                                     /* leerCmos */
 
 #pragma option -w-use /* (comundrv.h) warning: 'x' declared but never used */
 
-rindx_t rec_reloj ;
+rindx_t rec_reloj ;                                      /* esta en el BSS */
 
 /* ----------------------------------------------------------------------- */
 /*                   seccion de implementacion del driver                  */
@@ -59,10 +58,7 @@ int far releaseReloj ( int dfs )
 
 int far readReloj ( int dfs, pointer_t dir, word_t nbytes )
 {
-
     /* El proceso lee los bytes del fichero virtual: HH:MM:SS */
-
-    word_t DS_Reloj = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
 
     trama_t far * tramaProceso ;
     pindx_t indProcesoActual ;
@@ -73,9 +69,9 @@ int far readReloj ( int dfs, pointer_t dir, word_t nbytes )
     char car ;
     char buf [tamBuf] ;
 
-    asm push ds
-    asm mov ds,DS_Reloj
-
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
+	
     tramaProceso = *ptrTramaProceso ;
     indProcesoActual = *ptrIndProcesoActual ;
     df = tramaProceso->BX ;
@@ -89,14 +85,9 @@ int far readReloj ( int dfs, pointer_t dir, word_t nbytes )
         {
             switch (i % 3)
             {
-            case 0 :
-                car = '0' + (w[i/3] >> 4) ;
-                break ;
-            case 1 :
-                car = '0' + (w[i/3] & 0x000F) ;
-                break ;
-            case 2 :
-                car = ':' ;
+            case 0 : car = '0' + (w[i/3] >> 4) ; break ;
+            case 1 : car = '0' + (w[i/3] & 0x000F) ; break ;
+            case 2 : car = ':' ;
             }
             buf[i] = car ;
         }
@@ -105,7 +96,7 @@ int far readReloj ( int dfs, pointer_t dir, word_t nbytes )
             dir[i] = buf[pos + i] ;
     }
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(nbytes) ;
 }
 
@@ -126,16 +117,13 @@ int far aio_writeReloj ( int dfs, pointer_t dir, word_t nbytes )
 
 long int far lseekReloj ( int dfs, long int pos, word_t whence )
 {
-
-    word_t DS_Reloj = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
-
     int df ;
     long int res = (long int)-1 ;
     long int posNueva ;
 
-    asm push ds
-    asm mov ds,DS_Reloj
-
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
+	
     switch (whence)
     {
     case SEEK_SET :
@@ -158,7 +146,7 @@ long int far lseekReloj ( int dfs, long int pos, word_t whence )
         ;
     }
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
 }
 
@@ -177,6 +165,16 @@ int far eliminarReloj ( pindx_t pindx )
     return(0) ;
 }
 
+int finishReloj ( void ) 
+{
+	exit(0) ;
+	return(0) ;
+}
+
+void finCodeDriver ( void )   /* marca el fin del codigo propio del driver */
+{
+}
+
 #pragma warn +par
 
 /* ----------------------------------------------------------------------- */
@@ -185,27 +183,32 @@ int far eliminarReloj ( pindx_t pindx )
 
 void mostrarFormato ( void )
 {
-    escribirStr(" formato: RELOJ [ -i | -q | -u | -h ] ") ;
+    printf(" formato: RELOJ [ -i | -q | -u | -h ] ") ;
 }
 
-void formato ( void )
+int formato ( void )
 {
     mostrarFormato() ;
-    exit(-1) ;
+    return(-1) ;
 }
 
-void help ( void )
+int help ( void )
 {
-    escribirLn() ;
-    escribirLn() ;
+    printf("\n\n") ;
     mostrarFormato() ;
-    escribirStr("\n\n") ;
-    escribirStr(" instala/desinstala el driver del reloj \n\n") ;
-    escribirStr(" opciones: (por defecto -i)             \n\n") ;
-    escribirStr("      -i : instala el driver (usar &)   \n") ;
-    escribirStr("      -u : desintala el driver          \n") ;
-    escribirStr("      -h : muestra este help            \n") ;
-    exit(0) ;
+    printf(
+	    ""                                                               "\n"
+		""                                                               "\n"
+        " instala/desinstala el driver del reloj"                        "\n"
+		""                                                               "\n"
+        " opciones: (por defecto -i)"                                    "\n"
+		""                                                               "\n"
+        "      -i : instala el driver (usar &)"                          "\n"
+        "      -q : instala sin mensajes de salida (&)"                  "\n"
+        "      -u : desintala el driver"                                 "\n"
+        "      -h : muestra este help"                                   "\n"
+	) ;
+    return(0) ;
 }
 
 descProceso_t descProceso [ maxProcesos ] ;
@@ -231,17 +234,17 @@ int integrarReloj ( bool_t conMensajes )
     dR.pindx = getpindx() ;
     dR.numVI = 0 ;
 
-    dR.open      = (open_t)pointer(_CS, (word_t)openReloj) ;
-    dR.release   = (release_t)pointer(_CS, (word_t)releaseReloj) ;
-    dR.read      = (read_t)pointer(_CS, (word_t)readReloj) ;
-    dR.aio_read  = (aio_read_t)pointer(_CS, (word_t)aio_readReloj) ;
-    dR.write     = (write_t)pointer(_CS, (word_t)writeReloj) ;
-    dR.aio_write = (aio_write_t)pointer(_CS, (word_t)aio_writeReloj) ;
-    dR.lseek     = (lseek_t)pointer(_CS, (word_t)lseekReloj) ;
-    dR.fcntl     = (fcntl_t)pointer(_CS, (word_t)fcntlReloj) ;
-    dR.ioctl     = (ioctl_t)pointer(_CS, (word_t)ioctlReloj) ;
+    dR.open      = (open_t)      pointer(_CS, (word_t)openReloj) ;
+    dR.release   = (release_t)   pointer(_CS, (word_t)releaseReloj) ;
+    dR.read      = (read_t)      pointer(_CS, (word_t)readReloj) ;
+    dR.aio_read  = (aio_read_t)  pointer(_CS, (word_t)aio_readReloj) ;
+    dR.write     = (write_t)     pointer(_CS, (word_t)writeReloj) ;
+    dR.aio_write = (aio_write_t) pointer(_CS, (word_t)aio_writeReloj) ;
+    dR.lseek     = (lseek_t)     pointer(_CS, (word_t)lseekReloj) ;
+    dR.fcntl     = (fcntl_t)     pointer(_CS, (word_t)fcntlReloj) ;
+    dR.ioctl     = (ioctl_t)     pointer(_CS, (word_t)ioctlReloj) ;
 
-    dR.eliminar  = (eliminar_t)pointer(_CS, (word_t)eliminarReloj) ;
+    dR.eliminar  = (eliminar_t)  pointer(_CS, (word_t)eliminarReloj) ;
 
     rec_reloj = crearRecurso(&dR) ;
 
@@ -253,48 +256,28 @@ int integrarReloj ( bool_t conMensajes )
         if (dfs >= 0)
         {
             if (conMensajes)
-                escribirStr("\n\n recurso RELOJ instalado (fichero: RELOJ) \n") ;
+                printf("\n\n recurso RELOJ instalado (fichero: RELOJ) \n") ;
             return(0) ;
         }
         switch(dfs)
         {
-        case -1 :
-            escribirStr(" tipo de fichero erroneo") ;
-            break ;
-        case -2 :
-            escribirStr(" numero de recurso erroneo") ;
-            break ;
-        case -3 :
-            escribirStr(" RELOJ nombre de fichero ya existente") ;
-            break ;
-        case -4 :
-            escribirStr(" no hay descriptores de fichero libres") ;
-            break ;
-        default :
-            escribirStr(" no ha podido crearse el fichero RELOJ") ;
+        case -1 : printf(" tipo de fichero erroneo") ; break ;
+        case -2 : printf(" numero de recurso erroneo") ; break ;
+        case -3 : printf(" RELOJ nombre de fichero ya existente") ; break ;
+        case -4 : printf(" no hay descriptores de fichero libres") ; break ;
+        default : printf(" no ha podido crearse el fichero RELOJ") ;
         }
         destruirRecurso("RELOJ") ;
         return(0) ;
     }
     switch(rec_reloj)
     {
-    case -1 :
-        escribirStr(" tipo de recurso erroneo") ;
-        break ;
-    case -2 :
-        escribirStr(" demasiados vectores de interrupcion") ;
-        break ;
-    case -3 :
-        escribirStr(" RELOJ nombre de recurso ya existente") ;
-        break ;
-    case -4 :
-        escribirStr(" no hay descriptores de recurso libres") ;
-        break ;
-    case -5 :
-        escribirStr(" numero de vector de interrupcion ya usado") ;
-        break ;
-    default :
-        escribirStr(" no se ha podido crear el recurso RELOJ") ;
+    case -1 : printf(" tipo de recurso erroneo") ; break ;
+    case -2 : printf(" demasiados vectores de interrupcion") ; break ;
+    case -3 : printf(" RELOJ nombre de recurso ya existente") ; break ;
+    case -4 : printf(" no hay descriptores de recurso libres") ; break ;
+    case -5 : printf(" numero de vector de interrupcion ya usado") ; break ;
+    default : printf(" no ha podido crearse el recurso RELOJ") ;
     }
     return(-1) ;
 }
@@ -316,7 +299,7 @@ int comprobarAmpersand ( void )
     while (car != (char)0) obtenCar() ;
     if (comando[0][pos] != '&') /* truco: crearProceso deja ahi &, <, >, | */
     {
-        escribirStr("\n\n este driver debe ejecutarse con & \n") ;
+        printf("\n\n este driver debe ejecutarse con & \n") ;
         return(-1) ;
     }
     return(0) ;
@@ -328,43 +311,41 @@ int instalarReloj ( bool_t conMensajes )
     res = comprobarAmpersand() ;
     if (res != 0) return(res) ;
     obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */
-    *((word_t far *)pointer(_CS, (word_t)segDatos)) = _DS ;   /* guardo DS */
     res = integrarReloj(conMensajes) ;
     if (res != 0) return(res) ;
-    esperarDesinstalacion() ;                        /* bloquea el proceso */
+#if (FALSE)	
+    esperarDesinstalacion(0) ;                       /* bloquea el proceso */
+#else 		
+    esperarDesinstalacion(                           /* bloquea el proceso */
+     	OFF(dirDescSO1) + sizeof(descSO1_t),                    /* tamDATA */
+	    (word_t)finCodeDriver,                            /* finCodeDriver */
+		(word_t)finishReloj                                /* finishDriver */ 
+	) ;
+#endif 	
     res = desintegrarReloj() ;
     return(res) ;
 }
 
-void main ( int argc, char * argv [ ] )
+int main ( int argc, char * argv [ ] )
 {
     int res ;
-    if (argc > 2) formato() ;
-    else if (argc == 1) exit(instalarReloj(TRUE)) ;
-    else if (!strcmpu(argv[1], "-h")) help() ;
-    else if (!strcmpu(argv[1], "-i")) exit(instalarReloj(TRUE)) ;
-    else if (!strcmpu(argv[1], "-q")) exit(instalarReloj(FALSE)) ;
+    if (argc > 2)                     return(formato()) ;
+    else if (argc == 1)               return(instalarReloj(TRUE)) ;
+    else if (!strcmpu(argv[1], "-h")) return(help()) ;
+    else if (!strcmpu(argv[1], "-i")) return(instalarReloj(TRUE)) ;
+    else if (!strcmpu(argv[1], "-q")) return(instalarReloj(FALSE)) ;
     else if (!strcmpu(argv[1], "-u"))
     {
         res = destruirRecurso("RELOJ") ;
         switch (res)
         {
-        case  0 :
-            escribirStr(" recurso RELOJ desinstalado") ;
-            break ;
-        case -1 :
-            escribirStr(" recurso RELOJ no existe") ;
-            break ;
-        case -2 :
-            escribirStr(" recurso RELOJ en uso") ;
-            break ;
-        case -3 :
-            escribirStr(" fichero RELOJ no puede destruirse") ;
-            break ;
-        default :
-            escribirStr(" RELOJ no ha podido desinstalarse") ;
+        case  0 : printf(" recurso RELOJ desinstalado") ; break ;
+        case -1 : printf(" recurso RELOJ no existe") ; break ;
+        case -2 : printf(" recurso RELOJ en uso") ; break ;
+        case -3 : printf(" fichero RELOJ no puede destruirse") ; break ;
+        default : printf(" RELOJ no ha podido desinstalarse") ;
         }
-        exit(res) ;
+        return(res) ;
     }
-    else formato() ;
+    else return(formato()) ;
 }

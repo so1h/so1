@@ -431,9 +431,17 @@ dfs_t crearFichero ( const char far * nombre,
   return(res) ;
 }
 
-int esperarDesinstalacion ( void ) {
+int esperarDesinstalacion ( word_t tamDATA, ... ) {
   int res ;
+  word_t finCodeDriver = 0x0000 ;
+  word_t finishDriver = 0x0000 ;
+  if (tamDATA != 0x0000)
+	finCodeDriver = *((word_t far *)((pointer_t)&tamDATA + sizeof(word_t))) ;
+	finishDriver = *((word_t far *)((pointer_t)&tamDATA + 2*sizeof(word_t))) ;
   asm {
+	mov bx,tamDATA ;
+	mov cx,finCodeDriver ;
+	mov dx,finishDriver ;
     mov ax,0203h ;
     int nVIntSO1 ;
     mov res,ax ;

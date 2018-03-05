@@ -13,12 +13,10 @@
 
 #define SPInicial 0x3FFE      /* Valor inicial puntero de pila del proceso */
 
-#include <so1pub.h\ajustusr.c>
-
-#include <so1pub.h\comundrv.h>                               /* dirDescSO1 */
+#include <so1pub.h\ajustusr.h>                                 /* valor_DS */
+#include <so1pub.h\comundrv.h>                 /* ptrIndProcesoActual, ... */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>
-#include <so1pub.h\carsctrl.h>                               /* CR, LF, FF */
 #include <so1pub.h\caracter.h>                           /* dig, mayuscula */
 #include <so1pub.h\strings.h>                                   /* iguales */
 #include <so1pub.h\scanner.h>
@@ -91,28 +89,28 @@ int printCarConsola ( byte_t con, char car ) {
     byte_t F = descConsola[con].F ;
     byte_t C = descConsola[con].C ;
     switch (car) {
-    case FF  : borrarPantalla(pantalla, numFilas) ;
-               descConsola[con].F = 0 ;
-               descConsola[con].C = 0 ;
-               break ;
-    case CR  : descConsola[con].C = 0 ;
-               break ;
-    case LF  : if (++descConsola[con].F == numFilas) {
-                 scrollPantalla(pantalla, numFilas) ;
-                 descConsola[con].F = numFilas-1 ;
-               }
-               break ;
-    case BS  : if (C > 0) {
-                 C-- ;
-                 pantalla->t[F][C].car = ' ' ;
-                 descConsola[con].C = C ;
-               }
-               else printCarBIOS(BEL) ;
-               break ;
-    case HT  : car = ' ' ;
-    case BEL : printCarBIOS(car) ;
-               break ;
-    default  :
+    case '\f' : borrarPantalla(pantalla, numFilas) ;
+                descConsola[con].F = 0 ;
+                descConsola[con].C = 0 ;
+                break ;
+    case 'r'  : descConsola[con].C = 0 ;
+                break ;
+    case '\n' : if (++descConsola[con].F == numFilas) {
+                  scrollPantalla(pantalla, numFilas) ;
+                  descConsola[con].F = numFilas-1 ;
+                }
+                break ;
+    case '\b' : if (C > 0) {
+                  C-- ;
+                  pantalla->t[F][C].car = ' ' ;
+                  descConsola[con].C = C ;
+                }
+                else printCarBIOS(car) ;
+                break ;
+    case '\t' : car = ' ' ;
+    case '\a' : printCarBIOS(car) ;
+                break ;
+    default   :
       pantalla->t[F][C].car = car ;
       if (++descConsola[con].C == 80) {
         descConsola[con].C = 0 ;
@@ -176,7 +174,7 @@ static int far releaseConsola ( int dfs ) {
 
 static int far readConsola ( int dfs, pointer_t dir, word_t nbytes ) {
 
-  word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Consola = valor_DS ;
   pindx_t indProcesoActual ;
   teclado_t far * teclado ;
   modoAp_t modoAp ;
@@ -199,7 +197,7 @@ static int far readConsola ( int dfs, pointer_t dir, word_t nbytes ) {
   if (nbytes <= teclado->ncar) {
     while (nbytes > 0) {
       car = sacar(teclado) ;
-      if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+      if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
       dir[i++] = car ;
       nbytes-- ;
     }
@@ -209,7 +207,7 @@ static int far readConsola ( int dfs, pointer_t dir, word_t nbytes ) {
   else {
     while (teclado->ncar > 0) {
       car = sacar(teclado) ;
-      if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+      if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
       dir[i++] = car ;
       nbytes-- ;
     }
@@ -224,7 +222,8 @@ static int far readConsola ( int dfs, pointer_t dir, word_t nbytes ) {
 }
 
 static int far aio_readConsola ( int dfs, pointer_t dir, word_t nbytes ) {
-  word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+
+  word_t DS_Consola = valor_DS ;
   pindx_t indProcesoActual ;
   teclado_t far * teclado ;
   modoAp_t modoAp ;
@@ -251,7 +250,7 @@ static int far aio_readConsola ( int dfs, pointer_t dir, word_t nbytes ) {
   nbARetornar0 = nbARetornar ;
   while (nbARetornar > 0) {
     car = sacar(teclado) ;
-    if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+    if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
     dir[i++] = car ;
     nbARetornar-- ;
   }
@@ -261,7 +260,8 @@ static int far aio_readConsola ( int dfs, pointer_t dir, word_t nbytes ) {
 }
 
 static int far writeConsola ( int dfs, pointer_t dir, word_t nbytes ) {
-  word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+	
+  word_t DS_Consola = valor_DS ;
   int i ;
   char car ;
   word_t con ;
@@ -345,7 +345,7 @@ static byte_t AltPulsada = FALSE ;
 
 void far isr_consola ( void ) {
 
-  word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Consola = valor_DS ;
   word_t w ;
   char car ;
   word_t nbytes ;
@@ -481,7 +481,7 @@ void far isr_consola ( void ) {
       nbytes = nbytesProceso[pindx] ;
       dir = dirProceso[pindx] ;
       nbytes-- ;
-      if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+      if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
       dir[0] = car ;                                                /* car */
       dir++ ;
       if (extendido) {
@@ -602,8 +602,9 @@ static int printPtrConsola ( byte_t con, pointer_t ptr ) {
   return(printGenPtr(ptr, pCon)) ;
 }
 
-static int far cbForTimer ( void far * arg ) {                       /* call back */
-  word_t DS_Consola = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+static int far cbForTimer ( void far * arg ) {                /* call back */
+
+  word_t DS_Consola = valor_DS ;
   byte_t F0 ;
   byte_t C0 ;
   byte_t congen0 ;
@@ -745,7 +746,6 @@ static int instalarConsola ( byte_t numConsolas ) {
   else {
 
     obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */
-    *((word_t far *)pointer(_CS, (word_t)segDatos)) = _DS ;   /* guardo DS */
 
     dR.tipo = rDCaracteres ;
     copiarStr("CONSOLA", dR.nombre) ;
@@ -801,7 +801,7 @@ static int instalarConsola ( byte_t numConsolas ) {
       }
       escribirStr("\n\n recurso CONSOLA instalado (ficheros: CON0 ...) \n") ;
 
-      esperarDesinstalacion() ;                    /* bloquea el proceso */
+      esperarDesinstalacion(0) ;                     /* bloquea el proceso */
 
       res = eliminarCcbRecurso(
               (callBack_t)pointer(_CS, (word_t)cbForTimer),

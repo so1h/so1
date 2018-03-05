@@ -79,8 +79,8 @@ void so1_manejador_01 ( void ) {                       /* ah = 1 ; int SO1 */
   modoAp_t modoAp ;
   pointer_t dir ;
   word_t nbytes ;
-  long int posNueva ;
-  long int pos ;
+  long posNueva ;
+  long pos ;
   int whence ;
   word_t cmd ;                                                    /* fcntl */
   word_t arg ;
@@ -191,17 +191,17 @@ void so1_manejador_01 ( void ) {                       /* ah = 1 ; int SO1 */
 
     case 0x06 :                                                 /* 0x0106 */
       df = tramaProceso->BX ;                                    /* lseek */
-      posNueva = (long int)-1 ;
+      posNueva = -1L ;
       if ((0 <= df) && (df < dfMax)) {
         dfs = descProceso[indProcesoActual].tfa[df].dfs ;
         if ((0 <= dfs) && (dfs < dfsMax)) {
           rindx = descFichero[dfs].rindx ;
           if ((0 <= rindx) && (rindx < maxRecursos)) {
-            pos = (long int)pointer(tramaProceso->ES, tramaProceso->DX) ;
+            pos = (long)pointer(tramaProceso->ES, tramaProceso->DX) ;
             whence = tramaProceso->CX ;
             if ((SEEK_SET <= whence) && (whence <= SEEK_END)) {
               posNueva = descRecurso[rindx].lseek(dfs, pos, whence) ;
-              if (posNueva >= (long int)0)
+              if (posNueva >= (long)0)
                 descProceso[indProcesoActual].tfa[df].pos = posNueva ;
             }
           }

@@ -7,7 +7,7 @@ DIRS = crtl/      \
 	   _pbr/      \
        so1/       \
        progusr/   \
-#      progusr2/  \
+       progusr2/  \
 	   
 DIRS.do       = $(DIRS:/=.do)
 DIRS.clean    = $(DIRS:/=.clean)

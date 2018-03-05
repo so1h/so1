@@ -1,19 +1,20 @@
 
 PROGRAMA = RETARDO
 
-# primer fichero objeto (..\so1pub\obj\ajustusr.obj)
+# primer fichero objeto (..\..\so1pub\lib\startlib.lib)
+# segundo fichero objeto (..\..\so1pub\obj\ajustusr.obj)
 # ultimo fichero objeto (..\so1pub\obj\fincode.obj)
 
 OBJS2LINK =                      \
 ..\..\startfin\lib\startlib.lib, \
 ..\..\so1pub\obj\ajustusr.obj,   \
+#
 $(PROGRAMA).obj,                 \
 ..\..\so1pub\lib\ll_s_so1.lib,   \
 ..\..\so1pub\obj\ctype.obj,      \  
-..\..\so1pub\obj\printgen.obj,   \
 ..\..\so1pub\obj\tipos.obj,      \
-..\..\so1pub\obj\put.obj,        \
-..\..\so1pub\obj\escribir.obj,   \
+..\..\so1pub\obj\stdio.obj,      \
+..\..\so1pub\obj\vsprintf.obj,   \
 ..\..\so1pub\obj\scanner.obj,    \
 ..\..\so1pub\obj\strings.obj,    \
 ..\..\crtl\obj\h_ldiv.obj,       \
@@ -23,9 +24,12 @@ $(PROGRAMA).obj,                 \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (finBSS = 1A74 < 1FFF)
+#puntero de pila inicial (finBSS = 2306 < 23FE)
 
-SPINICIAL = 1FFE
+SPINICIAL = 23FE
 
 !include "..\..\MKFILE0"
+
+COMPILACIONDIRECTA = 0
+
 !include "..\MAKEUSR"

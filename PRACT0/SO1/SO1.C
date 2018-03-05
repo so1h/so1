@@ -206,6 +206,7 @@ void tirarSistema ( word_t loQueHay, int timeout )
     rindx_t rindx ;
     char far * nombre ;
     char strComando [ 12 ] ;
+    int status ;
 
 #if (CON_PROCESO_INICIAL)
 
@@ -281,11 +282,11 @@ void tirarSistema ( word_t loQueHay, int timeout )
     for ( pindx = 1 ; pindx < maxProcesos ; pindx++ )
     {
         if ((descProceso[pindx].estado == bloqueado) &&
-                (descProceso[pindx].esperandoPor == rec_desinstalacion))
+            (descProceso[pindx].esperandoPor == rec_desinstalacion))
         {
             strlcpy(strComando, descProceso[pindx].programa, 8) ;
             for ( i = 0 ; i < 8 ; i++ )
-                if ((strComando[i] == (char)0) || (strComando[i] == '.'))
+                if ((strComando[i] == '\0') || (strComando[i] == '.'))
                 {
                     for ( j = i ; j < 8 ; j++ )
                         strComando[j] = ' ' ;
@@ -294,15 +295,25 @@ void tirarSistema ( word_t loQueHay, int timeout )
             strComando[ 8] = ' ' ;
             strComando[ 9] = '-' ;
             strComando[10] = 'u' ;
-            strComando[11] = (char)0 ;
+            strComando[11] = '\0' ;
             escribirCar(' ') ;
             escribirStr((char *)strComando) ;
             escribirCar(':') ;
             if (timeout > 0) esperarTicsBIOS(18) ;
             if ((pid = createProcess(descProceso[pindx].programa, strComando)) > 0)
             {
+#if (TRUE)				
                 waitpid(pid, (int far *)NULL) ;
-                killpid(descProceso[pindx].pid) ;
+#else				
+                waitpid(pid, (int far *)&status) ;
+				if (status == 0) 
+				{
+                    escribirStr(" killpid(") ;
+                    escribirInt(descProceso[pindx].pid, 1) ;
+                    escribirStr(") --> ") ; 
+				    escribirInt(killpid(descProceso[pindx].pid), 1) ;
+				}
+#endif
                 escribirLn() ;
             }
         }

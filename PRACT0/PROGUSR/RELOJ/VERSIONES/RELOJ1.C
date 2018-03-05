@@ -6,9 +6,8 @@
 
 #define SPInicial 0x3FFE      /* Valor inicial puntero de pila del proceso */
 
-#include <so1pub.h\ajustusr.c>
-
-#include <so1pub.h\comundrv.h>                               /* dirDescSO1 */
+#include <so1pub.h\ajustusr.h>                                 /* valor_DS */
+#include <so1pub.h\comundrv.h>                 /* ptrIndProcesoActual, ... */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>
 #include <so1pub.h\carsctrl.h>                                       /* FF */
@@ -58,7 +57,7 @@ static int far readReloj ( int dfs, pointer_t dir, word_t nbytes ) {
 
   /* El proceso lee los bytes que solicita del fichero virtual: HH:MM:SS   */
 
-  word_t DS_Reloj = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Reloj = valor_DS ;
 
   trama_t far * tramaProceso ;
   pindx_t indProcesoActual ;
@@ -111,7 +110,7 @@ static int far aio_writeReloj ( int dfs, pointer_t dir, word_t nbytes ) {
 
 static long int far lseekReloj ( int dfs, long int pos, word_t whence ) {
 
-  word_t DS_Reloj = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Reloj = valor_DS ;
 
   int df ;
   long int res = (long int)-1 ;
@@ -202,7 +201,6 @@ static int instalarReloj ( void ) {
   else {
 
     obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */
-    *((word_t far *)pointer(_CS, (word_t)segDatos)) = _DS ;   /* guardo DS */
 
     dR.tipo = rDCaracteres ;
     copiarStr("RELOJ", dR.nombre) ;
@@ -229,7 +227,7 @@ static int instalarReloj ( void ) {
 
       if (dfs >= 0) {
         escribirStr("\n\n recurso RELOJ instalado (fichero: RELOJ) \n") ;
-        esperarDesinstalacion() ;                    /* bloquea el proceso */
+        esperarDesinstalacion(0) ;                   /* bloquea el proceso */
         return(0) ;
       }
       else switch(dfs) {

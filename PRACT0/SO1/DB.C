@@ -128,9 +128,9 @@ static int far aio_writeDB ( int dfs, pointer_t dir, word_t nbytes )
   return(writeDB(dfs, dir, nbytes)) ;
 }
 
-static long int far lseekDB ( int dfs, long int pos, word_t whence ) 
+static long far lseekDB ( int dfs, long pos, word_t whence ) 
 {
-  return((long int)-1) ;
+  return(-1L) ;
 }
 
 static int far fcntlDB ( int dfs, word_t cmd, word_t arg ) 
@@ -153,26 +153,36 @@ bool_t posibleErr9EnOpBIOS ( word_t seg )
 	else return(FALSE) ;
 }
 
-/* Para que funcione bien segBuferSeguro es necesario que la memoria este  */
-/* compactada con un unico bloque de memoria libre. Ademas no debe de      */
-/* mas procesos accediendo a la lista de bloques libres. Estas condiciones */
-/* se cumplen si se llama desde el main de SO1.C ya que se acaba de poner  */
-/* en marcha el gestor de memoria y las interrupciones esta inhibidas.     */  
-
 word_t segBuferSO1 ;           /* bufer para leer de forma segura sectores */
-                                    /* con el BIOS (ver error 0x09 int 13) */
+                                   /* con el BIOS (ver error 0x09 int 13h) */
+                /* el sector no debe atravesar una frontera de 64 KB (DMA) */ 								
+
+/* Funcion para encontrar un bufer seguro de cara a leer/escribir con la   */ 
+/* interrupcion int 13h. Hay que asegurar que el bufer no atraviesa        */
+/* ninguna frontera de 64 Bytes (0x10000, 0x20000, .... , 0xF0000) ya que  */
+/* en ese caso el bus de direcciones del DMA da problemas. La funcion      */
+/* solicita al gestor de memoria un bloque de 1024 bytes (dos sectores).   */
+/* Si los primeros 512 bytes no atraviesan ninguna frontera de 64 KB nos   */
+/* quedamos con ese bufer devolviendo los segundos 512 bytes al gestor.    */
+/* Si los primeros 512 bytes si atraviesan una frontera de 64 KB tomamos   */
+/* como bufer los 512 bytes que comienzan en una direccion multiplo de     */
+/* 512 bytes, devolviendo de los 1024 bytes solicitados los bytes          */
+/* restantes tras el bufer.                                                */
+
 word_t segBuferSeguro ( void )                        /* seguro con el DMA */
 {
     word_t segB ;
     word_t segBufer ;                     /* 512 bytes = 512/16 paragrafos */
-    segB = k_buscarBloque(512/16) ;        /* primer segmento tras la pila */
+    segB = k_buscarBloque(2*(512/16)) ;                              /* GM */   
     segBufer = segB ;
-    if ((segB % (512/16)) != 0)                    /* multiplo de (512/16) */
-    {
-        segBufer = ((segB & 0xFFE0) + 512/16) ;
-        k_devolverBloque(segB, 512/16) ;                             /* GM */
-        k_buscarBloque(segBufer + 512/16 - segB) ;                   /* GM */
-    }
+//  if ((segB % (512/16)) != 0)                 /* no multiplo de (512/16) */
+    if ((segB & 0xF000) != ((segB + 512/16) & 0xF000))   /* atraviesa 64KB */               
+        segBufer = ((segB & 0xFFE0) + 512/16) ;      /* siguiente multiplo */         
+    k_devolverBloque(
+        segBufer + 512/16, 
+//	    segB + 2*(512/16) - (segBufer + 512/16)
+	    segB + 512/16 - segBufer
+	) ;                                                              /* GM */ 		
     return(segBufer) ;
 }
 

@@ -195,11 +195,12 @@ void finish ( void ) {                          /* main debe retornar aqui */
   /* exit(0) ; */             /* esta función no se usa, pero por simetria */
 }                               /* ver macro atexit en SO1PUB.H/AJUSTUSR.H */
 
-void segDatos ( void ) {              /* vamos a guardar aqui el valor del */
+void segDatos ( void ) {           /* vamos a guardar aqui el valor del DS */
   /* asm db 'DS' */
   asm dw 0x0000       /* aqui se guardara el segmento de datos (DS) de SO1 */
+                                          /* dentro del segmento de codigo */
                           /* en BCC 5.02 no funciona ni db 'DS' ni ds 'DS' */
-}                                         /* dentro del segmento de codigo */
+}                                         
 
 #pragma warn -rvl           /* para evitar: Function should return a value */
 

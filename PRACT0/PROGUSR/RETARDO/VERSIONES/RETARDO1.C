@@ -6,9 +6,8 @@
 
 #define SPInicial 0x3FFE      /* Valor inicial puntero de pila del proceso */
 
-#include <so1pub.h\ajustusr.c>
-
-#include <so1pub.h\comundrv.h>                               /* dirDescSO1 */
+#include <so1pub.h\ajustusr.h>                                 /* valor_DS */
+#include <so1pub.h\comundrv.h>                 /* ptrIndProcesoActual, ... */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>
 #include <so1pub.h\carsctrl.h>                                       /* FF */
@@ -45,7 +44,7 @@ static void retardar ( dword_t nVueltas ) {
 }
 
 static int far retardarProceso ( void ) {
-  word_t DS_Retardo = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Retardo = valor_DS ;
   int res ;
   asm push ds
   asm mov ds,DS_Retardo                      /* establecemos DS del driver */
@@ -61,7 +60,7 @@ static int far retardarProceso ( void ) {
 #pragma warn -par
 
 static int far openRetardo ( int dfs, modoAp_t modo ) {
-  word_t DS_Retardo = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Retardo = valor_DS ;
   pindx_t indProcesoActual ;
   int res = 0 ;
 
@@ -77,7 +76,7 @@ static int far openRetardo ( int dfs, modoAp_t modo ) {
 }
 
 static int far releaseRetardo ( int dfs ) {
-  word_t DS_Retardo = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Retardo = valor_DS ;
   pindx_t indProcesoActual ;
   int res = 0 ;
 
@@ -93,7 +92,7 @@ static int far releaseRetardo ( int dfs ) {
 }
 
 static int far readRetardo ( int dfs, pointer_t dir, word_t nbytes ) {
-  word_t DS_Retardo = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Retardo = valor_DS ;
   pindx_t indProcesoActual ;
   int res = 4 ;
   dword_t far * ptrDWord = (dword_t far *)dir ;
@@ -123,7 +122,7 @@ static int far aio_readRetardo ( int dfs, pointer_t dir, word_t nbytes ) {
 }
 
 static int far writeRetardo ( int dfs, pointer_t dir, word_t nbytes ) {
-  word_t DS_Retardo = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Retardo = valor_DS ;
   pindx_t indProcesoActual ;
   int res = 4 ;
   dword_t far * ptrDWord = (dword_t far *)dir ;
@@ -225,7 +224,6 @@ static int instalarRetardo ( void ) {
   else {
 
     obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */
-    *((word_t far *)pointer(_CS, (word_t)segDatos)) = _DS ;   /* guardo DS */
 
     dR.tipo = rDCaracteres ;
     copiarStr("RETARDO", dR.nombre) ;
@@ -259,7 +257,7 @@ static int instalarRetardo ( void ) {
         escribirStr("\n\n nVueltasRetardo = ") ;
         escribirLDec(nVueltasRetardo, 1) ;
         escribirStr("\n") ;
-        esperarDesinstalacion() ;                    /* bloquea el proceso */
+        esperarDesinstalacion(0) ;                   /* bloquea el proceso */
         return(0) ;
       }
       else switch(dfs) {

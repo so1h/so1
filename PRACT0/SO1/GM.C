@@ -82,6 +82,9 @@ bool_t k_devolverBloque ( word_t segmento, word_t tam ) {
 
   ptrBloque_t ptrBloqueIz, ptrBloque, ptrBloqueDe ;
 
+  if (seg((pointer_t)listaLibres) <= segmento) 
+    return(FALSE) ;	  
+  
   ptrBloqueDe = (ptrBloque_t)pointer(listaLibres->sig, 0x0000) ;
   while (seg((pointer_t)ptrBloqueDe) < segmento)
     ptrBloqueDe = (ptrBloque_t)pointer(ptrBloqueDe->sig, 0x0000) ;
@@ -171,8 +174,8 @@ static int far aio_writeGM ( int dfs, pointer_t dir, word_t nbytes ) {
   return(writeGM(dfs, dir, nbytes)) ;
 }
 
-static long int far lseekGM ( int dfs, long int pos, word_t whence ) {
-  return((long int)-1) ;
+static long far lseekGM ( int dfs, long pos, word_t whence ) {
+  return(-1L) ;
 }
 
 static int far fcntlGM ( int dfs, word_t cmd, word_t arg ) {

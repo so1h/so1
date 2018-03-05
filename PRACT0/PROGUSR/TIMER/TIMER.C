@@ -4,7 +4,8 @@
 /*             implementacion del recurso TIMER (temporizador)             */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\comundrv.h>                               /* dirDescSO1 */
+#include <so1pub.h\ajustusr.h>          /* save_DS0, setraw_DS, restore_DS */
+#include <so1pub.h\comundrv.h>                 /* ptrIndProcesoActual, ... */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>
 #include <so1pub.h\carsctrl.h>                                       /* FF */
@@ -68,12 +69,10 @@ static int far releaseTimer ( int dfs )
 
 static int far readTimer ( int dfs, pointer_t dir, word_t nbytes )
 {
-
-    word_t DS_Timer = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     pindx_t indProcesoActual ;
 
-    asm push ds
-    asm mov ds,DS_Timer
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     indProcesoActual = *ptrIndProcesoActual ;
 
@@ -108,14 +107,13 @@ static int far aio_readTimer ( int dfs, pointer_t dir, word_t nbytes )
     /* donde CCCC     son los 2 bytes de contTicsRodaja                    */
     /* donde XXXX     son los 2 bytes de ticsPorRodaja                     */
 
-    word_t DS_Timer = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     int i, j ;
     int df ;
     word_t pos ;
     word_t posNueva ;
 
-    asm push ds
-    asm mov ds,DS_Timer
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     df = (*ptrTramaProceso)->BX ;
     pos = (word_t)ptrDescProceso[*ptrIndProcesoActual].tfa[df].pos ;
@@ -138,7 +136,7 @@ static int far aio_readTimer ( int dfs, pointer_t dir, word_t nbytes )
             dir[j++] = buf[i] ;
     }
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(nbytes) ;
 }
 
@@ -159,7 +157,6 @@ static int far aio_writeTimer ( int dfs, pointer_t dir, word_t nbytes )
     /* donde CCCC     son los 2 bytes de contTicsRodaja                    */
     /* donde XXXX     son los 2 bytes de ticsPorRodaja                     */
 
-    word_t DS_Timer = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     int i, j ;
     int df ;
     word_t pos ;
@@ -170,8 +167,8 @@ static int far aio_writeTimer ( int dfs, pointer_t dir, word_t nbytes )
     int contTicsRodajaAux ;
     word_t ticsPorRodajaAux ;
 
-    asm push ds
-    asm mov ds,DS_Timer
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     df = (*ptrTramaProceso)->BX ;
     pos = (word_t)ptrDescProceso[*ptrIndProcesoActual].tfa[df].pos ;
@@ -212,21 +209,18 @@ static int far aio_writeTimer ( int dfs, pointer_t dir, word_t nbytes )
         }
         else nbytes = -1 ;
     }
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(nbytes) ;
 }
 
 static long int far lseekTimer ( int dfs, long int pos, word_t whence )
 {
-
-    word_t DS_Timer = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
-
     int df ;
     long int res = (long int)-1 ;
     long int posNueva ;
 
-    asm push ds
-    asm mov ds,DS_Timer
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     switch (whence)
     {
@@ -250,7 +244,7 @@ static long int far lseekTimer ( int dfs, long int pos, word_t whence )
         ;
     }
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
 }
 
@@ -266,8 +260,13 @@ static int far ioctlTimer ( int dfs, word_t request, word_t arg )
 
 static int far eliminarTimer ( pindx_t pindx )
 {
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
+
     if (estaPC2c(pindx, (ptrC2c_t)&colaTimer))
         eliminarPC2c(pindx, (ptrC2c_t)&colaTimer) ;
+	
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(0) ;
 }
 
@@ -306,12 +305,10 @@ static argCbTimer_t argCbTimer ;
 
 static void far isr_timer ( )
 {
-
-    word_t DS_Timer = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     pindx_t indProcesoActual ;
 
-    asm push ds
-    asm mov ds,DS_Timer
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     indProcesoActual = *ptrIndProcesoActual ;
 
@@ -369,7 +366,7 @@ static void far isr_timer ( )
             ptrDescProceso[ptrC2cPFR[PPreparados].primero].estado = preparado ;
     }
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
 }
 
 /* ----------------------------------------------------------------------- */
@@ -529,10 +526,9 @@ static int instalarTimer ( word_t ticsPR )
     res = comprobarAmpersand() ;
     if (res != 0) return(res) ;
     obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */
-    *((word_t far *)pointer(_CS, (word_t)segDatos)) = _DS ;   /* guardo DS */
     res = integrarTimer(ticsPR) ;
     if (res != 0) return(res) ;
-    esperarDesinstalacion() ;                        /* bloquea el proceso */
+    esperarDesinstalacion(0) ;                       /* bloquea el proceso */
     res = desintegrarTimer() ;
     return(res) ;
 }

@@ -16,7 +16,6 @@
 #include <so1pub.h\bios_0.h>                /* leerTeclaBIOS, printCarBIOS */
 #include <so1pub.h\biosdata.h>                              /* ptrBiosArea */
 #include <so1pub.h\strings.h>                                 /* copiarStr */
-#include <so1pub.h\carsctrl.h>                                   /* CR, LF */
 #include <so1pub.h\printgen.h>
 #include <so1pub.h\ptrc2c.h>                                   /* inicPC2c */
 #include <so1pub.h\pantalla.h>                               /* pantalla_t */
@@ -83,28 +82,28 @@ int printCarConsola ( byte_t con, char car ) {
     byte_t F = descConsola[con].F ;
     byte_t C = descConsola[con].C ;
     switch (car) {
-    case FF  : borrarPantalla(pantalla, numFilas) ;
-               descConsola[con].F = 0 ;
-               descConsola[con].C = 0 ;
-               break ;
-    case CR  : descConsola[con].C = 0 ;
-               break ;
-    case LF  : if (++descConsola[con].F == numFilas) {
-                 scrollPantalla(pantalla, numFilas) ;
-                 descConsola[con].F = numFilas-1 ;
-               }
-               break ;
-    case BS  : if (C > 0) {
-                 C-- ;
-                 pantalla->t[F][C].car = ' ' ;
-                 descConsola[con].C = C ;
-               }
-               else printCarBIOS(BEL) ;
-               break ;
-    case HT  : car = ' ' ;
-    case BEL : printCarBIOS(car) ;
-               break ;
-    default  :
+    case '\f' : borrarPantalla(pantalla, numFilas) ;
+                descConsola[con].F = 0 ;
+                descConsola[con].C = 0 ;
+                break ;
+    case '\r' : descConsola[con].C = 0 ;
+                break ;
+    case '\n' : if (++descConsola[con].F == numFilas) {
+                  scrollPantalla(pantalla, numFilas) ;
+                  descConsola[con].F = numFilas-1 ;
+                }
+                break ;
+    case '\b' : if (C > 0) {
+                  C-- ;
+                  pantalla->t[F][C].car = ' ' ;
+                  descConsola[con].C = C ;
+                }
+                else printCarBIOS(BEL) ;
+                break ;
+    case '\t' : car = ' ' ;
+    case '\a' : printCarBIOS(car) ;
+                break ;
+    default   :
       pantalla->t[F][C].car = car ;
       if (++descConsola[con].C == 80) {
         descConsola[con].C = 0 ;
@@ -231,7 +230,7 @@ static int far readConsola ( int dfs, pointer_t dir, word_t nbytes ) {
   if (nbytes <= teclado->ncar) {
     while (nbytes > 0) {
       car = sacar(teclado) ;
-      if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+      if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
       dir[i++] = car ;
       nbytes-- ;
     }
@@ -240,7 +239,7 @@ static int far readConsola ( int dfs, pointer_t dir, word_t nbytes ) {
   else {
     while (teclado->ncar > 0) {
       car = sacar(teclado) ;
-      if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+      if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
       dir[i++] = car ;
       nbytes-- ;
     }
@@ -267,7 +266,7 @@ static int far aio_readConsola ( int dfs, pointer_t dir, word_t nbytes ) {
   nbARetornar0 = nbARetornar ;
   while (nbARetornar > 0) {
     car = sacar(teclado) ;
-    if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+    if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
     dir[i++] = car ;
     nbARetornar-- ;
   }
@@ -608,7 +607,7 @@ printDecVideo(teclado->bloqueados.e[teclado->bloqueados.primero].sig, 6) ;
       nbytes = nbytesProceso[pindx] ;
       dir = dirProceso[pindx] ;
       nbytes-- ;
-      if ((car == CR) && (modoAp & O_TEXT)) car = LF ;
+      if ((car == '\r') && (modoAp & O_TEXT)) car = '\n' ;
       dir[0] = car ;                                                /* car */
       dir++ ;
       if (extendido) {

@@ -203,7 +203,7 @@ dfs_t crearFichero ( const char far * nombre,
                      word_t           menor,
                      tipoFichero_t    tipo ) ;
 
-int esperarDesinstalacion ( void ) ;
+int esperarDesinstalacion ( word_t tamDATA, ... ) ;
 
 int destruirRecurso ( char far * nombre ) ;
 

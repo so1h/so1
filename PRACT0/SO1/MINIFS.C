@@ -70,8 +70,8 @@ static int far aio_writeSF ( int dfs, pointer_t dir, word_t nbytes ) {
     return(0) ;
 }
 
-static long int far lseekSF ( int dfs, long int pos, word_t whence ) {
-    long int posFich = (dword_t)pos ;
+static long far lseekSF ( int dfs, long pos, word_t whence ) {
+    long posFich = (dword_t)pos ;
     lseekDOS(descFichero[dfs].menor, (dword_t *)&posFich, whence) ;
     return(posFich) ;
 }

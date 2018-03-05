@@ -46,7 +46,7 @@ extern word_t BSS_SO1 ;                             /* comienzo BSS de SO1 */
 extern word_t IMRInicial ;     /* mascara de interrupcion inicial del 8259 */
 
                                     /* guardar el segmento de datos de SO1 */
-
+							
 #if defined(TASM32)
 #define guardarDS_SO1()                                           /* macro */\
   asm mov word ptr cs:[OFFSET segDatos],ds ;                  /* fin macro */
@@ -66,6 +66,3 @@ extern word_t IMRInicial ;     /* mascara de interrupcion inicial del 8259 */
 #endif
 
 #endif /* AJUSTES_H */
-
-
-

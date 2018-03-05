@@ -4,24 +4,25 @@
 /*           implementacion del recurso RETARDO (retardo activo)           */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\comundrv.h>                /* dirDescSO1, segDatos, ... */
+#include <so1pub.h\ajustusr.h>          /* save_DS0, setraw_DS, restore_DS */
+#include <so1pub.h\comundrv.h>                 /* ptrIndProcesoActual, ... */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\escribir.h>            /* escribirStr, escribirDec, ... */
+#include <so1pub.h\stdio.h>                                      /* printf */
 #include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
 #include <so1pub.h\scanner.h>  /* inicScanner, obtenCar, comando, car, pos */
 #include <so1pub.h\biosdata.h>                              /* ptrBiosArea */
 
 #pragma option -w-use /* (comundrv.h) warning: 'x' declared but never used */
 
-rindx_t rec_retardo ;
+rindx_t rec_retardo ;                                    /* esta en el BSS */
 
 /* ----------------------------------------------------------------------- */
 /*                   seccion de implementacion del driver                  */
 /* ----------------------------------------------------------------------- */
 
-bool_t retardando [ maxProcesos ] ;        /* procesos retardandose */
-
-dword_t nVueltasRetardo ;
+bool_t retardando [ maxProcesos ] = { FALSE } ;   /* procesos retardandose */
+ 
+dword_t nVueltasRetardo = 0 ;                           /* esta en la DATA */
 
 #define cuerpoVuelta {                                                       \
   for ( j = 0 ; j < 10 ; j++ ) {                                             \
@@ -44,17 +45,19 @@ void retardar ( dword_t nVueltas )
 
 int far retardarProceso ( void )
 {
-    word_t DS_Retardo = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     int res ;
-    asm push ds
-    asm mov ds,DS_Retardo                    /* establecemos DS del driver */
+
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
+	
     if (!retardando[*ptrIndProcesoActual]) res = -1 ;
     else
     {
         retardar(nVueltasRetardo) ;
         res = 0 ;
     }
-    asm pop ds                               /* restauramos DS del proceso */
+
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
 }
 
@@ -62,47 +65,44 @@ int far retardarProceso ( void )
 
 int far openRetardo ( int dfs, modoAp_t modo )
 {
-    word_t DS_Retardo = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     pindx_t indProcesoActual ;
     int res = 0 ;
 
-    asm push ds
-    asm mov ds,DS_Retardo
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     indProcesoActual = *ptrIndProcesoActual ;
     if (retardando[indProcesoActual]) res = -1 ;
     else retardando[indProcesoActual] = TRUE ;
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
 }
 
 int far releaseRetardo ( int dfs )
 {
-    word_t DS_Retardo = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     pindx_t indProcesoActual ;
     int res = 0 ;
 
-    asm push ds
-    asm mov ds,DS_Retardo
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     indProcesoActual = *ptrIndProcesoActual ;
     if (!retardando[indProcesoActual]) res = -1 ;
     else retardando[indProcesoActual] = FALSE ;
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
 }
 
 int far readRetardo ( int dfs, pointer_t dir, word_t nbytes )
 {
-    word_t DS_Retardo = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     pindx_t indProcesoActual ;
     int res = 4 ;
     dword_t far * ptrDWord = (dword_t far *)dir ;
 
-    asm push ds
-    asm mov ds,DS_Retardo
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     indProcesoActual = *ptrIndProcesoActual ;
     if (!retardando[indProcesoActual]) res = -1 ;    /* fichero no abierto */
@@ -121,7 +121,7 @@ int far readRetardo ( int dfs, pointer_t dir, word_t nbytes )
             res = -3 ;                   /* codigo de operacion incorrecto */
         }
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
 }
 
@@ -132,20 +132,19 @@ int far aio_readRetardo ( int dfs, pointer_t dir, word_t nbytes )
 
 int far writeRetardo ( int dfs, pointer_t dir, word_t nbytes )
 {
-    word_t DS_Retardo = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     pindx_t indProcesoActual ;
     int res = 4 ;
     dword_t far * ptrDWord = (dword_t far *)dir ;
 
-    asm push ds
-    asm mov ds,DS_Retardo
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     indProcesoActual = *ptrIndProcesoActual ;
     if (!retardando[indProcesoActual]) res = -1 ;    /* fichero no abierto */
     else if (nbytes != 4) res = -2 ;
     else nVueltasRetardo = ptrDWord[0] ;
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
 }
 
@@ -174,6 +173,16 @@ int far eliminarRetardo ( pindx_t pindx )
     return(0) ;
 }
 
+int finishRetardo ( void ) 
+{
+	exit(0) ;
+	return(0) ;
+}
+
+void finCodeDriver ( void )   /* marca el fin del codigo propio del driver */
+{
+}
+
 #pragma warn +par
 
 /* ----------------------------------------------------------------------- */
@@ -182,9 +191,7 @@ int far eliminarRetardo ( pindx_t pindx )
 
 void mostrarFormato ( void )
 {
-    escribirStr(
-        " formato: RETARDO [ -i | -q | -u | -h ] "
-    ) ;
+    printf(" formato: RETARDO [ -i | -q | -u | -h ] ") ;
 }
 
 int formato ( void )
@@ -195,22 +202,19 @@ int formato ( void )
 
 int help ( void )
 {
-    escribirStr(
-        "\n"
-        "\n"
-    ) ;
+    printf("\n\n") ;
     mostrarFormato() ;
-    escribirStr(
-        "\n"
-        "\n"
-        " instala/desinstala el driver de retardo activo \n"
-        "\n"
-        " opciones: (por defecto -i)                     \n"
-        "\n"
-        "      -i : instala el driver (usar &)           \n"
-        "      -q : instala sin mensajes de salida (&)   \n"
-        "      -u : desintala el driver                  \n"
-        "      -h : muestra este help                    \n"
+    printf(
+	    ""                                                               "\n"
+		""                                                               "\n"
+        " instala/desinstala el driver de retardo activo"                "\n"
+        ""                                                               "\n"
+        " opciones: (por defecto -i)"                                    "\n"
+        ""                                                               "\n"
+        "      -i : instala el driver (usar &)"                          "\n"
+        "      -q : instala sin mensajes de salida (&)"                  "\n"
+        "      -u : desintala el driver"                                 "\n"
+        "      -h : muestra este help"                                   "\n"
     ) ;
     return(0) ;
 }
@@ -257,7 +261,6 @@ dword_t valorRetardo ( void )  /* permite las interrupciones temporalmente */
 
 int integrarRetardo ( bool_t conMensajes )
 {
-
     int i ;
     int dfs ;
     descRecurso_t dR ;
@@ -269,22 +272,23 @@ int integrarRetardo ( bool_t conMensajes )
     dR.pindx = getpindx() ;
     dR.numVI = 0 ;
 
-    dR.open      = (open_t)pointer(_CS, (word_t)openRetardo) ;
-    dR.release   = (release_t)pointer(_CS, (word_t)releaseRetardo) ;
-    dR.read      = (read_t)pointer(_CS, (word_t)readRetardo) ;
-    dR.aio_read  = (aio_read_t)pointer(_CS, (word_t)aio_readRetardo) ;
-    dR.write     = (write_t)pointer(_CS, (word_t)writeRetardo) ;
+    dR.open      = (open_t)     pointer(_CS, (word_t)openRetardo) ;
+    dR.release   = (release_t)  pointer(_CS, (word_t)releaseRetardo) ;
+    dR.read      = (read_t)     pointer(_CS, (word_t)readRetardo) ;
+    dR.aio_read  = (aio_read_t) pointer(_CS, (word_t)aio_readRetardo) ;
+    dR.write     = (write_t)    pointer(_CS, (word_t)writeRetardo) ;
     dR.aio_write = (aio_write_t)pointer(_CS, (word_t)aio_writeRetardo) ;
-    dR.lseek     = (lseek_t)pointer(_CS, (word_t)lseekRetardo) ;
-    dR.fcntl     = (fcntl_t)pointer(_CS, (word_t)fcntlRetardo) ;
-    dR.ioctl     = (ioctl_t)pointer(_CS, (word_t)ioctlRetardo) ;
+    dR.lseek     = (lseek_t)    pointer(_CS, (word_t)lseekRetardo) ;
+    dR.fcntl     = (fcntl_t)    pointer(_CS, (word_t)fcntlRetardo) ;
+    dR.ioctl     = (ioctl_t)    pointer(_CS, (word_t)ioctlRetardo) ;
 
-    dR.eliminar  = (eliminar_t)pointer(_CS, (word_t)eliminarRetardo) ;
+    dR.eliminar  = (eliminar_t) pointer(_CS, (word_t)eliminarRetardo) ;
 
     rec_retardo = crearRecurso(&dR) ;
 
     nVueltasRetardo = valorRetardo() ;                  /* dividimos por 2 */
-    /* para compensar las ints */
+//                                              /* para compensar las ints */
+
     for ( i = 0 ; i < maxProcesos ; i ++ ) retardando[i] = FALSE ;
 
     if (rec_retardo >= 0)
@@ -296,55 +300,36 @@ int integrarRetardo ( bool_t conMensajes )
         {
             if (conMensajes)
             {
-                escribirStr(
-                    "\n"
-                    "\n recurso RETARDO instalado (fichero: RETARDO) "
-                    "\n\n nVueltasRetardo = "
+                printf(
+                    ""                                                   "\n"
+                    ""                                                   "\n"
+					" recurso RETARDO instalado (fichero: RETARDO)"      "\n"  
+					""                                                   "\n"
+					" nVueltasRetardo = %lu"                             "\n", 
+					nVueltasRetardo 
                 ) ;
-                escribirLDec(nVueltasRetardo, 1) ;
-                escribirStr("\n") ;
             }
             return(0) ;
         }
         switch(dfs)
         {
-        case -1 :
-            escribirStr(" tipo de fichero erroneo") ;
-            break ;
-        case -2 :
-            escribirStr(" numero de recurso erroneo") ;
-            break ;
-        case -3 :
-            escribirStr(" RETARDO nombre de fichero ya existente") ;
-            break ;
-        case -4 :
-            escribirStr(" no hay descriptores de fichero libres") ;
-            break ;
-        default :
-            escribirStr(" no se ha podido crear el fichero RETARDO") ;
+        case -1 : printf(" tipo de fichero erroneo") ; break ;
+        case -2 : printf(" numero de recurso erroneo") ; break ;
+        case -3 : printf(" RETARDO nombre de fichero ya existente") ; break ;
+        case -4 : printf(" no hay descriptores de fichero libres") ; break ;
+        default : printf(" no ha podido crearse el fichero RETARDO") ;
         }
         destruirRecurso("RETARDO") ;
         return(0) ;
     }
     switch(rec_retardo)
     {
-    case -1 :
-        escribirStr(" tipo de recurso erroneo") ;
-        break ;
-    case -2 :
-        escribirStr(" demasiados vectores de interrupcion") ;
-        break ;
-    case -3 :
-        escribirStr(" RETARDO nombre de recurso ya existente") ;
-        break ;
-    case -4 :
-        escribirStr(" no hay descriptores de recurso libres") ;
-        break ;
-    case -5 :
-        escribirStr(" numero de vector de interrupcion ya usado") ;
-        break ;
-    default :
-        escribirStr(" no ha podido crearse el recurso RETARDO") ;
+    case -1 : printf(" tipo de recurso erroneo") ; break ;
+    case -2 : printf(" demasiados vectores de interrupcion") ; break ;
+    case -3 : printf(" RETARDO nombre de recurso ya existente") ; break ;
+    case -4 : printf(" no hay descriptores de recurso libres") ; break ;
+    case -5 : printf(" numero de vector de interrupcion ya usado") ; break ;
+    default : printf(" no ha podido crearse el recurso RETARDO") ;
     }
     return(-1) ;
 }
@@ -366,7 +351,7 @@ int comprobarAmpersand ( void )
     while (car != (char)0) obtenCar() ;
     if (comando[0][pos] != '&') /* truco: crearProceso deja ahi &, <, >, | */
     {
-        escribirStr("\n\n este driver debe ejecutarse con & \n") ;
+        printf("\n\n este driver debe ejecutarse con & \n") ;
         return(-1) ;
     }
     return(0) ;
@@ -378,10 +363,18 @@ int instalarRetardo ( bool_t conMensajes )
     res = comprobarAmpersand() ;
     if (res != 0) return(res) ;
     obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */
-    *((word_t far *)pointer(_CS, (word_t)segDatos)) = _DS ;   /* guardo DS */
     res = integrarRetardo(conMensajes) ;
     if (res != 0) return(res) ;
-    esperarDesinstalacion() ;                        /* bloquea el proceso */
+#if (FALSE)	
+    esperarDesinstalacion(0) ;                       /* bloquea el proceso */
+#else 		
+    esperarDesinstalacion(                           /* bloquea el proceso */
+     	OFF(dirDescSO1) + sizeof(descSO1_t)  
+		  + sizeof(retardando) + sizeof(nVueltasRetardo),       /* tamDATA */
+	    (word_t)finCodeDriver,                            /* finCodeDriver */
+		(word_t)finishRetardo                              /* finishDriver */ 
+	) ;
+#endif 		
     res = desintegrarRetardo() ;
     return(res) ;
 }
@@ -389,8 +382,8 @@ int instalarRetardo ( bool_t conMensajes )
 int main ( int argc, char * argv [ ] )
 {
     int res ;
-    if (argc > 2) return(formato()) ;
-    else if (argc == 1) exit(instalarRetardo(TRUE)) ;
+    if (argc > 2)                     return(formato()) ;
+    else if (argc == 1)               return(instalarRetardo(TRUE)) ;
     else if (!strcmpu(argv[1], "-h")) return(help()) ;
     else if (!strcmpu(argv[1], "-i")) return(instalarRetardo(TRUE)) ;
     else if (!strcmpu(argv[1], "-q")) return(instalarRetardo(FALSE)) ;
@@ -399,20 +392,11 @@ int main ( int argc, char * argv [ ] )
         res = destruirRecurso("RETARDO") ;
         switch (res)
         {
-        case  0 :
-            escribirStr(" recurso RETARDO desinstalado") ;
-            break ;
-        case -1 :
-            escribirStr(" recurso RETARDO no existe") ;
-            break ;
-        case -2 :
-            escribirStr(" recurso RETARDO en uso") ;
-            break ;
-        case -3 :
-            escribirStr(" fichero RETARDO no puede destruirse") ;
-            break ;
-        default :
-            escribirStr(" RETARDO no ha podido desinstalarse") ;
+        case  0 : printf(" recurso RETARDO desinstalado") ; break ;
+        case -1 : printf(" recurso RETARDO no existe") ; break ;
+        case -2 : printf(" recurso RETARDO en uso") ; break ;
+        case -3 : printf(" fichero RETARDO no puede destruirse") ; break ;
+        default : printf(" RETARDO no ha podido desinstalarse") ;
         }
         return(res) ;
     }

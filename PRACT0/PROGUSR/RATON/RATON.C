@@ -4,7 +4,8 @@
 /*                              recurso raton                              */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\comundrv.h>                               /* dirDescSO1 */
+#include <so1pub.h\ajustusr.h>          /* save_DS0, setraw_DS, restore_DS */
+#include <so1pub.h\comundrv.h>                 /* ptrIndProcesoActual, ... */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>
 
@@ -159,13 +160,11 @@ int far releaseRaton ( int dfs )
 
 int far readRaton ( int dfs, pointer_t dir, word_t nbytes )
 {
-
-    word_t DS_Raton = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     word_t nbARetornar ;
     pindx_t indProcesoActual ;
 
-    asm push ds
-    asm mov ds,DS_Raton
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     indProcesoActual = *ptrIndProcesoActual ;
     if (nbytes <= sizeof(estadoRaton_t))
@@ -179,19 +178,16 @@ int far readRaton ( int dfs, pointer_t dir, word_t nbytes )
     encolarPC2c(indProcesoActual, &bloqueadosRaton) ;
     bloquearProcesoActual(rec_raton) ;
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(-1) ;
-
 }
 
 int far aio_readRaton ( int dfs, pointer_t dir, word_t nbytes )
 {
-
-    word_t DS_Raton = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
     word_t nbARetornar ;
 
-    asm push ds
-    asm mov ds,DS_Raton
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
 
     if (nbytes <= sizeof(estadoRaton_t))
         nbARetornar = nbytes ;
@@ -199,9 +195,8 @@ int far aio_readRaton ( int dfs, pointer_t dir, word_t nbytes )
         nbARetornar = sizeof(estadoRaton_t) ;
     memcpy(dir, &er, nbARetornar) ;
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(nbARetornar) ;
-
 }
 
 int far writeRaton ( int dfs, pointer_t dir, word_t nbytes )
@@ -231,8 +226,13 @@ int far ioctlRaton ( int dfs, word_t request, word_t arg )
 
 int far eliminarRaton ( pindx_t pindx )
 {
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	setraw_DS() ;           /* establece el DS correspondiente al programa */
+	
     if (estaPC2c(pindx, &bloqueadosRaton))
         eliminarPC2c(pindx, &bloqueadosRaton) ;
+
+	restore_DS0() ;                               /* restaura el DS de SO1 */
     return(0) ;
 }
 
@@ -252,27 +252,21 @@ void actualizarCursor ( void ) ;                                /* forward */
 
 void far isr_raton ( void )
 {
-
-    word_t DS_Raton = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
-
-    asm push ds
-    asm mov ds,DS_Raton
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	set_DS() ;              /* establece el DS correspondiente al programa */
 
     /*  plot('m', 0, contadorTimer0()) ; */
     tratarRaton() ;
     /*  plot('e', 0, contadorTimer0()) ; */
     eoi_pic2() ;
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
 }
 
 void far isr_raton_dosbox ( void )
 {
-
-    word_t DS_Raton = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
-
-    asm push ds
-    asm mov ds,DS_Raton
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	set_DS() ;              /* establece el DS correspondiente al programa */
 
     ptrVIOrg[nVIntRaton]() ;    /* llamamos a la antigua rti (pushf + int) */
     /*  plot('m', 0, contadorTimer0()) ; */
@@ -280,7 +274,7 @@ void far isr_raton_dosbox ( void )
     /*  plot('e', 0, contadorTimer0()) ; */
     /* eoi_pic2() ; */
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
 }
 
 word_t rH_CS ;
@@ -294,11 +288,8 @@ word_t rH_DI ;
 
 void far isr_raton_BIOS ( void )
 {
-
-    word_t DS_Raton = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
-
-    asm push ds
-    asm mov ds,DS_Raton
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	set_DS() ;              /* establece el DS correspondiente al programa */
 
     /*
     printStrBIOS("\n isr_raton_bios") ;
@@ -310,7 +301,7 @@ void far isr_raton_BIOS ( void )
     /*  plot('e', 0, contadorTimer0()) ; */
     /* eoi_pic2() ; */
 
-    asm pop ds
+	restore_DS0() ;                               /* restaura el DS de SO1 */
 }
 
 rti_t rti_nVIntRaton ;                               /* ver so1\interrup.c */
@@ -321,15 +312,15 @@ word_t far * ptrWordAux ;                          /* para depurar la pila */
 
 void far rti_raton_BIOS ( void )
 {
-    asm {
-		
+    asm {		
 		sub sp,10 ;                             /* Flags, CS, IP (Proceso) */
 //                                               /* segment_rti_nVIntRaton */
 //                                                /* offset_rti_nVIntRaton */
-        push ds ;                                          /* DS (Proceso) */
+    }
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	set_DS() ;              /* establece el DS correspondiente al programa */
 
-        mov ds,word ptr cs:[segDatos] ;      /* segmento de datos DS_Raton */
-
+    asm {				  
         push ax ;
         push bp ;
 
@@ -369,9 +360,9 @@ void far rti_raton_BIOS ( void )
     asm {
         pop bp ;
         pop ax ;
-        pop ds ;                                           
         /* retorno lejano a rti_nVIntRaton */
 	}
+	restore_DS0() ;                               /* restaura el DS de SO1 */	
 }
 
 void far ratonHandler ( void )
@@ -381,8 +372,8 @@ void far ratonHandler ( void )
     /* llamada a procedimiento lejano. Por ese motivo la pila contiene lo  */
     /* siguiente: Flags, CS, IP del proceso y direccion de retorno lejana. */
 
-    asm push ds                  /* segmento de datos del driver del raton */
-    asm mov ds,word ptr cs:[segDatos]        /* segmento de datos DS_Raton */
+    save_DS0() ;                            /* guarda el DS anterior (SO1) */
+ 	set_DS() ;              /* establece el DS correspondiente al programa */
     /*
     printStrBIOS("\n ratonHandler principio") ;
       ptrWordAux = (word_t far  *)pointer(_SS,_SP) ;
@@ -449,7 +440,7 @@ void far ratonHandler ( void )
     printHexBIOS(ptrWordAux[8], 4) ;
     printStrBIOS("\n ") ;
     */
-    asm pop ds                                   /* se retorna del handler */
+	restore_DS0() ;                               /* restaura el DS de SO1 */	
 }                            /* de el a isr_raton_bios y de ahi al proceso */
 
 #define TECLADO_ESTADO  0x64
@@ -743,7 +734,16 @@ void far handlerRaton ( dword_t y, word_t x, word_t s )
 	int maxYAct ;
 
     asm cli
-    asm mov ds,word ptr cs:[segDatos]
+//  asm mov ds,word ptr cs:[segDatos]
+      asm push ax ;
+	  asm push bx ;
+      asm mov ax,cs:[3] ;
+	  asm mov bx,cs ;
+      asm add ax,bx
+	  asm mov ds,ax ;
+	  asm pop bx
+	  asm pop ax       
+
     /*  establecerDS_SO1() ; */
     if (priVez)
         priVez = FALSE ;       /* Ignoro la primera lectura por ser basura */
@@ -1298,10 +1298,9 @@ int instalarRaton ( bool_t conMensajes )
     res = comprobarAmpersand() ;
     if (res != 0) return(res) ;
     obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */
-    *((word_t far *)pointer(_CS, (word_t)segDatos)) = _DS ;   /* guardo DS */
     res = integrarRaton(conMensajes) ;
     if (res != 0) return(res) ;
-    esperarDesinstalacion() ;                        /* bloquea el proceso */
+    esperarDesinstalacion(0) ;                       /* bloquea el proceso */
     res = desintegrarRaton() ;
     return(res) ;
 }

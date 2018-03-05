@@ -18,7 +18,7 @@ void relleno ( void ) {
 
 #define MBOOT_ENTRY OFFSET mbheader + sizeof(multiboot_header_t) ;
 
-//#define tamFichBin 40146          /* numero de bytes en el fichero so1.bin */
+//#define tamFichBin 40146        /* numero de bytes en el fichero so1.bin */
 #define tamFichBin 40844          /* numero de bytes en el fichero so1.bin */
 
 //#define numNops 15

@@ -26,7 +26,7 @@
 #include <so1pub.h\def_proc.h>                                 /* rec_hijo */
 #include <so1.h\ajustes.h>
 #include <so1.h\ejecutar.h>                        /* kk_fork, preEjecutar */
-#include <so1.h\procesos.h>
+#include <so1.h\procesos.h>                               /* matarProcIndx */
 #include <so1.h\blockpr.h>
 #include <so1.h\bios.h>
 #include <so1.h\dokill.h>

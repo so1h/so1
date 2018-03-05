@@ -256,20 +256,22 @@ int destruirRec ( const char far * nombre ) {
 
   descRecurso[rindx].numVI = 0 ;
 
-  descRecurso[rindx].open =      (open_t)0x00000000 ;
-  descRecurso[rindx].release =   (release_t)0x00000000 ;
-  descRecurso[rindx].read =      (read_t)0x00000000 ;
-  descRecurso[rindx].aio_read =  (aio_read_t)0x00000000 ;
-  descRecurso[rindx].write =     (write_t)0x00000000 ;
+  descRecurso[rindx].open =      (open_t     )0x00000000 ;
+  descRecurso[rindx].release =   (release_t  )0x00000000 ;
+  descRecurso[rindx].read =      (read_t     )0x00000000 ;
+  descRecurso[rindx].aio_read =  (aio_read_t )0x00000000 ;
+  descRecurso[rindx].write =     (write_t    )0x00000000 ;
   descRecurso[rindx].aio_write = (aio_write_t)0x00000000 ;
-  descRecurso[rindx].lseek =     (lseek_t)0x00000000 ;
-  descRecurso[rindx].fcntl =     (fcntl_t)0x00000000 ;
-  descRecurso[rindx].ioctl =     (ioctl_t)0x00000000 ;
+  descRecurso[rindx].lseek =     (lseek_t    )0x00000000 ;
+  descRecurso[rindx].fcntl =     (fcntl_t    )0x00000000 ;
+  descRecurso[rindx].ioctl =     (ioctl_t    )0x00000000 ;
 
-  descRecurso[rindx].eliminar =  (ioctl_t)0x00000000 ;
+  descRecurso[rindx].eliminar =  (ioctl_t    )0x00000000 ;
 
   eliminarPC2c(rindx, (ptrC2c_t)&c2cPFR[DROcupados]) ;
   apilarPC2c(rindx, (ptrC2c_t)&c2cPFR[DRLibres]) ;
+  
+  matarProcIndx(pindx) ;                   /* en otro caso quedaria zombie */	
 
   return(0) ;
 }

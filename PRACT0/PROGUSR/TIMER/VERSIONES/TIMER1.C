@@ -6,9 +6,8 @@
 
 #define SPInicial 0x3FFE      /* Valor inicial puntero de pila del proceso */
 
-#include <so1pub.h\ajustusr.c>
-
-#include <so1pub.h\comundrv.h>                               /* dirDescSO1 */
+#include <so1pub.h\ajustusr.h>                                 /* valor_DS */
+#include <so1pub.h\comundrv.h>                 /* ptrIndProcesoActual, ... */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\escribir.h>
 #include <so1pub.h\carsctrl.h>                                       /* FF */
@@ -67,7 +66,7 @@ static int far releaseTimer ( int dfs ) {
 
 static int far readTimer ( int dfs, pointer_t dir, word_t nbytes ) {
 
-  word_t DS_Timer = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Timer = valor_DS ;
   pindx_t indProcesoActual ;
 
   asm push ds
@@ -105,7 +104,7 @@ static int far aio_readTimer ( int dfs, pointer_t dir, word_t nbytes ) {
   /* donde CCCC     son los 2 bytes de contTicsRodaja                      */
   /* donde XXXX     son los 2 bytes de ticsPorRodaja                       */
 
-  word_t DS_Timer = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Timer = valor_DS ;
   int i, j ;
   int df ;
   word_t pos ;
@@ -152,7 +151,7 @@ static int far aio_writeTimer ( int dfs, pointer_t dir, word_t nbytes ) {
   /* donde CCCC     son los 2 bytes de contTicsRodaja                      */
   /* donde XXXX     son los 2 bytes de ticsPorRodaja                       */
 
-  word_t DS_Timer = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Timer = valor_DS ;
   int i, j ;
   int df ;
   word_t pos ;
@@ -206,19 +205,19 @@ static int far aio_writeTimer ( int dfs, pointer_t dir, word_t nbytes ) {
   return(nbytes) ;
 }
 
-static long int far lseekTimer ( int dfs, long int pos, word_t whence ) {
+static long far lseekTimer ( int dfs, long pos, word_t whence ) {
 
-  word_t DS_Timer = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Timer = valor_DS ;
 
   int df ;
-  long int res = (long int)-1 ;
-  long int posNueva ;
+  long res = -1L ;
+  long posNueva ;
 
   asm push ds
   asm mov ds,DS_Timer
 
   switch (whence) {
-    case SEEK_SET : if ((0 <= pos) && (pos <= (long int)tamBuf))
+    case SEEK_SET : if ((0 <= pos) && (pos <= (long)tamBuf))
                       res = pos ;
                     break ;
     case SEEK_CUR : df = (*ptrTramaProceso)->BX ;
@@ -278,7 +277,7 @@ static argCbTimer_t argCbTimer ;
 
 static void far isr_timer ( ) {
 
-  word_t DS_Timer = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+  word_t DS_Timer = valor_DS ;
   pindx_t indProcesoActual ;
 
   asm push ds
@@ -393,7 +392,6 @@ static int instalarTimer ( word_t ticsPR ) {
   else {
 
     obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */
-    *((word_t far *)pointer(_CS, (word_t)segDatos)) = _DS ;   /* guardo DS */
 
     dR.tipo = rDCaracteres ;
     copiarStr("TIMER", dR.nombre) ;
@@ -429,7 +427,7 @@ static int instalarTimer ( word_t ticsPR ) {
         escribirStr("\n\n ticsPorRodaja = ") ;
         escribirDec(ticsPorRodaja, 1) ;
         escribirStr("\n") ;
-        esperarDesinstalacion() ;                    /* bloquea el proceso */
+        esperarDesinstalacion(0) ;                   /* bloquea el proceso */
         return(0) ;
       }
       else switch(dfs) {
