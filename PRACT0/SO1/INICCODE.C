@@ -15,16 +15,17 @@
 #include <so1pub.h\debug.h>            /* assert, valorFlags, mostrarFlags */
 #include <so1pub.h\bios_0.h>            /* printStrBIOS, printDecBIOS, ... */
 #include <so1pub.h\biosdata.h>                             /* ptrFechaBios */
+#include <progusr\consola\consola.h>                             /* descConsola_t */
 
 #include <so1pub.h\interpre.h>                      /* interpretarComandos */
 
 #include <so1.h\iniccode.h>                                        /* inic */
 //                                                         /* valor normal */
 #define TIMER   TRUE                                       /*    TRUE      */
-#define CONRAT  FALSE                                      /*    FALSE     */
 #define RETARDO TRUE                                       /*    TRUE      */ 
 #define RELOJ   TRUE                                       /*    TRUE      */ 
 #define RATON   TRUE                                       /*    TRUE      */ 
+#define CONRAT  FALSE                                      /*    FALSE     */
 
 #define numConsolas 6
 
@@ -141,6 +142,9 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     if ((pid = createProcess("CONRAT", "CONRAT&")) < 0)                /* GP */
     {
 #else
+
+    ll_buscarBloque((((numConsolas+1)*sizeof(descConsola_t))+15)/16) ; /* GM */
+    
     strcpy(strArg, "CONSOLA -q X &") ;
     strArg[11] = '0' + numConsolas ;
     if ((pid = createProcess("CONSOLA", strArg)) < 0)                  /* GP */
@@ -156,7 +160,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     for ( i = 0 ; i < numConsolas ; i++ )
     {
         nombre[3] = '0' + i ;
-        esperarFichero(nombre) ;
+        esperarFichero(nombre) ;  /* esperamos a que se creen las 6 consolas */
     }
     printLnBIOS() ;
 
@@ -173,7 +177,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     /* fdGM = 0.                                                             */
 
     close(0) ;   /* Cerramos "GM" para no interferir con la entrada estandar */
-    /* de INIT (STDIN) que todavia no se ha asociado a CON0.   */
+//               /* de INIT (STDIN) que todavia no se ha asociado a CON0.    */
     assert(
 
         (open("CON0", O_RDONLY) == STDIN) &&

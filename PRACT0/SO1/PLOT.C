@@ -101,7 +101,7 @@ bool_t initPlot ( byte_t modo, char * filePlot ) {
                 plotCar = plotCarBuf ;
                 if (segmento == 0x0000) {
                   segmento = k_buscarBloque(tamBufPlot) ;
-                  ptrBufPlot = pointer(segmento, 0x0000) ;
+                  ptrBufPlot = MK_FP(segmento, 0x0000) ;
                 }
                 inBufPlot = 0 ;
                 outBufPlot = 0 ;
@@ -111,7 +111,7 @@ bool_t initPlot ( byte_t modo, char * filePlot ) {
                 accion = 0x0012 ;
                   df = extendedOpenDOS((pointer_t)filePlot, 0x2021, 0, &accion, &error) ;
                /* df = extendedOpenDOS((pointer_t)filePlot, 0x6021, 0, 0x0012) ; */
-                encolarCcb((callBack_t)pointer(_CS, (word_t)tareaPlot), ccbAlEpilogo) ;
+                encolarCcb((callBack_t)MK_FP(_CS, FP_OFF(tareaPlot)), ccbAlEpilogo) ;
                 vaciarBufPlot = FALSE ;
 /*                contTicsPlot = contTics ; */
               }

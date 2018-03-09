@@ -14,7 +14,7 @@
 #include <so1pub.h\tipos.h>                             /* word_t, dword_t */
 #include <so1pub.h\memory.h> 
 
-#if (FALSE)
+#if (TRUE)
 
 void * memcpy_n ( void * destino, const void * origen, word_t n ) 
 {

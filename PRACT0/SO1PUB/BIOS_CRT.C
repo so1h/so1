@@ -11,37 +11,37 @@
 
 /* Ver proyecto Public Domain Curses (pdcurses) en sourceforge             */
 
-byte_t numFilas ;
-byte_t numColumnas ;
+byte_t numFilas = 0 ;                               /* inicializacion DATA */
+byte_t numColumnas = 0 ;                            /* inicializacion DATA */
 
-pantalla_t far * ptrPant ;
+pantalla_t far * ptrPant = NULL ;                   /* inicializacion DATA */
 
-tipoAdaptador_t tipoAdaptador ;
+tipoAdaptador_t tipoAdaptador = 0 ;                 /* inicializacion DATA */
 
-static bool_t enColor ;
-static bool_t videoDirecto ;
-bool_t redimensionable ;
-static bool_t adaptadorNoFiable ;
+static bool_t enColor = FALSE ;                     /* inicializacion DATA */
+static bool_t videoDirecto = FALSE ;                /* inicializacion DATA */
+bool_t redimensionable = FALSE ;                    /* inicializacion DATA */
+static bool_t adaptadorNoFiable = FALSE ;           /* inicializacion DATA */
 
-byte_t fontSize ;
+byte_t fontSize = 0 ;                               /* inicializacion DATA */
 byte_t visibilidad = 1 ;             /* 0 invisible, 2 grande, por defecto */
 
-static byte_t cursorOriginalF ;
-static byte_t cursorOriginalC ;
-static byte_t lineaOriginal1 ;
-static byte_t lineaOriginal2 ;
+static byte_t cursorOriginalF = 0 ;                 /* inicializacion DATA */
+static byte_t cursorOriginalC = 0 ;                 /* inicializacion DATA */
+static byte_t lineaOriginal1 = 0 ;                  /* inicializacion DATA */
+static byte_t lineaOriginal2 = 0 ;                  /* inicializacion DATA */
 
-static byte_t numFilasOriginal ;
-static byte_t numColumnasOriginal ;
+static byte_t numFilasOriginal = 0 ;                /* inicializacion DATA */
+static byte_t numColumnasOriginal = 0 ;             /* inicializacion DATA */
 
-static byte_t fontSizeOriginal ;
-static byte_t VIDEO_mode ;                 /* si = 0x07 => enColor == TRUE */
-static word_t VIDEO_pagesize ;
-static word_t VIDEO_pageoff ;
+static byte_t fontSizeOriginal = 0 ;                /* inicializacion DATA */
+static byte_t VIDEO_mode = 0 ;             /* si = 0x07 => enColor == TRUE */
+static word_t VIDEO_pagesize = 0 ;                  /* inicializacion DATA */
+static word_t VIDEO_pageoff = 0 ;                   /* inicializacion DATA */
 
 /* static pantalla_t far * copiaPantallaOriginal ; */
 
-static word_t segMemVideo ;           /* 0xB000 (mono) o 0xB800 (en color) */
+static word_t segMemVideo = 0 ;       /* 0xB000 (mono) o 0xB800 (en color) */
 
 void inicBiosCrt ( int filas, int columnas, bool_t redim ) {
 
@@ -51,7 +51,7 @@ void inicBiosCrt ( int filas, int columnas, bool_t redim ) {
   readXYBIOS(&cursorOriginalF, &cursorOriginalC, &lineaOriginal1, &lineaOriginal2) ;
   tipoAdaptador = tipoDeAdaptador() ;            /* inicializa segMemVideo */
 
-  ptrPant = (pantalla_t far *)pointer(segMemVideo, 0x0000) ;
+  ptrPant = MK_FP(segMemVideo, 0x0000) ;
 /*  copiaPantallaOriginal = (pantalla_t far *)&ptrPant->t[maxFilas][0] ; */
 /*  copiarPantalla(ptrPant, copiaPantallaOriginal, numFilasOriginal) ; */
 /*  copiarPantalla(ptrPant, copiaPantallaOriginal, maxFilas) ; */

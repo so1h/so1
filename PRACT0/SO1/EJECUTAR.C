@@ -4,7 +4,8 @@
 /*            busqueda, carga y ejecucion de comandos externos             */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\tipos.h>  /* pid_t, pindx_t, word_t, dword_t, pointer_t */ /* MK_FP */
+#include <so1pub.h\tipos.h>  /* pid_t, pindx_t, word_t, dword_t, pointer_t */ 
+//                                                /* MK_FP, FP_SEG, FP_OFF */
 #include <so1pub.h\def_proc.h>
 #include <so1pub.h\scanner.h>                                /* tamComando */
 #include <so1pub.h\msdos.h>                  /* lssekMSDOS, SEEK_SET_MSDOS */
@@ -45,13 +46,13 @@ pid_t kk_fork ( void ) {
   memcpy(destino, origen, sizeof(descProceso_t)) ;
 
   SS_NuevoProceso = segmento
-    + (seg((pointer_t)descProceso[indProcesoActual].trama)
-         - descProceso[indProcesoActual].CSProc) ;
+                      + (FP_SEG(descProceso[indProcesoActual].trama)
+                      - descProceso[indProcesoActual].CSProc) ;
 
-  descProceso[pindx].trama = (trama_t far *) MK_FP(
-    SS_NuevoProceso,
-    off((pointer_t)descProceso[indProcesoActual].trama)
+  descProceso[pindx].trama = MK_FP(
+    SS_NuevoProceso, FP_OFF(descProceso[indProcesoActual].trama)
   ) ;
+  
   descProceso[pindx].CSProc = segmento ;
 
   descProceso[pindx].trama->DS = SS_NuevoProceso ;
@@ -266,12 +267,12 @@ pindx_t preEjecutar ( const char far * nombre,
   }
   else {
     word_t s = segmento ;
-    ptr = pointer(s, 0x0000) ;
+    ptr = MK_FP(s, 0x0000) ;
     posFich = (dword_t)0 ;
     lseekDOS(df, (dword_t *)&posFich, SEEK_SET_MSDOS) ;          /* whence */
     while ((n = readDOS(df, (char far *)ptr, 32*512)) > 0) {
       s = s + (32*512)/16 ;
-      ptr = pointer(s, 0x0000) ;
+      ptr = MK_FP(s, 0x0000) ;
     }
     closeDOS(df) ;
     if (n < 0) return(-9) ;

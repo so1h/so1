@@ -7,16 +7,16 @@
 #ifndef CCB_H
 #define CCB_H
 
-#include <so1pub.h\tipos.h>                                      /* word_t */
+#include <so1pub.h\tipos.h>                                /* word_t, NULL */
 
 typedef int far ( far * callBack_t ) ( void far * arg ) ;     /* call back */
 
-#define cbNulo (callBack_t)0x00000000
+#define cbNulo (callBack_t)NULL
 
 typedef struct {
   word_t num ;                               /* numero actual de callBacks */
-  word_t in ;                                /* indice del primer callBack */
-  word_t out ;                    /* indice de la primera componente libre */
+  word_t in ;                     /* indice de la primera componente libre */           
+  word_t out ;                     /* indice del primer callBack disponible*/ 
   word_t max ;                               /* numero máximo de callBacks */
   void far * arg ;                                   /* argumento devuelto */
   callBack_t callBack [ ] ;                 /* array circular de callBacks */
@@ -24,7 +24,7 @@ typedef struct {
 
 typedef descCcb_t far * ccb_t ;
 
-#define ccbNulo (ccb_t)0x00000000
+#define ccbNulo (ccb_t)NULL
 
 #define tamCcb (sizeof(descCcb_t) + max * sizeof(callBack_t))
 
@@ -43,4 +43,3 @@ int vaciarCcb ( ccb_t ccb ) ;
 int atenderCcb ( ccb_t ccb ) ;
 
 #endif /* CCB_H */
-

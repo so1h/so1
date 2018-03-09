@@ -142,8 +142,8 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
     int error ;
     int i ;
 
-    /* Se necesita un bufer de 512 bytes para la lectura segura de los     */ 
-	/* sectores mediante la INT13 (DMA).                                   */
+    /* Se necesita un bufer de 512 bytes para la lectura segura de los     */
+    /* sectores mediante la INT13 (DMA).                                   */
 
 //    segBuferSO1 = segBuferSeguro() ;                                 /* GM */
 //    ptrBuferSO1 = MK_FP(segBuferSO1, 0x0000) ;
@@ -217,7 +217,7 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
     } ;
     if ((boot->instJMP[0] != 0xEB) || (boot->instJMP[1] < 0x3C) || (boot->instNOP != 0x90) ||
             (boot->signaturaExt != 0x29))       /* debe tratarse de un MBR */
-	{                                  /* copiamos la tabla de particiones */
+    {                                  /* copiamos la tabla de particiones */
         memcpy(&descUnidadFisica[unidadFisicaActual].descParticion,
                &mbr->descParticion,
                4*sizeof(descParticion_t)
@@ -620,7 +620,7 @@ int abrirFichero ( const char far * nombre, byte_t unidadLogica )
     for ( i = 0 ; i < maxFichAbiertos ; i++ )
         if ((!tablaFichAbiertos[i].libre) &&
                 (tablaFichAbiertos[i].unidadLogica == unidadLogica) &&
-//              (!strncmp(tablaFichAbiertos[i].entrada.nombre, (char *)&nombreFormateado, 11))) 
+//              (!strncmp(tablaFichAbiertos[i].entrada.nombre, (char *)&nombreFormateado, 11)))
                 (!strncmpu((char far *)tablaFichAbiertos[i].entrada.nombre,
                            (char far *)&nombreFormateado, 11)))
             return(i) ;

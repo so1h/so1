@@ -70,11 +70,11 @@ asm                                                                          \
    
 #define offset_SPInicial 0x001A
 
-#define valor_SPInicial *((word_t far *)pointer(_CS, offset_SPInicial))
+#define valor_SPInicial *((word_t far *)MK_FP(_CS, offset_SPInicial))
 
 #define atexit( finish ) {                                                   \
   manejador_t far * ptrManejadorAtExit =                                     \
-    (manejador_t far *)pointer(                                              \
+    (manejador_t far *)MK_FP(                                              \
        _DS,                                                                  \
        valor_SPInicial-2             /* ver crearProceso en SO1\PROCESOS.C */\
     ) ;                                                                      \

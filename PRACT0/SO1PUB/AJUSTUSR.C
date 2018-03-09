@@ -44,7 +44,7 @@ void finish ( void ) {                    /* por defecto main retorna aqui */
   
   asm push ax ;                       /* AX = resultado retornado por main */
 
-  ptrManejadorAtExit = (manejador_t far *)pointer(_DS, valor_SPInicial-2) ;
+  ptrManejadorAtExit = (manejador_t far *)MK_FP(_DS, valor_SPInicial-2) ;
   
   if (((word_t)(*ptrManejadorAtExit)) != 0x0000)         /* se ha cambiado */
   { 

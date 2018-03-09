@@ -24,7 +24,7 @@ dfs_t dfs_sf ;
 
 static int far openSF ( int dfs, modoAp_t modo ) {
 
-    char far * nombre = (char far *)pointer(tramaProceso->ES, tramaProceso->BX) ;
+    char far * nombre = MK_FP(tramaProceso->ES, tramaProceso->BX) ;
     int dfMSDOS ;                           /* descriptor de fichero MSDOS */
     int modoDOSExt = 0x2000 ;
     word_t accion = 0x0001 ;
@@ -97,18 +97,19 @@ int inicMinisfMSDOS ( void ) {
     dR.tipo = rSF ;
     strcpy(dR.nombre, "SF") ;
     dR.ccb = (ccb_t)&descCcbSF ;
+    dR.ccb->arg = NULL ;
     dR.pindx = indProcesoActual ;
     dR.numVI = 0 ;
 
-    dR.open      = (open_t)pointer(_CS, (word_t)openSF) ;
-    dR.release   = (release_t)pointer(_CS, (word_t)releaseSF) ;
-    dR.read      = (read_t)pointer(_CS, (word_t)readSF) ;
-    dR.aio_read  = (aio_read_t)pointer(_CS, (word_t)aio_readSF) ;
-    dR.write     = (write_t)pointer(_CS, (word_t)writeSF) ;
-    dR.aio_write = (aio_write_t)pointer(_CS, (word_t)aio_writeSF) ;
-    dR.lseek     = (lseek_t)pointer(_CS, (word_t)lseekSF) ;
-    dR.fcntl     = (fcntl_t)pointer(_CS, (word_t)fcntlSF) ;
-    dR.ioctl     = (ioctl_t)pointer(_CS, (word_t)ioctlSF) ;
+    dR.open      = (open_t)     MK_FP(_CS, FP_OFF(openSF)) ;
+    dR.release   = (release_t)  MK_FP(_CS, FP_OFF(releaseSF)) ;
+    dR.read      = (read_t)     MK_FP(_CS, FP_OFF(readSF)) ;
+    dR.aio_read  = (aio_read_t) MK_FP(_CS, FP_OFF(aio_readSF)) ;
+    dR.write     = (write_t)    MK_FP(_CS, FP_OFF(writeSF)) ;
+    dR.aio_write = (aio_write_t)MK_FP(_CS, FP_OFF(aio_writeSF)) ;
+    dR.lseek     = (lseek_t)    MK_FP(_CS, FP_OFF(lseekSF)) ;
+    dR.fcntl     = (fcntl_t)    MK_FP(_CS, FP_OFF(fcntlSF)) ;
+    dR.ioctl     = (ioctl_t)    MK_FP(_CS, FP_OFF(ioctlSF)) ;
 
     rec_sf = crearRec(&dR) ;
 

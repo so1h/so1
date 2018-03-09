@@ -17,7 +17,7 @@ int printGenLn ( printCar_t p ) {
 int printGenStr ( const char far * str, printCar_t p ) {
   char car ;
   int cont = 0 ;
-  while ((car = *str++) != (char)0) {
+  while ((car = *str++) != '\0') {
     if (car == '\n') { p('\r') ; cont++ ; }
     p(car) ; cont++ ;
   }
@@ -27,7 +27,7 @@ int printGenStr ( const char far * str, printCar_t p ) {
 int printGenStrHasta ( const char far * str, word_t n, bool_t lleno, printCar_t p ) {
   char car ;
   word_t i = 0 ;
-  while ((i < n) && ((car = *str++) != (char)0)) {
+  while ((i < n) && ((car = *str++) != '\0')) {
     if (car == '\n') p('\r') ;
     p(car) ;
     i++ ;
@@ -42,7 +42,7 @@ int printGenStrHasta ( const char far * str, word_t n, bool_t lleno, printCar_t 
 
 #define tamStrMax 11
 
-static char str[tamStrMax] ;
+static char str[tamStrMax] = "" ;
 
 #define codigoPrintGenDec(tamStr, tamStrM1, tamStrM2) {                     \
 /*  char str[tamStr] ; */                                                   \
@@ -56,7 +56,7 @@ static char str[tamStrMax] ;
     return(l) ;                                                             \
   }                                                                         \
   ptr = (char *)&str[tamStrM1] ;                                            \
-  *ptr = (char)0 ;                                                          \
+  *ptr = '\0' ;                                                             \
   i = 0 ;                                                                   \
   while (num > 0) {                                                         \
     str[tamStrM2-i] = dig[(word_t)(num%10)] ;                               \
@@ -65,7 +65,7 @@ static char str[tamStrMax] ;
   }                                                                         \
   for ( j = i ; j < l ; j++ ) p(' ') ;                                      \
   ptr = (char *)&str[tamStrM2-i+1] ;                                        \
-  while (*ptr != (char)0) {                                                 \
+  while (*ptr != '\0') {                                                 \
     p(*ptr) ;                                                               \
     ptr++ ;                                                                 \
       cont++ ;                                                                \
@@ -94,7 +94,7 @@ int printGenLDec ( dword_t num, word_t l, printCar_t p ) {
   }                                                                         \
   if (num < 0) num = -num ;                                             /**/\
   ptr = (char *)&str[tamStrM1] ;                                            \
-  *ptr = (char)0 ;                                                          \
+  *ptr = '\0' ;                                                             \
   i = 0 ;                                                                   \
   while (num > 0) {                                                         \
     str[tamStrM2-i] = dig[(word_t)(num%10)] ;                               \
@@ -108,7 +108,7 @@ int printGenLDec ( dword_t num, word_t l, printCar_t p ) {
   else                                                                  /**/\
     for ( j = i ; j < l ; j++ ) p(' ') ;                                    \
   ptr = (char *)&str[tamStrM2-i+1] ;                                        \
-  while (*ptr != (char)0) {                                                 \
+  while (*ptr != '\0') {                                                 \
     p(*ptr) ;                                                               \
     ptr++ ;                                                                 \
   }                                                                         \
@@ -135,7 +135,7 @@ int printGenHex ( word_t num, word_t l, printCar_t p ) {
     return(l) ;
   }
   ptr = &str[4] ;
-  *ptr = (char)0 ;
+  *ptr = '\0' ;
   i = 0 ;
   while (num > 0) {
     str[3-i] = dig[num%16] ;
@@ -144,7 +144,7 @@ int printGenHex ( word_t num, word_t l, printCar_t p ) {
   }
   for ( j = i ; j < l ; j++ ) p('0') ;
   ptr = &str[3-i+1] ;
-  while (*ptr != (char)0) {
+  while (*ptr != '\0') {
     p(*ptr) ;
     ptr++ ;
     cont++ ;
@@ -163,7 +163,7 @@ int printGenLHex ( dword_t num, word_t l, printCar_t p ) {
     p('0') ;
     return(l) ;
   }
-  str[8] = (char)0 ;
+  str[8] = '\0' ;
   i = 0 ;
   ptrWord = (word_t far *)&num ;
   while (num > 0) {
@@ -217,7 +217,7 @@ int printGenLBin ( dword_t num, word_t l, printCar_t p ) {
 }
 
 int printGenPtr ( pointer_t ptr, printCar_t p ) {
-  printGenHex(seg(ptr), 4, p) ; p(':') ;
-  printGenHex(off(ptr), 4, p) ;
+  printGenHex(SEG(ptr), 4, p) ; p(':') ;
+  printGenHex(OFF(ptr), 4, p) ;
   return(9) ;
 }

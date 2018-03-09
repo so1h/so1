@@ -178,8 +178,8 @@ if (debugWord == 0x0001) {
     contTicsRodaja = -1 ;   /* ya que un tic puede estar a punto de llegar */
   hayTic = FALSE ;
 
-  SS_Proceso = seg((pointer_t)(descProceso[indProcesoActual].trama)) ;
-  SP_Proceso = off((pointer_t)(descProceso[indProcesoActual].trama)) ;
+  SS_Proceso = FP_SEG(descProceso[indProcesoActual].trama) ;
+  SP_Proceso = FP_OFF(descProceso[indProcesoActual].trama) ;
 
   /* SS_Proceso y SP_Proceso son variables globales. Si fueran variables   */
   /* locales habria que tener cuidado en el orden de las 3 instrucciones   */
@@ -208,12 +208,12 @@ if (debugWord == 0x0001) {
 
 void salvarProceso ( void ) {                    /* indProcesoActual != -1 */
   descProceso[indProcesoActual].trama =
-    (trama_t far *)pointer(SS_Proceso, SP_Proceso) ;
+    (trama_t far *)MK_FP(SS_Proceso, SP_Proceso) ;
 }
 
 void salvarTareaInterrumpida ( void ) {          /* indProcesoActual != -1 */
   descProceso[indProcesoActual].trama =
-    (trama_t far *)pointer(SS_Tarea, SP_Tarea) ;
+    (trama_t far *)MK_FP(SS_Tarea, SP_Tarea) ;
 }
 
 static int ponerArgs ( pindx_t pindx, word_t DSProc, word_t offDATADS, word_t far * offArgv ) {
@@ -223,16 +223,16 @@ static int ponerArgs ( pindx_t pindx, word_t DSProc, word_t offDATADS, word_t fa
   bool_t estadoBlanco = TRUE ;
   pointer_t ptrCmdLine ;
   char * far * ptrArgv ;
-  ptrCmdLine = pointer(DSProc, offDATADS + 1) ;
+  ptrCmdLine = MK_FP(DSProc, offDATADS + 1) ;
   *offArgv = offDATADS + 1 + tamComando ;      /* offset respecto DS pindx */
-  ptrArgv = (char * far *)pointer(DSProc, offDATADS + 1 + tamComando) ;
+  ptrArgv = (char * far *)MK_FP(DSProc, offDATADS + 1 + tamComando) ;
   memcpy(ptrCmdLine, &descProceso[pindx].comando, tamComando) ;
   while ((car = ptrCmdLine[i]) != (char)0) {
     switch (estadoBlanco) {
     case TRUE  : if (car != ' ') {
                    if (argc >= 20) return(-1) ;           /* 20 == maxArgs */
                    estadoBlanco = FALSE ;
-                   ptrArgv[argc] = (char *)off((pointer_t)&ptrCmdLine[i]) ;
+                   ptrArgv[argc] = (char *)FP_OFF((pointer_t)&ptrCmdLine[i]) ;
                    argc++ ;
                  }
     case FALSE : if (car == ' ') {
@@ -289,13 +289,13 @@ pindx_t crearProceso (       word_t     segmento,
            /* createProcess (pindx = -1) o exec (pindx = indProcesoActual) */
 
   if ((pindx < 0) && (c2cPFR[DPOcupados].numElem == maxProcesos)) return(-1) ;
-  cabecera = (cabecera_t far *)pointer(segmento, 0x0000) ;
+  cabecera = (cabecera_t far *)MK_FP(segmento, 0x0000) ;
   if (strncmp((char far *)cabecera->magicbyte,
               (char far *)ptrMagicByteUsr, 3)) {                /* AJUSTES */
     if (strncmp((char far *)cabecera->magicbyte,
                 (char far *)ptrMagicByteSO1, 3))
       return(-1) ;                                  /* cabecera incorrecta */
-    cabecera = (cabecera_t far *)pointer(segmento, desplCab()) ;
+    cabecera = (cabecera_t far *)MK_FP(segmento, desplCab()) ;
   }
   if ((cabecera->magicbyte[ 5] != ptrMagicByteUsr[ 5]) || /* ver AJUSTES.H */
       (cabecera->magicbyte[ 8] != ptrMagicByteUsr[ 8]) ||
@@ -372,7 +372,7 @@ pindx_t crearProceso (       word_t     segmento,
 
   argc = ponerArgs(i, SS_NuevoProceso, offDATADS, &offArgv) ;
 
-  ptrPila = (word_t far *)pointer(SS_NuevoProceso, SP_NuevoProceso) ;
+  ptrPila = (word_t far *)MK_FP(SS_NuevoProceso, SP_NuevoProceso) ;
 
 //return(-105) ;                                             /* depuracion */  
 
@@ -381,7 +381,7 @@ pindx_t crearProceso (       word_t     segmento,
   *(--ptrPila) = argc ;                            /* apilo parametro argc */
   *(--ptrPila) = cabecera->desplFinish ; /* apilo dir. de retorno a finish */
 
-  SP_NuevoProceso = off((pointer_t)ptrPila) - sizeof(trama_t) ;
+  SP_NuevoProceso = FP_OFF(ptrPila) - sizeof(trama_t) ;
 
           /* inicializacion de los registros en la pila del proceso creado */
 
@@ -450,11 +450,11 @@ char comandoSo1b [tamComando] = "SO1 (desde MSDOS)" ;
 void inicProcesos ( void ) {
 
   pindx_t i ;
-  cabecera_t far * cabecera = (cabecera_t far *)pointer(CS_SO1, desplCab()) ;
+  cabecera_t far * cabecera = (cabecera_t far *)MK_FP(CS_SO1, desplCab()) ;
 
 /*  rec_hijo = crearRec("HIJO", rOtro, sinInt) ;  */
 
-  ccbAlEpilogo = (ccb_t)pointer(DS_SO1, (word_t)&descCcbAlEpilogo) ;
+  ccbAlEpilogo = (ccb_t)MK_FP(DS_SO1, (word_t)&descCcbAlEpilogo) ;
 
   /* inicializamos colas: */
 
@@ -492,18 +492,18 @@ void inicProcesos ( void ) {
   inicPC2c(&descProceso[0].c2cHijos, &e2PFR.e2Hijos, maxProcesos + 0, TRUE) ;
   apilarPC2c(0, (ptrC2c_t)&c2cPFR[DPOcupados]) ;             /* apilamos 0 */
   apilarPC2c(0, (ptrC2c_t)&c2cPFR[POrdenados]) ;             /* apilamos 0 */
-  descProceso[0].trama = (trama_t far *)pointer(DS_SO1, cabecera->SP0-sizeof(trama_t)) ;
+  descProceso[0].trama = (trama_t far *)MK_FP(DS_SO1, cabecera->SP0-sizeof(trama_t)) ;
   descProceso[0].CSProc = CS_SO1 ;
   descProceso[0].tamCodigo = (16*cabecera->segDatosSR) + cabecera->startData ;
-  descProceso[0].desplBSS = off((pointer_t)startBSS) ;
+  descProceso[0].desplBSS = FP_OFF(startBSS) ;
 //  printStrBIOS(" descProceso[0].desplBSS = ") ;
 //  printHexBIOS(descProceso[0].desplBSS, 4) ;
-  descProceso[0].desplPila = off((pointer_t)finBSS) ;
+  descProceso[0].desplPila = FP_OFF(finBSS) ;
 //  printStrBIOS(" descProceso[0].desplPila = ") ;
 //  printHexBIOS(descProceso[0].desplPila, 4) ;
   descProceso[0].tamFichero =
 
-    16 * (dword_t)(DS_SO1 - CS_SO1) + off((pointer_t)startBSS) ;
+    16 * (dword_t)(DS_SO1 - CS_SO1) + FP_OFF((pointer_t)startBSS) ;
 //  printStrBIOS(" descProceso[0].tamFichero = ") ;
 //  printLDecBIOS(descProceso[0].tamFichero, 8) ;
 

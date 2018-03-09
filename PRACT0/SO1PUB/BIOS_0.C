@@ -5,7 +5,6 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\tipos.h>                                        /* retf */
-#include <so1pub.h\carsctrl.h>
 #include <so1pub.h\printgen.h>
 #include <so1pub.h\biosdata.h>
 #include <so1pub.h\bios_0.h>
@@ -17,7 +16,7 @@
 /* tipo de ordenador */
 
 byte_t tipoOrdenador ( void ) {
-  byte_t far * ptr = pointer(0xFFFF, 0xE) ;
+  byte_t far * ptr = MK_FP(0xFFFF, 0x000E) ;
   return(*ptr) ;
 }
 
@@ -136,7 +135,7 @@ word_t teclaListaBDA ( void ) {
   word_t out = ptrBiosArea->KBD_bufhead ;
   word_t in = ptrBiosArea->KBD_buftail ;
   if (out != in)
-    /* w = *((word_t far *)pointer(0x040, out)) ; */
+//  w = *((word_t far *)MK_FP(0x040, out)) ; 
     w = ptrBiosArea->KBD_buffer[(out-start)/2] ;
   return(w) ;
 }
@@ -146,7 +145,7 @@ void cambiarTeclaListaBDA ( word_t w ) {
   word_t out = ptrBiosArea->KBD_bufhead ;
   word_t in = ptrBiosArea->KBD_buftail ;
   if (out != in)
-    /* w = *((word_t far *)pointer(0x040, out)) ; */
+//  w = *((word_t far *)MK_FP(0x040, out)) ; 
     ptrBiosArea->KBD_buffer[(out-start)/2] = w ;
 }	
 
@@ -184,17 +183,17 @@ int printCarPagBIOS ( char car, byte_t pag ) {
   byte_t columnaMax = (ptrBiosArea->VIDEO_width) - 1 ;
   byte_t filaMax = ptrBiosArea->VIDEO_lastrow ;
   switch (car) {
-  case BS : if (fila > 0)
-              goToXYPag(fila, --columna, pag) ;
-            break ;
-  case CR : goToXYPag(fila, 0, pag) ; break ;
-  case LF : if (fila < filaMax)
-              goToXYPag(++fila, columna, pag) ;
-            else {
-              scrollPagBDA(1, pag) ;            /* scrollPagBIOS(1, pag) ; */
-              goToXYPag(filaMax, columna, pag) ; break ;
-            }
-            break ;
+  case '\b' : if (fila > 0)
+                goToXYPag(fila, --columna, pag) ;
+              break ;
+  case '\r' : goToXYPag(fila, 0, pag) ; break ;
+  case '\n' : if (fila < filaMax)
+                goToXYPag(++fila, columna, pag) ;
+              else {
+                scrollPagBDA(1, pag) ;          /* scrollPagBIOS(1, pag) ; */
+                goToXYPag(filaMax, columna, pag) ; break ;
+              }
+              break ;
   default :
     if (' ' <= car) {
       printCarRawBIOS(car, pag) ;
@@ -219,8 +218,8 @@ int printCarAtrPagBIOS ( char car, byte_t atr, byte_t pag ) {
 }
 
 int printLnBIOS () {
-  printCarBIOS(CR) ;
-  printCarBIOS(LF) ;
+  printCarBIOS('\r') ;
+  printCarBIOS('\n') ;
 }
 
 int printStrBIOS ( const char far * str ) {
@@ -401,7 +400,7 @@ void scrollPagBDA ( byte_t numLineas, byte_t pag ) {
   word_t segMemVideo ;
   if (ptrBiosArea->VIDEO_mode == 7) segMemVideo = 0xB000 ;
   else segMemVideo = 0xB800 ;
-  ptr = pointer(segMemVideo, pag*ptrBiosArea->VIDEO_pagesize) ;
+  ptr = MK_FP(segMemVideo, pag*ptrBiosArea->VIDEO_pagesize) ;
   if (numLineas == 0) {
     for ( i = 0 ; i < ptrBiosArea->VIDEO_pagesize ; i = i + 2 ) {
       ptr[i] = ' ' ;

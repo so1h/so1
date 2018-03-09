@@ -5,12 +5,24 @@
 /*                            [con multiscreen]                            */
 /* ----------------------------------------------------------------------- */
 
+#ifndef CONSOLA_H
+#define CONSOLA_H
+
+#include <so1pub.h\def_tecl.h>                                /* teclado_t */
+#include <so1pub.h\def_pant.h>                               /* pantalla_t */
+
+typedef struct
+{
+    pantalla_t pantalla ;
+    teclado_t  teclado ;
+    byte_t     F ;                       /* fila de la posicion del cursor */
+    byte_t     C ;                    /* columna de la posicion del cursor */
+//  byte_t     maxF ;                    /* ultima (mayor) fila modificada */
+} descConsola_t ;
+
 /* ----------------------------------------------------------------------- */
 /*                    codigos de exploracion del teclado                   */
 /* ----------------------------------------------------------------------- */
-
-#ifndef CONSOLA_H
-#define CONSOLA_H
 
 /* Original PX/XT Keyboard */
 

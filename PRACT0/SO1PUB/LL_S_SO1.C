@@ -558,7 +558,7 @@ void obtenInfoMEM ( descProceso_t far * descProceso,         /* ax = 0301h */
     mov segmento,ax ;
     mov tam,dx ;
   }
-  *listaLibres = (ptrBloque_t)pointer(segmento, 0x0000) ;
+  *listaLibres = (ptrBloque_t)MK_FP(segmento, 0x0000) ;
   *tamBlqMax = tam ;
 
 }

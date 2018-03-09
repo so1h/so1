@@ -11,7 +11,7 @@
 .path.c   = .
 .path.h   = ..\SO1PUB.H
 
-OBJS = ajustusr.obj  bios_0.obj   \
+OBJS = ajustusr.obj  bios_0.obj    comundrv.obj  \
        c2c.obj       ptrc2c.obj    ccb.obj       \
 	   cmos.obj      ctype.obj     pantalla.obj  \
 	   puertos.obj   colores.obj   escribir.obj  \

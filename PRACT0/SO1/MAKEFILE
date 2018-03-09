@@ -7,7 +7,9 @@ OBJS0 = obj\ajustes.obj  \
 #       obj\mboot.obj    \
         obj\so1dbg.obj   \
         obj\s0.obj       \
+#
         obj\$(PROGRAMA).obj \
+#
         obj\blockpr.obj  \
         obj\bios.obj     \
         obj\dbgword.obj  \
@@ -31,7 +33,7 @@ OBJS0 = obj\ajustes.obj  \
         obj\gm.obj       \
 #       obj\gp.obj       \
         obj\db.obj       \
-        obj\minifs.obj
+        obj\minifs.obj   \
 
 !if $(CON_PROCESO_INICIAL) == TRUE
 OBJS = $(OBJS0)
@@ -39,8 +41,9 @@ OBJS = $(OBJS0)
 OBJS = $(OBJS0) obj\iniccode.obj
 !endif
 
-# primer fichero objeto (..\so1\obj\ajustes.obj)
-# ultimo fichero objeto (..\so1pub\lib\finlib.lib)
+# primer fichero objeto (..\..\so1pub\lib\startlib.lib)
+# segundo fichero objeto (..\so1\obj\ajustes.obj)
+# ultimo fichero objeto (..\so1pub\obj\fincode.obj)
 
 OBJSConComa = $(OBJS:.lib=.lib,)
 
@@ -64,26 +67,25 @@ $(OBJSConComa:.obj=.obj,)      \
 ..\so1pub\obj\bios_0.obj,      \
 ..\so1pub\obj\telon.obj,       \
 ..\so1pub\obj\debug.obj,       \
+..\so1pub\obj\cmos.obj,        \
 ..\so1pub\obj\pic.obj,         \
 ..\crtl\obj\h_ldiv.obj,        \
 ..\crtl\obj\h_lursh.obj,       \
 ..\crtl\obj\h_llsh.obj,        \
 ..\crtl\obj\f_lxmul.obj,       \
-..\crtl\obj\n_lxmul.obj,
+..\crtl\obj\n_lxmul.obj,       \
 
 !if $(CON_PROCESO_INICIAL) == TRUE
-OBJS2LINK = $(OBJS2LINK0)    \
-..\so1pub\obj\cmos.obj,      \
+OBJS2LINK = $(OBJS2LINK0)      \
 ..\startfin\lib\finlib.lib
 !else
-OBJS2LINK = $(OBJS2LINK0)    \
-..\so1pub\obj\nop.obj,       \
-..\so1pub\obj\colores.obj,   \
-..\so1pub\obj\saludos.obj,   \
-..\so1pub\obj\scanner.obj,   \
-..\so1pub\obj\interpre.obj,  \
-..\so1pub\obj\cmos.obj,      \
-..\so1pub\obj\crthw.obj,     \
+OBJS2LINK = $(OBJS2LINK0)      \
+..\so1pub\obj\nop.obj,         \
+..\so1pub\obj\colores.obj,     \
+..\so1pub\obj\saludos.obj,     \
+..\so1pub\obj\scanner.obj,     \
+..\so1pub\obj\interpre.obj,    \
+..\so1pub\obj\crthw.obj,       \
 ..\startfin\lib\finlib.lib
 !endif
 
@@ -102,4 +104,3 @@ SPINICIAL =
 !include "..\MKFILE0"
 !include "..\MKS"
 !include "MAKEMB"
-

@@ -97,7 +97,7 @@ void far isr_SO1 ( void )
 //       /* los parametros de entrada de la llamada al sistema estan en la */
 //                                                     /* trama de la pila */
 
-    tramaProceso = (trama_t far *)pointer(SS_Proceso, SP_Proceso) ;
+    tramaProceso = (trama_t far *)MK_FP(SS_Proceso, SP_Proceso) ;
 
     plot('s', tramaProceso->AX, contadorTimer0()) ;
 

@@ -23,14 +23,14 @@
 #define CRTCCurStart 0x0A                 /* Reg. cursor start (scan line) */
 #define CRTCCurEnd   0x0B                 /* Reg. cursor end   (scan line) */
 
-#define escribirRegistro( indiceRegistro, dato ) \
-  asm {                                          \
-    mov al,indiceRegistro ;                      \
-	mov dx,CRTCPort1 ;                           \
-	out dx,al ;                                  \
-    mov al,dato ;                                \
-	mov dx,CRTCPort2 ;                           \
-	out dx,al ;                                  \
+#define escribirRegistro( indiceRegistro, dato )                             \
+  asm {                                                                      \
+    mov al,indiceRegistro ;                                                  \
+	mov dx,CRTCPort1 ;                                                       \
+	out dx,al ;                                                              \
+    mov al,dato ;                                                            \
+	mov dx,CRTCPort2 ;                                                       \
+	out dx,al ;                                                              \
   }	
 
 void inicCrtHw ( void ) {

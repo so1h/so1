@@ -5,12 +5,15 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ajustusr.h>          /* save_DS0, setraw_DS, restore_DS */
-#include <so1pub.h\comundrv.h>                 /* ptrIndProcesoActual, ... */
+#include <so1pub.h\comundrv.h>  /* ptrIndProcesoActual, comprobarAmpersand */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                                      /* printf */
 #include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
-#include <so1pub.h\scanner.h>       /* inicScanner, car, obtenCar, comando */
+#include <so1pub.h\scanner.h>  /* inicScanner, obtenCar, comando, car, pos */
 #include <so1pub.h\cmos.h>                                     /* leerCmos */
+
+#define REDUCIR_DRIVER TRUE     /* TRUE ==> reducimos la memoria utilizada */
+//#define REDUCIR_DRIVER FALSE
 
 #pragma option -w-use /* (comundrv.h) warning: 'x' declared but never used */
 
@@ -70,8 +73,8 @@ int far readReloj ( int dfs, pointer_t dir, word_t nbytes )
     char buf [tamBuf] ;
 
     save_DS0() ;                            /* guarda el DS anterior (SO1) */
- 	setraw_DS() ;           /* establece el DS correspondiente al programa */
-	
+    setraw_DS() ;           /* establece el DS correspondiente al programa */
+
     tramaProceso = *ptrTramaProceso ;
     indProcesoActual = *ptrIndProcesoActual ;
     df = tramaProceso->BX ;
@@ -96,7 +99,7 @@ int far readReloj ( int dfs, pointer_t dir, word_t nbytes )
             dir[i] = buf[pos + i] ;
     }
 
-	restore_DS0() ;                               /* restaura el DS de SO1 */
+    restore_DS0() ;                               /* restaura el DS de SO1 */
     return(nbytes) ;
 }
 
@@ -115,15 +118,15 @@ int far aio_writeReloj ( int dfs, pointer_t dir, word_t nbytes )
     return(0) ;
 }
 
-long int far lseekReloj ( int dfs, long int pos, word_t whence )
+long far lseekReloj ( int dfs, long pos, word_t whence )
 {
     int df ;
-    long int res = (long int)-1 ;
-    long int posNueva ;
+    long res = -1L ;
+    long posNueva ;
 
     save_DS0() ;                            /* guarda el DS anterior (SO1) */
- 	setraw_DS() ;           /* establece el DS correspondiente al programa */
-	
+    setraw_DS() ;           /* establece el DS correspondiente al programa */
+
     switch (whence)
     {
     case SEEK_SET :
@@ -146,7 +149,7 @@ long int far lseekReloj ( int dfs, long int pos, word_t whence )
         ;
     }
 
-	restore_DS0() ;                               /* restaura el DS de SO1 */
+    restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
 }
 
@@ -165,10 +168,10 @@ int far eliminarReloj ( pindx_t pindx )
     return(0) ;
 }
 
-int finishReloj ( void ) 
+int finishReloj ( void )
 {
-	exit(0) ;
-	return(0) ;
+    exit(0) ;
+    return(0) ;
 }
 
 void finCodeDriver ( void )   /* marca el fin del codigo propio del driver */
@@ -197,29 +200,23 @@ int help ( void )
     printf("\n\n") ;
     mostrarFormato() ;
     printf(
-	    ""                                                               "\n"
-		""                                                               "\n"
+        ""                                                               "\n"
+        ""                                                               "\n"
         " instala/desinstala el driver del reloj"                        "\n"
-		""                                                               "\n"
+        ""                                                               "\n"
         " opciones: (por defecto -i)"                                    "\n"
-		""                                                               "\n"
+        ""                                                               "\n"
         "      -i : instala el driver (usar &)"                          "\n"
         "      -q : instala sin mensajes de salida (&)"                  "\n"
         "      -u : desintala el driver"                                 "\n"
         "      -h : muestra este help"                                   "\n"
-	) ;
+    ) ;
     return(0) ;
 }
 
-descProceso_t descProceso [ maxProcesos ] ;
-
-e2PFR_t e2PFR ;
-
-c2c_t c2cPFR [ numColasPFR ] ;
-
 #define maxCbRL 0
 
-descCcb_t descCcbRL = { 0, 0, 0, maxCbRL, NULL } ;
+descCcb_t descCcbRL = { 0, 0, 0, maxCbRL, NULL } ;                 /* DATA */
 
 int integrarReloj ( bool_t conMensajes )
 {
@@ -234,23 +231,22 @@ int integrarReloj ( bool_t conMensajes )
     dR.pindx = getpindx() ;
     dR.numVI = 0 ;
 
-    dR.open      = (open_t)      pointer(_CS, (word_t)openReloj) ;
-    dR.release   = (release_t)   pointer(_CS, (word_t)releaseReloj) ;
-    dR.read      = (read_t)      pointer(_CS, (word_t)readReloj) ;
-    dR.aio_read  = (aio_read_t)  pointer(_CS, (word_t)aio_readReloj) ;
-    dR.write     = (write_t)     pointer(_CS, (word_t)writeReloj) ;
-    dR.aio_write = (aio_write_t) pointer(_CS, (word_t)aio_writeReloj) ;
-    dR.lseek     = (lseek_t)     pointer(_CS, (word_t)lseekReloj) ;
-    dR.fcntl     = (fcntl_t)     pointer(_CS, (word_t)fcntlReloj) ;
-    dR.ioctl     = (ioctl_t)     pointer(_CS, (word_t)ioctlReloj) ;
+    dR.open      = (open_t)      MK_FP(_CS, FP_OFF(openReloj)) ;
+    dR.release   = (release_t)   MK_FP(_CS, FP_OFF(releaseReloj)) ;
+    dR.read      = (read_t)      MK_FP(_CS, FP_OFF(readReloj)) ;
+    dR.aio_read  = (aio_read_t)  MK_FP(_CS, FP_OFF(aio_readReloj)) ;
+    dR.write     = (write_t)     MK_FP(_CS, FP_OFF(writeReloj)) ;
+    dR.aio_write = (aio_write_t) MK_FP(_CS, FP_OFF(aio_writeReloj)) ;
+    dR.lseek     = (lseek_t)     MK_FP(_CS, FP_OFF(lseekReloj)) ;
+    dR.fcntl     = (fcntl_t)     MK_FP(_CS, FP_OFF(fcntlReloj)) ;
+    dR.ioctl     = (ioctl_t)     MK_FP(_CS, FP_OFF(ioctlReloj)) ;
 
-    dR.eliminar  = (eliminar_t)  pointer(_CS, (word_t)eliminarReloj) ;
+    dR.eliminar  = (eliminar_t)  MK_FP(_CS, FP_OFF(eliminarReloj)) ;
 
     rec_reloj = crearRecurso(&dR) ;
 
     if (rec_reloj >= 0)
     {
-
         dfs = crearFichero("RELOJ", rec_reloj, 0, fedCaracteres) ;
 
         if (dfs >= 0)
@@ -287,24 +283,6 @@ int desintegrarReloj ( void )
     return(0) ;
 }
 
-int comprobarAmpersand ( void )
-{
-    int i ;
-    obtenInfoPS((descProceso_t far *)&descProceso, (e2PFR_t far *)&e2PFR, (c2c_t far *)&c2cPFR) ;
-
-    for ( i = 0 ; i < tamComando ; i++ )
-        comando[0][i] = descProceso[getpindx()].comando[i] ;
-
-    inicScanner() ;
-    while (car != (char)0) obtenCar() ;
-    if (comando[0][pos] != '&') /* truco: crearProceso deja ahi &, <, >, | */
-    {
-        printf("\n\n este driver debe ejecutarse con & \n") ;
-        return(-1) ;
-    }
-    return(0) ;
-}
-
 int instalarReloj ( bool_t conMensajes )
 {
     int res ;
@@ -313,15 +291,18 @@ int instalarReloj ( bool_t conMensajes )
     obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */
     res = integrarReloj(conMensajes) ;
     if (res != 0) return(res) ;
-#if (FALSE)	
+#if (!REDUCIR_DRIVER)
     esperarDesinstalacion(0) ;                       /* bloquea el proceso */
-#else 		
+#else
     esperarDesinstalacion(                           /* bloquea el proceso */
-     	OFF(dirDescSO1) + sizeof(descSO1_t),                    /* tamDATA */
-	    (word_t)finCodeDriver,                            /* finCodeDriver */
-		(word_t)finishReloj                                /* finishDriver */ 
-	) ;
-#endif 	
+//      FP_OFF(dirDescSO1) + sizeof(descSO1_t)
+//          + sizeof(descCcbRL) + 0*sizeof(callBack_t),         /* tamDATA */
+        FP_OFF(&descCcbRL)
+            + sizeof(descCcbRL) + 0*sizeof(callBack_t),         /* tamDATA */
+        FP_OFF(finCodeDriver),                            /* finCodeDriver */
+        FP_OFF(finishReloj)                                /* finishDriver */
+    ) ;
+#endif
     res = desintegrarReloj() ;
     return(res) ;
 }

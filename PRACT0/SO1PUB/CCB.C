@@ -5,6 +5,7 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ccb.h>
+#include <so1pub.h\tipos.h>                                         /* SEG */
 
 int inicCcb ( ccb_t ccb, word_t max ) {
   int i ;
@@ -33,6 +34,7 @@ callBack_t desencolarCcb ( ccb_t ccb ) {
   if (ccb == ccbNulo) return(ccbNulo) ;
   if (ccb->num == 0) return(cbNulo) ;
   cb = ccb->callBack[ccb->out] ;
+  ccb->callBack[ccb->out] = cbNulo ;
   ccb->out = (ccb->out + 1) % ccb->max ;
   ccb->num-- ;
   return(cb) ;
@@ -69,7 +71,7 @@ int eliminarSegCcb ( word_t segmento, ccb_t ccb ) {
   if (num == 0) return(-2) ;                                  /* ccb vacio */
   ind = ccb->out ;
   for ( i = 0 ; i < num ; i++ ) {
-    if (seg((pointer_t)ccb->callBack[ind]) == segmento) break ;
+    if (SEG((pointer_t)ccb->callBack[ind]) == segmento) break ;
     ind = (ind + 1 ) % ccb->max ;
   }
   if (i == num) return(-3) ;                      /* no se encuentra el cb */
@@ -111,4 +113,3 @@ int atenderCcb ( ccb_t ccb ) {
   }                          /* pero puede activarlas durante su ejecucion */
   return(0) ;
 }
-

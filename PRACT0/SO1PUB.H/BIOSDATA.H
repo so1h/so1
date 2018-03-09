@@ -262,8 +262,10 @@ typedef struct {
 
 #define ptrBiosArea ((BIOSAREA_t far *)0x00000000L) 
 
+//BIOSAREA_t far * const ptrBiosArea = ((BIOSAREA_t far *)0x00000000L) ;
+
 #define ptrFechaBios ((pointer_t)0xFFFF0005L) 
 
+//pointer_t const ptrFechaBios = ((pointer_t)0xFFFF0005L) ;
+
 #endif /* BIOSDATA_H */
-
-

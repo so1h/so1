@@ -47,14 +47,10 @@ void cargarDescSO1 ( descSO1_t far * descSO1 ) {
   descSO1->ptrContRodajas           = (dword_t far *)&contRodajas ;
   descSO1->ptrContTicsRodaja        = (int far *)&contTicsRodaja ;
   descSO1->ptrVIOrg                 = (rti_t far *)&VIOrg ;
-  descSO1->sigProceso               =
-    (sigProceso_t)pointer(_CS, (word_t)sigProceso) ;
-  descSO1->activarProceso           =
-    (activarProceso_t)pointer(_CS, (word_t)activarProceso) ;
-  descSO1->buscarNuevoProcesoActual =
-    (buscarNuevoProcesoActual_t)pointer(_CS, (word_t)buscarNuevoProcesoActual) ;
-  descSO1->bloquearProcesoActual    =
-    (bloquearProcesoActual_t)pointer(_CS, (word_t)bloquearProcesoActual) ;
+  descSO1->sigProceso               = MK_FP(_CS, (word_t)sigProceso) ;
+  descSO1->activarProceso           = MK_FP(_CS, (word_t)activarProceso) ;
+  descSO1->buscarNuevoProcesoActual = MK_FP(_CS, (word_t)buscarNuevoProcesoActual) ;
+  descSO1->bloquearProcesoActual    = MK_FP(_CS, (word_t)bloquearProcesoActual) ;
 }
 
 extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
@@ -63,14 +59,14 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
 
   case 0x00 : {                                                  /* 0x0200 */
     descSO1_t far * descSO1 ;                              /* obtenInfoSO1 */
-    descSO1 = (descSO1_t far *)pointer(tramaProceso->ES, tramaProceso->BX) ;
+    descSO1 = MK_FP(tramaProceso->ES, tramaProceso->BX) ;
     cargarDescSO1(descSO1) ;
     break ;
   }
   case 0x01 : {                                                  /* 0x0201 */
     descRecurso_t far * dR ;                               /* crearRecurso */
     rindx_t rindx ;
-    dR = (descRecurso_t far *)pointer(tramaProceso->ES, tramaProceso->BX) ;
+    dR = MK_FP(tramaProceso->ES, tramaProceso->BX) ;
     rindx = crearRec(dR) ;
     tramaProceso->AX = rindx ;
     break ;
@@ -80,7 +76,7 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
     rindx_t rindx ;
     word_t menor ;
     tipoFichero_t tipo ;
-    nombre = (char far *)pointer(tramaProceso->ES, tramaProceso->BX) ;
+    nombre = MK_FP(tramaProceso->ES, tramaProceso->BX) ;
     rindx = tramaProceso->CX ;
     menor = tramaProceso->DX ;
     tipo = tramaProceso->SI ;
@@ -88,6 +84,7 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
     break ;
   }                                                              /* 0x0203 */
   case 0x03 : {                                   /* esperarDesinstalacion */
+    rindx_t r ;
     word_t tamDATA       = tramaProceso->BX ;              /* BX = tamDATA */
 	word_t finCodeDriver = tramaProceso->CX ;        /* CX = finCodeDriver */
 	word_t finishDriver  = tramaProceso->DX ;         /* DX = finishDriver */
@@ -96,18 +93,46 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
     	word_t tamPs ;                                       /* paragrafos */
 	    word_t tamPilaPs ;                                   /* paragrafos */
 	    word_t segBloqueLibre ;
-		word_t nuevoSegDatosSR = finCodeDriver >> 4 ;
-		word_t nuevoDS = tramaProceso->CS + nuevoSegDatosSR ; 
+		word_t nuevoSegDatosSR ; 
+		word_t nuevoDS ; 
 		trama_t far * nuevaTramaProceso ;
      	
 		tamDATA       = (tamDATA + 0x000F) & 0xFFF0 ;             /* bytes */
 	    finCodeDriver = (finCodeDriver + 0x000F) & 0xFFF0 ;
 		tamPs = descProceso[indProcesoActual].tam ;
 //		tamPilaPs = tramaProceso->CS + tamPs 
-//		          - (tramaProceso->DS + (off((pointer_t)tramaProceso) >> 4)) ;
+//		          - (tramaProceso->DS + (FP_OFF(tramaProceso) >> 4)) ;
         tamPilaPs = (sizeof(trama_t) + 0x000F) >> 4 ;  /* minimo minimorum */
         segBloqueLibre = tramaProceso->DS + (tamDATA >> 4) + tamPilaPs ;		
         nuevoSegDatosSR = finCodeDriver >> 4 ;
+        nuevoDS = tramaProceso->CS + nuevoSegDatosSR ;  
+
+        r = c2cPFR[DROcupados].primero ;    /* actualizar DS en call backs */
+        while (r != c2cPFR[DROcupados].cabecera) 
+		{
+            if (descRecurso[r].pindx == indProcesoActual) 
+			{
+				if (descRecurso[r].ccb->arg != NULL) 
+			        descRecurso[r].ccb->arg = 
+			            MK_FP(nuevoDS, FP_OFF(descRecurso[r].ccb->arg)) ;  		
+                descRecurso[r].ccb = MK_FP(nuevoDS, FP_OFF(descRecurso[r].ccb)) ; 
+            }
+#if (TRUE)			 
+            else 
+			{
+				int i, j ;
+				j = descRecurso[r].ccb->out ;
+				for ( i = 0 ; i < descRecurso[r].ccb->num ; i ++ ) 
+				{
+                    if (FP_SEG(descRecurso[r].ccb->callBack[j]) == tramaProceso->DS)
+						descRecurso[r].ccb->callBack[j] = 
+				            MK_FP(nuevoDS, FP_OFF(descRecurso[r].ccb->callBack[j])) ;
+                    j = (j + 1) % (descRecurso[r].ccb->max) ;
+				}	
+			}
+#endif			
+            r = c2cPFR[DROcupados].e[r].sig ;
+        } 
 
 		memcpy(          /* copia de los primeros tamDATA bytes de la DATA */
 		    MK_FP(tramaProceso->CS, finCodeDriver),             /* destino */
@@ -117,18 +142,18 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
 	
         nuevaTramaProceso = MK_FP(
 		    nuevoDS, 
-			tamDATA + (off((pointer_t)tramaProceso) & 0x000F)
+			tamDATA + (FP_OFF(tramaProceso) & 0x000F)
 		) ;			   
 
 		memcpy(                               /* copia de la trama de pila */
 	       nuevaTramaProceso, 
 		   tramaProceso, 
-           (tamPilaPs << 4) + (off((pointer_t)tramaProceso) & 0x000F) 
+           (tamPilaPs << 4) + (FP_OFF(tramaProceso) & 0x000F) 
 		) ;  
 
 		descProceso[indProcesoActual].tam = segBloqueLibre - tramaProceso->CS ;
-		descProceso[indProcesoActual].desplBSS = off((pointer_t)nuevaTramaProceso) ; 
-		descProceso[indProcesoActual].desplPila = off((pointer_t)nuevaTramaProceso) ;
+		descProceso[indProcesoActual].desplBSS = FP_OFF(nuevaTramaProceso) ; 
+		descProceso[indProcesoActual].desplPila = FP_OFF(nuevaTramaProceso) ;
 		
         ((cabecera_t far *)MK_FP(tramaProceso->CS, 0x0000))->segDatosSR =
             nuevoSegDatosSR ;	
@@ -149,16 +174,17 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
 		tramaProceso->DX = 0x0000 ;
 		tramaProceso->SI = 0x0000 ;
 		tramaProceso->DI = 0x0000 ;
-		tramaProceso->SP = off((pointer_t)tramaProceso) + 10*(sizeof(word_t)) ;
+		tramaProceso->SP = FP_OFF(tramaProceso) + 10*(sizeof(word_t)) ;
 		tramaProceso->BP = 0x0000 ; 
-		tramaProceso->IP = (word_t)finishDriver ;		
+		tramaProceso->IP = (word_t)finishDriver ;	
+
 	}
     bloquearProcesoActual(rec_desinstalacion) ;  /* rec_desinstalacion */   
     break ;
   }                                                              /* 0x0204 */
   case 0x04 : {                                         /* destruirRecurso */    
     tramaProceso->AX =
-      destruirRec((char far *)pointer(tramaProceso->ES, tramaProceso->BX)) ;
+      destruirRec(MK_FP(tramaProceso->ES, tramaProceso->BX)) ;
     break ;
   }                                                              /* 0x0205 */
   case 0x05 : ;                                       /* encolarCcbRecurso */
@@ -170,7 +196,7 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
     rindx = c2cPFR[DROcupados].primero ;                  /* ver si existe */
     while (rindx != c2cPFR[DROcupados].cabecera) {
       if (!strcmp(descRecurso[rindx].nombre,
-                  (char far *)pointer(tramaProceso->CX, tramaProceso->BX))) {
+                  MK_FP(tramaProceso->CX, tramaProceso->BX))) {
         enc = TRUE ;
         break ;                                          /* sale del bucle */
       }
@@ -178,7 +204,7 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
     }
     if (!enc) res = -1 ;                           /* el recurso no existe */
     else {
-      cb = (callBack_t)pointer(tramaProceso->ES, tramaProceso->DX) ;
+      cb = MK_FP(tramaProceso->ES, tramaProceso->DX) ;
       switch (tramaProceso->AL) {
       case 0x05 :
         res = encolarCcb(cb, descRecurso[rindx].ccb) ;   /* 0, -1, ..., -3 */

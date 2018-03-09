@@ -144,8 +144,8 @@ void colas ( char opcion, word_t num )
         printf(" %s.primero  = %2i\n", strCola[num], ptrC2c[num]->primero) ;
         printf(" %s.cabecera = %2i\n", strCola[num], ptrC2c[num]->cabecera) ;
         printf(" %s.e        = ", strCola[num]) ; 
-		printf("%04X:%04X", seg((pointer_t)ptrC2c[num]->e), 
-		                    off((pointer_t)ptrC2c[num]->e)) ;
+		printf("%04X:%04X", SEG((pointer_t)ptrC2c[num]->e), 
+		                    OFF((pointer_t)ptrC2c[num]->e)) ;
 
         printf("\n\n        i: ") ;
         for ( i = 0 ; i <= ptrC2c[num]->cabecera ; i++ )

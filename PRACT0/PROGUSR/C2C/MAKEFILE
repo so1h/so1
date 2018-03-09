@@ -11,7 +11,6 @@ OBJS2LINK =                      \
 $(PROGRAMA).obj,                 \
 ..\..\so1pub\lib\ll_s_so1.lib,   \
 ..\..\so1pub\obj\ctype.obj,      \
-..\..\so1pub\obj\tipos.obj,      \
 ..\..\so1pub\obj\stdio.obj,      \
 ..\..\so1pub\obj\vsprintf.obj,   \
 ..\..\so1pub\obj\scanner.obj,    \

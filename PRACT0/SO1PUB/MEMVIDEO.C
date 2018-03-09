@@ -9,9 +9,9 @@
 #include <so1pub.h\pantalla.h>             /* numFilas, borrarPantalla ... */
 #include <so1pub.h\bios_crt.h>                                  /* ptrPant */
 
-byte_t cursorF ;
+byte_t cursorF = 0 ;                                /* inicializacion DATA */
 
-byte_t cursorC ;
+byte_t cursorC = 0 ;                                /* inicializacion DATA */
 
 void inicMemVideo ( void ) {
 

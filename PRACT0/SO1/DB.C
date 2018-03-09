@@ -45,7 +45,7 @@ static int far readDB ( int dfs, pointer_t dir, word_t nbytes )
 {
 #if (FALSE)	
 	
-    word_t DS_DB = *((word_t far *)pointer(_CS, (word_t)segDatos)) ;
+    word_t DS_DB = *((word_t far *)MK_FP(_CS, FP_OFF(segDatos))) ;
     pindx_t indProcesoActual ;
     modoAp_t modoAp ;
     word_t nbytes0 ;
@@ -235,23 +235,26 @@ void inicDB ( void ) {
     CSH_t CSH, CSHMax ;
 	int error ;
 	
+	int numUnidades = 0 ; 
+	
     descRecurso_t dR ;
 
     dR.tipo = rDB ;
     strcpy(dR.nombre, "DB") ;
     dR.ccb = (ccb_t)&descCcbDB ;
+    dR.ccb->arg = NULL ;	
     dR.pindx = indProcesoActual ;
     dR.numVI = 0 ;
 
-    dR.open      = (open_t     )pointer(_CS, (word_t)openDB) ;
-    dR.release   = (release_t  )pointer(_CS, (word_t)releaseDB) ;
-    dR.read      = (read_t     )pointer(_CS, (word_t)readDB) ;
-    dR.aio_read  = (aio_read_t )pointer(_CS, (word_t)aio_readDB) ;
-    dR.write     = (write_t    )pointer(_CS, (word_t)writeDB) ;
-    dR.aio_write = (aio_write_t)pointer(_CS, (word_t)aio_writeDB) ;
-    dR.lseek     = (lseek_t    )pointer(_CS, (word_t)lseekDB) ;
-    dR.fcntl     = (fcntl_t    )pointer(_CS, (word_t)fcntlDB) ;
-    dR.ioctl     = (ioctl_t    )pointer(_CS, (word_t)ioctlDB) ;
+    dR.open      = (open_t     )MK_FP(_CS, FP_OFF(openDB)) ;
+    dR.release   = (release_t  )MK_FP(_CS, FP_OFF(releaseDB)) ;
+    dR.read      = (read_t     )MK_FP(_CS, FP_OFF(readDB)) ;
+    dR.aio_read  = (aio_read_t )MK_FP(_CS, FP_OFF(aio_readDB)) ;
+    dR.write     = (write_t    )MK_FP(_CS, FP_OFF(writeDB)) ;
+    dR.aio_write = (aio_write_t)MK_FP(_CS, FP_OFF(aio_writeDB)) ;
+    dR.lseek     = (lseek_t    )MK_FP(_CS, FP_OFF(lseekDB)) ;
+    dR.fcntl     = (fcntl_t    )MK_FP(_CS, FP_OFF(fcntlDB)) ;
+    dR.ioctl     = (ioctl_t    )MK_FP(_CS, FP_OFF(ioctlDB)) ;
 
     rec_db = crearRec(&dR) ;
 	
@@ -349,12 +352,16 @@ void inicDB ( void ) {
 	}
 	
 #if (TRUE)
+	numUnidades = 0 ;
 	for ( i = 0 ; i < dbMax ; i++ ) {
 		if (d_bloque[i].tipoUnidad != 0x00) {
+			numUnidades++ ;
 	        printStrBIOS(d_bloque[i].nombre) ;
             printCarBIOS(' ') ; 
 		}
     }
+	if (numUnidades == 0)
+	    k_devolverBloque(segBuferSO1, 512/16) ;
 #endif	
 
 #if (TRUE) 	
@@ -401,7 +408,7 @@ int opSectorDB ( dword_t sectorLogico, int db, pointer_t dir, byte_t cmd )
 	
     if (db >= dbMax) return(-1) ;
 	unidadBIOS = d_bloque[db].unidadBIOS ;
-	posibleErr9 = posibleErr9EnOpBIOS(seg(dir)) ;
+	posibleErr9 = posibleErr9EnOpBIOS(FP_SEG(dir)) ;
 	dirAux = dir ;
 	if (posibleErr9) { 
 	    dirAux = ptrBuferSO1 ;

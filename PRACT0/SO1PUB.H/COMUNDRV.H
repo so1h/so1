@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------- */
 /*                               comundrv.h                                */
 /* ----------------------------------------------------------------------- */
-/*                  fragmento cumun a todos los drivers                    */
+/*                  fragmento comun a todos los drivers                    */
 /* ----------------------------------------------------------------------- */
 
 #ifndef COMUNDRV_H
@@ -44,5 +44,7 @@ static buscarNuevoProcesoActual_t buscarNuevoProcesoActual = NULL ;
 static bloquearProcesoActual_t    bloquearProcesoActual    = NULL ; /* no retorna */
 
 /* fin campos de descSO1 declarados como variables inicializadas */
+
+int comprobarAmpersand ( void ) ; /* mira si hay un & al final del comando */
 
 #endif /* COMUNDRV_H */

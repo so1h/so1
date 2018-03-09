@@ -7,8 +7,7 @@
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                             /* printf, getchar */
 #include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
-#include <so1pub.h\scanner.h>
-
+#include <so1pub.h\scanner.h>                /* inicScanner, obtenSimb ... */
 #include <so1pub.h\ptrc2c.h>                                   /* ptrC2c_t */
 
 void formato ( void )
@@ -60,16 +59,19 @@ void eCcb ( ccb_t ccb )
 {
     int i, j ;
 	printf(
-	    " %i %i %i %04X:%04X [ ", 
+	    " %i %i %i %i %04X:%04X [ ",  
 		ccb->num, ccb->in, ccb->out, ccb->max, 
-		seg((pointer_t)ccb->arg), off((pointer_t)ccb->arg)
+//		SEG((pointer_t)(ccb->arg)),       /* SEG funciona mal, usar FP_SEG */ 
+//      OFF((pointer_t)(ccb->arg)) 
+		FP_SEG(ccb->arg), FP_OFF(ccb->arg)                /* funciona bien */
 	) ;
-    j = ccb->in ;
-    for ( i = 0 ; i < ccb->num ; i ++ )
+    j = ccb->out ;
+//  for ( i = 0 ; (i < ccb->num) && (i < 2) ; i ++ ) 
+    for ( i = 0 ; i < ccb->num ; i ++ ) 
     {
      	printf(
 	        "%04X:%04X ", 
-		    seg((pointer_t)ccb->callBack[j]), off((pointer_t)ccb->callBack[j])
+		    FP_SEG(ccb->callBack[j]), FP_OFF(ccb->callBack[j])
 	    ) ;
         j = (j + 1) % ccb->max ;
     }
@@ -155,35 +157,35 @@ void mostrarDescRecurso ( rindx_t rindx )
         ""                                                               "\n"
      	" descRecurso[%i].eliminar   = %04X:%04X"                        "\n",
         rindx, 
-		  seg((pointer_t)descRecurso[rindx].open), 
-		  off((pointer_t)descRecurso[rindx].open), 
+		  FP_SEG(descRecurso[rindx].open), 
+		  FP_OFF(descRecurso[rindx].open), 
         rindx, 
-		  seg((pointer_t)descRecurso[rindx].release), 
-		  off((pointer_t)descRecurso[rindx].release), 
+		  FP_SEG(descRecurso[rindx].release), 
+		  FP_OFF(descRecurso[rindx].release), 
         rindx, 
-		  seg((pointer_t)descRecurso[rindx].read), 
-		  off((pointer_t)descRecurso[rindx].read), 
+		  FP_SEG(descRecurso[rindx].read), 
+		  FP_OFF(descRecurso[rindx].read), 
         rindx, 
-		  seg((pointer_t)descRecurso[rindx].aio_read), 
-		  off((pointer_t)descRecurso[rindx].aio_read), 
+		  FP_SEG(descRecurso[rindx].aio_read), 
+		  FP_OFF(descRecurso[rindx].aio_read), 
         rindx, 
-		  seg((pointer_t)descRecurso[rindx].write), 
-		  off((pointer_t)descRecurso[rindx].write), 
+		  FP_SEG(descRecurso[rindx].write), 
+		  FP_OFF(descRecurso[rindx].write), 
         rindx, 
-		  seg((pointer_t)descRecurso[rindx].aio_write), 
-		  off((pointer_t)descRecurso[rindx].aio_write), 
+		  FP_SEG(descRecurso[rindx].aio_write), 
+		  FP_OFF(descRecurso[rindx].aio_write), 
         rindx, 
-		  seg((pointer_t)descRecurso[rindx].lseek), 
-		  off((pointer_t)descRecurso[rindx].lseek), 
+          FP_SEG(descRecurso[rindx].lseek), 
+		  FP_OFF(descRecurso[rindx].lseek), 
         rindx, 
-		  seg((pointer_t)descRecurso[rindx].fcntl), 
-		  off((pointer_t)descRecurso[rindx].fcntl), 
+		  FP_SEG(descRecurso[rindx].fcntl), 
+		  FP_OFF(descRecurso[rindx].fcntl), 
         rindx, 
-		  seg((pointer_t)descRecurso[rindx].ioctl), 
-		  off((pointer_t)descRecurso[rindx].ioctl), 
+		  FP_SEG(descRecurso[rindx].ioctl), 
+		  FP_OFF(descRecurso[rindx].ioctl), 
         rindx, 
-		  seg((pointer_t)descRecurso[rindx].eliminar),
-		  off((pointer_t)descRecurso[rindx].eliminar)
+		  FP_SEG(descRecurso[rindx].eliminar),
+		  FP_OFF(descRecurso[rindx].eliminar)
 	) ;
 }
 
@@ -206,16 +208,16 @@ void mostrarRecursos ( void )
                 descRecurso[rindx].nombre,
                 descRecurso[rindx].tipo, 
                 descRecurso[rindx].pindx, 
-                seg((pointer_t)descRecurso[rindx].open),
-                off((pointer_t)descRecurso[rindx].open)
+                FP_SEG(descRecurso[rindx].open),
+                FP_OFF(descRecurso[rindx].open)
 	        ) ;
             for ( i = 0 ; i < descRecurso[rindx].numVI ; i++ )
             {
 				printf("%02X %4i %04X:%04X ",
                     descRecurso[rindx].nVInt[i], 
                     descRecurso[rindx].irq[i], 
-                    seg((pointer_t)descRecurso[rindx].isr[i]),
-                    off((pointer_t)descRecurso[rindx].isr[i])
+                    FP_SEG(descRecurso[rindx].isr[i]),
+                    FP_OFF(descRecurso[rindx].isr[i])
                 ) ;					
             }
 	        printf("\n") ;

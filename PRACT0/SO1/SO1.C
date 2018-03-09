@@ -4,6 +4,7 @@
 /*                       Un primer sistema operativo                       */
 /* ----------------------------------------------------------------------- */
 
+#include <so1pub.h\tipos.h>                       /* MK_FP, FP_SEG, FP_OFF */
 #include <so1pub.h\ll_s_exc.h>  /* createProcess, waitpid, exit, open, ... */
 #include <so1pub.h\strings.h>                           /* strcpy, strlcpy */
 #include <so1pub.h\escribir.h>     /* escribirStr, escribirInt, escribirLn */
@@ -107,7 +108,7 @@ void main ( void )                             /* interrupciones inhibidas */
 
     E(inicGM()) ;         /* asigna memoria para el proceso 0. rec_gm "GM" */
 
-    E(inicDB()) ;                                           /* rec_db "DM" */
+    E(inicDB()) ;                                           /* rec_db "DB" */
 
     if ((modoSO1() == modoSO1_Bin) || (modoSO1() == modoSO1_Bs))
     {
@@ -130,9 +131,9 @@ void main ( void )                             /* interrupciones inhibidas */
     /* establecemos el vector de interrupcion de llamadas al sistema SO1   */
 
     printStrBIOS("\n redirigirInt(nVIntSO1, ") ;
-    printPtrBIOS(pointer(CS_SO1, (word_t)isr_SO1)) ;
+    printPtrBIOS(MK_FP(CS_SO1, FP_OFF(isr_SO1))) ;
     printStrBIOS(")") ;
-    redirigirInt(nVIntSO1, (isr_t)pointer(CS_SO1, (word_t)isr_SO1)) ;
+    redirigirInt(nVIntSO1, (isr_t)MK_FP(CS_SO1, FP_OFF(isr_SO1))) ;
     printStrBIOS(" nVIntSO1 = 0x") ;
     printHexBIOS(nVIntSO1, 2) ;
 
@@ -241,7 +242,7 @@ void tirarSistema ( word_t loQueHay, int timeout )
 
     /* devolver bloque de memoria ocupado por la FAT en su caso */
 
-//  k_devolverBloque(seg((pointer_t)&FAT), (2*entradasFAT+15)/16) ; /* peligro */
+//  k_devolverBloque(FP_SEG((pointer_t)&FAT), (2*entradasFAT+15)/16) ; /* peligro */
 
     finPlot() ;
 
