@@ -8,11 +8,13 @@
 #define DEF_RAT_H
 
 #include <so1pub.h\tipos.h>                              /* byte_t, bool_t */ 
-#include <so1pub.h\def_pant.h>                    /* maxColumnas, maxFilas */
+#include <so1pub.h\def_pant.h>       /* maxColumnas, maxFilas, maxFilasAct */
 
 #define maxX 8*maxColumnas                                   /* 8*80 = 640 */
 
 #define maxY 8*maxFilas                                      /* 8*50 = 400 */
+
+#define maxYAct 8*maxFilasAct                          /* 8*25, 8*28, 8*50 */
 
 typedef struct {
   byte_t S0 ;                                          /* byte estado 8042 */

@@ -87,7 +87,7 @@ void tratamientoComun ( void ) {                    /* opcion -r- (SI, DI) */
 
 void inicTVI ( void ) {
 
-  int nVInt ;
+    int nVInt ;
 
 #if defined(TASM32) || defined(IDE) || defined(BASM502)
     struct linea {   /* para resolver el problema de la tabla rti_00 (ide) */
@@ -97,7 +97,7 @@ void inicTVI ( void ) {
     int i ;
 #endif
 
-  /* salvamos la tabla de vectores original */
+//                               /* salvamos la tabla de vectores original */
 
     for (nVInt = 0 ; nVInt < nVIntMax ; nVInt++ ) {
         VIOrg[nVInt] = ptrTVI[nVInt] ;
@@ -106,7 +106,7 @@ void inicTVI ( void ) {
 
 #if defined(TASM32) || defined(IDE) || defined(BASM502)
 
-                     /* para resolver el problema de la tabla rti_00 (ide) */
+//                   /* para resolver el problema de la tabla rti_00 (ide) */
 
     ptrLinea = MK_FP(_CS, FP_OFF(rti_00)) ;
     for ( i = 0 ; i < nVIntMax ; i++ )

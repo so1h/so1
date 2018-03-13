@@ -392,7 +392,7 @@ int ioctl ( int df, word_t cmd, word_t arg  ) ;
 /* 0201: rindx = crearRecurso(dR)                                          */
 /* 0202: crearFichero(nombre, rindx)                                       */
 /* 0203: esperarDesinstalacion()                                           */
-/* 0204: destruirRecurso(nombre)                                           */
+/* 0204: destruirRecurso(nombre, matando)                                  */
 /* 0205: encolarCcbRecurso(cb, nombre)                                     */
 /* 0206: eliminarCcbRecurso(cb, nombre)                                    */
 /* ======================================================================= */
@@ -435,13 +435,16 @@ int esperarDesinstalacion ( word_t tamDATA, ... ) {
   int res ;
   word_t finCodeDriver = 0x0000 ;
   word_t finishDriver = 0x0000 ;
+  word_t tamPila = 0x0000 ;
   if (tamDATA != 0x0000)
-	finCodeDriver = *((word_t far *)((pointer_t)&tamDATA + sizeof(word_t))) ;
-	finishDriver = *((word_t far *)((pointer_t)&tamDATA + 2*sizeof(word_t))) ;
+	finCodeDriver = *((word_t far *)((pointer_t)&tamDATA + 1*sizeof(word_t))) ;
+	finishDriver  = *((word_t far *)((pointer_t)&tamDATA + 2*sizeof(word_t))) ;
+	tamPila       = *((word_t far *)((pointer_t)&tamDATA + 3*sizeof(word_t))) ;
   asm {
 	mov bx,tamDATA ;
 	mov cx,finCodeDriver ;
 	mov dx,finishDriver ;
+	mov si,tamPila ;
     mov ax,0203h ;
     int nVIntSO1 ;
     mov res,ax ;
@@ -449,10 +452,12 @@ int esperarDesinstalacion ( word_t tamDATA, ... ) {
   return(res) ;
 }
 
-int destruirRecurso ( char far * nombre ) {
+int destruirRecurso ( char far * nombre, bool_t matando ) 
+{
   int res ;
   asm {
     les bx,nombre ;
+	mov cx,matando ;
     mov ax,0204h ;
     int nVIntSO1 ;
     mov res,ax ;

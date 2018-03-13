@@ -39,9 +39,9 @@ $(PROGRAMA).obj,                 \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (DATA = 6F5 BSS = 154F total: 1C44 < 1FFF)
+#puntero de pila inicial (finBSS = 2694 < 27FE)
 
-SPINICIAL = 1FFE
+SPINICIAL = 27FE
 
 !include "..\..\MKFILE0"
 

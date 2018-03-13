@@ -8,11 +8,9 @@
 #include <so1pub.h\bios_0.h>                     /* readXYBIOS, goToXYBIOS */
 #include <so1pub.h\bios_crt.h>                          /* tipoAdaptador_t */
 #include <so1pub.h\biosdata.h>                              /* ptrBiosArea */
+#include <so1pub.h\def_pant.h>                              /* maxFilasAct */
 
 /* Ver proyecto Public Domain Curses (pdcurses) en sourceforge             */
-
-byte_t numFilas = 0 ;                               /* inicializacion DATA */
-byte_t numColumnas = 0 ;                            /* inicializacion DATA */
 
 pantalla_t far * ptrPant = NULL ;                   /* inicializacion DATA */
 
@@ -31,8 +29,8 @@ static byte_t cursorOriginalC = 0 ;                 /* inicializacion DATA */
 static byte_t lineaOriginal1 = 0 ;                  /* inicializacion DATA */
 static byte_t lineaOriginal2 = 0 ;                  /* inicializacion DATA */
 
-static byte_t numFilasOriginal = 0 ;                /* inicializacion DATA */
-static byte_t numColumnasOriginal = 0 ;             /* inicializacion DATA */
+static byte_t maxFilasOriginal = 0 ;                /* inicializacion DATA */
+static byte_t maxColumnasOriginal = 0 ;             /* inicializacion DATA */
 
 static byte_t fontSizeOriginal = 0 ;                /* inicializacion DATA */
 static byte_t VIDEO_mode = 0 ;             /* si = 0x07 => enColor == TRUE */
@@ -45,20 +43,20 @@ static word_t segMemVideo = 0 ;       /* 0xB000 (mono) o 0xB800 (en color) */
 
 void inicBiosCrt ( int filas, int columnas, bool_t redim ) {
 
-  numFilasOriginal = ptrBiosArea->VIDEO_lastrow + 1 ;
-  numColumnasOriginal = ptrBiosArea->VIDEO_width ;
+  maxFilasOriginal = maxFilasAct ;                           /* DEF_PANT.H */
+  maxColumnasOriginal = maxColumnasAct ;                     /* DEF_PANT.H */
   fontSizeOriginal = ptrBiosArea->VIDEO_hchar ;
   readXYBIOS(&cursorOriginalF, &cursorOriginalC, &lineaOriginal1, &lineaOriginal2) ;
   tipoAdaptador = tipoDeAdaptador() ;            /* inicializa segMemVideo */
 
   ptrPant = MK_FP(segMemVideo, 0x0000) ;
 /*  copiaPantallaOriginal = (pantalla_t far *)&ptrPant->t[maxFilas][0] ; */
-/*  copiarPantalla(ptrPant, copiaPantallaOriginal, numFilasOriginal) ; */
+/*  copiarPantalla(ptrPant, copiaPantallaOriginal, maxFilasOriginal) ; */
 /*  copiarPantalla(ptrPant, copiaPantallaOriginal, maxFilas) ; */
 
   redimensionable = TRUE ;               /* ¡deberia ser TRUE y no lo era! */
 
-  if (ptrBiosArea->VIDEO_lastrow + 1 != filas)
+  if (maxFilasAct != filas)
 	  redimensionar(filas, columnas) ;
 //redimensionar(50, 80) ;
 //redimensionar(25, 80) ;
@@ -67,10 +65,7 @@ void inicBiosCrt ( int filas, int columnas, bool_t redim ) {
   /* redimensionar(50, 80) ; */ /* setFontSize(_FONT08) ; */
   /* set25x80() ; */
 
-  numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
-  numColumnas = (byte_t)ptrBiosArea->VIDEO_width ;
-
-  redimensionable = (numFilas > 25) || redim ;
+  redimensionable = (maxFilasAct > 25) || redim ;
 
   VIDEO_mode = ptrBiosArea->VIDEO_mode ;
   VIDEO_pagesize = ptrBiosArea->VIDEO_pagesize ;
@@ -79,8 +74,8 @@ void inicBiosCrt ( int filas, int columnas, bool_t redim ) {
 }
 
 void finBiosCrt ( void ) {
-  redimensionar(numFilasOriginal, numColumnasOriginal) ;
-/*  copiarPantalla(copiaPantallaOriginal, ptrPant, numFilasOriginal) ; */
+  redimensionar(maxFilasOriginal, maxColumnasOriginal) ;
+/*  copiarPantalla(copiaPantallaOriginal, ptrPant, maxFilasOriginal) ; */
 /*  copiarPantalla(copiaPantallaOriginal, ptrPant, maxFilas) ; */
 /*  goToXYBIOS(cursorOriginalF, cursorOriginalC) ; */
 }

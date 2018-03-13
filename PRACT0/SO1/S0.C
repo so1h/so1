@@ -37,14 +37,14 @@
 #endif
 
 word_t fechaCompactada ( pointer_t ptrFecha ) {
-  word_t mes, dia, anio ;
-  if ((ptrFecha[2] != '/') || (ptrFecha[5] != '/')) return(0x0000) ;
-  mes  = 10*(ptrFecha[0] - '0') + (ptrFecha[1] - '0') ;
-  if ((mes == 0) || (mes > 12)) return(0x0000) ;
-  dia  = 10*(ptrFecha[3] - '0') + (ptrFecha[4] - '0') ;
-  if ((dia == 0) || (dia > 31)) return(0x0000) ;
-  anio = 10*(ptrFecha[6] - '0') + (ptrFecha[7] - '0') ;
-  return((anio << 9) | (mes << 5) | dia) ;
+    word_t mes, dia, anio ;
+    if ((ptrFecha[2] != '/') || (ptrFecha[5] != '/')) return(0x0000) ;
+    mes  = 10*(ptrFecha[0] - '0') + (ptrFecha[1] - '0') ;   /* mes:  4 bits */ 
+    if ((mes == 0) || (mes > 12)) return(0x0000) ;
+    dia  = 10*(ptrFecha[3] - '0') + (ptrFecha[4] - '0') ;   /* dia:  5 bits */ 
+    if ((dia == 0) || (dia > 31)) return(0x0000) ;
+    anio = 10*(ptrFecha[6] - '0') + (ptrFecha[7] - '0') ;   /* año: 7 bits */ 
+    return((anio << 9) | (mes << 5) | dia) ; 
 }
 
 void mirarLoQueHay ( word_t * loQueHay ) {

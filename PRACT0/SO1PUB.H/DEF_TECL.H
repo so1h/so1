@@ -35,18 +35,15 @@ extern pulsacion_t pulsacion ;
 typedef struct {
   dobleEnlace_t e2Bloqueados [ maxProcesos + 2 ] ;
   c2c_t  bloqueados ;              /* cola de procesos esperando una tecla */
-  char   bufer[tamBTeclado] ;                         /* bufer del teclado */
+  char   bufer [tamBTeclado] ;                        /* bufer del teclado */
   int    in ;
   int    out ;
   int    ncar ;                       /* numero de caracteres sin procesar */
-  c2c_t  bloqueadosRaw ;            /* cola de procesos esperando una tecla */
-  byte_t buferRaw [tamBRaw] ;
+  c2c_t  bloqueadosRaw ;           /* cola de procesos esperando una tecla */
+  byte_t buferRaw [ tamBRaw ] ;
   int    inRaw ;
   int    outRaw ;
   int    nRaw ;
 } teclado_t ;
 
 #endif /* DEF_TECL_H */
-
-
-

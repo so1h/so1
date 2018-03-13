@@ -40,19 +40,19 @@ void inicRecursos ( void )
 		{
             descRecurso[rindx].nVInt[i] = 0x00 ;
             descRecurso[rindx].irq[i] = 0x00 ;
-            descRecurso[rindx].isr[i] = (isr_t)0x00000000 ;
+            descRecurso[rindx].isr[i] = (isr_t)NULL ;
         }
-        descRecurso[rindx].open =      (open_t)     0x00000000 ;
-        descRecurso[rindx].release =   (release_t)  0x00000000 ;
-        descRecurso[rindx].read =      (read_t)     0x00000000 ;
-        descRecurso[rindx].aio_read =  (aio_read_t) 0x00000000 ;
-        descRecurso[rindx].write =     (write_t)    0x00000000 ;
-        descRecurso[rindx].aio_write = (aio_write_t)0x00000000 ;
-        descRecurso[rindx].lseek =     (lseek_t)    0x00000000 ;
-        descRecurso[rindx].fcntl =     (fcntl_t)    0x00000000 ;
-        descRecurso[rindx].ioctl =     (ioctl_t)    0x00000000 ;
+        descRecurso[rindx].open =      (open_t     )NULL ;
+        descRecurso[rindx].release =   (release_t  )NULL ;
+        descRecurso[rindx].read =      (read_t     )NULL ;
+        descRecurso[rindx].aio_read =  (aio_read_t )NULL ;
+        descRecurso[rindx].write =     (write_t    )NULL ;
+        descRecurso[rindx].aio_write = (aio_write_t)NULL ;
+        descRecurso[rindx].lseek =     (lseek_t    )NULL ;
+        descRecurso[rindx].fcntl =     (fcntl_t    )NULL ;
+        descRecurso[rindx].ioctl =     (ioctl_t    )NULL ;
 
-        descRecurso[rindx].eliminar =  (eliminar_t)0x00000000 ;
+        descRecurso[rindx].eliminar =  (eliminar_t )NULL ;
     }
 
     /* inicializamos todos los descriptores de fichero del sistema */
@@ -195,7 +195,7 @@ int destruirFich ( dfs_t dfs )
     return(0) ;
 }
 
-int destruirRec ( const char far * nombre ) 
+int destruirRec ( const char far * nombre, bool_t matando ) 
 {
     rindx_t r ; 
     rindx_t rindx ;
@@ -261,27 +261,28 @@ int destruirRec ( const char far * nombre )
         recVInt[nVInt] = -1 ;
         restablecerInt(nVInt) ;
         descRecurso[rindx].nVInt[j] = 0 ;
-        descRecurso[rindx].isr[j] = (isr_t)0x00000000 ;
+        descRecurso[rindx].isr[j] = (isr_t)NULL ;
     }
 
     descRecurso[rindx].numVI = 0 ;
 
-    descRecurso[rindx].open =      (open_t     )0x00000000 ;
-    descRecurso[rindx].release =   (release_t  )0x00000000 ;
-    descRecurso[rindx].read =      (read_t     )0x00000000 ;
-    descRecurso[rindx].aio_read =  (aio_read_t )0x00000000 ;
-    descRecurso[rindx].write =     (write_t    )0x00000000 ;
-    descRecurso[rindx].aio_write = (aio_write_t)0x00000000 ;
-    descRecurso[rindx].lseek =     (lseek_t    )0x00000000 ;
-    descRecurso[rindx].fcntl =     (fcntl_t    )0x00000000 ;
-    descRecurso[rindx].ioctl =     (ioctl_t    )0x00000000 ;
+    descRecurso[rindx].open =      (open_t     )NULL ;
+    descRecurso[rindx].release =   (release_t  )NULL ;
+    descRecurso[rindx].read =      (read_t     )NULL ;
+    descRecurso[rindx].aio_read =  (aio_read_t )NULL ;
+    descRecurso[rindx].write =     (write_t    )NULL ;
+    descRecurso[rindx].aio_write = (aio_write_t)NULL ;
+    descRecurso[rindx].lseek =     (lseek_t    )NULL ;
+    descRecurso[rindx].fcntl =     (fcntl_t    )NULL ;
+    descRecurso[rindx].ioctl =     (ioctl_t    )NULL ;
 
-    descRecurso[rindx].eliminar =  (ioctl_t    )0x00000000 ;
+    descRecurso[rindx].eliminar =  (eliminar_t )NULL ;
 
     eliminarPC2c(rindx, (ptrC2c_t)&c2cPFR[DROcupados]) ;
     apilarPC2c(rindx, (ptrC2c_t)&c2cPFR[DRLibres]) ;
   
-    matarProcIndx(pindx) ;                 /* en otro caso quedaria zombie */	
+    if (matando) 
+		matarProcIndx(pindx) ;             /* en otro caso quedaria zombie */	
 
     return(0) ;
 }

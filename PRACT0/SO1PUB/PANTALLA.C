@@ -5,8 +5,9 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\def_pant.h>                  /* pantalla_t, maxColumnas */
+#include <so1pub.h\bios_0.h>                         /* printCarBIOS('\a') */
 #include <so1pub.h\memory.h>                          /* memcpy, memcpy_fd */
-#include <so1pub.h\pantalla.h>
+#include <so1pub.h\pantalla.h>                    /* pantalla_t, display_t */
 
 word_t tamPantalla ( byte_t numFilas ) 
 {
@@ -86,3 +87,50 @@ void scrollCPantalla ( pantalla_t far * pantalla, word_t numFilas )
     copiarCPantalla((pantalla_t far *)&pantalla->t[1][0], pantalla, numFilas) ;
     for ( C = 0 ; C < maxColumnas ; C++ ) pantalla->t[numFilas][C].car = ' ' ;
 }
+
+#if (FALSE)
+
+int printCarDisplay ( display_t far * display, char car ) 
+{
+    byte_t numFilas = maxFilasAct ;	
+	pantalla_t far * pantalla = display->pantalla ;
+    switch(car) {
+    case '\f' : borrarCPantalla(pantalla, numFilas) ;
+//              borrarPantalla(pantalla, numFilas) ; 
+                display->F = 0 ;
+    case '\r' : display->C = 0 ;
+                break ;
+    case '\n' : if (++(display->F) == numFilas) {
+                    scrollCPantalla(pantalla, numFilas) ;
+                    display->F = numFilas-1 ;
+                }
+                break ;
+    case '\b' : if (display->C > 0) {
+                    (display->C)-- ;
+                    pantalla->t[display->F][display->C].car = ' ' ;
+                }
+                else printCarBIOS('\a') ;
+                break ;
+    case '\t' : car = ' ' ; break ;                           /* Tabulador */
+    case '\a' : printCarBIOS('\a') ;
+                break ;
+    default   : 
+#if (FALSE)
+                if (display->C < maxColumnasAct)            
+	                pantalla->t[display->F][display->C].car = car ;
+                    display->C++ ;
+#else	
+	            pantalla->t[display->F][display->C].car = car ;
+                if (++(display->C) == maxColumnasAct) {     
+                    display->C = 0 ;
+                    if (++(display->F) == numFilas) {
+                        scrollCPantalla(pantalla, numFilas) ;
+                        display->F = numFilas-1 ;
+                    }
+                }
+#endif
+    }
+    return(0) ;
+}
+
+#endif

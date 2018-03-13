@@ -8,7 +8,7 @@
 #define MEMVIDEO_H
 
 #include <so1pub.h\tipos.h>                                      /* byte_t */
-#include <so1pub.h\pantalla.h>
+#include <so1pub.h\pantalla.h>                         /* printCarPantalla */
 
 extern byte_t cursorF ;
 

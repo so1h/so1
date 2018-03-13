@@ -8,6 +8,7 @@
 #include <so1pub.h\comundrv.h>  /* ptrIndProcesoActual, comprobarAmpersand */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                                      /* printf */
+#include <so1pub.h\ctype.h>                                     /* toupper */
 #include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
 #include <so1pub.h\scanner.h>               /* inicScanner, obtenSimb, ... */
 #include <so1pub.h\pic.h>                                     /* IRQ_TIMER */
@@ -371,7 +372,7 @@ void far isr_timer ( )
 
 int finishTimer ( void )
 {
-    exit(0) ;
+//  exit(0) ;              /* obligaria a meter la biblioteca ll_s_so1.lib */
     return(0) ;
 }
 
@@ -385,7 +386,7 @@ void finCodeDriver ( void )   /* marca el fin del codigo propio del driver */
 
 void mostrarFormato ( void )
 {
-    printf(" formato: TIMER [ -i [ tpr ] | -u | -s | -c tpr | -h | tpr ] ") ;
+    printf(" formato: TIMER [ -i [ tpr ] | -q | -u | -k | -s | -c tpr | -h | tpr ] ") ;
 }
 
 int formato ( void )
@@ -409,6 +410,7 @@ int help ( void )
         "      -i : instala el driver (usar &)"                          "\n"
         "      -q : instala sin mensajes de salida (&)"                  "\n"
         "      -u : desintala el driver"                                 "\n"
+        "      -k : desintala el driver (matando)"                       "\n"
         "      -s : muestra el estado del timer"                         "\n"
         "      -c : cambia los tics por rodaja"                          "\n"
         "      -h : muestra este help"                                   "\n"
@@ -482,7 +484,7 @@ int integrarTimer ( word_t ticsPR, bool_t conMensajes )
         case -4 : printf(" no hay descriptores de fichero libres") ; break ;
         default : printf(" no ha podido crearse el fichero TIMER") ;
         }
-        destruirRecurso("TIMER") ;
+        destruirRecurso("TIMER", TRUE) ;                        /* matando */
         return(0) ;
     }
     switch(rec_timer)
@@ -526,9 +528,12 @@ int instalarTimer ( word_t ticsPR, bool_t conMensajes )
         FP_OFF(&descCcbTM)
             + sizeof(descCcbTM) + maxCbTM*sizeof(callBack_t),   /* tamDATA */
         FP_OFF(finCodeDriver),                            /* finCodeDriver */
-        FP_OFF(finishTimer)                                /* finishDriver */
+        FP_OFF(finishTimer),                               /* finishDriver */
+		0x0000                                                  /* tamPila */ 
     ) ;
+/*  se retorna a finishTimer */		
 #endif
+/*  solo se llega aqui en el caso esperarDesinstalacion(0) */
     res = desintegrarTimer() ;
     return(res) ;
 }
@@ -572,9 +577,10 @@ int main ( int argc, char * argv [ ] )
                 return(0) ;
             }
         }
-        else if (!strcmpu(argv[1], "-u"))
+        else if ((!strcmpu(argv[1], "-u")) || 
+                 (!strcmpu(argv[1], "-k")))
         {
-            res = destruirRecurso("TIMER") ;
+            res = destruirRecurso("TIMER", tolower(argv[1][1]) == 'k') ;  
             switch (res)
             {
             case  0 : printf(" recurso TIMER desinstalado") ; break ;

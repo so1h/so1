@@ -20,7 +20,6 @@ dfs_t crearFich ( const char far * nombre,
 
 int destruirFich ( dfs_t dfs ) ;
 
-int destruirRec ( const char far * nombre ) ;
+int destruirRec ( const char far * nombre, bool_t matando ) ;
 
 #endif /* RECURSOS_H */
-

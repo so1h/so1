@@ -85,16 +85,21 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
   }                                                              /* 0x0203 */
   case 0x03 : {                                   /* esperarDesinstalacion */
     rindx_t r ;
-    word_t tamDATA       = tramaProceso->BX ;              /* BX = tamDATA */
+    word_t tamDATA       = tramaProceso->BX ;        /* BX = tamDATA       */
 	word_t finCodeDriver = tramaProceso->CX ;        /* CX = finCodeDriver */
-	word_t finishDriver  = tramaProceso->DX ;         /* DX = finishDriver */
+	word_t finishDriver  = tramaProceso->DX ;        /* DX = finishDriver  */
+	word_t tamPila       = tramaProceso->SI ;        /* SI = tamPila       */
+	
     if (tamDATA != 0x0000)                            /* tamDATA != 0x0000 */
     {
+		word_t SP0 ;
     	word_t tamPs ;                                       /* paragrafos */
+	    word_t tamPilaPsMin ;                                /* paragrafos */
 	    word_t tamPilaPs ;                                   /* paragrafos */
 	    word_t segBloqueLibre ;
 		word_t nuevoSegDatosSR ; 
 		word_t nuevoDS ; 
+		word_t nuevoSP0 ;
 		trama_t far * nuevaTramaProceso ;
      	
 		tamDATA       = (tamDATA + 0x000F) & 0xFFF0 ;             /* bytes */
@@ -102,10 +107,15 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
 		tamPs = descProceso[indProcesoActual].tam ;
 //		tamPilaPs = tramaProceso->CS + tamPs 
 //		          - (tramaProceso->DS + (FP_OFF(tramaProceso) >> 4)) ;
-        tamPilaPs = (sizeof(trama_t) + 0x000F) >> 4 ;  /* minimo minimorum */
-        segBloqueLibre = tramaProceso->DS + (tamDATA >> 4) + tamPilaPs ;		
+        tamPilaPsMin = (sizeof(trama_t) + 8 + 0x000F) >> 4 ;     /* minimo */
+              /* 8 bytes para 4 palabras: desplFinish, argc, argv y 0x0000 */
+		if (16*tamPilaPsMin < tamPila)               /* tamPila solicitado */
+			tamPilaPs = (tamPila + 0x000F) >> 4 ; 
+        else
+			tamPilaPs = tamPilaPsMin ;
         nuevoSegDatosSR = finCodeDriver >> 4 ;
         nuevoDS = tramaProceso->CS + nuevoSegDatosSR ;  
+        segBloqueLibre = nuevoDS + (tamDATA >> 4) + tamPilaPs ;
 
         r = c2cPFR[DROcupados].primero ;    /* actualizar DS en call backs */
         while (r != c2cPFR[DROcupados].cabecera) 
@@ -117,7 +127,6 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
 			            MK_FP(nuevoDS, FP_OFF(descRecurso[r].ccb->arg)) ;  		
                 descRecurso[r].ccb = MK_FP(nuevoDS, FP_OFF(descRecurso[r].ccb)) ; 
             }
-#if (TRUE)			 
             else 
 			{
 				int i, j ;
@@ -130,7 +139,6 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
                     j = (j + 1) % (descRecurso[r].ccb->max) ;
 				}	
 			}
-#endif			
             r = c2cPFR[DROcupados].e[r].sig ;
         } 
 
@@ -142,18 +150,12 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
 	
         nuevaTramaProceso = MK_FP(
 		    nuevoDS, 
-			tamDATA + (FP_OFF(tramaProceso) & 0x000F)
+			tamDATA + 16*tamPilaPs - sizeof(trama_t) - 8        /* 4 palabras */ 
 		) ;			   
-
-		memcpy(                               /* copia de la trama de pila */
-	       nuevaTramaProceso, 
-		   tramaProceso, 
-           (tamPilaPs << 4) + (FP_OFF(tramaProceso) & 0x000F) 
-		) ;  
-
+		
 		descProceso[indProcesoActual].tam = segBloqueLibre - tramaProceso->CS ;
-		descProceso[indProcesoActual].desplBSS = FP_OFF(nuevaTramaProceso) ; 
-		descProceso[indProcesoActual].desplPila = FP_OFF(nuevaTramaProceso) ;
+		descProceso[indProcesoActual].desplBSS = tramaProceso->BX ;
+		descProceso[indProcesoActual].desplPila = tramaProceso->BX ;
 		
         ((cabecera_t far *)MK_FP(tramaProceso->CS, 0x0000))->segDatosSR =
             nuevoSegDatosSR ;	
@@ -161,30 +163,43 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
             descProceso[indProcesoActual].desplBSS ;
         ((cabecera_t far *)MK_FP(tramaProceso->CS, 0x0000))->finBSS =
             descProceso[indProcesoActual].desplPila ;	
-
+        
+		SP0 = ((cabecera_t far *)MK_FP(tramaProceso->CS, 0x0000))->SP0 ;
+		nuevoSP0 = 16*(segBloqueLibre - nuevoDS)  ;	
+		((cabecera_t far *)MK_FP(tramaProceso->CS, 0x0000))->SP0 = nuevoSP0 ;
+		
+		memcpy(                              /* cuatro palabras: (8 nytes) */ 
+		    MK_FP(nuevoDS, nuevoSP0-8),                /* dir. ret. finish */  
+			MK_FP(tramaProceso->DS, SP0-8),            /* argc             */
+			8                                          /* argv             */ 
+		) ;                                            /* 0x0000 (atexit)  */ 
+		  
         k_devolverBloque(segBloqueLibre, tramaProceso->CS + tamPs - segBloqueLibre) ; 
 
 		tramaProceso = nuevaTramaProceso ;
 		
-        tramaProceso->DS = nuevoDS ;
-		tramaProceso->ES = nuevoDS ;
-		tramaProceso->AX = 0x0000 ;
-		tramaProceso->BX = 0x0000 ;
-		tramaProceso->CX = 0x0000 ;
-		tramaProceso->DX = 0x0000 ;
-		tramaProceso->SI = 0x0000 ;
-		tramaProceso->DI = 0x0000 ;
-		tramaProceso->SP = FP_OFF(tramaProceso) + 10*(sizeof(word_t)) ;
-		tramaProceso->BP = 0x0000 ; 
-		tramaProceso->IP = (word_t)finishDriver ;	
-
+        tramaProceso->DS    = nuevoDS ;
+		tramaProceso->ES    = nuevoDS ;
+		tramaProceso->AX    = 0x0000 ;
+		tramaProceso->BX    = 0x0000 ;
+		tramaProceso->CX    = 0x0000 ;
+		tramaProceso->DX    = 0x0000 ;
+		tramaProceso->SI    = 0x0000 ;
+		tramaProceso->DI    = 0x0000 ;
+		tramaProceso->SP    = FP_OFF(tramaProceso) + 10*(sizeof(word_t)) ;
+		tramaProceso->BP    = 0x0000 ; 
+		tramaProceso->IP    = finishDriver ;	
+		tramaProceso->CS    = descProceso[indProcesoActual].CSProc ;	
+		tramaProceso->Flags = (_FLAGS & 0xF000) | 0x0202 ;	
 	}
-    bloquearProcesoActual(rec_desinstalacion) ;  /* rec_desinstalacion */   
-    break ;
+    bloquearProcesoActual(rec_desinstalacion) ;      /* rec_desinstalacion */   
+//  (no se retorna aqui, sino a la instruccion siguiente al trap) 	
+    break ; 
   }                                                              /* 0x0204 */
   case 0x04 : {                                         /* destruirRecurso */    
     tramaProceso->AX =
-      destruirRec(MK_FP(tramaProceso->ES, tramaProceso->BX)) ;
+      destruirRec(MK_FP(tramaProceso->ES, tramaProceso->BX),     /* nombre */
+	              tramaProceso->CX) ;                           /* matando */
     break ;
   }                                                              /* 0x0205 */
   case 0x05 : ;                                       /* encolarCcbRecurso */

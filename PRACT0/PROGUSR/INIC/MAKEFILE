@@ -35,9 +35,9 @@ $(PROGRAMA).obj,                 \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (finBSS = 19A0 < 23FE)
+#puntero de pila inicial (finBSS = 19D6 < 1CFE)
 
-SPINICIAL = 23FE
+SPINICIAL = 1CFE
 
 inicio: ..\..\so1\obj\iniccode.obj ..\..\DISQUETE\$(PROGRAMA).bin
 

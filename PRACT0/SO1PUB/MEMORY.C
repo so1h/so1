@@ -71,7 +71,7 @@ void far * normaliza ( void far * dir )
 		pop bp
 		ret ;
 	}
-//	return(MK_FP(_DX, _AX)) ; 
+	return(MK_FP(_DX, _AX)) ; 
 }
 
 void far * memcpy_fd ( void far * destino, const void far * origen, dword_t n ) 
@@ -79,17 +79,17 @@ void far * memcpy_fd ( void far * destino, const void far * origen, dword_t n )
 	void far * destinoAux = destino ;
 	void far * origenAux = origen ;
 	word_t min ;	
-    do 
+    for ( ; n > 0 ; ) 
     {
   	    destinoAux = normaliza(destinoAux) ;
 	    origenAux = normaliza(origenAux) ;
 	    min = (n <= 0xFFF0) ? n : 0xFFF0 ; 
         destinoAux = memcpy(destinoAux, origenAux, min) ;
+        (pointer_t)destinoAux += min ;
         (pointer_t)origenAux += min ;
 		n = n - min ;
 	}
-	while (n > 0) ;
-    return(destinoAux) ;		
+    return(destino) ;		
 }
 
 void * memmove_n ( void * destino, const void * origen, word_t n ) 
@@ -142,3 +142,74 @@ done:
 //  asm pop ds ;	                   /* para el caso de punteros lejanos */	
 	return(destino) ;
 }
+
+#if (TRUE)
+
+void * memset_n ( void * destino, byte_t valor, word_t n ) 
+{
+    asm 
+	{		
+        mov di,destino ;
+        mov cx,n ;
+        mov al,valor ;
+        mov ah,al ;
+        cld ;
+
+        test di,1 ;
+        jz isAligned ;
+        jcxz done ;
+        stosb ;
+        dec cx ;
+isAligned:
+        shr cx,1 ;
+        rep stosw ;
+        jnc noOdd ;
+        stosb ;
+noOdd: ;
+done: ;	
+    }
+	return(destino) ;
+}
+
+void far * memset ( void far * destino, byte_t valor, word_t n ) 
+{
+    asm 
+	{		
+        les di,destino ;
+        mov cx,n ;
+        mov al,valor ;
+        mov ah,al ;
+        cld ;
+
+        test di,1 ;
+        jz isAligned ;
+        jcxz done ;
+        stosb ;
+        dec cx ;
+isAligned:
+        shr cx,1 ;
+        rep stosw ;
+        jnc noOdd ;
+        stosb ;
+noOdd: ;
+done: ;	
+    }
+	return(destino) ;
+}
+
+void far * memset_fd ( void far * destino, byte_t valor, dword_t n ) 
+{
+	void far * destinoAux = destino ;
+	word_t min ;	
+    for ( ; n > 0 ; ) 
+	{
+  	    destinoAux = normaliza(destinoAux) ;
+	    min = (n <= 0xFFF0) ? n : 0xFFF0 ; 
+        destinoAux = memset(destinoAux, valor, min) ;
+        (pointer_t)destinoAux += min ;
+		n = n - min ;
+	}
+    return(destino) ;		
+}
+
+#endif

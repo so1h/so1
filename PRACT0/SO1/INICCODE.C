@@ -15,7 +15,7 @@
 #include <so1pub.h\debug.h>            /* assert, valorFlags, mostrarFlags */
 #include <so1pub.h\bios_0.h>            /* printStrBIOS, printDecBIOS, ... */
 #include <so1pub.h\biosdata.h>                             /* ptrFechaBios */
-#include <progusr\consola\consola.h>                             /* descConsola_t */
+#include <progusr\consola\consola.h>                      /* descConsola_t */
 
 #include <so1pub.h\interpre.h>                      /* interpretarComandos */
 
@@ -241,9 +241,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
 #endif
 
 #if (RATON)
-    if (strncmp(
-                (char far *)ptrFechaBios,
-                (char far *)"01/01/99", 8))                    /* !hayVDos */
+    if (strncmp(ptrFechaBios, "01/01/99", 8))                  /* !hayVDos */
     {
         if ((pid = createProcess("RATON", "RATON -q &")) < 0)        /* GP */
         {
@@ -258,22 +256,6 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     }
 #endif
 
-#if (FALSE)                                     /* depuracion msdos Takeda */
-    {
-        char car ;
-        printStrBIOS("\n probando Takeda ") ;
-        while ((car = leerCarBIOS()) != 'F')                               /* Ok */
-        {
-//while ((car = (char)teclaListaBIOS()) != 'F') {/* (no saca del bufer) Ok */
-//while ((car = (char)leerTeclaListaBDA()) != 'F') {        /* no lee nada */ /* problema */
-//while ((car = leerListo(STDIN)) != 'F') {                 /* no lee nada */
-//while ((car = leer(STDIN)) != 'F') {              /* el programa termina */
-            if (car != '\0')
-                printCarBIOS(car) ;
-        }
-    }
-#endif
-
 #define ptrPant ((pantalla_t far *)pointer(0xB800, 0x0000))
 
     if ((df = open("TIMER", O_RDONLY)) >= 0)
@@ -283,7 +265,6 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
      		lseek(STDOUT, 21*80+i, SEEK_SET) ;              	
 			putchar(0xFE) ;                                 /* cuadrado pequenio */
 //          pantallazo(ptrPant, 50, (char)254, atrNormal, 21, 20, 21, i) ;
-#if (TRUE)                 /* FALSE para que funcione no se cuelgue Takeda */
             leer(df) ;     /* permite las interrupciones mientras esta bloqueado */
             car = leerListo(STDIN);
             if (car != '\0')
@@ -292,7 +273,6 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
                 car = getchar() ;
                 if (car == ESC) break ;
             }
-#endif
         }
         close(df) ;
     }
@@ -310,7 +290,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     printf("\n flags = %04X", valorFlags()) ;
     if (getpid() != 0)
     {
-        printf("\n") ;
+        putchar('\n') ;
         asm sti ;                         /* permitimos las interrupsiones */
     }
     else
@@ -327,7 +307,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     if ((pid = createProcess("CONSOLA", "consola -c 1")) > 0)        /* GP */
         waitpid(pid, (int far *)&status) ;                           /* GP */
     else
-        printf("\n") ;
+        putchar('\n') ;
 
     status = interpretarComandos() ;                              /* shell */
 

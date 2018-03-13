@@ -9,7 +9,7 @@
 /* (origen, origen + n - 1) y (destino, destino + n -1) el resultado es    */
 /* indefinido (ANSI).                                                      */   
 /* Hay que asegurarse de que offset(origen)+n-1 y offset(destino)+n-1 no   */
-/* son mayores de 0xFFFF.                                                  */         
+/* sean mayores de 0xFFFF.                                                 */         
 
 #ifndef MEMORY_H
 #define MEMORY_H
@@ -25,5 +25,11 @@ void far * normaliza ( void far * dir ) ;
 void far * memcpy_fd ( void far * destino, const void far * origen, dword_t n ) ;
 
 void * memmove_n ( void * destino, const void * origen, word_t n ) ;
+
+void * memset_n ( void * destino, byte_t valor, word_t n ) ;
+
+void far * memset ( void far * destino, byte_t valor, word_t n ) ;
+
+void far * memset_fd ( void far * destino, byte_t valor, dword_t n ) ;
 
 #endif /* MEMORY_H */

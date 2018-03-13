@@ -13,11 +13,10 @@
 
 typedef struct
 {
-    pantalla_t pantalla ;
-    teclado_t  teclado ;
+    pantalla_t pantalla ;  /* pantalla, F y C forman un display PANTALLA.H */
     byte_t     F ;                       /* fila de la posicion del cursor */
     byte_t     C ;                    /* columna de la posicion del cursor */
-//  byte_t     maxF ;                    /* ultima (mayor) fila modificada */
+    teclado_t  teclado ;
 } descConsola_t ;
 
 /* ----------------------------------------------------------------------- */

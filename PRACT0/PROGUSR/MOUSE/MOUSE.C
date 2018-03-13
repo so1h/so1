@@ -44,7 +44,6 @@ void help ( void )
 	
 void mostrarEstado ( char opcion, word_t modo )
 {
-
     bool_t nuevoEstado ;
     estadoRaton_t est ;
     char car = '\0' ;
@@ -66,22 +65,12 @@ void mostrarEstado ( char opcion, word_t modo )
 
     switch (opcion)
     {
-    case 'P' :
-        ;
-    case 'B' :
-        ;
-    case 'F' :
-        printf(" (clic en C = 0 F = 0 termina) ") ;
-        break ;
-    case 'C' :
-        printf(" (Q o clic en C = 0 F = 0 termina) ") ;
-        break ;
-    case 'T' :
-        printf(" (Esc o clic en C = 0 F = 0 termina) ") ;
-        break ;
-    default  :
-        printf(" opcion incorrecta ") ;
-        return ;
+    case 'P' : ;
+    case 'B' : ;
+    case 'F' : printf(" (clic en C = 0 F = 0 termina) ") ; break ;
+    case 'C' : printf(" (Q o clic en C = 0 F = 0 termina) ") ; break ;
+    case 'T' : printf(" (Esc o clic en C = 0 F = 0 termina) ") ; break ;
+    default  : printf(" opcion incorrecta ") ; return ;
     }
 
     printf("\n\n") ;
@@ -93,15 +82,13 @@ void mostrarEstado ( char opcion, word_t modo )
     est.B2 = 0 ;
     est.incX = 0 ;
     est.incY = 0 ;
-    /*
-        est.X = maxX/2 ;
-        est.Y = maxY/2 ;
-        est.F = est.Y >> 3 ;
-        est.C = est.X >> 3 ;
-        est.botonIz = FALSE ;
-        est.botonDe = FALSE ;
-        est.botonMe = FALSE ;
-    */
+//  est.X = maxX/2 ;
+//  est.Y = maxY/2 ;
+//  est.F = est.Y >> 3 ;
+//  est.C = est.X >> 3 ;
+//  est.botonIz = FALSE ;
+//  est.botonDe = FALSE ;
+//  est.botonMe = FALSE ;
     i = 0 ;
 
     nuevoEstado = TRUE ;
@@ -147,8 +134,8 @@ void mostrarEstado ( char opcion, word_t modo )
             {
             case 2 :
                 read(dfRaton, (pointer_t)&est, sizeof(estadoRaton_t)) ;
-                break ;
 //              leerRaton((estadoRaton_t far *)&est) ;
+                break ;
             }
             break ;
         default  :

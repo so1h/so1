@@ -7,8 +7,8 @@
 #ifndef BIOS_CRT_H
 #define BIOS_CRT_H
 
-#include <so1pub.h\tipos.h>
-#include <so1pub.h\pantalla.h>
+#include <so1pub.h\tipos.h>                              /* byte_t, bool_t */
+#include <so1pub.h\pantalla.h>                               /* pantalla_t */
 
 typedef enum {
   _NONE, _MDA, _CGA,
@@ -24,10 +24,6 @@ typedef enum {
   _FONT15,                                                       /* GENIUS */
   _FONT16
 } fontSize_t ;
-
-extern byte_t numFilas ;
-
-extern byte_t numColumnas ;
 
 extern pantalla_t far * ptrPant ;
 

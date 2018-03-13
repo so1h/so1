@@ -5,8 +5,8 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\tipos.h>
-#include <so1pub.h\memvideo.h>                         /* printCarVideo */
-#include <so1pub.h\printgen.h>  /* printGen(Ln|Str|StrHasta|Dec|Int|..) */
+#include <so1pub.h\memvideo.h>                            /* printCarVideo */
+#include <so1pub.h\printgen.h>     /* printGen(Ln|Str|StrHasta|Dec|Int|..) */
 
 int printLnVideo ( ) {
   return(printGenLn(printCarVideo)) ;
@@ -55,4 +55,3 @@ int printLBinVideo ( dword_t num, word_t l ) {
 int printPtrVideo ( pointer_t ptr ) {
   return(printGenPtr(ptr, printCarVideo)) ;
 }
-

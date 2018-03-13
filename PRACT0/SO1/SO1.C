@@ -21,7 +21,6 @@
 #include <so1.h\db.h>                                            /* inicDB */
 #include <so1.h\recursos.h>                   /* inicRecursos, destruirRec */
 #include <so1.h\procesos.h>      /* descProceso, descRecurso, inicProcesos */ /* c2cPFR */
-//#include <so1.h\main.h>                                          /* main */
 #include <so1.h\minifs.h>              /* inicMinisfMSDOS, inicMinisfFAT12 */
 #include <so1.h\sf.h>        /* inicSF, inicTablaFichAbiertos, segBuferSO1 */
 #include <so1.h\plot.h>                                         /* finPlot */
@@ -165,9 +164,9 @@ void main ( void )                             /* interrupciones inhibidas */
 
 #if (CON_PROCESO_INICIAL)          /* se utiliza un proceso inicial de SO1 */
 
-    printStrBIOS("\n creando el proceso inicial INIC: \"inic\"") ;
+    printStrBIOS("\n creando el proceso inicial INIC: \"INIC\"") ;
 
-    if ((pid = createProcess("INIC", "inic")) > 0)
+    if ((pid = createProcess("INIC", "INIC")) > 0)
     {
         /* inic */ /* GP */
         pindx = descProceso[indProcesoActual].c2cHijos.primero ;
@@ -205,7 +204,7 @@ void tirarSistema ( word_t loQueHay, int timeout )
     pid_t pid ;
     pindx_t pindx ;
     rindx_t rindx ;
-    char far * nombre ;
+    char * nombre ;
     char strComando [ 12 ] ;
     int status ;
 
@@ -276,6 +275,9 @@ void tirarSistema ( word_t loQueHay, int timeout )
     if ((pid = createProcess("PS", "ps")) > 0)
         waitpid(pid, (int far *)NULL) ;
 
+#define MATANDO TRUE	
+//#define MATANDO FALSE	
+	
     escribirStr("\n desinstalando drivers ... \n\n") ;
 
     if (timeout > 0) esperarTicsBIOS(3*18) ;
@@ -295,15 +297,19 @@ void tirarSistema ( word_t loQueHay, int timeout )
                 }
             strComando[ 8] = ' ' ;
             strComando[ 9] = '-' ;
-            strComando[10] = 'u' ;
+#if (MATANDO)
+            strComando[10] = 'k' ;                              /* matando */
+#else		
+            strComando[10] = 'u' ;         /* sin matar (posibles zombies) */
+#endif		
             strComando[11] = '\0' ;
             escribirCar(' ') ;
-            escribirStr((char *)strComando) ;
+            escribirStr(strComando) ;
             escribirCar(':') ;
             if (timeout > 0) esperarTicsBIOS(18) ;
             if ((pid = createProcess(descProceso[pindx].programa, strComando)) > 0)
             {
-#if (TRUE)				
+#if (MATANDO)				
                 waitpid(pid, (int far *)NULL) ;
 #else				
                 waitpid(pid, (int far *)&status) ;
@@ -327,7 +333,7 @@ void tirarSistema ( word_t loQueHay, int timeout )
     rindx = c2cPFR[DROcupados].primero ;
     while (rindx != c2cPFR[DROcupados].cabecera)
     {
-        nombre = (char far *)descRecurso[rindx].nombre ;
+        nombre = descRecurso[rindx].nombre ;
         pindx = descRecurso[rindx].pindx ;
         pid = descProceso[pindx].pid ;
         if (pindx > 0)
@@ -335,11 +341,11 @@ void tirarSistema ( word_t loQueHay, int timeout )
             escribirStr("\n destruyendo recurso ") ;
             escribirInt(rindx, 1) ;
             escribirStr(" ") ;
-            escribirStr((char *)nombre) ;
+            escribirStr(nombre) ;
             escribirStr(" ...") ;
             rindx = c2cPFR[DROcupados].e[rindx].sig ;
-//          err = destruirRecurso(nombre) ;          /* llamada al sistema */
-            err = destruirRec(nombre) ;                 /* funcion interna */
+//          err = destruirRecurso(nombre, TRUE) ;    /* llamada al sistema */
+            err = destruirRec(nombre, TRUE) ;           /* funcion interna */
             if (err == 0)
             {
                 if (pid > 0) waitpid(pid, (int far *)NULL) ;

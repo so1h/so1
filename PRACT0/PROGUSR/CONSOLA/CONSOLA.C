@@ -86,15 +86,13 @@ char sacar ( teclado_t far * teclado  )     /* se supone: teclado.ncar > 0 */
 int printCarConsola ( byte_t con, char car )
 {
     if (con == consolaDeSuperficie)
-    {
         printCarVideo(car) ;
-//      if (car == '\f')
-//          descConsola[con].maxF = 0 ;
-//      else if (cursorF > descConsola[con].maxF)
-//          descConsola[con].maxF = cursorF ;
-    }
     else
+#if (0) 			
+		printCarDisplay((display_t far *)&(descConsola[con]), car) ;
+#else	
     {
+	    byte_t numFilas = maxFilasAct ;
         pantalla_t far * pantalla = (pantalla_t far *)&descConsola[con].pantalla ;
         byte_t F = descConsola[con].F ;
         byte_t C = descConsola[con].C ;
@@ -102,10 +100,9 @@ int printCarConsola ( byte_t con, char car )
         {
         case '\f'  :
             borrarCPantalla(pantalla, numFilas) ;
-            /* borrarPantalla(pantalla, numFilas) ; */
+//          borrarPantalla(pantalla, numFilas) ; 
             descConsola[con].F = 0 ;
             descConsola[con].C = 0 ;
-//          descConsola[con].maxF = 0 ;
             break ;
         case '\r'  :
             descConsola[con].C = 0 ;
@@ -116,8 +113,6 @@ int printCarConsola ( byte_t con, char car )
                 scrollCPantalla(pantalla, numFilas) ;
                 descConsola[con].F = numFilas-1 ;
             }
-//          if (descConsola[con].F > descConsola[con].maxF)
-//              descConsola[con].maxF = descConsola[con].F ;
             break ;
         case '\b'  :
             if (C > 0)
@@ -148,22 +143,21 @@ int printCarConsola ( byte_t con, char car )
                     scrollCPantalla(pantalla, numFilas) ;
                     descConsola[con].F = numFilas-1 ;
                 }
-//              if (descConsola[con].F > descConsola[con].maxF)
-//                  descConsola[con].maxF = descConsola[con].F ;
             }
 #endif
         }
     }
+#endif		
     return(0) ;
 }
 
 int goToXYConsola ( byte_t con, byte_t F, byte_t C )
 {
-    if (F >= numFilas) return(-1) ;
-    if (C >= 80) return(-1) ;                /* ptrBiosArea->VIDEO-width */
+    if (F >= maxFilasAct) return(-1) ;
+    if (C >= maxColumnasAct) return(-1) ;  
     if (con == consolaDeSuperficie)
     {
-        /*    goToXYHw(F, C) ; */
+//      goToXYHw(F, C) ; 
         cursorF = F ;
         cursorC = C ;
     }
@@ -172,8 +166,6 @@ int goToXYConsola ( byte_t con, byte_t F, byte_t C )
         descConsola[con].F = F ;
         descConsola[con].C = C ;
     }
-//  if (F > descConsola[con].maxF)
-//      descConsola[con].maxF = F ;
     return(0) ;
 }
 
@@ -181,22 +173,19 @@ void establecerConsolaDeSuperficie ( void )
 {
     pantalla_t far * pantalla =
         (pantalla_t far *)&descConsola[consolaDeSuperficie].pantalla ;
-    copiarCPantalla(pantalla, ptrPant, numFilas) ;
-    /* copiarPantalla(pantalla, ptrPant, numFilas) ; */
-    goToXYHw(
-        descConsola[consolaDeSuperficie].F,
-        descConsola[consolaDeSuperficie].C
-    ) ;
+    copiarCPantalla(pantalla, ptrPant, maxFilasAct) ;
+//  copiarPantalla(pantalla, ptrPant, maxFilasAct) ; 
     cursorF = descConsola[consolaDeSuperficie].F ;
     cursorC = descConsola[consolaDeSuperficie].C ;
+    goToXYHw(cursorF, cursorC) ;
 }
 
 void salvarConsolaDeSuperficie ( void )
 {
     pantalla_t far * pantalla =
         (pantalla_t far *)&descConsola[consolaDeSuperficie].pantalla ;
-    copiarCPantalla(ptrPant, pantalla, numFilas) ;
-    /* copiarPantalla(ptrPant, pantalla, numFilas) ; */
+    copiarCPantalla(ptrPant, pantalla, maxFilasAct) ;
+//  copiarPantalla(ptrPant, pantalla, maxFilasAct) ;
     descConsola[consolaDeSuperficie].F = cursorF ;
     descConsola[consolaDeSuperficie].C = cursorC ;
 }
@@ -379,9 +368,7 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
     byte_t con ;
     byte_t cursorFAux ;
     pantalla_t far * pantallaAux ;
-    int numFilasAnt ;
-//  byte_t maxF ;
-
+    
     save_DS0() ;                            /* guarda el DS anterior (SO1) */
     setraw_DS() ;           /* establece el DS correspondiente al programa */
 
@@ -405,48 +392,32 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
     }
     else if (request == 0x0003) /* cambiar numero de lineas de la pantalla */
     {
-        if (arg <= 0) res = numFilas ; /* devolvemos el numero de lineas actual */
+        int numFilasAnt = maxFilasAct ;
+        if (arg <= 0) res = numFilasAnt ;       /* numero de lineas actual */
         else if ((arg != 25) && (arg != 28) && (arg != 50)) res = -1 ;
-        else if (arg == numFilas) res = 0 ;
+        else if (arg == numFilasAnt) res = 0 ;
         else
         {
-            numFilasAnt = numFilas ;
-            numFilas = arg ;
-//          printStrBIOS("\n numFilas = ") ;
-//          printDecBIOS(numFilas, 1) ;
-//          printStrBIOS(" numFilasAnt = ") ;
-//          printDecBIOS(numFilasAnt, 1) ;
-//          printStrBIOS(" cursorF = ") ;
-//          printDecBIOS(cursorF, 1) ;
-//          maxF = descConsola[consolaDeSuperficie].maxF ;
-//          if (maxF >= numFilas)
+			int numFilas = arg ;
+            ptrBiosArea->VIDEO_lastrow = arg - 1 ;
             if (cursorF >= numFilas)
             {
 //              copiarPantalla((pantalla_t far *)&ptrPant->t[maxF-numFilas+1][0], ptrPant, numFilas) ;
                 copiarCPantalla((pantalla_t far *)&ptrPant->t[cursorF-numFilas+1][0], ptrPant, numFilas) ;
                 borrarCPantalla((pantalla_t far *)&ptrPant->t[numFilas][0], numFilasAnt-numFilas) ;
                 cursorF = numFilas-1 ;
-//              if ((maxF-cursorF+1) <= numFilas)
-//                  cursorF = numFilas-1-(maxF-cursorF) ;
-//              else
-//                  cursorF = 0 ;
-//              descConsola[consolaDeSuperficie].maxF = numFilas-1 ;
             }
             salvarConsolaDeSuperficie() ;
-            redimensionar(numFilas, 80) ;
-            numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
+            redimensionar(arg, 80) ;
             establecerConsolaDeSuperficie() ;
-            res = numFilas ;
-            if (numFilas == arg)
+            res = maxFilasAct ;
+            if (maxFilasAct == numFilas)
             {
-
                 for ( con = 0 ; con < maxConsolas ; con ++ )
                 {
                     if (con != consolaDeSuperficie)
                     {
-//                      maxF = descConsola[con].maxF ;
                         cursorFAux = descConsola[con].F ;
-//                      if (maxF >= numFilas)
                         if (cursorFAux >= numFilas)
                         {
                             pantallaAux = (pantalla_t far *)&descConsola[con].pantalla ;
@@ -454,21 +425,11 @@ int far ioctlConsola ( int dfs, word_t request, word_t arg )
                             copiarCPantalla((pantalla_t far *)&pantallaAux->t[cursorFAux-numFilas+1][0], pantallaAux, numFilas) ;
                             borrarCPantalla((pantalla_t far *)&pantallaAux->t[numFilas][0], numFilasAnt-numFilas) ;
                             descConsola[con].F = numFilas-1 ;
-//                          if ((maxF-cursorFAux+1) <= numFilas)
-//                              cursorFAux = numFilas-1-(maxF-cursorFAux) ;
-//                          else
-//                              cursorFAux = 0 ;
-//                          descConsola[con].F = cursorFAux ;
-//                          descConsola[con].maxF = numFilas-1 ;
                         }
                     }
                 }
             }
-            else {
-                numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
-            }
         }
-
     }
     restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
@@ -526,6 +487,7 @@ void far isr_consola ( void )
     teclado_t far * teclado ;
     byte_t con ;
     byte_t nuevaConsola ;
+    word_t numFilas ;
     word_t numFilasAnt ;
     byte_t cursorFAux ;
     pantalla_t far * pantallaAux ;
@@ -540,8 +502,7 @@ void far isr_consola ( void )
     ptrVIOrg[nVIntConsola]() ;  /* llamamos a la antigua rti (pushf + int) */
 
     nuevaConsola = 0xFF ;
-//  numFilasAnt = numFilas ;
-    numFilasAnt = ptrBiosArea->VIDEO_lastrow + 1 ;
+    numFilasAnt = maxFilasAct ;
 
 #if (FALSE)                               /* trazas por si hay que depurar */
     printCarBIOS('<') ;
@@ -569,24 +530,15 @@ void far isr_consola ( void )
             nuevaConsola = 0 ;
             break ;
 
-        case CS_F1     :
-            ;
-        case CS_F2     :
-            ;
-        case CS_F3     :
-            ;
-        case CS_F4     :
-            ;
-        case CS_F5     :
-            ;
-        case CS_F6     :
-            ;
-        case CS_F7     :
-            ;
-        case CS_F8     :
-            ;
-        case CS_F9     :
-            ;
+        case CS_F1     : ;
+        case CS_F2     : ;
+        case CS_F3     : ;
+        case CS_F4     : ;
+        case CS_F5     : ;
+        case CS_F6     : ;
+        case CS_F7     : ;
+        case CS_F8     : ;
+        case CS_F9     : ;
         case CS_F10    :
             con = scanCode - CS_F1 + 1 ;
             if (con < maxConsolas)
@@ -641,7 +593,6 @@ void far isr_consola ( void )
 #endif
                     if (numFilas == ptrBiosArea->VIDEO_lastrow + 1)
                     {
-                        numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
                         establecerConsolaDeSuperficie() ;
                         for ( con = 0 ; con < maxConsolas ; con ++ )
                         {
@@ -657,21 +608,6 @@ void far isr_consola ( void )
                                 }
                             }
                         }
-                    }
-                    else {
-/*
-                        printStrBIOS(
-                            "\n"
-                            "                                               \n"
-                            " Could not resize                              \n"
-                            "                                               \n"
-                            " ptrBiosArea->VIDEO_lastrow+1 == ") ;
-                        printDecBIOS(ptrBiosArea->VIDEO_lastrow+1, 2) ;
-                        printStrBIOS(                                " !!!! \n"
-                            "                                               \n"
-                        ) ;
-*/
-                        numFilas = ptrBiosArea->VIDEO_lastrow + 1 ;
                     }
 ////            }
                 break ;
@@ -794,6 +730,8 @@ void far isr_consola ( void )
 /*                     call back para el recurso TIMER                     */
 /* ----------------------------------------------------------------------- */
 
+/* necesitamos funciones para escribir desde el call back                  */
+
 byte_t congen = 0 ;                                                /* DATA */
 
 int pCon ( char car )
@@ -801,13 +739,13 @@ int pCon ( char car )
     printCarConsola(congen, car) ;
     return(1) ;
 }
-
+#if (REDUCIR_DRIVER) 
 int printLnConsola ( byte_t con )
 {
     congen = con ;
     return(printGenLn(pCon)) ;
 }
-
+#endif /* REDUCIR_DRIVER */
 int printStrConsola ( byte_t con, const char far * str )
 {
     congen = con ;
@@ -819,31 +757,31 @@ int printStrHastaConsola ( byte_t con, const char far * str, word_t n, bool_t ll
     congen = con ;
     return(printGenStrHasta(str, n, lleno, pCon)) ;
 }
-
+#if (REDUCIR_DRIVER)
 int printDecConsola ( byte_t con, word_t num, word_t l )
 {
     congen = con ;
     return(printGenDec(num, l, pCon)) ;
 }
-
+#endif /* REDUCIR_DRIVER */
 int printIntConsola ( byte_t con, int num, word_t l )
 {
     congen = con ;
     return(printGenInt(num, l, pCon)) ;
 }
-
+#if (REDUCIR_DRIVER)
 int printLIntConsola ( byte_t con, long int num, word_t l )
 {
     congen = con ;
     return(printGenLInt(num, l, pCon)) ;
 }
-
+#endif /* REDUCIR_DRIVER */
 int printLDecConsola ( byte_t con, dword_t num, word_t l )
 {
     congen = con ;
     return(printGenLDec(num, l, pCon)) ;
 }
-
+#if (REDUCIR_DRIVER)
 int printHexConsola ( byte_t con, word_t num, word_t l )
 {
     congen = con ;
@@ -861,12 +799,12 @@ int printPtrConsola ( byte_t con, pointer_t ptr )
     congen = con ;
     return(printGenPtr(ptr, pCon)) ;
 }
-
+#endif /* REDUCIR_DRIVER */
 /* las siguientes cadenas de caracteres estan pensadas para ser utilizadas */
 /* en cbForTimer. Son convenientes cuando se reduce el tamanio del driver  */
 /* al instalarlo haciendo la llamada al sistema:                           */
 /*                                                                         */
-/*        esperarDesinstalacion(tamDATA, finCodeDriver, finishDriver       */
+/*   esperarDesinstalacion(tamDATA, finCodeDriver, finishDriver, tamPila   */
 /*                                                                         */
 /* El problema es que el compilador pone las cadenas de caracteres (ver s@ */
 /* en los ficheros de listado del ensamblado) al final, por lo que al      */
@@ -927,7 +865,7 @@ int far cbForTimer ( void far * arg )                         /* call back */
 
 int finishConsola ( void )
 {
-    exit(0) ;
+//  exit(0) ;              /* obligaria a meter la biblioteca ll_s_so1.lib */
     return(0) ;
 }
 
@@ -945,7 +883,7 @@ descCcb_t descCcbConsola = { 0, 0, 0, maxCbConsola, NULL } ;
 
 void mostrarFormato ( void )
 {
-    printf(" formato: CONSOLA [ [ -i | -q | -c | -l ] [ num ] | -N | -n | -u | -h ] ") ;
+    printf(" formato: CONSOLA [ [ -i | -q | -c | -l ] [ num ] | -N | -n | -u | -k | -h ] ") ;
 }
 
 int formato ( void )
@@ -973,8 +911,9 @@ int help ( void )
         "      -l  : establece en numero de lineas a num"                "\n"
         "      -n  : status = numero de consola actual"                  "\n"
         "      -nq : como -n pero sin mensaje por pantalla"              "\n"
-        "     num  : numero de consolas (o nueva c.)"                    "\n"
+        "      num : numero de consolas (o nueva c.)"                    "\n"
         "      -u  : desintala el driver"                                "\n"
+        "      -k  : desintala el driver (matando)"                      "\n"
         "      -h  : muestra este help"                                  "\n"
     ) ;
     return(0) ;
@@ -1051,7 +990,7 @@ int integrarConsola ( byte_t numConsolas, bool_t conMensajes )
     printStrBIOS("\n descConsola = ") ;
     printPtrBIOS((pointer_t)descConsola) ;
     printStrBIOS("\n numFilas = ") ;
-    printIntBIOS(numFilas, 1) ;
+    printIntBIOS(maxFilasAct, 1) ;
     printStrBIOS(" numColumnas = ") ;
     printIntBIOS(numColumnas, 1) ;
 */
@@ -1073,7 +1012,7 @@ int integrarConsola ( byte_t numConsolas, bool_t conMensajes )
 
     for ( con = 0 ; con < maxConsolas ; con++ )
     {
-        borrarPantalla((pantalla_t far *)&descConsola[con].pantalla, numFilas) ;
+        borrarPantalla((pantalla_t far *)&descConsola[con].pantalla, maxFilas) ;
         descConsola[con].F = 0 ;
         descConsola[con].C = 0 ;
     }
@@ -1125,7 +1064,7 @@ int integrarConsola ( byte_t numConsolas, bool_t conMensajes )
                 case -4 : printf(" no hay descriptores de fichero libres") ; break ;
                 default : printf(" no ha podido crearse el fichero CON%i", con) ;
                 }
-                destruirRecurso("CONSOLA") ;
+                destruirRecurso("CONSOLA", TRUE) ;              /* matando */
             }
         }
 
@@ -1197,9 +1136,12 @@ int instalarConsola ( byte_t numConsolas, bool_t conMensajes )
         FP_OFF(&descCcbConsola)
             + sizeof(descCcbConsola) + 0*sizeof(callBack_t),    /* tamDATA */
         FP_OFF(finCodeDriver),                            /* finCodeDriver */
-        FP_OFF(finishConsola)                              /* finishDriver */
+        FP_OFF(finishConsola),                             /* finishDriver */
+		0x0000                                                  /* tamPila */ 
     ) ;
+/*  se retorna a finishConsola */		
 #endif
+/*  solo se llega aqui en el caso esperarDesinstalacion(0) */
     res = desintegrarConsola() ;
     return(res) ;
 }
@@ -1216,7 +1158,7 @@ int main ( int argc, char * argv [ ] )
         switch (toupper(argv[1][1]))
         {
         case 'H' :
-            help() ;
+            return(help()) ;
         case 'I' :
             return(instalarConsola(numConsolasPorDefecto, TRUE)) ;
         case 'Q' :
@@ -1239,7 +1181,8 @@ int main ( int argc, char * argv [ ] )
                 return(res) ;
             }
         case 'U' :
-            res = destruirRecurso("CONSOLA") ;
+        case 'K' :
+            res = destruirRecurso("CONSOLA", tolower(argv[1][1]) == 'k') ; 
             switch (res)
             {
             case  0 : printf(" recurso CONSOLA desinstalado") ; break ;

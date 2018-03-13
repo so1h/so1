@@ -31,38 +31,45 @@ void main ( ) ;                                                 /* forward */
 static void finish ( void ) ;                   /* main debe retornar aqui */
 
 void startBin ( void ) {    /* Inicializacion de los registros de segmento */
-  startUserCode
-  asm mov bx,OFFSET main                                  /* jmp near main */
-  asm push bx                                                  /* apilamos */
-  asm mov dx,OFFSET finish        /* para que figure finish en la cabecera */
-  asm mov dx,OFFSET __sighandler  /* para que figure tambien __sighandler  */
+    startUserCode
+    asm {
+		mov bx,OFFSET main ;                              /* jmp near main */
+        push bx ;                                              /* apilamos */
+        mov dx,OFFSET finish ;    /* para que figure finish en la cabecera */
+        mov dx,OFFSET __sighandler ;    /* y para que figure __sighandler  */
+	}
 }                                                                   /* ret */
 
 void finish ( void ) {                    /* por defecto main retorna aqui */
 
-  manejador_t far * ptrManejadorAtExit ;
+    manejador_t far * ptrManejadorAtExit ;
   
-  asm push ax ;                       /* AX = resultado retornado por main */
+    asm push ax ;                     /* AX = resultado retornado por main */
 
-  ptrManejadorAtExit = (manejador_t far *)MK_FP(_DS, valor_SPInicial-2) ;
+    ptrManejadorAtExit = (manejador_t far *)MK_FP(_DS, valor_SPInicial-2) ;
   
-  if (((word_t)(*ptrManejadorAtExit)) != 0x0000)         /* se ha cambiado */
-  { 
-     asm pop ax ;        /* sacamos de la pila el valor retornado por main */
-     (*ptrManejadorAtExit)() ;   	  /* se llama a la funcion establecida */
-  }
-  else asm pop ax ;       /* restauramos en ax el valor retornado por main */
+    if (((word_t)(*ptrManejadorAtExit)) != 0x0000)       /* se ha cambiado */
+    { 
+       asm pop ax ;      /* sacamos de la pila el valor retornado por main */
+       (*ptrManejadorAtExit)() ;   	  /* se llama a la funcion establecida */
+    }
+    else asm pop ax ;     /* restauramos en ax el valor retornado por main */
   
-//exit(0) ;                        
-  exit(_AX) ;   /* codigo de terminacion = valor de retorno de main/atexit */
+//  exit(0) ;                        
+//  exit(_AX) ; /* codigo de terminacion = valor de retorno de main/atexit */
+    asm {                            /* ponemos el codigo de exit en linea */
+		mov bx,ax ;          
+		mov ax,0004h ;       /* peligro si cambia ese codigo en LL_S_EXC.C */
+		int nVIntSO1 ;
+	}
 }
 
 /* En cuanto a la llamada a main se hace en ensamblador para evitar que el */
 /* compilador de error si ponemos main() para llamar a main(argc, argv)    */
-/* sin indicar los dos argumentos que tiene declarados la función main.    */
+/* sin indicar los dos argumentos que tiene declarados la funciï¿½n main.    */
 /* El truco es que dichos argumentos argc y (char * *)&argv los va a       */
-/* colocar el sistema operativo en el momento de la creación del proceso   */
-/* es decir en la función preEjecutar del fichero EJECUTAR.C.              */
+/* colocar el sistema operativo en el momento de la creaciï¿½n del proceso   */
+/* es decir en la funciï¿½n preEjecutar del fichero EJECUTAR.C.              */
 
 #if   (__TURBOC__ == 0x0200)                         /* compilador TCC 2.0 */
 /* #error __TURBOC__ == 0x0200 */
@@ -75,9 +82,7 @@ void finish ( void ) {                    /* por defecto main retorna aqui */
 #endif
 
 #if (__TURBOC__ == 0x0401) || (__TURBOC__ == 0x0520)
-void far _setargv__ ( void ) {      /* el compilador requiere este símbolo */
+void far _setargv__ ( void ) {      /* el compilador requiere este sï¿½mbolo */
                                             /* cuando main usa argc y argv */
 }
 #endif
-
-

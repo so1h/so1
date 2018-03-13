@@ -10,7 +10,7 @@
 #include <so1pub.h\stdio.h>                                      /* printf */
 #include <so1pub.h\escribir.h>                                 /* printCar */ 
 
-#include <so1pub.h\tipos.h>          /* byte_t, word_t, pointer_t, rindx_t */ /* TRUE, FALSE */
+#include <so1pub.h\tipos.h>          /* byte_t, word_t, pointer_t, rindx_t */ 
 #include <so1pub.h\c2c.h>                          /* c2c_t, dobleEnlace_t */
 #include <so1pub.h\ctype.h>                                     /* toupper */
 #include <so1pub.h\strings.h>                  /* strcpy, strcmpu, strncmp */
@@ -24,30 +24,30 @@
 #include <so1pub.h\pic.h>                                        /* ptrTVI */
 #include <so1pub.h\def_timer.h>                            /* argCbTimer_t */
 #include <so1pub.h\printgen.h>
-//#include <so1pub.h\msdos.h>                              /* hayWindowsNT */
+#include <so1pub.h\msdos.h>                                /* hayWindowsNT */
 #include <so1pub.h\def_rat.h>                       /* maxX, estadoRaton_t */
 #include <so1pub.h\bios_rat.h>
 
 #include <so1.h\interrup.h>
 
-//#define REDUCIR_DRIVER TRUE     /* TRUE ==> reducimos la memoria utilizada */
-#define REDUCIR_DRIVER FALSE  
+#define REDUCIR_DRIVER TRUE     /* TRUE ==> reducimos la memoria utilizada */
+//#define REDUCIR_DRIVER FALSE  
 
 #pragma option -w-use /* (comundrv.h) warning: 'x' declared but never used */
 
-rindx_t rec_raton = 0 ;             /* inicializacion provisional --> DATA */ /* se necesita en readConsola */
-
+rindx_t rec_raton = 0 ;             /* inicializacion provisional --> DATA */ 
+//                                           /* se necesita en readConsola */
 /* ----------------------------------------------------------------------- */
 /*                   seccion de implementacion del driver                  */
 /* ----------------------------------------------------------------------- */
 
 #define nVIntRaton 0x74          /* obtenido experimentalmente MSD + DEBUG */
 
-c2c_t bloqueadosRaton = { 0, 0, 0, NULL } ;                                   /* DATA */
+c2c_t bloqueadosRaton = { 0, 0, 0, NULL } ;                        /* DATA */
 
 dobleEnlace_t e2BloqueadosRaton [ maxProcesos + 1 ] = { { 0, 0 } } ;          /* DATA */ 
 
-word_t nbytesProceso [ maxProcesos ] = { 0 } ;   /* tabla bytes pendientes */ /* DATA */
+word_t nbytesProceso [ maxProcesos ] = { 0 } ;         /* bytes pendientes */ /* DATA */
 
 pointer_t dirProceso [ maxProcesos ] = { NULL } ;   /* direcciones destino */ /* DATA */
 
@@ -74,12 +74,12 @@ estadoRaton_t er =
     /* Y             */ 0,
     /* F             */ 0,
     /* C             */ 0,
-    /* botonIz       */ (int)FALSE,
-    /* botonDe       */ (int)FALSE,
-    /* botonMe       */ (int)FALSE,
-    /* botonIzAnt    */ (int)FALSE,
-    /* botonDeAnt    */ (int)FALSE,
-    /* botonMeAnt    */ (int)FALSE,
+    /* botonIz       */ FALSE,
+    /* botonDe       */ FALSE,
+    /* botonMe       */ FALSE,
+    /* botonIzAnt    */ FALSE,
+    /* botonDeAnt    */ FALSE,
+    /* botonMeAnt    */ FALSE,
     /* visible       */ FALSE,
     /* forzarLectura */ FALSE
 } ;
@@ -106,14 +106,14 @@ int primeraInt = TRUE ;         /* la siguiente interrupcion es la primera */
 
 void inicEstadoRaton ( void )
 {
-    er.S0 = 0x00 ;
-    er.B0 = 0x00 ;
-    er.B1 = 0x00 ;
-    er.B2 = 0x00 ;
+    er.S0 = 0x00 ;                                    /* byte estado 8042  */
+    er.B0 = 0x00 ;                                    /* Byte 0 = 00SS1MRL */
+    er.B1 = 0x00 ;                                    /* Byte 1 = X        */
+    er.B2 = 0x00 ;                                    /* Byte 2 = Y        */
     er.W0 = 0x0000 ;
     er.X = maxX/2 ;
-    /* er.Y = maxY/2 ; */
-    er.Y = (ptrBiosArea->VIDEO_lastrow + 1)/2 ;
+//  er.Y = maxY/2 ; 
+    er.Y = (maxYAct + 1)/2 ;	
     er.F = er.Y >> 3 ;                                          /* F = Y/8 */
     er.C = er.X >> 3 ;                                          /* C = X/8 */
     er.botonIz = FALSE ;
@@ -249,9 +249,9 @@ void far isr_raton ( void )
     save_DS0() ;                            /* guarda el DS anterior (SO1) */
  	set_DS() ;              /* establece el DS correspondiente al programa */
 
-    /*  plot('m', 0, contadorTimer0()) ; */
+//                                    /*  plot('m', 0, contadorTimer0()) ; */
     tratarRaton() ;
-    /*  plot('e', 0, contadorTimer0()) ; */
+//                                    /*  plot('e', 0, contadorTimer0()) ; */
     eoi_pic2() ;
 
 	restore_DS0() ;                               /* restaura el DS de SO1 */
@@ -263,10 +263,10 @@ void far isr_raton_dosbox ( void )
  	set_DS() ;              /* establece el DS correspondiente al programa */
 
     ptrVIOrg[nVIntRaton]() ;    /* llamamos a la antigua rti (pushf + int) */
-    /*  plot('m', 0, contadorTimer0()) ; */
+//                                    /*  plot('m', 0, contadorTimer0()) ; */
     procesarRaton((word_t)er.B0, er.X, er.Y) ;
-    /*  plot('e', 0, contadorTimer0()) ; */
-    /* eoi_pic2() ; */
+//                                    /*  plot('e', 0, contadorTimer0()) ; */
+//  eoi_pic2() ; 
 
 	restore_DS0() ;                               /* restaura el DS de SO1 */
 }
@@ -285,22 +285,17 @@ void far isr_raton_BIOS ( void )
     save_DS0() ;                            /* guarda el DS anterior (SO1) */
  	set_DS() ;              /* establece el DS correspondiente al programa */
 
-    /*
-    printStrBIOS("\n isr_raton_bios") ;
-    printStrBIOS("\n isr_raton_bios") ;
-    */
-
-    /*  plot('m', 0, contadorTimer0()) ; */
+//                                    /*  plot('m', 0, contadorTimer0()) ; */
     procesarRaton(rH_BX, rH_CX, rH_DX)  ;
-    /*  plot('e', 0, contadorTimer0()) ; */
-    /* eoi_pic2() ; */
+//                                    /*  plot('e', 0, contadorTimer0()) ; */
+//  eoi_pic2() ;
 
 	restore_DS0() ;                               /* restaura el DS de SO1 */
 }
 
 rti_t rti_nVIntRaton = (rti_t)NULL ;                 /* ver so1\interrup.c */
-word_t segment_rti_nVIntRaton = 0x0000 ;
-word_t offset_rti_nVIntRaton = 0x0000 ;
+word_t segment_rti_nVIntRaton = 0x0000 ;                           /* DATA */
+word_t offset_rti_nVIntRaton = 0x0000 ;                            /* DATA */
 
 word_t far * ptrWordAux = NULL ;                   /* para depurar la pila */
 
@@ -359,82 +354,47 @@ void far rti_raton_BIOS ( void )
 	restore_DS0() ;                               /* restaura el DS de SO1 */	
 }
 
-void far ratonHandler ( void )
+void far ratonHandler ( void )           /* ver techelp int 33h AH = 000Ch */
 {
+    /* Se llama a esta funcion tras la interrupcion y mediante un CALL FAR */
+    /* Por ese motivo la pila contiene lo siguiente:                       */
+	/*                                                                     */
+	/*     Flags, CS, IP del proceso y direccion de retorno (lejana)       */
+	/*                                                                     */
+	/* Es innecesario establecer DS (ver techelp int 33h 000Ch)            */
+	
 
-    /* se llama a esta funcion tras la interrupcion y mediante un CALL FAR */
-    /* llamada a procedimiento lejano. Por ese motivo la pila contiene lo  */
-    /* siguiente: Flags, CS, IP del proceso y direccion de retorno lejana. */
+//  save_DS0() ;                            /* guarda el DS anterior (SO1) */
+// 	set_DS() ;              /* establece el DS correspondiente al programa */
+	
+    asm {
+		mov rH_AX,ax ;        /* mascara de eventos ocurridos, ver techelp */
+        mov rH_BX,bx ;                                /* botones: 00000MRL */
+        mov rH_CX,cx ;                                                /* X */
+        mov rH_DX,dx ;                                                /* Y */
+//      mov rH_SI,si ;                                             /* incX */
+//      mov rH_DI,di ;                                             /* incY */
 
-    save_DS0() ;                            /* guarda el DS anterior (SO1) */
- 	set_DS() ;              /* establece el DS correspondiente al programa */
-    /*
-    printStrBIOS("\n ratonHandler principio") ;
-      ptrWordAux = (word_t far  *)MK_FP(_SS,_SP) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[0], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[1], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[2], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[3], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[4], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[5], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[6], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[7], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[8], 4) ;
-    printStrBIOS("\n ") ;
-    */
-    asm mov rH_AX,ax                       /* evento ocurrido, ver techelp */
-    asm mov rH_BX,bx                                            /* botones */
-    asm mov rH_CX,cx                                                  /* X */
-    asm mov rH_DX,dx                                                  /* Y */
-    /* asm mov rH_SI,si */                                         /* incX */
-    /* asm mov rH_DI,di */                                         /* incY */
+    /* Con lo siguente modificamos la trama de la pila de manera que la    */
+    /* interrupcion en vez de retornar al CS:IP del proceso, retorne a la  */
+    /* a la rutina rti_raton_BIOS. El CS:IP del proceso quedan guardados   */
+    /* en las variables rH_CS:rH_IP con el fin de poder retornar en un     */
+    /* momento posterior al proceso.                                       */     
 
-    asm push ax
-    asm push bp
-    asm mov bp,sp
-    asm mov ax,ss:[bp+12]
-    asm mov rH_CS,ax                                     /* CS del proceso */
-    asm mov ax,ss:[bp+10]                                /* IP del proceso */
-    asm mov rH_IP,ax
-
-    asm mov ss:[bp+12],cs                                            /* CS */
-    asm mov ax,OFFSET rti_raton_BIOS                     /* rti_raton_BIOS */
-    asm mov ss:[bp+10],ax
-    asm pop bp
-    asm pop ax
-    /*
-    printStrBIOS("\n ratonHandler fin") ;
-      ptrWordAux = (word_t far  *)MK_FP(_SS,_SP) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[0], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[1], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[2], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[3], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[4], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[5], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[6], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[7], 4) ;
-    printStrBIOS("\n ") ;
-    printHexBIOS(ptrWordAux[8], 4) ;
-    printStrBIOS("\n ") ;
-    */
-	restore_DS0() ;                               /* restaura el DS de SO1 */	
+        push ax ;
+        push bp ;
+        mov bp,sp ;
+        mov ax,ss:[bp+12] ;                              /* CS del proceso */
+        mov rH_CS,ax ;                                   
+        mov ax,ss:[bp+10] ;                              /* IP del proceso */
+        mov rH_IP,ax ;       
+        mov ss:[bp+12],cs ;                                          /* CS */
+        mov ax,OFFSET rti_raton_BIOS ;                   /* rti_raton_BIOS */
+        mov ss:[bp+10],ax ;
+        pop bp ;
+        pop ax ;
+    }
+//	restore_DS0() ;                               /* restaura el DS de SO1 */	
 }                            /* de el a isr_raton_bios y de ahi al proceso */
 
 #define TECLADO_ESTADO  0x64
@@ -447,18 +407,17 @@ void far ratonHandler ( void )
 
 void tratarRaton ( void )
 {
-
     static byte_t byteEstado = 0 ;                                 /* DATA */
     static byte_t byteDato = 0 ;                                   /* DATA */
     static int incX = 0, incY = 0 ;                                /* DATA */
 
-    asm in al,64h
+    asm in al,64h ;                                      /* TECLADO_ESTADO */
     asm mov byteEstado,al
     if ((byteEstado & 0x21) == 0x21)      /* hay byte procedente del raton */
     {
         er.S0 = byteEstado ;
-        asm in al,60h
-        asm mov byteDato,al
+        asm in al,60h ;                                    /* TECLADO_DATO */
+        asm mov byteDato,al ;
 
         if ((inB != 0) || (((byteDato^0x08) & 0xC8) == 0))
         {
@@ -472,9 +431,9 @@ void tratarRaton ( void )
                 er.B1 = B[1] ;
                 if (er.B0 & 0x10)
                 {
-                    asm mov al, byte ptr er.B1
-                    asm mov ah,0ffh
-                    asm mov incX,ax
+                    asm mov al, byte ptr er.B1 ;
+                    asm mov ah,0ffh ;
+                    asm mov incX,ax ;
                     er.incX = incX ;
                 }
                 else er.incX = er.B1 ;
@@ -485,19 +444,18 @@ void tratarRaton ( void )
                 er.B2 = B[2] ;
                 if (er.B0 & 0x20)
                 {
-                    asm mov al, byte ptr er.B2
-                    asm mov ah,0ffh
-                    asm mov incY,ax
+                    asm mov al, byte ptr er.B2 ;
+                    asm mov ah,0ffh ;
+                    asm mov incY,ax ;
                     er.incY = incY ;
                 }
                 else er.incY = er.B2 ;
                 er.incY = -er.incY ;                                /* ojo */
                 YAux = er.Y + er.incY ;
-                if ((0 <= YAux) && (YAux < maxY))            /* 8*25 = 200 */
+                if ((0 <= YAux) && (YAux < maxYAct))         /* 8*25 = 200 */
                     er.Y = YAux ;
 
                 procesarRaton((word_t)er.B0, er.X, er.Y) ;
-
             }
         }
     }
@@ -527,8 +485,8 @@ void procesarRaton ( word_t parW0, int parX, int parY )
     er.botonMeAnt = er.botonMe ;
 
     er.botonIz = (er.W0 & 0x0001) ;
-    er.botonDe = ((er.W0 & 0x0002) >> 1) ;
-    er.botonMe = ((er.W0 & 0x0004) >> 2) ;
+    er.botonDe = (er.W0 & 0x0002) >> 1 ;
+    er.botonMe = (er.W0 & 0x0004) >> 2 ;
 
     procesarColaBloqueadosRaton() ;
 
@@ -689,21 +647,19 @@ void actualizarCursor ( void )
         if (primeraInt) primeraInt = FALSE ;
         else if ((er.F != FAntCursor) || (er.C != CAntCursor))
         {
-
             atrAux = ptrPant->t[FAntCursor][CAntCursor].atr ;
-            /* atrAux = (atrAux << 4) | (atrAux >> 4) ; */
+//          atrAux = (atrAux << 4) | (atrAux >> 4) ; 
             if (atrAux != atrNormal)
             {
                 rotarDerecha(atrAux, 4) ;
                 ptrPant->t[FAntCursor][CAntCursor].atr = atrAux ;
             }
             atrAux = ptrPant->t[er.F][er.C].atr ;
-            /* atrAux = (atrAux << 4) | (atrAux >> 4) ; */
+//          atrAux = (atrAux << 4) | (atrAux >> 4) ; 
             rotarDerecha(atrAux, 4) ;
             ptrPant->t[er.F][er.C].atr = atrAux ;
             FAntCursor = er.F ;
             CAntCursor = er.C ;
-
         }
     }
 }
@@ -718,59 +674,70 @@ void far handlerRatonNulo ( void )
 
 void far handlerRaton ( dword_t y, word_t x, word_t s )
 {
-
-    static bool_t priVez = TRUE ; /* Lo necesito para ignorar los incrementos .. */
-    static int incX = 0, incY = 0 ; /* .. X,Y iniciales que son basura */
+    static bool_t priVez = TRUE ;       /* para ignorar los incrementos .. */
+    static int incX = 0, incY = 0 ;     /* .. X,Y iniciales que son basura */
     int X1 ;
     int Y1 ;
-    int numFilasAct ;
-	int maxYAct ;
 
-    asm cli
-//  asm mov ds,word ptr cs:[segDatos]
-      asm push ax ;
-	  asm push bx ;
-      asm mov ax,cs:[3] ;
-	  asm mov bx,cs ;
-      asm add ax,bx
-	  asm mov ds,ax ;
-	  asm pop bx
-	  asm pop ax       
-
-    /*  establecerDS_SO1() ; */
+	setraw_DS() ;                         /* establecemos el DS del driver */
+	  
     if (priVez)
         priVez = FALSE ;       /* Ignoro la primera lectura por ser basura */
     else
     {
         incX = x ;
-        incY = (word_t)(y >> 16) ;   /* Tienen sentido respecto a MOVING/SIZING y */
-        er.B0 = s ; /* (s & BITS_IGN) | (M.stat & ~BITS_IGN) ; */
-    } /* Respeto los que habia */
-    /* Considero el bit de signo .. */
-    if (er.B0 & 0x20) incY |= 0xFF00 ;  /* ..haciendo una extension.. */
-    if (er.B0 & 0x10) incX |= 0xFF00 ;  /* ..del bit de signo */
+        incY = (word_t)(y >> 16) ; /* Tienen sentido respecto a MOVING/SIZING y */
+        er.B0 = s ;             /* (s & BITS_IGN) | (M.stat & ~BITS_IGN) ; */
+    }                                             /* Respeto los que habia */
+//                                         /* Considero el bit de signo .. */
+    if (s & 0x20) incY |= 0xFF00 ;           /* ..haciendo una extension.. */
+    if (s & 0x10) incX |= 0xFF00 ;                   /* ..del bit de signo */
     X1 = (er.X + incX) ;
     Y1 = (er.Y - incY) ;
 
-    if (X1 < 0) er.X = 0 ;
-    else if (X1 >= maxX) er.X = maxX-1 ;
-    else er.X = X1 ;
+    if (X1 < 0)             er.X = 0 ;
+    else if (X1 >= maxX)    er.X = maxX-1 ;
+    else                    er.X = X1 ;
 
-    if (Y1 < 0) er.Y = 0 ;
-    else
+    if (Y1 < 0)             er.Y = 0 ;
+    else if (Y1 >= maxYAct) er.Y = maxYAct-1 ;
+    else                    er.Y = Y1 ;
+}
+
+typedef enum { ninguno, msdos, ps2 } tipoRaton_t ;
+
+tipoRaton_t tipoRaton = ninguno ;                                  /* DATA */
+
+void disablePS2 ( void )
+{
+asm
+{
+    xor bx,bx ;
+    mov ax,0C200h ;                                       /* set mouse off */
+    int 15h ;
+
+    mov es,bx ;
+    mov ax,0C207h ;                      /* borrar mouse handler (ES:BX=0) */
+    int 15h ;
+}
+}
+
+int desintegrarRaton ( tipoRaton_t tipoRaton )
+{
+    int res = 0 ;
+    switch (tipoRaton)
     {
-        numFilasAct = ptrBiosArea->VIDEO_lastrow + 1 ;
-		maxYAct = (numFilasAct << 3) ;
-        if (Y1 >= maxYAct) er.Y = maxYAct-1 ;
-        else er.Y = Y1 ;
+    case msdos : uninstallMouseEventHandler(ratonHandler) ; break ; 
+    case ps2   : disablePS2() ;                                     
     }
-
+    return(res) ;
 }
 
 int finishRaton ( void )
 {
-    exit(0) ;
-    return(0) ;
+    int res = desintegrarRaton(tipoRaton) ;
+//  exit(0) ;              /* obligaria a meter la biblioteca ll_s_so1.lib */
+    return(res) ;
 }
 
 void finCodeDriver ( void )   /* marca el fin del codigo propio del driver */
@@ -913,26 +880,10 @@ noPS2:
     return(FALSE) ;
 }
 
-rti_t rtiRatonOrg ;                      /* rti antes de instalar el raton */
+/* desintegarRaton se ha movido mas arriba para poder ser utilizado por la */
+/* funcion finishRaton en caso de que REDUCIR_DRIVER valga TRUE.           */
 
-void disablePS2 ( void )
-{
-    asm pushf ;
-    asm cli ;
-    ptrTVI[nVIntRaton] = rtiRatonOrg ;  /* falta actualizar la mascara de interrupcion del pic ?? */
-    asm popf ;
-//                                         /* restablecerInt(nVIntRaton) ; */
-asm
-{
-    xor bx,bx ;
-    mov ax,0C200h ;                                       /* set mouse off */
-    int 15h ;
-
-    mov es,bx ;
-    mov ax,0C207h ;                      /* borrar mouse handler (ES:BX=0) */
-    int 15h ;
-}
-}
+void disablePS2 ( void ) ;
 
 void enablePS2 ( handler_t handler )
 {
@@ -972,26 +923,33 @@ asm
 }
 }
 
-typedef enum { ninguno, msdos, ps2 } tipoRaton_t ;
-
+/* inicRaton nos dice:                                                     */
+/*   1) que tipo de raton hay: ninguno, msdos o ps2                        */
+/*   2) que isr vamos a utilizar:                                          */
+/*        isr_raton_BIOS (si hayNT) por medio de ratonHandler   [msdos]    */
+/*        isr_raton_dosbox (si hayDBox) handlerRaton              [ps2]    */
+/*        isr_raton (en otro caso) handlerRatonNulo               [ps2]    */
+/*                                                                         */
+/* Ademas inicRaton instala el handler correspondiente al tipo de raton    */                        
+             
 void noPrintCar ( char car ) ;
 void noPrintCar ( )                          /* no se utiliza el argumento */
 {
 }
 
 void inicRaton ( tipoRaton_t * tipoRaton,
-                 isr_t * isrRaton,
-                 bool_t conMensajes)
+                 isr_t       * isrRaton,
+                 bool_t        conMensajes)
 {
     word_t numBotones ;
 
-    info_t info ;
+    info_t info ;                           /* para consultar info.modoSO1 */
 
     bool_t hayNT ;
     bool_t hayDBox ;
 
-    printCar_t pCar ;
-
+    printCar_t pCar ;                /* para poder escribir desde checkPS2 */
+	
     obtenInfoINFO((info_t far *)&info) ;
 
     hayNT = FALSE ;
@@ -1004,7 +962,7 @@ void inicRaton ( tipoRaton_t * tipoRaton,
         ;
     } ;
 
-    hayDBox  = (bool_t)(!strncmp((char far *)ptrFechaBios, "01/01/92", 8)) ;
+    hayDBox = (bool_t)(!strncmp((char far *)ptrFechaBios, "01/01/92", 8)) ;
 
     if (conMensajes)
     {
@@ -1022,25 +980,21 @@ void inicRaton ( tipoRaton_t * tipoRaton,
         {
             *tipoRaton = msdos ;                         /* WinXP o DOSBox */
             *isrRaton = isr_raton_BIOS ;
-            installMouseEventHandler(     /* hay que poner _CS por el caso */
-                (handler_t)MK_FP(_CS, FP_OFF(ratonHandler))     /* SO1.COM */
+            installMouseEventHandler(     
+                (handler_t)MK_FP(_CS, FP_OFF(ratonHandler))     
             ) ;
         }
-        else if (conMensajes)
-            printf("\n\n no hay raton BIOS ") ;
+        else if (conMensajes) printf("\n\n no hay raton BIOS ") ;
     }
     if (*tipoRaton == ninguno)
     {
-        if (conMensajes)
-            printf("\n\n comprobando si hay raton PS/2 ") ;
-        if (conMensajes)
-            pCar = escribirCar ;
-        else
-            pCar = (printCar_t)noPrintCar ;
+        if (conMensajes) printf("\n\n comprobando si hay raton PS/2 ") ;
+        if (conMensajes) pCar = escribirCar ;
+        else             pCar = (printCar_t)noPrintCar ;
+		
         if (checkPS2(pCar))
         {
-            if (conMensajes)
-                printf(" Ok") ;
+            if (conMensajes) printf(" Ok") ;
             *tipoRaton = ps2 ;                                /* raton PS2 */
             if (hayDBox)                           /* dosbox (qemu, bochs) */
             {
@@ -1055,8 +1009,7 @@ void inicRaton ( tipoRaton_t * tipoRaton,
         }
         else
         {
-            if (conMensajes)
-                printf("\r no se ha encontrado ningun raton \n") ;
+            if (conMensajes) printf("\r no se ha encontrado ningun raton \n") ;
             exit(-1) ;
         }
     }
@@ -1066,7 +1019,7 @@ void inicRaton ( tipoRaton_t * tipoRaton,
 
 void mostrarFormato ( void )
 {
-    printf(" formato: RATON [ [ -i | -q ] [ num ] | -u | -h ] ") ;
+    printf(" formato: RATON [ [ -i | -q ] [ num ] | -u | -k | -h ] ") ;
 }
 
 int formato ( void )
@@ -1089,7 +1042,9 @@ int help ( void )
         " opciones: (por defecto -i)"                                    "\n"
         ""                                                               "\n"
         "      -i  : instala el driver (usar &)"                         "\n"
+        "      -q  : instala sin mensajes de salida (&)"                 "\n"
         "      -u  : desintala el driver"                                "\n"
+        "      -k  : desintala el driver (matando)"                      "\n"
         "      -h  : muestra este help"                                  "\n"
     ) ;
     return(0) ;
@@ -1100,40 +1055,32 @@ char strTipoRaton [ ] [ 8 ] =
     "ninguno", "msdos", "ps2"
 } ;
 
-tipoRaton_t tipoRaton ;
-
-int integrarRaton ( bool_t conMensajes )
+int integrarRaton ( rti_t * rtiRatonOrg, bool_t conMensajes )
 {
     int dfRaton ;
     dfs_t dfs ;
     descRecurso_t dR ;
-    int res ;
+	
+    int res ;                                                 /* resultado */
     pindx_t pindx ;
-    char nomFich [ 12 ] ;
-    isr_t isrRaton ;
-    rti_t rtiRecRatonOrg ;
+	
+    isr_t isrRaton ;                                 /* rutina de servicio */
+	
+    rti_t rtiRecRatonOrg ;      /* rti tras instalar el recurso (handlers) */
 
-    rtiRatonOrg = ptrTVI[nVIntRaton] ;     /* antes de instalar el handler */
+    *rtiRatonOrg = ptrTVI[nVIntRaton] ;    /* antes de instalar el handler */
 
+#if (FALSE)                                             /* ya inicilizados */
     for ( pindx = 0 ; pindx < maxProcesos ; pindx++ )
     {
-        nbytesProceso[pindx] = 0 ;                /* nbytes esperando leer */
-        dirProceso[pindx] = NULL ;
-    }
+        nbytesProceso[pindx] = 0 ;          /* nbytes esperando ser leidos */
+        dirProceso[pindx] = NULL ;               /* direcciones de destino */
+    }	
+#endif
 
-    /* de momento esto solo funciona si hay msdos <--------
-       dfRaton = open("RATON", O_RDONLY) ;
-       if (dfRaton >= 0)
-       {
-           escribirStr("\n\n error: RATON ya instalado \n") ;
-           close(dfRaton) ;
-           exit(-1) ;
-       }
-    */
-
-    inicRaton((tipoRaton_t *)&tipoRaton,
-              (isr_t *)&isrRaton,
-              (bool_t)conMensajes) ;               /* tipoRaton != ninguno */
+    inicRaton((tipoRaton_t *)&tipoRaton,        /* tipoRaton = msdos o ps2 */ 
+              (isr_t *)&isrRaton, /* isr_[raton_BIOS, raton_dosbox, raton] */
+              (bool_t)conMensajes) ;               
 
     dR.tipo = rDCaracteres ;
     strcpy(dR.nombre, "RATON") ;
@@ -1143,7 +1090,7 @@ int integrarRaton ( bool_t conMensajes )
     dR.numVI = 1 ;
     dR.nVInt[0] = nVIntRaton ;
     dR.irq[0] = IRQ_RATON ;
-    dR.isr[0] = (isr_t)MK_FP(_CS, FP_OFF(isrRaton)) ;
+    dR.isr[0] = (isr_t)MK_FP(_CS, FP_OFF(isrRaton)) ;          /* isrRaton */
 
     dR.open      = (open_t)     MK_FP(_CS, FP_OFF(openRaton)) ;
     dR.release   = (release_t)  MK_FP(_CS, FP_OFF(releaseRaton)) ;
@@ -1161,30 +1108,21 @@ int integrarRaton ( bool_t conMensajes )
     asm cli
 
     rtiRecRatonOrg = ptrTVI[nVIntRaton] ;      /* tras instalar el handler */
-    rec_raton = crearRecurso(&dR) ;
+	
+    rec_raton = crearRecurso(&dR) ;         /* modifica ptrTVI[nVIntRaton] */
     if (tipoRaton == msdos)
     {
         rti_nVIntRaton = ptrTVI[nVIntRaton] ;        /* ver so1\interrup.c */
-        segment_rti_nVIntRaton = FP_SEG((pointer_t)rti_nVIntRaton) ;
-        offset_rti_nVIntRaton = FP_OFF((pointer_t)rti_nVIntRaton) ;
+        segment_rti_nVIntRaton = FP_SEG(rti_nVIntRaton) ;
+        offset_rti_nVIntRaton = FP_OFF(rti_nVIntRaton) ;
         ptrTVI[nVIntRaton] = rtiRecRatonOrg ; /* restablecer el v.i.nVIntRaton */
-        /*
-            escribirStr("\n rti_nVIntRaton = ") ;
-            escribirPtr((pointer_t)rti_nVIntRaton) ;
-            escribirStr("\n segment_rti_nVIntRaton = ") ;
-            escribirHex(segment_rti_nVIntRaton, 4) ;
-            escribirStr("\n offset_rti_nVIntRaton = ") ;
-            escribirHex(offset_rti_nVIntRaton, 4) ;
-        */
     }
 	
     asm popf
 
     if (rec_raton >= 0)
     {
-        strcpy(nomFich, "RATON") ;
-
-        dfs = crearFichero(nomFich, rec_raton, 0, fedCaracteres) ;
+        dfs = crearFichero("RATON", rec_raton, 0, fedCaracteres) ;
 
         if (dfs < 0)
         {
@@ -1196,7 +1134,7 @@ int integrarRaton ( bool_t conMensajes )
             case -4 : printf(" no hay descriptores de fichero libres") ; break ;
             default : printf(" no ha podido crearse el fichero RATON") ;
             }
-            destruirRecurso("RATON") ;
+            destruirRecurso("RATON", TRUE) ;                    /* matando */
         }
         if (conMensajes)
             printf(
@@ -1224,28 +1162,20 @@ int integrarRaton ( bool_t conMensajes )
     return(-1) ;
 }
 
-int desintegrarRaton ( void )
-{
-    int res ;
-    res = 0 ;
-    switch (tipoRaton)
-    {
-    case msdos :
-        uninstallMouseEventHandler(ratonHandler) ;
-        break ;
-    case ps2   :
-        disablePS2() ;
-    }
-    return(res) ;
-}
+/* desintegarRaton se ha movido mas arriba para poder ser utilizado por la */
+/* funcion finishRaton en caso de que REDUCIR_DRIVER valga TRUE.           */
+
+int desintegrarRaton ( tipoRaton_t tipoRaton ) ; 
 
 int instalarRaton ( bool_t conMensajes )
 {
     int res ;
+    rti_t rtiRatonOrg ;                  /* rti antes de instalar el raton */
+	
     res = comprobarAmpersand() ;
     if (res != 0) return(res) ;
     obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */
-    res = integrarRaton(conMensajes) ;
+    res = integrarRaton(&rtiRatonOrg, conMensajes) ;
     if (res != 0) return(res) ;
 #if (!REDUCIR_DRIVER)
     esperarDesinstalacion(0) ;                       /* bloquea el proceso */
@@ -1257,10 +1187,13 @@ int instalarRaton ( bool_t conMensajes )
         FP_OFF(&descCcbRaton)
             + sizeof(descCcbRaton) + 9*sizeof(callBack_t),      /* tamDATA */
         FP_OFF(finCodeDriver),                            /* finCodeDriver */
-        FP_OFF(finishRaton)                                /* finishDriver */
+        FP_OFF(finishRaton),                               /* finishDriver */
+		0x0000                                                  /* tamPila */ 
     ) ;
+/*  se retorna a finishRaton */		
 #endif
-    res = desintegrarRaton() ;
+/*  solo se llega aqui en el caso esperarDesinstalacion(0) */
+    res = desintegrarRaton(tipoRaton) ;
     return(res) ;
 }
 
@@ -1274,9 +1207,10 @@ int main ( int argc, char * argv [ ] )
         if (!strcmpu(argv[1], "-h")) return(help()) ;
         else if (!strcmpu(argv[1], "-i")) return(instalarRaton(TRUE)) ;
         else if (!strcmpu(argv[1], "-q")) return(instalarRaton(FALSE)) ;
-        else if (!strcmpu(argv[1], "-u"))
+        else if ((!strcmpu(argv[1], "-u")) || 
+		         (!strcmpu(argv[1], "-k")))
         {
-            res = destruirRecurso("RATON") ;
+            res = destruirRecurso("RATON", tolower(argv[1][1]) == 'k') ;         
             switch (res)
             {
             case  0 : printf(" recurso RATON desinstalado") ; break ;

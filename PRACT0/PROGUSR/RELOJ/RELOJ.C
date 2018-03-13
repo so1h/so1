@@ -8,6 +8,7 @@
 #include <so1pub.h\comundrv.h>  /* ptrIndProcesoActual, comprobarAmpersand */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                                      /* printf */
+#include <so1pub.h\ctype.h>                                     /* toupper */
 #include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
 #include <so1pub.h\scanner.h>  /* inicScanner, obtenCar, comando, car, pos */
 #include <so1pub.h\cmos.h>                                     /* leerCmos */
@@ -170,13 +171,17 @@ int far eliminarReloj ( pindx_t pindx )
 
 int finishReloj ( void )
 {
-    exit(0) ;
+//  exit(0) ;              /* obligaria a meter la biblioteca ll_s_so1.lib */
     return(0) ;
 }
 
 void finCodeDriver ( void )   /* marca el fin del codigo propio del driver */
 {
 }
+
+#define maxCbRL 0
+
+descCcb_t descCcbRL = { 0, 0, 0, maxCbRL, NULL } ;                 /* DATA */
 
 #pragma warn +par
 
@@ -186,7 +191,7 @@ void finCodeDriver ( void )   /* marca el fin del codigo propio del driver */
 
 void mostrarFormato ( void )
 {
-    printf(" formato: RELOJ [ -i | -q | -u | -h ] ") ;
+    printf(" formato: RELOJ [ -i | -q | -u | -k | -h ] ") ;
 }
 
 int formato ( void )
@@ -209,14 +214,11 @@ int help ( void )
         "      -i : instala el driver (usar &)"                          "\n"
         "      -q : instala sin mensajes de salida (&)"                  "\n"
         "      -u : desintala el driver"                                 "\n"
+        "      -k : desintala el driver (matando)"                       "\n"
         "      -h : muestra este help"                                   "\n"
     ) ;
     return(0) ;
 }
-
-#define maxCbRL 0
-
-descCcb_t descCcbRL = { 0, 0, 0, maxCbRL, NULL } ;                 /* DATA */
 
 int integrarReloj ( bool_t conMensajes )
 {
@@ -263,7 +265,7 @@ int integrarReloj ( bool_t conMensajes )
         case -4 : printf(" no hay descriptores de fichero libres") ; break ;
         default : printf(" no ha podido crearse el fichero RELOJ") ;
         }
-        destruirRecurso("RELOJ") ;
+        destruirRecurso("RELOJ", TRUE) ;                        /* matando */
         return(0) ;
     }
     switch(rec_reloj)
@@ -300,9 +302,12 @@ int instalarReloj ( bool_t conMensajes )
         FP_OFF(&descCcbRL)
             + sizeof(descCcbRL) + 0*sizeof(callBack_t),         /* tamDATA */
         FP_OFF(finCodeDriver),                            /* finCodeDriver */
-        FP_OFF(finishReloj)                                /* finishDriver */
+        FP_OFF(finishReloj),                               /* finishDriver */
+		0x0000                                                  /* tamPila */ 
     ) ;
+/*  se retorna a finishReloj */		
 #endif
+/*  solo se llega aqui en el caso esperarDesinstalacion(0) */
     res = desintegrarReloj() ;
     return(res) ;
 }
@@ -315,9 +320,10 @@ int main ( int argc, char * argv [ ] )
     else if (!strcmpu(argv[1], "-h")) return(help()) ;
     else if (!strcmpu(argv[1], "-i")) return(instalarReloj(TRUE)) ;
     else if (!strcmpu(argv[1], "-q")) return(instalarReloj(FALSE)) ;
-    else if (!strcmpu(argv[1], "-u"))
-    {
-        res = destruirRecurso("RELOJ") ;
+    else if ((!strcmpu(argv[1], "-u")) || 
+             (!strcmpu(argv[1], "-k")))
+    { 
+        res = destruirRecurso("RELOJ", tolower(argv[1][1]) == 'k') ;  
         switch (res)
         {
         case  0 : printf(" recurso RELOJ desinstalado") ; break ;

@@ -205,7 +205,7 @@ dfs_t crearFichero ( const char far * nombre,
 
 int esperarDesinstalacion ( word_t tamDATA, ... ) ;
 
-int destruirRecurso ( char far * nombre ) ;
+int destruirRecurso ( char far * nombre, bool_t matando ) ;
 
 int encolarCcbRecurso ( callBack_t cb, const char far * nombre ) ;
 

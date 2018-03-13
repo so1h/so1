@@ -154,8 +154,11 @@ void volcar ( pointer_t ptr, dword_t nBytes )
 
 void formato ( void )
 {
-//  escribirStrIntenso(" formato: DMP [ SSSS:DDDD [ num ] | -h ]") ;
-    printf(" formato: DMP [ SSSS:DDDD [ num ] | -h ]") ;
+	printf(
+	    ""                                                               "\n"
+	    ""                                                               "\n"
+	    " formato: DMP [ SSSS:DDDD [ num ] | -h ]"                       "\n"
+	) ;
 }
 
 void help ( void )

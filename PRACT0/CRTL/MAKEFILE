@@ -2,7 +2,8 @@
 
 .autodepend
 
-OBJS     = h_ldiv.obj h_lursh.obj h_llsh.obj f_lxmul.obj n_lxmul.obj
+OBJS     = h_ldiv.obj h_lursh.obj h_llsh.obj f_lxmul.obj n_lxmul.obj \
+           f_scopy.obj n_scopy.obj
 
 .suffixes: .obj .asm
 

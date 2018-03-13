@@ -17,7 +17,9 @@ OBJS2LINK =                      \
 ..\..\so1pub\obj\bios_0.obj,     \
 ..\..\so1pub\obj\memvideo.obj,   \
 ..\..\so1pub\obj\crthw.obj,      \
+# (printgen requiere h_ldiv.obj)   
 ..\..\so1pub\obj\printgen.obj,   \
+..\..\crtl\obj\h_ldiv.obj,       \
 $(PROGRAMA).obj,                 \
 #
 ..\..\so1pub\obj\debug.obj,      \
@@ -25,17 +27,18 @@ $(PROGRAMA).obj,                 \
 ..\..\so1pub\obj\comundrv.obj,   \
 ..\..\so1pub\obj\ctype.obj,      \
 ..\..\so1pub\obj\stdio.obj,      \
+# (vsprintf requiere h_ldiv.obj)   
 ..\..\so1pub\obj\vsprintf.obj,   \
 ..\..\so1pub\obj\scanner.obj,    \
 ..\..\so1pub\obj\strings.obj,    \
-..\..\crtl\obj\h_ldiv.obj,       \
+#..\..\crtl\obj\h_ldiv.obj,       \
 ..\..\crtl\obj\h_lursh.obj,      \
 ..\..\crtl\obj\h_llsh.obj,       \
 ..\..\crtl\obj\f_lxmul.obj,      \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (finBSS = 20DE < 23FF)
+#puntero de pila inicial (finBSS = 2868 < 2FFE)
 
 SPINICIAL = 2FFE
 

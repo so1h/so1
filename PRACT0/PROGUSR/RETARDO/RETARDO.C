@@ -8,6 +8,7 @@
 #include <so1pub.h\comundrv.h>  /* ptrIndProcesoActual, comprobarAmpersand */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                                      /* printf */
+#include <so1pub.h\ctype.h>                                     /* toupper */
 #include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
 #include <so1pub.h\scanner.h>  /* inicScanner, obtenCar, comando, car, pos */
 #include <so1pub.h\biosdata.h>                              /* ptrBiosArea */
@@ -177,13 +178,23 @@ int far eliminarRetardo ( pindx_t pindx )
 
 int finishRetardo ( void )
 {
-    exit(0) ;
-    return(0) ;
+//	while(TRUE) ;                                            /* depuracion */
+//  exit(0) ;              /* obligaria a meter la biblioteca ll_s_so1.lib */
+//  asm {                      /* solucion para no necesitar la biblioteca */
+//	    mov bx,0 ;                           /* codigo de exit(0) en linea */
+//	    mov ax,0x0004 ;
+//	    int nVIntSO1 ;
+//	}
+    return(0) ;            /* obligaria a meter la biblioteca ll_s_so1.lib */
 }
 
 void finCodeDriver ( void )   /* marca el fin del codigo propio del driver */
 {
 }
+
+#define maxCbRT 0
+
+descCcb_t descCcbRT = { 0, 0, 0, maxCbRT, NULL } ;                 /* DATA */
 
 #pragma warn +par
 
@@ -193,7 +204,7 @@ void finCodeDriver ( void )   /* marca el fin del codigo propio del driver */
 
 void mostrarFormato ( void )
 {
-    printf(" formato: RETARDO [ -i | -q | -u | -h ] ") ;
+    printf(" formato: RETARDO [ -i | -q | -u | -k | -h ] ") ;
 }
 
 int formato ( void )
@@ -216,14 +227,11 @@ int help ( void )
         "      -i : instala el driver (usar &)"                          "\n"
         "      -q : instala sin mensajes de salida (&)"                  "\n"
         "      -u : desintala el driver"                                 "\n"
+        "      -k : desintala el driver (matando)"                       "\n"
         "      -h : muestra este help"                                   "\n"
     ) ;
     return(0) ;
 }
-
-#define maxCbRT 0
-
-descCcb_t descCcbRT = { 0, 0, 0, maxCbRT, NULL } ;                 /* DATA */
 
 /* valorRetardo calcula cuantas vueltas hay que dar en un bucle de         */
 /* de espera de referencia (ver: cuerpoVuelta y retardar) para conseguir   */
@@ -313,7 +321,7 @@ int integrarRetardo ( bool_t conMensajes )
         case -4 : printf(" no hay descriptores de fichero libres") ; break ;
         default : printf(" no ha podido crearse el fichero RETARDO") ;
         }
-        destruirRecurso("RETARDO") ;
+        destruirRecurso("RETARDO", TRUE) ;                      /* matando */
         return(0) ;
     }
     switch(rec_retardo)
@@ -349,13 +357,17 @@ int instalarRetardo ( bool_t conMensajes )
 //          + sizeof(retardando) + sizeof(nVueltasRetardo)
 //          + sizeof(descCcbRT) + 0*sizeof(callBack_t),         /* tamDATA */
         FP_OFF(&descCcbRT)
-            + sizeof(descCcbRT) + 0*sizeof(callBack_t),         /* tamDATA */
+            + sizeof(descCcbRT) + maxCbRT*sizeof(callBack_t),   /* tamDATA */
         FP_OFF(finCodeDriver),                            /* finCodeDriver */
-        FP_OFF(finishRetardo)                              /* finishDriver */
+        FP_OFF(finishRetardo),                             /* finishDriver */
+		0x0000                                                  /* tamPila */ 
     ) ;
+/*  se retorna a finishRetardo */	
 #endif
+/*  solo se llega aqui en el caso esperarDesinstalacion(0) */
     res = desintegrarRetardo() ;
-    return(res) ;
+	printf("\n\n fin RETARDO (pid = %i) \n", getpid()) ;
+    return(0) ;
 }
 
 int main ( int argc, char * argv [ ] )
@@ -366,9 +378,10 @@ int main ( int argc, char * argv [ ] )
     else if (!strcmpu(argv[1], "-h")) return(help()) ;
     else if (!strcmpu(argv[1], "-i")) return(instalarRetardo(TRUE)) ;
     else if (!strcmpu(argv[1], "-q")) return(instalarRetardo(FALSE)) ;
-    else if (!strcmpu(argv[1], "-u"))
-    {
-        res = destruirRecurso("RETARDO") ;
+    else if ((!strcmpu(argv[1], "-u")) || 
+             (!strcmpu(argv[1], "-k")))
+    { 
+        res = destruirRecurso("RETARDO", tolower(argv[1][1]) == 'k') ;         
         switch (res)
         {
         case  0 : printf(" recurso RETARDO desinstalado") ; break ;
