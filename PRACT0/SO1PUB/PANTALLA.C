@@ -5,6 +5,7 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\def_pant.h>                  /* pantalla_t, maxColumnas */
+//                                          /* maxFilasAct, maxColumnasAct */
 #include <so1pub.h\bios_0.h>                         /* printCarBIOS('\a') */
 #include <so1pub.h\memory.h>                          /* memcpy, memcpy_fd */
 #include <so1pub.h\pantalla.h>                    /* pantalla_t, display_t */
@@ -26,11 +27,11 @@ void pantallazo ( pantalla_t far * pantalla,
     int F, C ;
     pos_t pos ;
     if (esqInfIzF >= numFilas) return ;
-    if (atr != (char)0) 
+    if (atr != 0x00) 
 	{                                     /* si se modifican los atributos */
         pos.car = car ;
         pos.atr = atr ;
-        for ( F = esqSupDeF ; F <= esqInfIzF ; F++ )
+        for ( F = esqSupDeF ; F <= esqInfIzF ; F++ ) 
             for ( C = esqSupDeC ; C <= esqInfIzC ; C++ )
                 pantalla->t[F][C] = pos ;
     }

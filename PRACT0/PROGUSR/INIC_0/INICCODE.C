@@ -7,29 +7,25 @@
 #include <so1pub.h\ll_s_so1.h>         /* exec, waitpid, getpid, open, ... */
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 #include <so1pub.h\escribir.h>            /* escribirStr, escribirDec, ... */
-#include <so1pub.h\put.h>                 /* putCar, putLn, putStr, putDec */
+//#include <so1pub.h\put.h>               /* putCar, putLn, putStr, putDec */
 #include <so1pub.h\saludos.h>                       /* mostrarSaludoGrande */
 #include <so1pub.h\strings.h>                           /* strcpy, strncmp */
 #include <so1pub.h\carsctrl.h>                                      /* ESC */
 //#include <so1pub.h\pantalla.h>                             /* pantallazo */
 #include <so1pub.h\debug.h>            /* assert, valorFlags, mostrarFlags */
-#include <so1pub.h\bios_0.h>            /* printStrBIOS, printDecBIOS, ... */
+#include <so1pub.h\bios_0.h>            /* printStrBIOS ... esperarTicBIOS */
 #include <so1pub.h\biosdata.h>                             /* ptrFechaBios */
 #include <progusr\consola\consola.h>                      /* descConsola_t */
 
 #include <so1pub.h\interpre.h>                      /* interpretarComandos */
 
-#include <so1.h\iniccode.h>                                        /* inic */
+#include "iniccode.h"                                            /* inic_0 */
 //                                                         /* valor normal */
 #define TIMER   TRUE                                       /*    TRUE      */
 #define RETARDO TRUE                                       /*    TRUE      */ 
 #define RELOJ   TRUE                                       /*    TRUE      */ 
 #define RATON   TRUE                                       /*    TRUE      */ 
 #define CONRAT  FALSE                                      /*    FALSE     */
-
-#define numConsolas 6
-
-#define ticsPorRodaja 18
 
 void esperarFichero ( char * nombre )    /* esperar poder abrir el fichero */
 {
@@ -42,37 +38,40 @@ void esperarFichero ( char * nombre )    /* esperar poder abrir el fichero */
 //      printCarBIOS(nombre[0]) ;                                  /* idem */
         printCarBIOS(' ') ;
     }
-    close(df) ;
+    close(df) ; 
 }
 
-int inic ( void )                  /* lanza los principales drivers de SO1 */
+/* inic_0 lanza los principales drivers de SO1 */
+
+int inic_0 ( word_t numConsolas, word_t ticsPorRodaja )  
 {
 
     int i, j ;
     int df ;
     pid_t pid ;
     int status ;
-    int timeout ;
+//  int timeout ;
     int dfCon ;
-    char strArg [15] ;
+    char strArg [16] ;
     char nombre [9] ;
     int anioBIOS ;
 
-    /* Vamos a lanzar procesos que son drivers, con la llamada createProcess */
+    /* Vamos a lanzar procesos drivers, con la llamada createProcess       */
 
-    /* Las interrupciones podrían estar inhibidas si se ejecuta desde SO1    */
-    /* esta funcion, por lo que podria no multiplexarse la CPU mediante las  */
-    /* interrupciones del timer. Por ese motivo se supone que createProcess  */
-    /* pasa a ejecucion primero el proceso creado (TIMER) habilitando sus    */
-    /* interrupciones. Si la funcion inic se ejecuta dentro del proceso      */
-    /* INIC, en ese caso las interrupciones estarían permitidas.             */
+    /* Las interrupciones podrían estar inhibidas si se ejecuta desde SO1  */
+    /* esta funcion, por lo que podria no multiplexarse la CPU mediante    */
+    /* las interrupciones del timer. Por ese motivo se supone que          */
+	/* createProcess pasa a ejecucion primero el proceso creado (TIMER)    */
+	/* habilitando sus interrupciones. Si la funcion inic se ejecuta       */
+	/* dentro del proceso INIC, en ese caso las interrupciones estarían    */
+	/* permitidas.                                                         */
 
-    /* RETARDO debe ejecutarse el primero para intentar asegurar que el      */
-    /* calculo del numero de vueltas del bucle no se vea interferido por la  */
-    /* ejecucion de otros procesos.                                          */
+    /* RETARDO debe ejecutarse el primero para intentar asegurar que el    */
+    /* calculo del numero de vueltas del bucle no se vea interferido por   */
+    /* la ejecucion de otros procesos.                                     */
 
 #if (RETARDO)
-    if ((pid = createProcess("RETARDO", "RETARDO -q &")) < 0)          /* GP */
+    if ((pid = createProcess("RETARDO", "RETARDO -q &")) < 0)        /* GP */
     {
         printStrBIOS(
             "\a\n fallo al arrancar RETARDO"
@@ -83,10 +82,10 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     esperarFichero("RETARDO") ;
     printStrBIOS(", RETARDO&") ;
 
-    /* qemu se retarda de mas, por lo que lo tratamos de una manera especial */
+    /* qemu se retarda de mas, por lo que lo tratamos de manera especial   */
 
     anioBIOS = 10*(ptrFechaBios[6] - '0') + (ptrFechaBios[7] - '0') ;
-    if (anioBIOS == 99)                /* fecha del BIOS de qemu: "06/23/99" */
+    if (anioBIOS == 99)              /* fecha del BIOS de qemu: "06/23/99" */
     {
 //      printStrBIOS("\n retardoActivo original = ") ;
 //      printLDecBIOS(retardoActivo(1), 1) ;
@@ -97,17 +96,22 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
 #endif
 
 #if (TIMER)
-    printStrBIOS("\n inicTimer(") ;
+    printStrBIOS("\n inicTimer(") ; 
     printDecBIOS(ticsPorRodaja, 1) ;
     printStrBIOS(") ... ticsPorRodaja = ") ;
     printDecBIOS(ticsPorRodaja, 1) ;
     printCarBIOS(' ') ;
+#if (FALSE) 
+	sprintf(strArg, "TIMER %d &", ticsPorRodaja) ;
+#else	
     strcpy(strArg, "TIMER X &") ;
-#if (ticsPorRodaja < 10)
+//#if (ticsPorRodaja < 10)
+#if (FALSE)
     strArg[6] = '0' + ticsPorRodaja ;
 #else
     strArg[6] = '0' + (ticsPorRodaja / 10) ;
     strArg[7] = '0' + (ticsPorRodaja % 10) ;
+#endif
 #endif
 
     /* Aqui se da a veces una condicion de carrera quedandose el sistema   */
@@ -126,7 +130,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
 //  printStrBIOS("\n inic: tras createProcess TIMER") ;
     esperarFichero("TIMER") ;
 
-    /* aqui hay ya multiplexacion de la CPU entre los procesos no bloqueados */
+    /* aqui ya se multiplexa la CPU entre los procesos no bloqueados       */
 
 #endif
 
@@ -137,17 +141,21 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     printStrBIOS(") ") ;
 
 #if (CONRAT)
-    strcpy(strArg, "CONRAT X &") ;
-    strArg[7] = '0' + numConsolas ;
-    if ((pid = createProcess("CONRAT", "CONRAT&")) < 0)                /* GP */
+//  strcpy(strArg, "CONRAT X &") ;
+//  strArg[7] = '0' + numConsolas ;
+    sprintf(strArg, "CONRAT %d &", numConsolas) ;
+    if ((pid = createProcess("CONRAT", "CONRAT&")) < 0)              /* GP */
     {
 #else
 
-    ll_buscarBloque((((numConsolas+1)*sizeof(descConsola_t))+15)/16) ; /* GM */
+    ll_buscarBloque(                                                 /* GM */
+	    (((numConsolas+1)*sizeof(descConsola_t))+15)/16
+	) ; 
     
-    strcpy(strArg, "CONSOLA -q X &") ;
-    strArg[11] = '0' + numConsolas ;
-    if ((pid = createProcess("CONSOLA", strArg)) < 0)                  /* GP */
+  strcpy(strArg, "CONSOLA -q X &") ;
+  strArg[11] = '0' + numConsolas ;
+//    sprintf(strArg, "CONSOLA -q %d &", numConsolas) ;
+    if ((pid = createProcess("CONSOLA", strArg)) < 0)                /* GP */
     {
 #endif
         printStrBIOS(
@@ -156,12 +164,21 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
         ) ;
         printIntBIOS(pid, 1) ;
     }
+	
+#if (TRUE)	
     strcpy(nombre, "CONX") ;
-    for ( i = 0 ; i < numConsolas ; i++ )
-    {
+    for ( i = 0 ; i < numConsolas ; i++ )     /* esperamos a que terminen de */
+    {                                              /* crearse las 6 consolas */
         nombre[3] = '0' + i ;
-        esperarFichero(nombre) ;  /* esperamos a que se creen las 6 consolas */
+        esperarFichero(nombre) ;  
     }
+#else	
+    for ( i = 0 ; i < numConsolas ; i++ )     /* esperamos a que terminen de */
+    {                                              /* crearse las 6 consolas */
+	    sprintf(nombre, "CON%i", i) ;
+        esperarFichero(nombre) ;
+	}
+#endif
     printLnBIOS() ;
 
     /* aqui tenemos ya (6) consolas CON0, ... , CON5 disponibles para E/S    */
@@ -205,7 +222,7 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
         open(nombre, O_RDONLY) ;
         open(nombre, O_WRONLY) ;
         open(nombre, O_WRONLY) ;
-        if ((pid = createProcess("LOGIN", "LOGIN")) < 0)             /* GP */
+        if ((pid = createProcess("LOGIN", "LOGIN")) < 0)               /* GP */
         {
             printStrBIOS("\a\n fallo al arrancar LOGIN en ") ;
             printStrBIOS(nombre) ;
@@ -263,9 +280,9 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
         for ( i = 20 ; i < 60 ; i++ )
         {
      		lseek(STDOUT, 21*80+i, SEEK_SET) ;              	
-			putchar(0xFE) ;                                 /* cuadrado pequenio */
+			putchar(0xFE) ;                           /* cuadrado pequenio */
 //          pantallazo(ptrPant, 50, (char)254, atrNormal, 21, 20, 21, i) ;
-            leer(df) ;     /* permite las interrupciones mientras esta bloqueado */
+            leer(df) ;   /* permite interrupciones mientras esta bloqueado */
             car = leerListo(STDIN);
             if (car != '\0')
             {
@@ -309,12 +326,25 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
     else
         putchar('\n') ;
 
+#if (TRUE)
+
+	
+    strcpy(strArg, "INIC X") ;
+	strArg[5] = '0' + numConsolas ;
+//  sprintf(strArg, "INIC %i", numConsolas) ;
+
+	exec("INIC", strArg) ;          /* resto del proceso de inicializacion */
+    
+	return(0) ;
+	
+#else 
+	
     status = interpretarComandos() ;                              /* shell */
 
 //    /* enviamos a todas las consolas el mensaje de terminacion inminente */
 
     timeout = status ;
-    close(STDOUT) ;           /* no se va a usar mas por parte del proceso */
+    close(STDOUT) ;            /* no va a usarse mas por parte del proceso */
 
     if (timeout >= 0)
     {
@@ -346,8 +376,10 @@ int inic ( void )                  /* lanza los principales drivers de SO1 */
         }
     }
 
-    if (getppid() == 0) exit(timeout) ;                  /* fin proceso INIT */
+    if (getppid() == 0) exit(timeout) ;                /* fin proceso INIT */
 
-    return(timeout) ;                                    /* fin funcion inic */
+    return(timeout) ;                                  /* fin funcion inic */
 
+#endif	
+	
 }

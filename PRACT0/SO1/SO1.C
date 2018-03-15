@@ -20,7 +20,7 @@
 //#include <so1.h\gp.h>                                        /* k_inicGP */
 #include <so1.h\db.h>                                            /* inicDB */
 #include <so1.h\recursos.h>                   /* inicRecursos, destruirRec */
-#include <so1.h\procesos.h>      /* descProceso, descRecurso, inicProcesos */ /* c2cPFR */
+#include <so1.h\procesos.h>     /* descProceso, ... , inicProcesos, c2cPFR */ 
 #include <so1.h\minifs.h>              /* inicMinisfMSDOS, inicMinisfFAT12 */
 #include <so1.h\sf.h>        /* inicSF, inicTablaFichAbiertos, segBuferSO1 */
 #include <so1.h\plot.h>                                         /* finPlot */
@@ -31,8 +31,8 @@
 
 /* CON_PROCESO_INICIAL permite configurar el sistema para que lleve a cabo */
 /* las inicializaciones por medio de un proceso de usuario (INIT), en vez  */
-/* de realizarse dichas inicializaciones mediante codigo del sistema SO1,  */
-/* lo que permite reducir el tamanio del codigo del sistema SO1, dado que  */
+/* de realizarse dichas inicializaciones mediante codigo del sistema SO1   */
+/* lo que permite reducir el tamanio del codigo del sistema SO1 dado que   */
 /* evitamos tener que icluir varias bibliotecas en el.                     */
 
 #define CON_PROCESO_INICIAL TRUE
@@ -164,11 +164,11 @@ void main ( void )                             /* interrupciones inhibidas */
 
 #if (CON_PROCESO_INICIAL)          /* se utiliza un proceso inicial de SO1 */
 
-    printStrBIOS("\n creando el proceso inicial INIC: \"INIC\"") ;
+    printStrBIOS("\n creando el proceso inicial INIC: \"INIC_0 6 18\"") ;
 
-    if ((pid = createProcess("INIC", "INIC")) > 0)
-    {
-        /* inic */ /* GP */
+    if ((pid = createProcess("INIC_0", "INIC_0 6 18")) > 0)   
+    {                                                   /* numConsolas = 6 */ 
+        /* inic */ /* GP */                          /* ticsPorRodaja = 18 */ 
         pindx = descProceso[indProcesoActual].c2cHijos.primero ;
         descProceso[pindx].uid = 1 ;
         descProceso[pindx].gid = 1 ;

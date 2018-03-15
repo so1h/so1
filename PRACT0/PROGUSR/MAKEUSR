@@ -78,9 +78,9 @@ clean: pule
 
 pule:
   @if exist $(PROGRAMA).exe erase $(PROGRAMA).exe
-  @if exist $(PROGRAMA).obj erase $(PROGRAMA).obj
+  @if exist *.obj erase *.obj
   @if exist $(PROGRAMA).asm erase $(PROGRAMA).asm
-  @if exist $(PROGRAMA).lst erase $(PROGRAMA).lst
+  @if exist *.lst erase *.lst
   @if exist $(PROGRAMA).map erase $(PROGRAMA).map
   @if exist $(PROGRAMA).bak erase $(PROGRAMA).bak
   @if exist ops.lnk erase ops.lnk

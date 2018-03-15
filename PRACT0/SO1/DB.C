@@ -7,7 +7,7 @@
 //#include <so1pub.h\comundrv.h>     /* segDatos, ptrIndProcesoActual, ... */
 #include <so1pub.h\bios_0.h>
 #include <so1pub.h\msdos.h>
-#include <so1pub.h\strings.h>                                    /* strcpy */
+#include <so1pub.h\strings.h>                            /* strcpy, strlen */
 #include <so1.h\ajustsp.h>
 #include <so1.h\ajustes.h>
 #include <so1.h\recursos.h>
@@ -199,14 +199,16 @@ typedef struct {
 } d_bloque_t ;
 
 d_bloque_t d_bloque [ ] = {
-    "FDA",  0x00, 0x00,  512,   18,   2,   80, 0x00000000, 0x00000000, /*  0 */
-    "FDB",  0x01, 0x00,  512,   18,   2,   80, 0x00000000, 0x00000000, /*  1 */  
-    "HDA",  0x80, 0x00,  512,   63,  16, 0x00, 0x00000000, 0x00000000, /*  2 */
+//  nombre  uBIOS tipoU	 bPS   sPP  cab   cil    primerS       numS        i
+//  ======  ====  ====   ===   ===  ===  ====  ==========  ==========    ====
+    "FDA" , 0x00, 0x00,  512,   18,   2,   80, 0x00000000, 0x00000000, /*  0 */
+    "FDB" , 0x01, 0x00,  512,   18,   2,   80, 0x00000000, 0x00000000, /*  1 */  
+    "HDA" , 0x80, 0x00,  512,   63,  16, 0x00, 0x00000000, 0x00000000, /*  2 */
     "HDA1", 0x80, 0x00,  512,   63,  16, 0x00, 0x00000000, 0x00000000, /*  3 */
     "HDA2", 0x80, 0x00,  512,   63,  16, 0x00, 0x00000000, 0x00000000, /*  4 */
     "HDA3", 0x80, 0x00,  512,   63,  16, 0x00, 0x00000000, 0x00000000, /*  5 */ 
     "HDA4", 0x80, 0x00,  512,   63,  16, 0x00, 0x00000000, 0x00000000, /*  6 */
-    "HDB",  0x81, 0x00,  512,   63,  16, 0x00, 0x00000000, 0x00000000, /*  7 */
+    "HDB" , 0x81, 0x00,  512,   63,  16, 0x00, 0x00000000, 0x00000000, /*  7 */
     "HDB1", 0x81, 0x00,  512,   63,  16, 0x00, 0x00000000, 0x00000000, /*  8 */
     "HDB2", 0x81, 0x00,  512,   63,  16, 0x00, 0x00000000, 0x00000000, /*  9 */
     "HDB3", 0x81, 0x00,  512,   63,  16, 0x00, 0x00000000, 0x00000000, /* 10 */
@@ -225,6 +227,11 @@ void inicDB ( void ) {
 
     int i, j, k ;
 	byte_t tipoUnidad ;
+    CSH_t CSH, CSHMax ;
+	
+	
+//  dword_t numSectores ;
+	dword_t primerSector ;
 	word_t bytesPorSector ;
 	byte_t sectoresPorPista ;
 	byte_t cabezas ;
@@ -232,7 +239,6 @@ void inicDB ( void ) {
     mbr_t far * mbr ;
     boot_t far * boot ;
 	word_t sectoresPorCilindro ;
-    CSH_t CSH, CSHMax ;
 	int error ;
 	
 	int numUnidades = 0 ; 
@@ -258,10 +264,66 @@ void inicDB ( void ) {
 
     rec_db = crearRec(&dR) ;
 	
-	segBuferSO1 = segBuferSeguro() ;
-	
+	segBuferSO1 = segBuferSeguro() ;   /* leer tablas de particiones (MBR) */
+    mbr = (mbr_t far *)ptrBuferSO1 ;
+    CSH.h = 0 ;                      /* sector logico 0 => sector fisico 1 */
+    CSH.cs = 0x0001 ;                              /* C = 0, S = 1 y H = 0 */
 //                                    	  /* CMOS_FLOPPY_DRIVE_TYPE = 0x10 */
 //                                                /* CMOS_DISK_DATA = 0x12 */
+    j = 0 ;            /* contador de unidades 0:FDA, 1:FDB, 2:HDA y 3:HDB */
+	for ( i = 0 ; i < dbMax ; i++ ) {
+		if (strlen(d_bloque[i].nombre) == 3) {       /* FDA, FDB, HDA, HDB */
+			tipoUnidad = (
+			    leerCmos(CMOS_FLOPPY_DRIVE_TYPE + (j & 2)) >> (4*(1-(j % 2)))
+			) & 0x0F ;
+			k = i + 1 ; /* indice de la primera particion (3:HDA1, 8:HDB1) */
+			if (tipoUnidad != 0x00) {
+                getDriveParams(d_bloque[i].unidadBIOS, (CSH_t *)&CSHMax) ;
+                bytesPorSector = 512 ;
+	            cabezas = CSHMax.h + 1 ;
+			    sectoresPorPista = CSHMax.cs & 0x003F ;/* ccccccccCCssssss */
+			    cilindros = (((CSHMax.cs & 0x00C0) << 2) | (CSHMax.cs >> 8)) + 1 ;
+//				numSectores = sectoresPorPista*cabezas*cilindros ;
+				if (j & 2) {                              /* 2:HDA o 3:HDB */
+				    error = leerSectorCSH((CSH_t *)&CSH,            /* MBR */
+				                          d_bloque[i].unidadBIOS, 
+									      (pointer_t)mbr) ; 
+			        if (error) tipoUnidad = 0x00 ;
+				}
+		        d_bloque[i].tipoUnidad = tipoUnidad ;
+				d_bloque[i].bytesPorSector = bytesPorSector ;
+	            d_bloque[i].cabezas = cabezas ;
+	            d_bloque[i].sectoresPorPista = sectoresPorPista ;
+	    		d_bloque[i].cilindros = cilindros ;
+     			d_bloque[i].primerSector = 0x00000000L ;
+		    	d_bloque[i].numSectores = 
+		            ((dword_t)cilindros)
+				        *((dword_t)sectoresPorPista)
+				        *((dword_t)cabezas) ; 
+			}
+			j++ ;
+        }
+		else if ((tipoUnidad != 0x00) && 
+		         (mbr->signatura[0] == 0x55) && 
+				 (mbr->signatura[1] == 0xAA) &&
+				 (mbr->descParticion[i-k].tipo != 0x00)) {    /* particion */
+	        d_bloque[i].tipoUnidad = tipoUnidad ;
+			d_bloque[i].bytesPorSector = bytesPorSector ;
+            d_bloque[i].cabezas = cabezas ;
+            d_bloque[i].sectoresPorPista = sectoresPorPista ;
+    		d_bloque[i].cilindros = 0 ;
+			d_bloque[i].primerSector = mbr->descParticion[i-k].primerSector ;
+			d_bloque[i].numSectores = mbr->descParticion[i-k].sectores ;			
+		}
+        if (d_bloque[i].tipoUnidad != 0x00) 
+			dfs_db = crearFich(d_bloque[i].nombre, rec_db, i, fedBloques) ;		
+	}
+	
+	
+#if (FALSE)
+	
+	segBuferSO1 = segBuferSeguro() ;
+	
     j = 0 ;            /* contador de unidades 0:FDA, 1:FDB, 2:HDA y 3:HDB */
     cilindros = 0 ;	                                  /* valor por defecto */
     mbr = (mbr_t far *)ptrBuferSO1 ;
@@ -351,6 +413,8 @@ void inicDB ( void ) {
 			dfs_db = crearFich(d_bloque[i].nombre, rec_db, i, fedBloques) ;
 	}
 	
+#endif	
+	
 #if (TRUE)
 	numUnidades = 0 ;
 	for ( i = 0 ; i < dbMax ; i++ ) {
@@ -367,6 +431,7 @@ void inicDB ( void ) {
 #if (TRUE) 	
 	for ( i = 0 ; i < dbMax ; i++ ) {
 		if (d_bloque[i].tipoUnidad != 0x00) {
+			dword_t daux ; 
 	        printStrBIOS("\n ") ;
 	        printStrBIOS(d_bloque[i].nombre) ;
 	     	if (d_bloque[i].nombre[3] == '\0') printCarBIOS(' ') ;
@@ -386,6 +451,14 @@ void inicDB ( void ) {
 	        printLHexBIOS(d_bloque[i].primerSector, 8) ;
 	        printStrBIOS(" 0x") ;
 	        printLHexBIOS(d_bloque[i].numSectores, 8) ;
+		    printStrBIOS("  ") ;
+			daux = d_bloque[i].numSectores ;               /* sectores */
+	        printLIntBIOS(daux/(2*1024), 3) ;                 /* bytes */
+		    printStrBIOS(",") ;
+	        printLIntBIOS(((10*daux)/(2*1024))%10, 1) ;
+	        printLIntBIOS(((100*daux)/(2*1024))%10, 1) ;
+		    printStrBIOS(" MB ") ;
+
 		}
 	}
 #endif

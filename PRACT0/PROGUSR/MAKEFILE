@@ -18,7 +18,9 @@ PROGS =   \
   hello2/   \
   help/     \
   info/     \
+  inic_0/   \
   inic/     \
+  inic_end/ \
   killpid/  \
   leetimer/ \
   login/    \

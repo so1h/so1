@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------- */
-/*                                 raton.c                                 */
+/*                                raton_ps.c                               */
 /* ----------------------------------------------------------------------- */
-/*                              recurso raton                              */
+/*                            recurso raton PS/2                           */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ajustusr.h>          /* save_DS0, setraw_DS, restore_DS */
@@ -10,7 +10,7 @@
 #include <so1pub.h\stdio.h>                                      /* printf */
 #include <so1pub.h\escribir.h>                                 /* printCar */ 
 
-#include <so1pub.h\tipos.h>          /* byte_t, word_t, pointer_t, rindx_t */ 
+#include <so1pub.h\tipos.h>          /* byte_t, word_t, pointer_t, rindx_t */ /* TRUE, FALSE */
 #include <so1pub.h\c2c.h>                          /* c2c_t, dobleEnlace_t */
 #include <so1pub.h\ctype.h>                                     /* toupper */
 #include <so1pub.h\strings.h>                  /* strcpy, strcmpu, strncmp */
@@ -35,15 +35,15 @@
 
 #pragma option -w-use /* (comundrv.h) warning: 'x' declared but never used */
 
-rindx_t rec_raton = 0 ;             /* inicializacion provisional --> DATA */ 
-//                                           /* se necesita en readConsola */
+rindx_t rec_raton = 0 ;             /* inicializacion provisional --> DATA */ /* se necesita en readConsola */
+
 /* ----------------------------------------------------------------------- */
 /*                   seccion de implementacion del driver                  */
 /* ----------------------------------------------------------------------- */
 
 #define nVIntRaton 0x74          /* obtenido experimentalmente MSD + DEBUG */
 
-c2c_t bloqueadosRaton = { 0, 0, 0, NULL } ;                        /* DATA */
+c2c_t bloqueadosRaton = { 0, 0, 0, NULL } ;                                   /* DATA */
 
 dobleEnlace_t e2BloqueadosRaton [ maxProcesos + 1 ] = { { 0, 0 } } ;          /* DATA */ 
 
@@ -485,8 +485,8 @@ void procesarRaton ( word_t parW0, int parX, int parY )
     er.botonMeAnt = er.botonMe ;
 
     er.botonIz = (er.W0 & 0x0001) ;
-    er.botonDe = (er.W0 & 0x0002) >> 1 ;
-    er.botonMe = (er.W0 & 0x0004) >> 2 ;
+    er.botonDe = ((er.W0 & 0x0002) >> 1) ;
+    er.botonMe = ((er.W0 & 0x0004) >> 2) ;
 
     procesarColaBloqueadosRaton() ;
 
@@ -704,48 +704,10 @@ void far handlerRaton ( dword_t y, word_t x, word_t s )
     else                    er.Y = Y1 ;
 }
 
-typedef enum { ninguno, msdos, ps2 } tipoRaton_t ;
-
-tipoRaton_t tipoRaton = ninguno ;                                  /* DATA */
-
-void disablePS2 ( void )
-{
-asm
-{
-    xor bx,bx ;  
-    mov ax,0C200h ;                                       /* set mouse off */
-    int 15h ;
-	
-//  @1: jmp @1                         /* para depurar y comprobar CF == 0 */
-	
-//	xor bx,bx ;
-    mov es,bx ;
-    mov ax,0C207h ;                     /* borrar mouse handler (ES:BX==0) */
-    int 15h ;
-	
-//  @2: jmp @2                         /* para depurar y comprobar CF == 0 */
-
-//  mov ax,0C202h ;                          
-//  int 15h ;                                   /* set rate, ignore errors */
-}
-}
-
-int desintegrarRaton ( tipoRaton_t tipoRaton )
-{
-    int res = 0 ;
-    switch (tipoRaton)
-    {
-    case msdos : uninstallMouseEventHandler(ratonHandler) ; break ; 
-    case ps2   : disablePS2() ;                                     
-    }
-    return(res) ;
-}
-
 int finishRaton ( void )
 {
-    int res = desintegrarRaton(tipoRaton) ;
-//  exit(0) ;              /* obligaria a meter la biblioteca ll_s_so1.lib */
-    return(res) ;
+    exit(0) ;
+    return(0) ;
 }
 
 void finCodeDriver ( void )   /* marca el fin del codigo propio del driver */
@@ -888,10 +850,24 @@ noPS2:
     return(FALSE) ;
 }
 
-/* desintegarRaton se ha movido mas arriba para poder ser utilizado por la */
-/* funcion finishRaton en caso de que REDUCIR_DRIVER valga TRUE.           */
+void disablePS2 ( rti_t rtiRatonOrg )
+{
+    asm pushf ;
+    asm cli ;
+    ptrTVI[nVIntRaton] = rtiRatonOrg ;   /* falta actualizar la mascara de */
+    asm popf ;                                  /* interrupcion del pic ?? */
+//                                         /* restablecerInt(nVIntRaton) ; */
+asm
+{
+    xor bx,bx ;
+    mov ax,0C200h ;                                       /* set mouse off */
+    int 15h ;
 
-void disablePS2 ( void ) ;
+    mov es,bx ;
+    mov ax,0C207h ;                      /* borrar mouse handler (ES:BX=0) */
+    int 15h ;
+}
+}
 
 void enablePS2 ( handler_t handler )
 {
@@ -940,6 +916,8 @@ asm
 /*                                                                         */
 /* Ademas inicRaton instala el handler correspondiente al tipo de raton    */                        
              
+typedef enum { ninguno, msdos, ps2 } tipoRaton_t ;
+
 void noPrintCar ( char car ) ;
 void noPrintCar ( )                          /* no se utiliza el argumento */
 {
@@ -1027,7 +1005,7 @@ void inicRaton ( tipoRaton_t * tipoRaton,
 
 void mostrarFormato ( void )
 {
-    printf(" formato: RATON [ [ -i | -q ] [ num ] | -u | -k | -h ] ") ;
+    printf(" formato: RATON [ [ -i | -q ] [ num ] | -u | -h ] ") ;
 }
 
 int formato ( void )
@@ -1052,7 +1030,6 @@ int help ( void )
         "      -i  : instala el driver (usar &)"                         "\n"
         "      -q  : instala sin mensajes de salida (&)"                 "\n"
         "      -u  : desintala el driver"                                "\n"
-        "      -k  : desintala el driver (matando)"                      "\n"
         "      -h  : muestra este help"                                  "\n"
     ) ;
     return(0) ;
@@ -1062,6 +1039,8 @@ char strTipoRaton [ ] [ 8 ] =
 {
     "ninguno", "msdos", "ps2"
 } ;
+
+tipoRaton_t tipoRaton ;
 
 int integrarRaton ( rti_t * rtiRatonOrg, bool_t conMensajes )
 {
@@ -1142,7 +1121,7 @@ int integrarRaton ( rti_t * rtiRatonOrg, bool_t conMensajes )
             case -4 : printf(" no hay descriptores de fichero libres") ; break ;
             default : printf(" no ha podido crearse el fichero RATON") ;
             }
-            destruirRecurso("RATON", TRUE) ;                    /* matando */
+            destruirRecurso("RATON") ;
         }
         if (conMensajes)
             printf(
@@ -1170,10 +1149,17 @@ int integrarRaton ( rti_t * rtiRatonOrg, bool_t conMensajes )
     return(-1) ;
 }
 
-/* desintegarRaton se ha movido mas arriba para poder ser utilizado por la */
-/* funcion finishRaton en caso de que REDUCIR_DRIVER valga TRUE.           */
-
-int desintegrarRaton ( tipoRaton_t tipoRaton ) ; 
+int desintegrarRaton ( rti_t rtiRatonOrg )
+{
+    int res ;
+    res = 0 ;
+    switch (tipoRaton)
+    {
+    case msdos : uninstallMouseEventHandler(ratonHandler) ; break ;
+    case ps2   : disablePS2(rtiRatonOrg) ;
+    }
+    return(res) ;
+}
 
 int instalarRaton ( bool_t conMensajes )
 {
@@ -1195,13 +1181,10 @@ int instalarRaton ( bool_t conMensajes )
         FP_OFF(&descCcbRaton)
             + sizeof(descCcbRaton) + 9*sizeof(callBack_t),      /* tamDATA */
         FP_OFF(finCodeDriver),                            /* finCodeDriver */
-        FP_OFF(finishRaton),                               /* finishDriver */
-		0x0000                                                  /* tamPila */ 
+        FP_OFF(finishRaton)                                /* finishDriver */
     ) ;
-/*  se retorna a finishRaton */		
 #endif
-/*  solo se llega aqui en el caso esperarDesinstalacion(0) */
-    res = desintegrarRaton(tipoRaton) ;
+    res = desintegrarRaton(rtiRatonOrg) ;
     return(res) ;
 }
 
@@ -1215,10 +1198,9 @@ int main ( int argc, char * argv [ ] )
         if (!strcmpu(argv[1], "-h")) return(help()) ;
         else if (!strcmpu(argv[1], "-i")) return(instalarRaton(TRUE)) ;
         else if (!strcmpu(argv[1], "-q")) return(instalarRaton(FALSE)) ;
-        else if ((!strcmpu(argv[1], "-u")) || 
-		         (!strcmpu(argv[1], "-k")))
+        else if (!strcmpu(argv[1], "-u"))
         {
-            res = destruirRecurso("RATON", tolower(argv[1][1]) == 'k') ;         
+            res = destruirRecurso("RATON") ;
             switch (res)
             {
             case  0 : printf(" recurso RATON desinstalado") ; break ;
@@ -1252,101 +1234,3 @@ int main ( int argc, char * argv [ ] )
     }
     return(formato()) ;
 }
-
-/***************************************************************************/
-
-#if (FALSE)
-
-#define tics2Click 4               /* timeout (en tics) para el doble clik */
-
-bool_t activarCursorRaton ( bool_t Ok )
-{
-    bool_t cRAAnt = cursorRatonActivo ;
-    if (!primeraInt)
-        if (Ok != cursorRatonActivo)
-        {
-            atrAux = ptrPant->t[FAntCursor][CAntCursor].atr ;
-            ptrPant->t[FAntCursor][CAntCursor].atr =
-                (atrAux << 4) | (atrAux >> 4) ;
-            cursorRatonActivo = Ok ;
-        }
-    return(cRAAnt) ;
-}
-
-pindx_t pindx ;
-pindx_t ppindx ;
-int nwin ;
-
-estadoRaton_t far * estado ;
-
-void cerrarPrograma ( void ) ;                                  /* forward */
-
-void botonCerrarVentana ( void ) ;                              /* forward */
-
-void actualizarCursor ( void ) ;                                /* forward */
-
-void tratarClickMarco ( void ) ;                                /* forward */
-
-#pragma warn -struct
-
-#pragma warn +struct
-
-void procesarTicReloj_raton ( void )
-{
-    if (contTics2Click > 0)
-        if (--contTics2Click == 0)
-        {
-            primerClick = TRUE ;
-            moviendo = TRUE ;
-        }
-}
-
-void cerrarPrograma ( void )
-{
-    for ( pindx = 1 ; pindx < maxProcesos ; pindx++ )
-        if (descProceso[pindx].estado != libre)
-            matarProcIndx(pindx) ;
-    nivelActivacionSO1 = 0 ;
-    indProcesoActual = 0 ;
-    asm mov sp,SPInicial
-    asm sti
-    tirarSistema() ;
-}
-
-void botonCerrarVentana ( void )
-{
-    if (pindx != 0)
-    {
-        if (pindx == indProcesoActual) eoi_pic2() ;                 /* EOI */
-        doKill(pindx) ;
-    }
-    else
-    {
-        eoi_pic2() ;                                                /* EOI */
-        cerrarPrograma() ;
-    }
-}
-
-void tratarClickMarco ( void )
-{
-#if (FALSE)
-    if (primerClick)
-    {
-        focalizarWin(win) ;
-        primerClick = FALSE ;
-        contTics2Click = tics2Click ;
-        actualizarCursor() ;
-    }
-    else
-    {
-        if (contTics2Click > 0)
-        {
-            maxMinWin(win, TRUE) ;
-            contTics2Click = 0 ;
-        }
-        primerClick = TRUE ;
-    }
-#endif
-}
-
-#endif

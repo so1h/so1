@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------- */
-/*                                  inic.c                                 */
+/*                                inic_end.c                               */
 /* ----------------------------------------------------------------------- */
 /*                          proceso inicial de SO1                         */
 /* ----------------------------------------------------------------------- */
@@ -13,7 +13,7 @@
 
 void formato ( void )
 {
-    printf(" formato: INIC [ numConsolas | -h ] ") ;
+    printf(" formato: INIC_END [ numConsolas | -h ] ") ;
 }
 
 void help ( void )
@@ -30,54 +30,40 @@ void help ( void )
     ) ;
 }
 
-int inic ( int numConsolas ) {
+int inic_end ( word_t numConsolas, word_t timeout ) {
 
     int i ;
     int j ;
     int dfCon ;
-    int status ;
-    int timeout ;
     char nombre [9] ;
-    char strArg [16] ;
 
-    status = interpretarComandos() ;                              /* shell */
-
-#if (TRUE)	
-	sprintf(strArg, "INIC_END %i %i", numConsolas, status) ;
-	exec("INIC_END", strArg) ;
-	return(0) ;
-#else 	
 //    /* enviamos a todas las consolas el mensaje de terminacion inminente */
 
-    timeout = status ;
     close(STDOUT) ;            /* no va a usarse mas por parte del proceso */
 
-    if (timeout >= 0)
+    strcpy(nombre, "CONX") ;
+    for ( i = 0 ; i < numConsolas ; i++ )
     {
-        strcpy(nombre, "CONX") ;
+        nombre[3] = '0' + i ;
+        if ((dfCon = open(nombre, O_WRONLY)) > 0)
+        {
+            if (i > 0) putLn(dfCon) ;
+            putStr(dfCon, "\n El sistema se cerrara en ") ;
+            putDec(dfCon, timeout, 1) ;
+            putStr(dfCon, " segundos ") ;
+            close(dfCon) ;                  /* luego se vuelve a abrir */
+        }
+    }
+    for ( j = 0 ; j < timeout ; j++ )
+    {
+        esperarTicsBIOS(18) ;
         for ( i = 0 ; i < numConsolas ; i++ )
         {
             nombre[3] = '0' + i ;
             if ((dfCon = open(nombre, O_WRONLY)) > 0)
             {
-                if (i > 0) putLn(dfCon) ;
-                putStr(dfCon, "\n El sistema se cerrara en ") ;
-                putDec(dfCon, timeout, 1) ;
-                putStr(dfCon, " segundos ") ;
-                close(dfCon) ;                  /* luego se vuelve a abrir */
-            }
-        }
-        for ( j = 0 ; j < timeout ; j++ )
-        {
-            esperarTicsBIOS(18) ;
-            for ( i = 0 ; i < numConsolas ; i++ )
-            {
-                nombre[3] = '0' + i ;
-                if ((dfCon = open(nombre, O_WRONLY)) > 0)
-                {
-                    putCar(dfCon, '.') ;
-                    close(dfCon) ;
-                }
+                putCar(dfCon, '.') ;
+                close(dfCon) ;
             }
         }
     }
@@ -85,7 +71,7 @@ int inic ( int numConsolas ) {
     if (getppid() == 0) exit(timeout) ;                /* fin proceso INIT */
 
     return(timeout) ;                                  /* fin funcion inic */
-#endif
+
 }	
 
 int valor ( const char * str )          /* str numero de a lo mas 4 cifras */
@@ -105,12 +91,14 @@ int main ( int argc, char * argv [ ] )
 {
 	char car ;
 	int numConsolas ;
+	int timeout ;
 	
-	if (argc == 2) {
+	if (argc == 3) {
 		numConsolas = valor(argv[1]) ;
-		if (numConsolas > 0) 
+		timeout = valor(argv[2]) ;
+        if ((numConsolas > 0) && (timeout > 0))    	
 			
-     		return(inic(numConsolas)) ;               /* inic(numConsolas) */
+     		return(inic_end(numConsolas, timeout)) ;           
 	}
 	
     if ((argc == 2) && (!strcmpu(argv[1], "-h")))

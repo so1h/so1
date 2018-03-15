@@ -6,4 +6,4 @@
 
 #include <so1pub.h\tipos.h>
 
-int inic ( void ) ;
+int inic_0 ( word_t numConsolas, word_t ticsPorRodaja ) ;

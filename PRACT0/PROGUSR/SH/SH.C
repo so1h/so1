@@ -56,21 +56,15 @@ int main ( int argc, char * argv [ ] )
             res = redirigirSTDIO((char *)nombreDispositivo) ;
             switch (res)
             {
-            case  0 :
-                break ;
-            case -1 :
-                ;
-            case -2 :
-                ;
+            case  0 : break ;
+            case -1 : ;
+            case -2 : ;
             case -3 : 
                 printf(" no ha podido cerrarse la %s estandar ", strStd[-res-1]) ;
                 return(res) ;
-            case -4 :
-                ;
-            case -5 :
-                ;
-            case -6 :
-                ;
+            case -4 : ;
+            case -5 : ;
+            case -6 : ;
             case -7 : 
                 printf(" no ha podido abrirse \"%s\"", nombreDispositivo) ;
                 if (res != -4)
