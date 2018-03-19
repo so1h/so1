@@ -44,7 +44,8 @@
 #define IRQ_RESERVED 15                                        /* INT 0x77 */
 
 
-extern ptrTVI_t ptrTVI ;                    /* puntero a la TVI: 0000:0000 */
+
+#define ptrTVI ((ptrTVI_t)MK_FP(0x0000, 0x0000)) /* puntero TVI: 0000:0000 */
 
 word_t valorIMR ( void ) ;
 
@@ -53,14 +54,14 @@ void establecerIMR ( word_t nuevoIMR ) ;
                                            /* fin de interrupcion generico */
 
 #define eoi_pic1()                                                /* macro */\
-  asm mov al,PIC_EOI ;                                                       \
-  asm out PORT_PIC1_OCW23,al ;                                               \
+    asm mov al,PIC_EOI ;                                                     \
+    asm out PORT_PIC1_OCW23,al ;                                             \
                                                               /* fin macro */
 
 #define eoi_pic2()                                                /* macro */\
-  asm mov al,PIC_EOI ;                                                       \
-  asm out PORT_PIC2_OCW23,al ;                                               \
-  eoi_pic1() ;                                                               \
+    asm mov al,PIC_EOI ;                                                     \
+    asm out PORT_PIC2_OCW23,al ;                                             \
+    eoi_pic1() ;                                                             \
                                                               /* fin macro */
 void mask_pic1 ( byte_t irq ) ;
 
@@ -76,9 +77,8 @@ byte_t get_pic2_isr ( void ) ;
 
 void set_pics ( byte_t irq0, byte_t irq8 ) ;
 
-void pic_setup ( void ) ;
+#define pic_setup() set_pics(0x08, 0x70) 
 
 void enable_hwirq ( int hwirq, rti_t rti ) ;
 
 #endif /* PIC_H */
-

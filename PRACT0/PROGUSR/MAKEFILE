@@ -21,6 +21,7 @@ PROGS =   \
   inic_0/   \
   inic/     \
   inic_end/ \
+  kill/     \
   killpid/  \
   leetimer/ \
   login/    \
@@ -29,6 +30,7 @@ PROGS =   \
   mouse/    \
   ps/       \
   sh/       \
+  sighello/ \
   time/     \
   ver_args/ \
             \

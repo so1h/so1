@@ -35,70 +35,69 @@ void help ( void )
 
 #define nTicsMax 360
 
+typedef struct
+{
+    dword_t a ;
+    dword_t b ;
+    word_t c ;
+    word_t d;
+} st_t ;
+
 void leeTimer ( word_t nTics )
 {
     int i ;
     byte_t buf [nTicsMax] ;
     int dfTimer ;
+    st_t * st ;
 
     if (nTics > nTicsMax)
     {
         printf(" el numero de tics debe ser <= %i", nTicsMax) ;
-        exit(0) ;
+        return ;
     }
 
     dfTimer = open("TIMER", O_RDONLY) ;
     if (dfTimer < 0)
-        printf(" no hay driver del timer ") ;
-    else
     {
-        printf("\n\n %i x leer(dfTimer) ... ", nTics) ;
-		
-        for ( i = 0 ; i < nTics ; i++ )
-            printf("%i ", (byte_t)leer(dfTimer)) ;
-		
-        printf("\n\n buf = ") ;
-		
-        for ( i = 0 ; i < nTics ; i++ )
-        {
-            buf[i] = '\0' ;
-            printf("%i ", buf[i]) ;
-        }
-        printf("\n\n read(dfTimer, %04X:%04X, %i) ... ", seg(NULL), off(NULL) , nTics) ;
-        read(dfTimer, NULL, nTics) ;
-        printf("\n\n buf = ") ;
-        for ( i = 0 ; i < nTics ; i++ )
-            printf("%i ", buf[i]) ;
+        printf(" recurso TIMER no disponible ") ;
+		return ;
+	}
 
-        printf("\n\n read(dfTimer, %04X:%04X, %i) ... ", seg(buf), off(buf) , nTics) ;
-        read(dfTimer, (pointer_t)buf, nTics) ;
-        printf("\n\n buf = ") ;
-        for ( i = 0 ; i < nTics ; i++ )
-            printf("%i ", buf[i]) ;
+    printf("\n\n %i x leer(dfTimer) ... ", nTics) ;
 		
-        printf("\n ") ;
-    }
-
+    for ( i = 0 ; i < nTics ; i++ )
+        printf("%i ", (byte_t)leer(dfTimer)) ;
+		
+    printf("\n\n buf = ") ;
+		
+    for ( i = 0 ; i < nTics ; i++ )
     {
-        typedef struct
-        {
-            dword_t a ;
-            dword_t b ;
-            word_t c ;
-            word_t d;
-        } st_t ;
-        st_t * st ;
-
-        printf("\n\n aio_read(dfTimer, %04X:%04X, %i) ... ", seg(buf), off(buf), nTics) ;
-        aio_read(dfTimer, (pointer_t)&buf, nTics) ;
-        for ( i = 0 ; i < nTics ; i++ )
-            printf("%i ", buf[i]) ;
-        st = (st_t *)&buf ;
-        printf(
-		    "\n\n a = %08lX\n b = %08lX\n c = %04X\n d = %04X\n", 
-			st->a, st->b, st->c, st->d
-		) ;
+        buf[i] = '\0' ;
+        printf("%i ", buf[i]) ;
     }
+    printf("\n\n read(dfTimer, %04X:%04X, %i) ... ", seg(NULL), off(NULL) , nTics) ;
+    read(dfTimer, NULL, nTics) ;
+    printf("\n\n buf = ") ;
+    for ( i = 0 ; i < nTics ; i++ )
+        printf("%i ", buf[i]) ;
+
+	printf("\n\n read(dfTimer, %04X:%04X, %i) ... ", seg(buf), off(buf) , nTics) ;
+    read(dfTimer, (pointer_t)buf, nTics) ;
+    printf("\n\n buf = ") ;
+    for ( i = 0 ; i < nTics ; i++ )
+        printf("%i ", buf[i]) ;
+		
+    printf("\n ") ;
+
+    printf("\n\n aio_read(dfTimer, %04X:%04X, %i) ... ", seg(buf), off(buf), nTics) ;
+    aio_read(dfTimer, (pointer_t)&buf, nTics) ;
+    for ( i = 0 ; i < nTics ; i++ )
+        printf("%i ", buf[i]) ;
+    st = (st_t *)&buf ;
+    printf(
+        "\n\n a = %08lX\n b = %08lX\n c = %04X\n d = %04X\n", 
+     	st->a, st->b, st->c, st->d
+    ) ;
 
     close(dfTimer) ;
 }
@@ -156,4 +155,3 @@ int main ( int argc, char * argv [ ] )
 //	getchar() ;
 	return(0) ;
 }
-

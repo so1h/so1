@@ -31,8 +31,8 @@ extern void so1_manejador_01 ( void ) ;                /* 0: open 1: close */
 
 extern void so1_manejador_02 ( void ) ;                 /* 0: obtenInfoSO1 */
 //                                      /* 1: crearRecurso 2: crearFichero */
-//                         /* 3: esperarDesinstalacion, 4: destruirRecurso */
-//                          /* 5: encolarCcbRecurso, 6: eliminarCcbRecurso */
+//                          /* 3: esperarDesinstalacion 4: destruirRecurso */
+//                           /* 5: encolarCcbRecurso 6: eliminarCcbRecurso */
 
 extern void so1_manejador_03 ( void ) ;                      /* 0: retardo */
 //                                       /* 1: obtenInfoPS 2: obtenInfoMEM */
@@ -42,28 +42,32 @@ extern void so1_manejador_03 ( void ) ;                      /* 0: retardo */
 extern void so1_manejador_04 ( void ) ;                 /* 0: activarTraza */
 //                                                  /* 1: analizarProcesos */
 
+extern void so1_manejador_07 ( void ) ;            /* 0: kill 1: sigaction */
+//                                                   /* 2: alarm  3: pause */
+
 void so1_manejador_Nulo ( void )
 {
 }
 
-manejador_t manejador [ ] =                          /* tabla de manejadores */
-{
-    so1_manejador_00,                                 /* gestion de procesos */
-    so1_manejador_01,                                  /* manejo de ficheros */
-    so1_manejador_02,                                /* soporte para drivers */
-    so1_manejador_03,                                           /* obtenInfo */
-    so1_manejador_04,
-    so1_manejador_Nulo,
-    so1_manejador_Nulo,
-    so1_manejador_Nulo,
-    so1_manejador_Nulo,
-    so1_manejador_Nulo,
-    so1_manejador_Nulo,
-    so1_manejador_Nulo,
-    so1_manejador_Nulo,
-    so1_manejador_Nulo,
-    so1_manejador_Nulo,
-    so1_manejador_Nulo
+manejador_t manejador [ ] =                   /*   tabla de manejadores    */
+{                                             /*                           */  
+    so1_manejador_00,                         /* 0x00 gestion de procesos  */
+    so1_manejador_01,                         /* 0x01 manejo de ficheros   */
+    so1_manejador_02,                         /* 0x02 soporte para drivers */
+    so1_manejador_03,                         /* 0x03 obtenInfo            */
+    so1_manejador_04,                         /* 0x04 activarTraza         */
+    so1_manejador_Nulo,                       /* 0x05                      */
+    so1_manejador_Nulo,                       /* 0x06                      */
+  so1_manejador_Nulo,                       /* 0x07 señales              */
+//    so1_manejador_07,                         /* 0x07 señales              */
+    so1_manejador_Nulo,                       /* 0x08                      */
+    so1_manejador_Nulo,                       /* 0x09                      */
+    so1_manejador_Nulo,                       /* 0x0A                      */
+    so1_manejador_Nulo,                       /* 0x0B                      */
+    so1_manejador_Nulo,                       /* 0x0C                      */
+    so1_manejador_Nulo,                       /* 0x0D                      */
+    so1_manejador_Nulo,                       /* 0x0E                      */
+    so1_manejador_Nulo                        /* 0x0F                      */
 } ;
 
 #define maxLlamadas sizeof(manejador)/sizeof(manejador_t)

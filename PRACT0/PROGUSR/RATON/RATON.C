@@ -7,26 +7,18 @@
 #include <so1pub.h\ajustusr.h>          /* save_DS0, setraw_DS, restore_DS */
 #include <so1pub.h\comundrv.h>  /* ptrIndProcesoActual, comprobarAmpersand */
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
-#include <so1pub.h\stdio.h>                                      /* printf */
-#include <so1pub.h\escribir.h>                                 /* printCar */ 
-
+#include <so1pub.h\stdio.h>                             /* printf, putchar */
 #include <so1pub.h\tipos.h>          /* byte_t, word_t, pointer_t, rindx_t */ 
 #include <so1pub.h\c2c.h>                          /* c2c_t, dobleEnlace_t */
-#include <so1pub.h\ctype.h>                                     /* toupper */
+#include <so1pub.h\ctype.h>                            /* tolower, toupper */
 #include <so1pub.h\strings.h>                  /* strcpy, strcmpu, strncmp */
-#include <so1pub.h\scanner.h>
 #include <so1pub.h\biosdata.h>               /* ptrBiosArea, VIDEO_lastrow */
-#include <so1pub.h\bios_0.h>
 #include <so1pub.h\memory.h>                                     /* memcpy */
-#include <so1pub.h\pantalla.h>                    /* maxFilas, maxColumnas */
-#include <so1pub.h\memvideo.h>                             /* printCarBIOS */
-#include <so1pub.h\def_tecl.h>                                /* teclado_t */
-#include <so1pub.h\pic.h>                                        /* ptrTVI */
-#include <so1pub.h\def_timer.h>                            /* argCbTimer_t */
-#include <so1pub.h\printgen.h>
+#include <so1pub.h\pic.h>                   /* eoi_pic2, ptrTVI, IRQ_RATON */
+#include <so1pub.h\printgen.h>                               /* printCar_t */
 #include <so1pub.h\msdos.h>                                /* hayWindowsNT */
-#include <so1pub.h\def_rat.h>                       /* maxX, estadoRaton_t */
-#include <so1pub.h\bios_rat.h>
+#include <so1pub.h\def_rat.h>              /* maxX, maxYAct, estadoRaton_t */
+#include <so1pub.h\bios_rat.h>         /* hayRatonBIOS, resetRatonBIOS ... */
 
 #include <so1.h\interrup.h>
 
@@ -409,7 +401,8 @@ void tratarRaton ( void )
 {
     static byte_t byteEstado = 0 ;                                 /* DATA */
     static byte_t byteDato = 0 ;                                   /* DATA */
-    static int incX = 0, incY = 0 ;                                /* DATA */
+    static int incX = 0 ;                                          /* DATA */
+    static int incY = 0 ;                                          /* DATA */
 
     asm in al,64h ;                                      /* TECLADO_ESTADO */
     asm mov byteEstado,al
@@ -675,9 +668,10 @@ void far handlerRatonNulo ( void )
 void far handlerRaton ( dword_t y, word_t x, word_t s )
 {
     static bool_t priVez = TRUE ;       /* para ignorar los incrementos .. */
-    static int incX = 0, incY = 0 ;     /* .. X,Y iniciales que son basura */
-    int X1 ;
-    int Y1 ;
+    static int incX = 0 ;               /* .. X,Y iniciales que son basura */
+	static int incY = 0 ;    
+    static int X1 ;
+    static int Y1 ;
 
 	setraw_DS() ;                         /* establecemos el DS del driver */
 	  
@@ -736,14 +730,22 @@ int desintegrarRaton ( tipoRaton_t tipoRaton )
     switch (tipoRaton)
     {
     case msdos : uninstallMouseEventHandler(ratonHandler) ; break ; 
-    case ps2   : disablePS2() ;                                     
+    case ps2   : disablePS2() ;         
+                 /* no funciona bien en qemu ya que al mover el raton se   */
+                 /* queda la maquina flipada. Una solucion es inhibir las  */
+                 /* interrupciones en el PIC 8259A (IMR)                   */
+                 /* establecerIMR(valorIMR() | (1 << IRQ_RATON)) ;         */	  
+//				 establecerIMR(valorIMR() | (1 << IRQ_RATON)) ;         /* */
     }
     return(res) ;
 }
 
 int finishRaton ( void )
 {
-    int res = desintegrarRaton(tipoRaton) ;
+    int res ;
+	asm sti ;      /* ya que se bloqueo al proceso con sus ints. inhibidas */
+	                                     /* antes de esperarDesinstalacion */
+    res = desintegrarRaton(tipoRaton) ;
 //  exit(0) ;              /* obligaria a meter la biblioteca ll_s_so1.lib */
     return(res) ;
 }
@@ -997,7 +999,8 @@ void inicRaton ( tipoRaton_t * tipoRaton,
     if (*tipoRaton == ninguno)
     {
         if (conMensajes) printf("\n\n comprobando si hay raton PS/2 ") ;
-        if (conMensajes) pCar = escribirCar ;
+//      if (conMensajes) pCar = escribirCar ;
+        if (conMensajes) pCar = putchar ;
         else             pCar = (printCar_t)noPrintCar ;
 		
         if (checkPS2(pCar))
@@ -1011,7 +1014,8 @@ void inicRaton ( tipoRaton_t * tipoRaton,
             }
             else                                            /* qemu, bochs */
             {
-                enablePS2((handler_t)handlerRatonNulo) ;
+//              establecerIMR(valorIMR() & ~(1 << IRQ_RATON)) ;         /* */
+				enablePS2((handler_t)handlerRatonNulo) ;
                 *isrRaton = isr_raton ;
             }
         }
@@ -1027,7 +1031,7 @@ void inicRaton ( tipoRaton_t * tipoRaton,
 
 void mostrarFormato ( void )
 {
-    printf(" formato: RATON [ [ -i | -q ] [ num ] | -u | -k | -h ] ") ;
+    printf(" formato: RATON [ -i | -q | -u | -k | -h ] ") ;
 }
 
 int formato ( void )
@@ -1170,8 +1174,8 @@ int integrarRaton ( rti_t * rtiRatonOrg, bool_t conMensajes )
     return(-1) ;
 }
 
-/* desintegarRaton se ha movido mas arriba para poder ser utilizado por la */
-/* funcion finishRaton en caso de que REDUCIR_DRIVER valga TRUE.           */
+/*  desintegrarRaton se ha movido mas arriba para poder ser utilizado por  */
+/*  la funcion finishRaton en caso de que REDUCIR_DRIVER valga TRUE.       */
 
 int desintegrarRaton ( tipoRaton_t tipoRaton ) ; 
 
@@ -1188,7 +1192,13 @@ int instalarRaton ( bool_t conMensajes )
 #if (!REDUCIR_DRIVER)
     esperarDesinstalacion(0) ;                       /* bloquea el proceso */
 #else
-    esperarDesinstalacion(                           /* bloquea el proceso */
+	asm cli ;                              /* inhibimos las interrupciones */
+    bloqueadosRaton.e =   /* actualizamos el segmento en bloqueadosRaton.e */
+	    MK_FP(
+		    _CS + (((word_t)finCodeDriver + 0x000F) >> 4),
+            FP_OFF(bloqueadosRaton.e)
+        ) ;			
+	esperarDesinstalacion(                           /* bloquea el proceso */
 //      FP_OFF(dirDescSO1) + sizeof(descSO1_t)
 //          ...
 //          + sizeof(descCcbConsola) + 0*sizeof(callBack_t),    /* tamDATA */
@@ -1212,9 +1222,9 @@ int main ( int argc, char * argv [ ] )
     else if (argc == 1) return(instalarRaton(TRUE)) ;
     else if (argc == 2)
     {
-        if (!strcmpu(argv[1], "-h")) return(help()) ;
-        else if (!strcmpu(argv[1], "-i")) return(instalarRaton(TRUE)) ;
-        else if (!strcmpu(argv[1], "-q")) return(instalarRaton(FALSE)) ;
+        if      ( !strcmpu(argv[1], "-h")) return(help()) ;
+        else if ( !strcmpu(argv[1], "-i")) return(instalarRaton(TRUE)) ;
+        else if ( !strcmpu(argv[1], "-q")) return(instalarRaton(FALSE)) ;
         else if ((!strcmpu(argv[1], "-u")) || 
 		         (!strcmpu(argv[1], "-k")))
         {
@@ -1228,26 +1238,6 @@ int main ( int argc, char * argv [ ] )
             default : printf(" RATON no ha podido desinstalarse") ;
             }
             return(res) ;
-        }
-    }
-    if ((argc == 2) ||
-            ((argc == 3) &&
-             (!strcmpu(argv[1], "-i") ||
-              !strcmpu(argv[1], "-q"))
-            )
-       )
-    {
-        strcpy(comando[0], argv[argc-1]) ;
-        inicScanner() ;
-        obtenSimb() ;
-        if (simb == s_numero)
-        {
-            if (num == 0)
-            {
-                printf("\n\n numConsolas debe ser > 0 \n") ;
-                return(-1) ;
-            }
-            else return(instalarRaton(toupper(argv[1][1]) == 'Q')) ;
         }
     }
     return(formato()) ;

@@ -7,8 +7,10 @@
 #ifndef LL_S_SIG_H
 #define LL_S_SIG_H
 
+#include <so1pub.h\tipos.h>
+
 #define SIGHUP    1               /* hangup                                 */
-#define SIGINT    2               /* interrupt (DEL)                        */  //
+#define SIGINT    2               /* interrupt (usually DEL o Ctrl-C)       */  //
 #define SIGQUIT   3               /* quit (ASCII FS)                        */ 
 #define SIGILL    4               /* illegal instruction                    */
 #define SIGTRAP   5               /* trace trap (not reset when caught)     */
@@ -22,8 +24,12 @@
 #define SIGPIPE  13               /* write on a pipe with no one to read it */
 #define SIGALRM  14               /* alarm clock                            */  //
 #define SIGTERM  15               /* software termination signal from kill  */  //
-#define SIGEMT   16               /* EMT instruction                        */
+#define SIGEMT   16               /* emulator trap (EMT instruction)        */
 #define SIGCHLD  17               /* child process terminated or stopped    */  //
+#define SIGCONT  18               /* Continue if stopped                    */  //
+#define SIGSTOP  19               /* Stop signal                            */  //
+#define SIGTSTP  20               /* Interactive (keyboard) stop (Ctrl-Z)   */  //
+
 
 typedef void ( * __sighandler_t ) ( int ) ;
 
@@ -33,6 +39,8 @@ void SIG_DFL ( int sig )  ;     /* se mata al proceso tras recibir la señal */
 
 extern __sighandler_t __sighandler [ ] ;
 
+void __handlerReturn ( int errorAX ) ;
+
 typedef dword_t sigset_t ; /* ??????????? */
 
 struct sigaction {
@@ -41,7 +49,9 @@ struct sigaction {
     int sa_flags ;                                         /* special flags */
 } ;
 
-int kill_nueva ( pid_t pid, int sig ) ;
+int kill ( pid_t pid, int sig ) ;
+
+#define raise( sig ) kill(getpid(), sig) 
 
 int sigaction ( int sig, const struct sigaction * act, struct sigaction * oact ) ;
 
@@ -49,11 +59,6 @@ unsigned int alarm ( unsigned int seconds ) ;
 
 void pause ( void ) ;
 
+void sigsuspend ( int sig ) ;
+
 #endif /* LL_S_SIG_H */
-
-
-
-
-
-
-

@@ -19,6 +19,14 @@ void SIG_DFL ( int sig )        /* se mata al proceso tras recibir la señal */
     exit(0) ;           /* en el estado de terminacion indicar la señal sig */
 }
 
+void __handlerReturn ( int errorAX ) 
+{
+	if (errorAX == 0) 
+		return(_AX) ;
+	else 
+		return(errorAX) ;
+}
+
 __sighandler_t __sighandler [ ] = {
     SIG_DFL,  /*  1 */
     SIG_DFL,  /*  2 */
@@ -36,38 +44,62 @@ __sighandler_t __sighandler [ ] = {
     SIG_DFL,  /* 14 */
     SIG_DFL,  /* 15 */
     SIG_DFL,  /* 16 */
-    SIG_DFL   /* 17 */ 
+    SIG_DFL,  /* 17 */ 
+    SIG_DFL,  /* 18 */ 
+    SIG_DFL,  /* 19 */ 
+    SIG_DFL   /* 20 */ 
 } ; 
 
 int kill ( pid_t pid, int sig ) 
 {
-    asm mov si,sig ;
-    asm mov bx,pid ;
-	asm mov ax,0x0700 ;
-    asm int nVIntSO1 ;	
+    asm 
+	{
+		mov si,sig ;
+        mov bx,pid ;
+	    mov ax,0x0700 ;
+        int nVIntSO1 ;
+    }		
 	return(_AX) ;
 }
 
 int sigaction ( int sig, const struct sigaction * act, struct sigaction * oact ) 
 {
-    asm mov si,sig ;
-    asm mov bx,act ;
-	asm mov dx,oact ; 
-	asm mov ax,0x0701 ;
-    asm int nVIntSO1 ;	
+    asm 
+	{
+        mov si,sig ;
+        mov bx,act ;
+	    mov dx,oact ; 
+	    mov ax,0x0701 ;
+        int nVIntSO1 ;	
+	}
 	return(_AX) ;
 }
 
 unsigned int alarm ( unsigned int seconds ) 
 {	
-    asm mov cx,seconds ;
-	asm mov ax,0x0702 ;
-    asm int nVIntSO1 ;	
+    asm 
+	{
+        mov cx,seconds ;
+	    mov ax,0x0702 ;
+        int nVIntSO1 ;
+    }		
 	return(_AX) ;
 }
 
 void pause ( void ) 
 {
-	asm mov ax,0x0703 ;
-    asm int nVIntSO1 ;	
+    asm 
+	{
+	    mov ax,0x0703 ;
+        int nVIntSO1 ;	
+	}
+}
+
+void sigsuspend ( int sig ) 
+{
+    asm 
+	{
+	    mov ax,0x0704 ;
+        int nVIntSO1 ;	
+	}
 }

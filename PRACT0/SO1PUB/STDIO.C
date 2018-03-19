@@ -30,12 +30,23 @@ static int writeStr ( const char * str )        /* sustituye a escribirStr */
 	        putchar('\r') ;
 			cont++ ; 
 		}
-        putchar(car) ; cont++ ;
+        putchar(car) ; 
+		cont++ ;
     }
     return(cont) ;
 }
 
-char far * sprintf ( const char far * fmt, ... ) 
+int sprintf ( char far * str, const char far * fmt, ... ) 
+{
+	int len ;
+    va_list aptr ;
+    va_start(aptr, fmt) ;
+    len = vsprintf(str, fmt, aptr) ;
+    va_end(aptr) ;
+	return(len) ;
+}
+
+char far * strprintf ( const char far * fmt, ... ) 
 {
     va_list aptr ;
     va_start(aptr, fmt) ;

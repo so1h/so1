@@ -55,7 +55,7 @@ void mostrarEstado ( char opcion, word_t modo )
 
     if (dfRaton < 0)
     {
-        printf("\n\n recurso RATON no disponible \n") ;
+        printf(" recurso RATON no disponible ") ;
         return ;
     }
 
@@ -192,4 +192,3 @@ int main ( int argc, char * argv [ ] )
     else formato() ;
 	return(0) ;
 }
-

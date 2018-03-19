@@ -140,7 +140,7 @@ rindx_t crearRec ( descRecurso_t far * dR )
 dfs_t crearFich ( const char far * nombre,
                   rindx_t          rindx,
                   word_t           menor,
-                  tipoFichero_t    tipo ) 
+                  tipoFichero_t    tipo ) 	
 {
 
     dfs_t dfs ;

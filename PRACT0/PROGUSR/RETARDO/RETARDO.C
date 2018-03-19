@@ -373,11 +373,11 @@ int instalarRetardo ( bool_t conMensajes )
 int main ( int argc, char * argv [ ] )
 {
     int res ;
-    if (argc > 2)                     return(formato()) ;
-    else if (argc == 1)               return(instalarRetardo(TRUE)) ;
-    else if (!strcmpu(argv[1], "-h")) return(help()) ;
-    else if (!strcmpu(argv[1], "-i")) return(instalarRetardo(TRUE)) ;
-    else if (!strcmpu(argv[1], "-q")) return(instalarRetardo(FALSE)) ;
+    if (argc > 2)                      return(formato()) ;
+    else if (argc == 1)                return(instalarRetardo(TRUE)) ;
+    else if ( !strcmpu(argv[1], "-h")) return(help()) ;
+    else if ( !strcmpu(argv[1], "-i")) return(instalarRetardo(TRUE)) ;
+    else if ( !strcmpu(argv[1], "-q")) return(instalarRetardo(FALSE)) ;
     else if ((!strcmpu(argv[1], "-u")) || 
              (!strcmpu(argv[1], "-k")))
     { 

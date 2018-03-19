@@ -3,6 +3,8 @@
 /* ----------------------------------------------------------------------- */
 /*                          proceso inicial de SO1                         */
 /* ----------------------------------------------------------------------- */
+/*               (fase 0 para lanzar los drivers del sistema)              */
+/* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>                                      /* printf */

@@ -35,6 +35,7 @@
 #include <so1pub.h\tipos.h>                                       /* MK_FP */
 #include <so1.h\procesos.h>    /* descProceso, descFihero, descRecurso ... */ 
 #include <so1.h\minifs.h>                                        /* rec_sf */
+
 //#include <so1.h\bios.h>                                  /* printStrBIOS */
 
 int indiceTFAS ( const char far * nombre ) /* puede mejorarse con la cola c2c de ficheros */
@@ -88,7 +89,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
 	{
     case 0x00 :                                                  /* 0x0100 */
         modoAp = tramaProceso->DX ;                                /* open */
-        nombre = (char far *)MK_FP(tramaProceso->ES, tramaProceso->BX) ;
+        nombre = MK_FP(tramaProceso->ES, tramaProceso->BX) ;
         df = -1 ;                                           /* por defecto */
         if ((modoAp & (O_TEXT | O_BINARY)) == (O_TEXT | O_BINARY)) 
 		{	
@@ -100,6 +101,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
         df = indiceTFA(nombre) ;
         if (df >= 0)                       /* fichero ya abierto (proceso) */
 		{
+//          printStrBIOS("\n fichero ya abierto \n") ;  			
             dfs = descProceso[indProcesoActual].tfa[df].dfs ;
             rindx = descFichero[dfs].rindx ;
         }
@@ -109,8 +111,15 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
             if (dfs >= 0)                  /* fichero ya abierto (sistema) */
                 rindx = descFichero[dfs].rindx ;
             else                           /* fichero no abierto (sistema) */
-                rindx = rec_sf ;                    /* sistema de ficheros */
+//              rindx = rec_sf ;                    /* sistema de ficheros */
+            {
+                tramaProceso->AX = df ;                              /* -1 */
+                break ;
+			}
         }
+//      printStrBIOS("\n manejador_01 dfs = ") ; printIntBIOS(dfs, 1) ; 
+//      printStrBIOS(" rindx = ") ; printIntBIOS(rindx, 1) ; 
+//      printLnBIOS() ; 			
         if ((descRecurso[rindx].open != (open_t)NULL) &&
             ((dfs1 = descRecurso[rindx].open(dfs, modoAp)) >= 0)) 
 		{

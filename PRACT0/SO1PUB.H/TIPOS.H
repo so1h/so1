@@ -13,7 +13,7 @@ typedef unsigned char byte_t ;                            /* byte (8 bits) */
                                                      /* sizeof(byte_t) = 1 */
 typedef unsigned int word_t ;                         /* palabra (16 bits) */
 
-typedef unsigned long int dword_t ;             /* doble palabra (32 bits) */
+typedef unsigned long dword_t ;                 /* doble palabra (32 bits) */
 
 typedef struct {
     dword_t dwl ;

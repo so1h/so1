@@ -131,7 +131,7 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
 			{
 				int i, j ;
 				j = descRecurso[r].ccb->out ;
-				for ( i = 0 ; i < descRecurso[r].ccb->num ; i ++ ) 
+				for ( i = 0 ; i < descRecurso[r].ccb->num ; i++ ) 
 				{
                     if (FP_SEG(descRecurso[r].ccb->callBack[j]) == tramaProceso->DS)
 						descRecurso[r].ccb->callBack[j] = 
@@ -143,7 +143,8 @@ extern void so1_manejador_02 ( ) {                     /* ah = 8 ; int SO1 */
         } 
 
 		memcpy(          /* copia de los primeros tamDATA bytes de la DATA */
-		    MK_FP(tramaProceso->CS, finCodeDriver),             /* destino */
+//		    MK_FP(tramaProceso->CS, finCodeDriver),             /* destino */
+		    MK_FP(nuevoDS, 0x0000),                             /* destino */
 		    MK_FP(tramaProceso->DS, 0x0000),        /* comienzo de la DATA */
             tamDATA
 		) ;               

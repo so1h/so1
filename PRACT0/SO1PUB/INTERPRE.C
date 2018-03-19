@@ -253,6 +253,7 @@ void interpretar_dir ( bool_t host, int unidadLogica ) {
 void interpretar_ret ( void ) {
   int dfRet ;
   if ((dfRet = open("RETARDO", O_RDONLY)) >= 0) {
+//  printf(" dfRet = %i", dfRet) ;
     close(dfRet) ;
     obtenSimb() ;
     if (simb == s_fin) {

@@ -3,6 +3,8 @@
 /* ----------------------------------------------------------------------- */
 /*                          proceso inicial de SO1                         */
 /* ----------------------------------------------------------------------- */
+/*       (fase final de cierre de consolas tras un HALT o SHUTDOWN)        */
+/* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
 #include <so1pub.h\stdio.h>        /* escribirStr, escribirInt, escribirLn */

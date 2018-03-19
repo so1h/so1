@@ -5,7 +5,7 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ccb.h>
-#include <so1pub.h\tipos.h>                                         /* SEG */
+#include <so1pub.h\tipos.h>                                      /* FP_SEG */
 
 int inicCcb ( ccb_t ccb, word_t max ) {
   int i ;
@@ -71,7 +71,7 @@ int eliminarSegCcb ( word_t segmento, ccb_t ccb ) {
   if (num == 0) return(-2) ;                                  /* ccb vacio */
   ind = ccb->out ;
   for ( i = 0 ; i < num ; i++ ) {
-    if (SEG((pointer_t)ccb->callBack[ind]) == segmento) break ;
+    if (FP_SEG(ccb->callBack[ind]) == segmento) break ;
     ind = (ind + 1 ) % ccb->max ;
   }
   if (i == num) return(-3) ;                      /* no se encuentra el cb */

@@ -226,7 +226,7 @@ long far lseekTimer ( int dfs, long pos, word_t whence )
     switch (whence)
     {
     case SEEK_SET :
-        if ((0 <= pos) && (pos <= (long int)tamBuf))
+        if ((0 <= pos) && (pos <= (long)tamBuf))
             res = pos ;
         break ;
     case SEEK_CUR :
@@ -313,7 +313,7 @@ void far isr_timer ( )
 
     indProcesoActual = *ptrIndProcesoActual ;
 
-    /* plot('t', 0, contadorTimer0()) ; */ /* mejor antes de llamar a la rti bios */
+//  plot('t', 0, contadorTimer0()) ; */  /* mejor antes de llamar rti bios */
 
     /* simulamos la interrupcion con el vector guardado */
     /* necesario para el timeout de leerSectorBIOS */
@@ -356,7 +356,7 @@ void far isr_timer ( )
                 *ptrContTicsRodaja = 0 ;
             }
         }
-        /*    plot('e', 0, contadorTimer0()) ; */ /* no hay cambio de estado */
+//      plot('e', 0, contadorTimer0()) ;        /* no hay cambio de estado */
     }
     else                                         /* indProcesoActual == -1 */
     {
@@ -372,6 +372,8 @@ void far isr_timer ( )
 
 int finishTimer ( void )
 {
+	asm sti ;      /* ya que se bloqueo al proceso con sus ints. inhibidas */
+	                                     /* antes de esperarDesinstalacion */
 //  exit(0) ;              /* obligaria a meter la biblioteca ll_s_so1.lib */
     return(0) ;
 }
@@ -434,7 +436,7 @@ int integrarTimer ( word_t ticsPR, bool_t conMensajes )
     dR.tipo = rDCaracteres ;
     strcpy(dR.nombre, "TIMER") ;
 //  dR.ccb = (ccb_t)&descCcbTM ;
-    dR.ccb = (ccb_t)MK_FP(_DS, FP_OFF(&descCcbTM)) ; /* problema si cambia DS */
+    dR.ccb = MK_FP(_DS, FP_OFF(&descCcbTM)) ;        /* problema si cambia DS */
     dR.ccb->arg = MK_FP(_DS, FP_OFF(&argCbTimer)) ;  /* problema si cambia DS */
     dR.pindx = getpindx() ;
     dR.numVI = 1 ;
@@ -515,6 +517,12 @@ int instalarTimer ( word_t ticsPR, bool_t conMensajes )
 #if (!REDUCIR_DRIVER)
     esperarDesinstalacion(0) ;                       /* bloquea el proceso */
 #else
+	asm cli ;                              /* inhibimos las interrupciones */
+    colaTimer.e =               /* actualizamos el segmento en colaTimer.e */
+	    MK_FP(
+		    _CS + (((word_t)finCodeDriver + 0x000F) >> 4),
+            FP_OFF(colaTimer.e)
+        ) ;			
     esperarDesinstalacion(                           /* bloquea el proceso */
 //      FP_OFF(dirDescSO1) + sizeof(descSO1_t)
 //          + sizeof(rec_timer)                /* se necesita en readTimer */

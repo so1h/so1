@@ -13,9 +13,8 @@ OBJS2LINK =                      \
 ..\..\so1pub\obj\ccb.obj,        \
 $(PROGRAMA).obj,                 \
 #
-..\..\so1pub\lib\ll_s_so1.lib,   \
 ..\..\so1pub\obj\comundrv.obj,   \
-..\..\so1pub\obj\memory.obj,     \
+..\..\so1pub\lib\ll_s_so1.lib,   \
 ..\..\so1pub\obj\ctype.obj,      \
 ..\..\so1pub\obj\stdio.obj,      \
 ..\..\so1pub\obj\vsprintf.obj,   \
@@ -28,7 +27,7 @@ $(PROGRAMA).obj,                 \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (finBSS = 257A < 27FE)
+#puntero de pila inicial (finBSS = 25B6 < 27FE)
 
 SPINICIAL = 27FE
 

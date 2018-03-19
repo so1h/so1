@@ -9,16 +9,13 @@ OBJS2LINK =                      \
 ..\..\startfin\lib\startlib.lib, \
 ..\..\so1pub\obj\ajustusr.obj,   \
 #
-#..\..\so1pub\lib\ll_s_so1.lib,   \
 $(PROGRAMA).obj,                 \
 #
 ..\..\so1pub\lib\ll_s_so1.lib,   \
 ..\..\so1pub\obj\comundrv.obj,   \
-..\..\so1pub\obj\memory.obj,     \
 ..\..\so1pub\obj\ctype.obj,      \  
 ..\..\so1pub\obj\stdio.obj,      \
 ..\..\so1pub\obj\vsprintf.obj,   \
-..\..\so1pub\obj\scanner.obj,    \
 ..\..\so1pub\obj\strings.obj,    \
 ..\..\crtl\obj\h_ldiv.obj,       \
 ..\..\crtl\obj\h_lursh.obj,      \
@@ -27,9 +24,9 @@ $(PROGRAMA).obj,                 \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (finBSS = 238E < 24FE)
+#puntero de pila inicial (finBSS = 1ECC < 1FFE)
 
-SPINICIAL = 24FE
+SPINICIAL = 1FFE
 
 !include "..\..\MKFILE0"
 

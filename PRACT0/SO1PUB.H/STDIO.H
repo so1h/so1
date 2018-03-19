@@ -4,7 +4,9 @@
 
 int putchar ( char car ) ;   
 
-char far * sprintf ( const char far * fmt, ... ) ;
+int sprintf ( char far * str, const char far * fmt, ... ) ;
+
+char far * strprintf ( const char far * fmt, ... ) ;
 
 int printf ( const char far * fmt, ... ) ;
 

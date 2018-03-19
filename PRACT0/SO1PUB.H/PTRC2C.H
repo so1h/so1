@@ -30,6 +30,7 @@ typedef c2c_t far * ptrC2c_t ;                   /* puntero lejano a c2c_t */
     ptrC2c->primero = i ;                                                    \
   ptrC2c->numElem++ ;                                                        \
 }
+
 #define codigoEliminarPC2c(i, ptrC2c) {    /* supuesto estaPC2c(i, ptrC2c) */\
   dobleEnlace_t far * e = ((ptrC2c_t)ptrC2c)->e ;                            \
   codigoEliminar(i) ;                                                        \
@@ -39,6 +40,7 @@ typedef c2c_t far * ptrC2c_t ;                   /* puntero lejano a c2c_t */
   e[i].ant = NULO ;                                                          \
   ((ptrC2c_t)ptrC2c)->numElem-- ;                                            \
 }
+
 #define codigoApilarPC2c(i, ptrC2c) {           /* ptrC2c vacia o no vacia */\
   dobleEnlace_t far * e = ((ptrC2c_t)ptrC2c)->e ;                            \
   int anterior = ((ptrC2c_t)ptrC2c)->cabecera ;                              \
@@ -47,6 +49,7 @@ typedef c2c_t far * ptrC2c_t ;                   /* puntero lejano a c2c_t */
   ((ptrC2c_t)ptrC2c)->primero = i ;                                          \
   ((ptrC2c_t)ptrC2c)->numElem++ ;                                            \
 }
+
 #define codigoEncolarPC2c(i, ptrC2c) {     /* supuesto noVaciaPC2c(ptrC2c) */\
   dobleEnlace_t far * e = ((ptrC2c_t)ptrC2c)->e ;                            \
   int siguiente = ((ptrC2c_t)ptrC2c)->cabecera ;                             \
@@ -55,6 +58,7 @@ typedef c2c_t far * ptrC2c_t ;                   /* puntero lejano a c2c_t */
   ((ptrC2c_t)ptrC2c)->primero = ((ptrC2c_t)ptrC2c)->e[siguiente].sig ;       \
   ((ptrC2c_t)ptrC2c)->numElem++ ;                                            \
 }
+
 #define codigoPosicionPC2c(i, ptrc2c) {                                      \
   dobleEnlace_t far * e = ((ptrC2c_t)ptrC2c)->e ;                            \
   int cabecera = ((ptrC2c_t)ptrC2c)->cabecera ;                              \
@@ -78,7 +82,7 @@ void inicializarPC2c ( ptrC2c_t ptrC2c, dobleEnlace_t far * e, int cabecera, boo
 
 #define inicPC2c(ptrC2c, e, cabecera, compartida)                            \
                                                                              \
-  inicializarPC2c((ptrC2c_t) ptrC2c, (dobleEnlace_t far *) e, cabecera, compartida) ;
+  inicializarPC2c((ptrC2c_t)ptrC2c, (dobleEnlace_t far *)e, cabecera, compartida) ;
 
 //void invertirPC2c ( ptrC2c_t ptrC2c ) ; /* intercambiar enlaces sig y ant */
 

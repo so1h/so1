@@ -136,6 +136,9 @@ typedef struct {
 #define rec_hijo            (rindx_t)(- 1)       /* terminacion de un hijo */
 #define rec_zombie          (rindx_t)(- 2)          /* para proceso zombie */
 #define rec_desinstalacion  (rindx_t)(- 3)          /* para proceso driver */ 
+#define rec_semaforo        (rindx_t)(- 4)          /* espera por un subir */ 
+#define rec_buzon           (rindx_t)(- 5)          /* espera por un buzon */ 
+#define rec_senial          (rindx_t)(- 6)        /* espera por una senial */ 
 
 typedef struct {                                    /* informacion variada */
   /* word_t ticsPorRodaja ; */
