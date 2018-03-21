@@ -504,7 +504,7 @@ void far isr_consola ( void )
     nuevaConsola = 0xFF ;
     numFilasAnt = maxFilasAct ;
 
-#if (FALSE)                               /* trazas por si hay que depurar */
+#if (TRUE)                               /* trazas por si hay que depurar */
     printCarBIOS('<') ;
     printHexBIOS(scanCodeAnt, 2) ;
     printHexBIOS(scanCode, 2) ;

@@ -25,6 +25,7 @@
 #include <so1.h\sf.h>        /* inicSF, inicTablaFichAbiertos, segBuferSO1 */
 #include <so1.h\plot.h>                                         /* finPlot */
 #include <so1.h\ajustes.h>   /* modoSO1, guardarDS_SO1, IMRInicial, CS_SO1 */
+//                                                           /* unidadBIOS */
 #include <so1.h\so1dbg.h>    /* inicTeclado, leerScancode, esperarScancode */
 #include <so1.h\s0.h>                    /* mirarLoQueHay, MostrarLoQueHay */
 //       /* hayDOS, hayNT, hayQemu, hayBochs, hayDBox, hayNTVDM, hayFake86 */

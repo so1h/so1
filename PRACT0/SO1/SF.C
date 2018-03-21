@@ -61,7 +61,9 @@ descriptor_de_fichero_t tablaFichAbiertos [ maxFichAbiertos ] ;
 
 static victimaASustituir = 0 ;          /* para la politica de sustitucion */
 
-/* leerSector de una unidad logica cualquiera (disquete o disco duro) */
+/* leerSector de una unidad logica cualquiera (disquete o disco duro)      */
+
+/* No esta protegido frente al error 0x09 de la int 13h (peligro)          */
 
 int leerSectorUL ( dword_t sectorLogico, byte_t unidadLogica, pointer_t dir )
 {
@@ -123,8 +125,10 @@ int leerSectorSO1 ( dword_t sectorLogico, byte_t unidadLogica, pointer_t dir )
     err = leerSectorUL(sectorLogico, unidadLogica, dir) ;
     if (err == 0x09)
     {
+//      printStrBIOS("\n !!! int 13h error = 0x09 crossing 64K boundary ") ;	
+//      while (TRUE) ;	
         err = leerSectorUL(sectorLogico, unidadLogica, ptrBuferSO1) ;
-        memcpy_fd(dir, ptrBuferSO1, 512) ;
+        memcpy(dir, ptrBuferSO1, 512) ;
     }
     return(err) ;
 }
@@ -147,7 +151,7 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
 
 //    segBuferSO1 = segBuferSeguro() ;                                 /* GM */
 //    ptrBuferSO1 = MK_FP(segBuferSO1, 0x0000) ;
-    printStrBIOS("\n ptrBuferSO1 = 0x") ;
+    printStrBIOS("\n ptrBuferSO1 = ") ;
     printPtrBIOS(ptrBuferSO1) ;
 
     mbr = (mbr_t far *)ptrBuferSO1 ;
@@ -216,7 +220,7 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
         rebootBIOS() ;
     } ;
     if ((boot->instJMP[0] != 0xEB) || (boot->instJMP[1] < 0x3C) || (boot->instNOP != 0x90) ||
-            (boot->signaturaExt != 0x29))       /* debe tratarse de un MBR */
+        (boot->signaturaExt != 0x29))           /* debe tratarse de un MBR */
     {                                  /* copiamos la tabla de particiones */
         memcpy(&descUnidadFisica[unidadFisicaActual].descParticion,
                &mbr->descParticion,
@@ -286,7 +290,7 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
         for ( i = 1 ; i < maxParticiones ; i++ )
             descUnidadFisica[unidadFisicaActual].descParticion[i].tipo = 0x00 ;
         descUnidadLogica[unidadLogicaActual].indParticion = 1 ;
-        if (!strncmp(boot->SF, "FAT12   ", 8)) tipo = 0x01 ;
+        if      (!strncmp(boot->SF, "FAT12   ", 8)) tipo = 0x01 ;
         else if (!strncmp(boot->SF, "FAT16   ", 8)) tipo = 0x04 ;
         else
         {
@@ -380,7 +384,7 @@ int inicSF ( byte_t unidadBIOS )             /* asigna memoria para la FAT */
     printPtrBIOS((pointer_t)FAT) ;
 
     if (((tipo == 0x01) && (cargaFAT12_Ok(unidadLogicaActual) != 0)) ||
-            ((tipo == 0x04) && (cargaFAT16_Ok(unidadLogicaActual) != 0)))
+        ((tipo == 0x04) && (cargaFAT16_Ok(unidadLogicaActual) != 0)))
     {
         printStrBIOS("\n error al cargar la FAT de la unidad logica ") ;
         printHexBIOS(unidadLogicaActual, 1) ;
@@ -469,10 +473,11 @@ int cargarSectoresFAT ( byte_t unidadLogica, pointer_t dir )
 {
     dword_t sectorLogico = primerSectorFAT ;
     pointer_t ptr = dir ;
-    int i ;
+    int i ;	
     for ( i = 0 ; i < descUnidadLogica[unidadLogica].BPB.sectoresPorFAT ; i++ )
     {
-        leerSectorUL(sectorLogico, unidadLogica, ptr) ;
+//      leerSectorUL(sectorLogico, unidadLogica, ptr) ; /* danger err 0x09 */
+        leerSectorSO1(sectorLogico, unidadLogica, ptr) ;      /* no danger */
         incPtr((pointer_t *)&ptr, 512) ;
         sectorLogico++ ;
     }
@@ -499,8 +504,8 @@ int cargaFAT12_Ok ( byte_t unidadLogica )
     bytesFAT = (pointer_t)MK_FP(segmento, 0x0000) ;
     cargarSectoresFAT(unidadLogica, bytesFAT) ; /* lectura FAT12 empaquetada */
     if ((bytesFAT[0] != descUnidadLogica[unidadLogica].BPB.tipoDeMedio) ||
-            (bytesFAT[1] != 0xFF) ||
-            (bytesFAT[2] != 0xFF))
+        (bytesFAT[1] != 0xFF) ||
+        (bytesFAT[2] != 0xFF))
         return(-1) ;                              /* signatura de la FAT12 */
     desempaquetarFAT12(bytesFAT, (word_t)entradasFAT, FAT) ;
     k_devolverBloque(segmento, (word_t)((tamFAT+15)/16)) ;
@@ -916,6 +921,3 @@ int cargaFichero_Ok ( char * nombre, byte_t unidad, word_t segmento )
     }
     return(FALSE) ;
 }
-
-
-

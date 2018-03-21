@@ -231,7 +231,7 @@ byte_t unidadBIOS ( void ) {       /* numero BIOS de la unidad de arranque */
   asm db 0xFF                                       /* valor de unidadBIOS */
 calculo3:
 #if defined(TASM32)
-  asm mov ax,word ptr cs:[OFFSET unidadBIOS + 2]     /* return(unidadBIOS) */
+  asm mov ax,word ptr cs:[OFFSET unidadBIOS + 2]     /* return(unidadBIOS) */ /* poner byte en vez de word */
 #else
   asm db 2eh, 0a1h ; asm dw OFFSET unidadBIOS + 2 ;
 #endif

@@ -80,7 +80,7 @@ int XAux = 0 ;
 int YAux = 0 ;
 int FAntCursor = 0 ;                                               /* DATA */
 int CAntCursor = 0 ;                                               /* DATA */
-
+	
 byte_t atrAux = 0 ;                                                /* DATA */
 
 int cursorRatonActivo = TRUE ;
@@ -448,7 +448,7 @@ void tratarRaton ( void )
                 if ((0 <= YAux) && (YAux < maxYAct))         /* 8*25 = 200 */
                     er.Y = YAux ;
 
-                procesarRaton((word_t)er.B0, er.X, er.Y) ;
+				procesarRaton((word_t)er.B0, er.X, er.Y) ;
             }
         }
     }
@@ -633,12 +633,35 @@ void procesarColaBloqueadosRaton ( void )
   asm ror al,n ;                           /* rotacion a la derecha n bits */\
   asm mov x,al ;
 
+void ocultarRaton ( void ) 
+{
+	byte_t atrAux = ptrPant->t[er.F][er.C].atr ;
+    if (atrAux != atrNormal)
+    {
+        rotarDerecha(atrAux, 4) ;
+        ptrPant->t[er.F][er.C].atr = atrAux ;
+    }	
+}	
+
+void mostrarRaton ( void ) 
+{
+	byte_t atrAux = ptrPant->t[er.F][er.C].atr ;
+    rotarDerecha(atrAux, 4) ;
+    ptrPant->t[er.F][er.C].atr = atrAux ;
+}	
+  
 void actualizarCursor ( void )
 {
     if (cursorRatonActivo)               /* actualizar el cursor del raton */
     {
-        if (primeraInt) primeraInt = FALSE ;
-        else if ((er.F != FAntCursor) || (er.C != CAntCursor))
+        if (primeraInt) 
+		{
+			inicEstadoRaton() ;
+			primeraInt = FALSE ;
+			FAntCursor = (maxX/2) >> 3 ; 
+            CAntCursor = ((maxYAct + 1)/2) >> 3 ;   
+		}
+        if ((er.F != FAntCursor) || (er.C != CAntCursor))
         {
             atrAux = ptrPant->t[FAntCursor][CAntCursor].atr ;
 //          atrAux = (atrAux << 4) | (atrAux >> 4) ; 
@@ -704,6 +727,9 @@ tipoRaton_t tipoRaton = ninguno ;                                  /* DATA */
 
 void disablePS2 ( void )
 {
+	
+	ocultarRaton() ;
+	
 asm
 {
     xor bx,bx ;  
@@ -1027,6 +1053,8 @@ void inicRaton ( tipoRaton_t * tipoRaton,
     }
 
     inicPC2c(&bloqueadosRaton, &e2BloqueadosRaton, maxProcesos + 0, FALSE) ;
+	
+	mostrarRaton() ;
 }
 
 void mostrarFormato ( void )

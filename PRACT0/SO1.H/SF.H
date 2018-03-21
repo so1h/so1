@@ -7,7 +7,7 @@
 #ifndef SF_H
 #define SF_H
 
-#include <so1pub.h\def_sf.h>
+#include <so1pub.h\def_sf.h>  /* maxUL, maxUF, descUnidad(Fisica/Logica)_t */
 #include <so1pub.h\tipos.h>
 
 /* ----------------- descriptores de unidades logicas -------------------- */
@@ -100,5 +100,3 @@ int cargaFicheroAbierto_Ok ( int df, word_t segmento ) ;
 int cargaFichero_Ok ( char * nombre, byte_t unidad, word_t segmento ) ;
 
 #endif /* SF_H */
-
-

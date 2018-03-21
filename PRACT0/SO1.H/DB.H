@@ -17,8 +17,6 @@ void inicDB ( void ) ;
 
 extern word_t segBuferSO1 ;    /* bufer para leer de forma segura sectores */
                                     /* con el BIOS (ver error 0x09 int 13) */
-									
 int opSectorDB ( dword_t sectorLogico, int db, pointer_t dir, byte_t cmd ) ;
 									
 #endif /* DB_H */
-

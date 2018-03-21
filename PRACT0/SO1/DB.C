@@ -229,7 +229,6 @@ void inicDB ( void ) {
 	byte_t tipoUnidad ;
     CSH_t CSH, CSHMax ;
 	
-	
 //  dword_t numSectores ;
 	dword_t primerSector ;
 	word_t bytesPorSector ;

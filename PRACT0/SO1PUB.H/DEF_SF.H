@@ -7,7 +7,7 @@
 #ifndef DEF_SF_H
 #define DEF_SF_H
 
-#include <so1pub.h\tipos.h>
+#include <so1pub.h\tipos.h>                     /* byte_t, word_t, dword_t */
 
 #define maxFichAbiertos 10
 
@@ -87,22 +87,22 @@ typedef struct {                   /* plantilla para el sector de arranque */
 
 #define signaturaBR { 0x55, 0xAA }
 
-#define maxUL 10                      /* maximo numero de unidades logicas */
+#define maxUL 10       /* maximo numero de unidades logicas A, B, C, D, .. */
 
-typedef struct {                                    /* unidad logica (BPB) */
-  int ufindx ;
-  int indParticion ;
-  char letra ;
-  BPB_t BPB ;
+typedef struct {                         /* unidad logica (particion, BPB) */
+  int ufindx ;                               /* indice de la unidad fisica */
+  int indParticion ;                             /* indice de la particion */
+  char letra ;                       /* letra de la unidad: A, B, C, D, .. */
+  BPB_t BPB ;               /* bloque de parametros del BIOS (superbloque) */
 } descUnidadLogica_t ;
 
 #define maxUF 4                       /* maximo numero de unidades fisicas */
 
 typedef struct {                                          /* unidad fisica */
-  int unidadBIOS ;
-  byte_t contUL ;
+  int unidadBIOS ;    /* numero de la unidad segun el BIOS: 0x00, 0x80, .. */
+  byte_t contUL ;                            /* numero de unidades logicas */
   descParticion_t descParticion [maxParticiones] ;
-  int ulindx [maxParticiones] ;
+  int ulindx [maxParticiones] ;         /* indices de las unidades logicas */
 } descUnidadFisica_t ;
 
 typedef struct {                                  /* entrada de directorio */
@@ -139,5 +139,3 @@ typedef struct {
 } ffblk_t ;
 
 #endif /* DEF_SF_H */
-
-
