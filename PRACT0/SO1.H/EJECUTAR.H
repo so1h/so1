@@ -11,6 +11,10 @@
 
 pid_t kk_fork ( void ) ;
 
+typedef void * (* funcion_t) (void * arg) ;
+
+pid_t kk_thread ( void * (* funcion) (void * arg), word_t SP0, void * arg ) ;
+
 pindx_t preEjecutar ( const char far * nombre,
                       const char far * comando,
                             pindx_t    pindx ) ;

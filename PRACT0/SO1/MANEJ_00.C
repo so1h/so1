@@ -5,37 +5,37 @@
 /* ----------------------------------------------------------------------- */
 
 /* ----------------------------------------------------------------------- */
-/* AX = 0x0000 createProcess                                               */
-/* AX = 0x0001 fork                                                        */
-/* AX = 0x0002 exec                                                        */
-/* AX = 0x0003 waitpid                                                     */
-/* AX = 0x0004 exit                                                        */
-/* AX = 0x0005 getpid                                                      */
-/* AX = 0x0006 getpindx                                                    */
+/* AX = 0x0000 createProcess(nombre, comando)                              */
+/* AX = 0x0001 fork()                                                      */
+/* AX = 0x0002 exec(nombre, comando)                                       */
+/* AX = 0x0003 waitpid(pid, &status)                                       */
+/* AX = 0x0004 exit(status)                                                */
+/* AX = 0x0005 getpid()                                                    */
+/* AX = 0x0006 getpindx()                                                  */
 /* AX = 0x0007 getppid()                                                   */
 /* AX = 0x0008 getuid()                                                    */
 /* AX = 0x0009 setuid(uid)                                                 */
 /* AX = 0x000a getgid()                                                    */
 /* AX = 0x000b setuid(gid)                                                 */
-/* AX = 0x000c killpid                                                     */
+/* AX = 0x000c killpid(pid)                                                */
+/* AX = 0x000d thread(funcion, SP0, arg)                                   */ 
+/* AX = 0x000e yield()                                                     */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\tipos.h>                              /* pid_t, pindx_t */
-#include <so1pub.h\strings.h>
-#include <so1pub.h\ptrc2c.h>
-#include <so1pub.h\def_proc.h>                                 /* rec_hijo */
-#include <so1.h\ajustes.h>
-#include <so1.h\ejecutar.h>                        /* kk_fork, preEjecutar */
-#include <so1.h\procesos.h>                               /* matarProcIndx */
-#include <so1.h\blockpr.h>
-#include <so1.h\bios.h>
-#include <so1.h\dokill.h>
+#include <so1pub.h\ptrc2c.h>              /* (encolar/apilar/eliminar)PC2c */
+#include <so1pub.h\def_proc.h>                    /* descProceso, rec_hijo */
+#include <so1.h\ejecutar.h>             /* kk_fork, kk_thread, preEjecutar */
+#include <so1.h\procesos.h>         /* tramaProceso, c2cPFR, matarProcIndx */
+#include <so1.h\blockpr.h>          /* (bloquear/buscarNuevo)ProcesoActual */
+#include <so1pub.h\bios_0.h>                               /* printStrBIOS */
+#include <so1.h\dokill.h>                                        /* doKill */
 
-void bloquearEsperandoHijo ( pindx_t hpindx ) 
-{
-    descProceso[indProcesoActual].hpindx = hpindx ;
-    bloquearProcesoActual(rec_hijo) ;
-}
+#define bloquearEsperandoHijo( hpindx )                                     \
+                                                                            \
+    ptrDPActual->hpindx = hpindx ;                         \
+    bloquearProcesoActual(rec_hijo) ;                                       \
+
 
 void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
 {
@@ -52,9 +52,10 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
 #if (FALSE)
     printStrBIOS("\n manej_00 createProcess ") ;
 //  printStrBIOS(" pid = ") ;
-//  printDecBIOS(descProceso[indProcesoActual].pid, 1) ;
+//  printDecBIOS(ptrDPActual->pid, 1) ;
 #endif
     case 0x01 :                                       /* fork */ /* 0x0001 */
+    case 0x0d :                                     /* thread */ /* 0x000d */
 
         if (c2cPFR[DPOcupados].numElem >= (maxProcesos-1)) 
 		{
@@ -62,11 +63,17 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
             break ;
         }
 
-        descProceso[indProcesoActual].trama = tramaProceso ;
+        ptrDPActual->trama = tramaProceso ;          /* salvamos el estado */
 
-        if (tramaProceso->AL == 0x01)                              /* fork */
+        if      (tramaProceso->AL == 0x01)                         /* fork */
             pindx = kk_fork() ;
-        else {                                            /* createProcess */
+        else if (tramaProceso->AL == 0x0d)                       /* thread */
+            pindx = kk_thread(
+			            (funcion_t)tramaProceso->BX, 
+						tramaProceso->CX, 
+						(void *)tramaProceso->DX
+					) ;
+		else {                                            /* createProcess */
             pindx = preEjecutar(
                 MK_FP(tramaProceso->CX, tramaProceso->BX),/* CX:BX nombre  */
                 MK_FP(tramaProceso->ES, tramaProceso->DX),/* ES:DX comando */
@@ -101,7 +108,7 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
 //          encolarPC2c(pindx, (ptrC2c_t)&c2cPFR[PUrgentes]) ;
             apilarPC2c(pindx, (ptrC2c_t)&c2cPFR[PUrgentes]) ;
 
-            descProceso[indProcesoActual].estado = preparado ;
+            ptrDPActual->estado = preparado ;
 //          encolarPC2c(indProcesoActual, (ptrC2c_t)&c2cPFR[PUrgentes]) ;
             apilarPC2c(indProcesoActual, (ptrC2c_t)&c2cPFR[PUrgentes]) ;
 
@@ -109,8 +116,8 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
             if (tramaProceso->AL == 0x01)                          /* fork */
                 descProceso[pindx].trama->DX = 0x0000 ;         /* hijo DX */
             tramaProceso->DX = descProceso[pindx].pid ;        /* padre DX */
-            buscarNuevoProcesoActual() ;/* ¡no se retorna de esta funcion! */
-        }                               /* =============================== */
+            buscarNuevoProcesoActual() ;  /* no se retorna de esta funcion */
+        }                                 /* ============================= */
         else
            tramaProceso->DX = pindx ;                   /* codigo de error */
         break ;
@@ -145,11 +152,11 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
 
         if (pindx < -5)                                     /* error fatal */
 		{                                   
-            descProceso[indProcesoActual].estado = bloqueado ;
-            descProceso[indProcesoActual].esperandoPor = rec_zombie ;
+            ptrDPActual->estado = bloqueado ;
+            ptrDPActual->esperandoPor = rec_zombie ;
             eliminarProcIndx(indProcesoActual) ;
-            eliminarPC2c(descProceso[indProcesoActual].ppindx,
-                         (ptrC2c_t)&descProceso[indProcesoActual].c2cHijos) ;
+            eliminarPC2c(ptrDPActual->ppindx,
+                         (ptrC2c_t)&ptrDPActual->c2cHijos) ;
             buscarNuevoProcesoActual() ;/* ¡no se retorna de esta funcion! */
         }                               /* =============================== */
         else if (pindx < 0)                                  /* error leve */
@@ -168,15 +175,15 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
             if (hpid == -1)                        /* buscar hijos zombies */
 			{
                 i = 0 ;
-                while ((i < maxProcesos) &&
-                       ((descProceso[i].ppindx != indProcesoActual) ||  /* hijo */
-                       (descProceso[i].estado != bloqueado) ||
-                       (descProceso[i].esperandoPor != rec_zombie)))  /* zombie */
+                while ((i < maxProcesos) &&                        /* hijo */
+                       ((descProceso[i].ppindx != indProcesoActual) ||  
+                       (descProceso[i].estado != bloqueado) ||   /* zombie */
+                       (descProceso[i].esperandoPor != rec_zombie)))  
                     i++ ;
-                if (i < maxProcesos) hpindx = i ;         /* primer hijo zombie */
+                if (i < maxProcesos) hpindx = i ;    /* primer hijo zombie */
                 else hpindx = -1 ;
             }
-            if ((hpindx != -1) &&              /* terminar de matar hijo zombie */
+            if ((hpindx != -1) &&         /* terminar de matar hijo zombie */
                 (descProceso[hpindx].ppindx == indProcesoActual) &&
                 (descProceso[hpindx].estado == bloqueado) &&
                 (descProceso[hpindx].esperandoPor == rec_zombie)) 
@@ -187,7 +194,7 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
 
                     eliminarPC2c(
 					    hpindx, 
-						(ptrC2c_t)&descProceso[indProcesoActual].c2cHijos
+						(ptrC2c_t)&ptrDPActual->c2cHijos
 					) ;
 
                 }
@@ -206,8 +213,8 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
 				{
                     i = 0 ;
                     while (i < maxProcesos) 
-					{
-                        if (descProceso[i].ppindx == indProcesoActual)   /* hijo */
+					{                                              /* hijo */
+                        if (descProceso[i].ppindx == indProcesoActual) 
                         descProceso[i].noStatus = TRUE ;
                         i++ ;
                     }
@@ -221,7 +228,7 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
                         i++ ;
                         if (i < maxProcesos)             /* hay algun hijo */
 						{
-                            descProceso[indProcesoActual].hpindx = -1 ;
+                            ptrDPActual->hpindx = -1 ;
 //                         if (indProcesoActual == indProcesoDeSuperficie)
 //                         focalizarWin(descProceso[i].win) ;
                            bloquearProcesoActual(rec_hijo) ;
@@ -238,7 +245,7 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
         break ;
                                                                  /* 0x0005 */
     case 0x05 :                                                  /* getpid */
-        tramaProceso->BX = descProceso[indProcesoActual].pid ;
+        tramaProceso->BX = ptrDPActual->pid ;
         break ;
                                                                  /* 0x0006 */
     case 0x06 :                                                /* getpindx */
@@ -247,25 +254,25 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
                                                                  /* 0x0007 */
     case 0x07 :                                                 /* getppid */
         tramaProceso->BX =
-        descProceso[descProceso[indProcesoActual].ppindx].pid ;
+        descProceso[ptrDPActual->ppindx].pid ;
         break ;
                                                                  /* 0x0008 */
     case 0x08 :                                                  /* getuid */
         tramaProceso->BX =
-        descProceso[indProcesoActual].uid ;
+        ptrDPActual->uid ;
         break ;
                                                                  /* 0x0009 */                                                                 /* 0x0008 */
     case 0x09 :                                                  /* setuid */
-        descProceso[indProcesoActual].uid = tramaProceso->BX ;
+        ptrDPActual->uid = tramaProceso->BX ;
         break ;
                                                                  /* 0x000a */
     case 0x0a :                                                  /* getgid */
         tramaProceso->BX =
-        descProceso[indProcesoActual].gid ;
+        ptrDPActual->gid ;
         break ;
                                                                  /* 0x000b */
     case 0x0b :                                                  /* setgid */
-      descProceso[indProcesoActual].gid = tramaProceso->BX ;
+      ptrDPActual->gid = tramaProceso->BX ;
       break ;
                                                                  /* 0x000c */
     case 0x0c :                                                 /* killpid */
@@ -273,18 +280,31 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
         if (pid >= 0)                              /* matar el proceso pid */
 		{
             i = indice(pid) ;
-            tramaProceso->BX = (word_t)((i != -1) ? matarProcIndx(i) : -2) ;
+            tramaProceso->BX = -1 ;       /* codigo de terminacion victima */
+            tramaProceso->BX = (word_t)((i != -1) ? doKill(i) : -2) ;
+//          tramaProceso->BX = (word_t)((i != -1) ? matarProcIndx(i) : -2) ;
         }
         else                                 /* matar a todos los procesos */
 		{
             for ( i = 1 ; i < maxProcesos ; i++ )
-            matarProcIndx(i) ;
+                matarProcIndx(i) ;
             tramaProceso->BX = 0 ;
             if (indProcesoActual > 0)
                 buscarNuevoProcesoActual() ;
         }
         break ;
+//                                                               /* 0x000d */
+//  case 0x0d : ;                                                /* thread */
+//      /* esta implementada arriba con el fork */	
 
+                                                                 /* 0x000e */
+    case 0x0e :                                                   /* yield */
+        ptrDPActual->trama = tramaProceso ;
+        ptrDPActual->estado = preparado ;	
+        encolarPC2c(indProcesoActual, &c2cPFR[PPreparados]) ;		
+		activarProceso(sigProceso()) ;
+		break ;
+		
     default : ;
 
   }

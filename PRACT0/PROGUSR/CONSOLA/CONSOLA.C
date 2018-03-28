@@ -504,7 +504,7 @@ void far isr_consola ( void )
     nuevaConsola = 0xFF ;
     numFilasAnt = maxFilasAct ;
 
-#if (TRUE)                               /* trazas por si hay que depurar */
+#if (FALSE)                               /* trazas por si hay que depurar */
     printCarBIOS('<') ;
     printHexBIOS(scanCodeAnt, 2) ;
     printHexBIOS(scanCode, 2) ;
@@ -522,30 +522,23 @@ void far isr_consola ( void )
 
     if (AltPulsada)
     {
-
         switch (scanCode)
         {
-
-        case CS_ES_BSlash :
-            nuevaConsola = 0 ;
-            break ;
-
-        case CS_F1     : ;
-        case CS_F2     : ;
-        case CS_F3     : ;
-        case CS_F4     : ;
-        case CS_F5     : ;
-        case CS_F6     : ;
-        case CS_F7     : ;
-        case CS_F8     : ;
-        case CS_F9     : ;
-        case CS_F10    :
-            con = scanCode - CS_F1 + 1 ;
-            if (con < maxConsolas)
-                nuevaConsola = con ;
-            break ;
-        default        :
-            ;
+        case CS_ES_BSlash : nuevaConsola = 0 ; break ;
+        case CS_F1        : ;
+        case CS_F2        : ;
+        case CS_F3        : ;
+        case CS_F4        : ;
+        case CS_F5        : ;
+        case CS_F6        : ;
+        case CS_F7        : ;
+        case CS_F8        : ;
+        case CS_F9        : ;
+        case CS_F10       : con = scanCode - CS_F1 + 1 ;
+                            if (con < maxConsolas)
+                                nuevaConsola = con ;
+                            break ;
+        default           : ;
         }
 
         if (nuevaConsola != 0xFF)
@@ -565,15 +558,15 @@ void far isr_consola ( void )
             case 0x35 : ;                                          /* Alt- */
                 if (scanCode == 0x1B)                              /* Alt+ */
                 {
-                    if (numFilasAnt >= 50) numFilas = 25 ;
+                    if      (numFilasAnt >= 50) numFilas = 25 ;
                     else if (numFilasAnt >= 28) numFilas = 50 ;
-                    else numFilas = 28 ;
+                    else                        numFilas = 28 ;
                 }
                 else                                               /* Alt- */
                 {
-                    if (numFilasAnt >= 50) numFilas = 28 ;
+                    if      (numFilasAnt >= 50) numFilas = 28 ;
                     else if (numFilasAnt >= 28) numFilas = 25 ;
-                    else numFilas = 50 ;
+                    else                        numFilas = 50 ;
                 }
 ////            if (numFilas != numFilasAnt)
 ////            {
@@ -636,7 +629,12 @@ void far isr_consola ( void )
 //  puntoDeParada() ;
 #endif
 
-//  printHexBIOS(w, 4) ; printCarBIOS(' ') ;
+#if (FALSE)                               /* trazas por si hay que depurar */
+    printCarBIOS('[') ;
+//  printCarBIOS((char)w) ;
+    printHexBIOS(w, 4) ; 
+    printCarBIOS(']') ;
+#endif
 
     if (w)
     {
@@ -825,7 +823,7 @@ int far cbForTimer ( void far * arg )                         /* call back */
 
     save_DS0() ;                            /* guarda el DS anterior (SO1) */
     setraw_DS() ;           /* establece el DS correspondiente al programa */
-    /* punteros a pila (parametros/variables locales) */
+//                       /* punteros a pila (parametros/variables locales) */
     /*
       tramaProceso = MK_FP(*ptrSS_Proceso, *ptrSP_Proceso) ;
     */

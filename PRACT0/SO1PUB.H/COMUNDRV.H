@@ -21,6 +21,7 @@
 /* (DATA) de manera que esten mas proximas al segmento de codigo (CODE)    */
 
 static pindx_t              far * ptrIndProcesoActual      = NULL ;
+static descProceso_t        far * ptrDPActual              = NULL ;
 static trama_t        far * far * ptrTramaProceso          = NULL ;
 static bool_t               far * ptrActivarAlEpilogo      = NULL ;
 static descProceso_t        far * ptrDescProceso           = NULL ; /* tabla de procesos */
@@ -38,6 +39,7 @@ static word_t                     SP0_SO1                  = 0x0000 ;
 static dword_t              far * ptrContRodajas           = NULL ; /* */
 static int                  far * ptrContTicsRodaja        = NULL ; /* */
 static rti_t                far * ptrVIOrg                 = NULL ;
+
 static sigProceso_t               sigProceso               = NULL ;
 static activarProceso_t           activarProceso           = NULL ;
 static buscarNuevoProcesoActual_t buscarNuevoProcesoActual = NULL ;

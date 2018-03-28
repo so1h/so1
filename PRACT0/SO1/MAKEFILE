@@ -23,6 +23,8 @@ OBJS0 = obj\ajustes.obj  \
         obj\manej_02.obj \
         obj\manej_03.obj \
         obj\manej_04.obj \
+#       obj\manej_05.obj \
+        obj\manej_06.obj \
 #       obj\manej_07.obj \
         obj\plot.obj     \
         obj\procesos.obj \
@@ -63,6 +65,7 @@ $(OBJSConComa:.obj=.obj,)      \
 ..\so1pub\obj\pantalla.obj,    \
 #..\so1pub\lib\ll_s_so1.lib,   \
 ..\so1pub\lib\ll_s_exc.lib,    \
+..\so1pub\lib\ll_s_u2s.lib,    \
 ..\so1pub\obj\msdos.obj,       \
 ..\so1pub\obj\puertos.obj,     \
 ..\so1pub\obj\bios_0.obj,      \

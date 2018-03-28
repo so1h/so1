@@ -56,6 +56,17 @@ int exec ( const char far * nombre,
 /* datros y pila.                                                          */
 /* ----------------------------------------------------------------------- */
 
+pid_t thread ( void * (* funcion) (void * arg), word_t SP0, void * arg ) ;
+
+/* ----------------------------------------------------------------------- */
+/* Esta llamada al sistema crea un nuevo proceso con exactamente el mismo  */
+/* espacio de direcionamiento que el proceso que la ejecuta (exactamente   */
+/* con las mismas direcciones) pero que pasa a ejecutar la funcion que se  */
+/* indica como primer parametro y utilizando una pila con puntero de pila  */
+/* inicial el indicado con SP0.                                            */
+/* ----------------------------------------------------------------------- */
+
+void yield ( void ) ;
 
 pid_t waitpid ( pid_t pid, int far * statloc ) ;
 

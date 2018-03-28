@@ -1,0 +1,188 @@
+INT 15h, C2h (194)         Mouse Interface                        PS/2
+
+     Support for the Mouse.
+
+   AL = 0 Enable/disable Mouse
+
+                 On entry:          AH    C2h
+                                    AL    00h
+                                    BH    00h . Disable mouse
+                                          01h . Enable mouse
+
+                 Returns:       For PCjr and PC:
+                                    AH = 80h, CF = 1
+                                For PC XT, AT, XT 286, Convertible, PS/2 30:
+                                    AH = 86h, CF = 1
+                                For All Others:
+                                    CF = 0 . Operation successful
+                                       = 1 . Operation unsuccessful
+                                    AH = Status:
+                                        00h No error
+                                        01h Invalid function call
+                                        02h Invalid input
+                                        03h Interface error
+                                        04h Resend
+                                        05h No far call installed
+
+  ---------------------------------------------------------------------------
+   AL = 1 Reset Mouse
+
+                 On entry:          AH    C2h
+                                    AL    01h
+
+                 Returns:           See AL = 0 for AH setting.
+                                    BH = Device ID
+
+  ---------------------------------------------------------------------------
+   AL = 2 Set Sample Rate
+
+                 On entry:          AH    C2h
+                                    AL    02h
+                                    BH    Sample Rate:
+                                        00h 10/sec
+                                        01h 20/sec
+                                        02h 40/sec
+                                        03h 60/sec
+                                        04h 80/sec
+                                        05h 100/sec
+                                        06h 200/sec
+
+                 Returns:           See AL = 0 for AH setting.
+
+  ---------------------------------------------------------------------------
+   AL = 3 Set Resolution
+
+                 On entry:          AH    C2h
+                                    AL    03h
+                                    BH    Sample Rate:
+                                        00h 1 count/mm
+                                        01h 2 counts/mm
+                                        02h 4 counts/mm
+                                        03h 8 counts/mm
+
+                 Returns:           See AL = 0 for AH setting.
+
+  ---------------------------------------------------------------------------
+   AL = 4 Read Device Type
+
+                 On entry:          AH    C2h
+                                    AL    4
+                                    AL    04h
+
+                 Returns:           See AL = 0 for AH setting.
+                                    BH = Device ID
+
+  ---------------------------------------------------------------------------
+   AL = 5 Mouse Interface Initialization
+
+                 On entry:          AH    C2h
+                                    AL    5
+                                    BH    Data package size
+                                        00h reserved
+                                        01h 1 byte
+                                        02h 2 bytes
+                                             :
+                                        08h 8 bytes
+
+                 Returns:           See AL = 0 for AH setting.
+
+  ---------------------------------------------------------------------------
+   AL = 6 Extended Commands
+
+        BH    00h . return status
+
+                 On entry:          AH    C2h
+                                    AL    6
+                                    BH    00h . return status
+
+                 Returns:           See AL = 0 for AH setting.
+                                    BL = Status Byte 1
+                                        Bit 7 = 0 Reserved
+                                        Bit 6 = 0 . Stream mode
+                                                1 . Remote mode
+                                        Bit 5 = 0 .Disable
+                                                1 . Enable
+                                        Bit 4 = 0 . 1:1 scaling
+                                                1 . 2:1 scaling
+                                        Bit 3 = 0 Reserved
+                                        Bit 2 = 1 . Left button pressed
+                                        Bit 1 = 0 Reserved
+                                        Bit 0 = 1 . Right button pressed
+
+                                    CL = Status Byte 2
+                                          0 . 1 count/mm
+                                          1 . 2 counts/mm
+                                          2 . 4 counts/mm
+                                          3 . 8 counts/mm
+
+        BH    01h . Set Scaling 1:1
+
+                 On entry:          AH    C2h
+                                    AL    6
+                                    BH    01h . Set scaling 1:1
+
+                 Returns:           See AL = 0 for AH setting.
+
+
+        BH    02h . Set Scaling 2:1
+
+                 On entry:          AH    C2h
+                                    AL    6
+                                    BH    02h . Set scaling 2:1
+
+                 Returns:           See AL = 0 for AH setting.
+
+  ---------------------------------------------------------------------------
+   AL = 7 Device Driver Far Call Initialization
+
+                 On entry:          AH    C2h
+                                    AL    7
+                                    ES    Segment
+                                    BX    Offset
+
+                 Returns:           See AL = 0 for AH setting.
+
+  ---------------------------------------------------------------------------
+
+     This is the support for the mouse. Each time mouse data is
+     available, the mouse interrupt handler calls the device driver
+     address (which you pass to BIOS in in Subservice 7) with the
+     following information on the stack:
+
+                Word 1 Pushed on Stack:
+                        Low Byte = Status
+                                Bit 7 = 1 . Y data overflow
+                                Bit 6 = 1 . X data overflow
+                                Bit 5 = 1 . Y data is negative
+                                Bit 4 = 1 . X data is negative
+                                Bit 3 reserved (must be 1)
+                                Bit 2 reserved (must be 0)
+                                Bit 1 = 1 . right button pressed
+                                Bit 0 = 1 . left button pressed
+                        High Byte = 0
+
+                Word 2 Pushed on the Stack
+                        Low Byte = X Data
+                                Bit 7 = Most significant bit
+                                Bit 0 = Least significant bit
+                        High byte = 0
+
+
+                Word 3 Pushed on the Stack
+                        Low Byte = Y Data
+                                Bit 7 = Most significant bit
+                                Bit 0 = Least significant bit
+                        High byte = 0
+
+
+                Word 4 Pushed on the Stack
+                        Low Byte = 0
+                        High byte = 0
+
+     This information is followed on the stack by the far return address of
+     the mouse interrupt routine.
+
+     Every time there is a mouse event (mouse moved, button pushed, etc),
+     the address you passed in Subservice 7 is called with the above
+     information. You can examine the words on the stack to get mouse
+     pointer location and button information.

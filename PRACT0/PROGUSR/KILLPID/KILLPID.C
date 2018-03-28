@@ -35,12 +35,12 @@ int main ( int argc, char * argv [ ] )
     else if (!strcmpu(argv[1], "-a")) killpid(-1) ;
     else
     {
-        while (argv[1][i] != (char)0)
+        while (argv[1][i] != '\0')
         {
             comando[0][i] = argv[1][i] ;
             i++ ;
         }
-        comando[0][i] = (char)0 ;
+        comando[0][i] = '\0' ;
         inicScanner() ;
         obtenSimb() ;
         if (simb == s_numero)
@@ -65,4 +65,3 @@ int main ( int argc, char * argv [ ] )
 //	getchar() ;
 	return(0) ;
 }
-

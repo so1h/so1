@@ -75,6 +75,38 @@ int exec ( const char far * nombre,                        /* ax = 0002h */
 
 
 /* ----------------------------------------------------------------------- */
+/* thread(funcion, SP0)                                                    */
+/* ----------------------------------------------------------------------- */
+/* Esta llamada al sistema crea un nuevo proceso con exactamente el mismo  */
+/* espacio de direcionamiento que el proceso que la ejecuta (exactamente   */
+/* con las mismas direcciones) pero que pasa a ejecutar la funcion que se  */
+/* indica como primer parametro y utilizando una pila con puntero de pila  */
+/* inicial el indicado con SP0.                                            */
+/* ----------------------------------------------------------------------- */
+
+pid_t thread ( void * (* funcion) (void * arg), word_t SP0, void * arg ) 
+{
+    asm 
+	{
+		mov bx,funcion ;
+		mov cx,SP0 ;
+		mov dx,arg ;
+		mov ax,000dh ;
+		int nVIntSO1 ;
+		mov ax,dx ;
+	}		
+}
+
+void yield ( void ) 
+{
+	asm 
+	{ 
+	    mov ax,000eh ;
+		int nVIntSO1 ;
+	}		
+}
+
+/* ----------------------------------------------------------------------- */
 /* waitpid(pid, &statloc)                                                  */
 /* ----------------------------------------------------------------------- */
 /* El proceso que ejecuta esta llamada queda bloqueado hasta que el        */

@@ -86,6 +86,7 @@ char strTipoRecurso [ ] [ 13 ] =
     "rTuberia",
     "rGP",
     "rGM",
+    "rDB",
     "rSF",
     "rOtro"
 } ;

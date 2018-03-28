@@ -1,0 +1,107 @@
+
+PROGRAMA = SO1
+
+CON_PROCESO_INICIAL = TRUE
+
+OBJS0 = obj\ajustes.obj  \
+#       obj\mboot.obj    \
+        obj\so1dbg.obj   \
+        obj\s0.obj       \
+#
+        obj\$(PROGRAMA).obj \
+#
+        obj\blockpr.obj  \
+        obj\bios.obj     \
+        obj\dbgword.obj  \
+        obj\dokill.obj   \
+        obj\ejecutar.obj \
+        obj\matrix.obj \
+        obj\interrup.obj \
+        obj\llamadas.obj \
+        obj\manej_00.obj \
+        obj\manej_01.obj \
+        obj\manej_02.obj \
+        obj\manej_03.obj \
+        obj\manej_04.obj \
+#       obj\manej_07.obj \
+        obj\plot.obj     \
+        obj\procesos.obj \
+        obj\recursos.obj \
+        obj\sf.obj       \
+#                        \
+#       drivers:         \
+#       =======          \
+        obj\gm.obj       \
+#       obj\gp.obj       \
+        obj\db.obj       \
+        obj\minifs.obj   \
+
+!if $(CON_PROCESO_INICIAL) == TRUE
+OBJS = $(OBJS0)
+!else
+OBJS = $(OBJS0) obj\iniccode.obj
+!endif
+
+# primer fichero objeto (..\..\so1pub\lib\startlib.lib)
+# segundo fichero objeto (..\so1\obj\ajustes.obj)
+# ultimo fichero objeto (..\so1pub\obj\fincode.obj)
+
+OBJSConComa = $(OBJS:.lib=.lib,)
+
+OBJS2LINK0 =                   \
+..\startfin\lib\startlib.lib,  \
+$(OBJSConComa:.obj=.obj,)      \
+..\so1pub\obj\tipos.obj,       \
+..\so1pub\obj\ptrc2c.obj,      \
+..\so1pub\obj\ccb.obj,         \
+..\so1pub\obj\ctype.obj,       \
+..\so1pub\obj\strings.obj,     \
+..\so1pub\obj\memory.obj,      \
+..\so1pub\obj\printgen.obj,    \
+..\so1pub\obj\escribir.obj,    \
+..\so1pub\obj\put.obj,         \
+..\so1pub\obj\pantalla.obj,    \
+#..\so1pub\lib\ll_s_so1.lib,   \
+..\so1pub\lib\ll_s_exc.lib,    \
+..\so1pub\obj\msdos.obj,       \
+..\so1pub\obj\puertos.obj,     \
+..\so1pub\obj\bios_0.obj,      \
+..\so1pub\obj\telon.obj,       \
+..\so1pub\obj\debug.obj,       \
+..\so1pub\obj\cmos.obj,        \
+..\so1pub\obj\pic.obj,         \
+..\crtl\obj\h_ldiv.obj,        \
+..\crtl\obj\h_lursh.obj,       \
+..\crtl\obj\h_llsh.obj,        \
+..\crtl\obj\f_lxmul.obj,       \
+..\crtl\obj\n_lxmul.obj,       \
+
+!if $(CON_PROCESO_INICIAL) == TRUE
+OBJS2LINK = $(OBJS2LINK0)      \
+..\startfin\lib\finlib.lib
+!else
+OBJS2LINK = $(OBJS2LINK0)      \
+..\so1pub\obj\nop.obj,         \
+..\so1pub\obj\colores.obj,     \
+..\so1pub\obj\saludos.obj,     \
+..\so1pub\obj\scanner.obj,     \
+..\so1pub\obj\interpre.obj,    \
+..\so1pub\obj\crthw.obj,       \
+..\startfin\lib\finlib.lib
+!endif
+
+#puntero de pila inicial (en ..\so1pub.h\ajustsp.h)
+
+SPINICIAL =
+
+.path.bin = .
+.path.exe = .
+.path.lib = LIB
+.path.obj = OBJ;..\SO1PUB\OBJ
+.path.asm = ASM
+.path.c   = .
+.path.h   = ..\SO1.H;..\SO1PUB.H
+
+!include "..\MKFILE0"
+!include "..\MKS"
+!include "MAKEMB"

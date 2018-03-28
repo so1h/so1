@@ -404,6 +404,8 @@ void tratarRaton ( void )
     static int incX = 0 ;                                          /* DATA */
     static int incY = 0 ;                                          /* DATA */
 
+//  *(pointer_t)MK_FP(0xB800, 0x0000) = '%' ;                     /* traza */	
+	
     asm in al,64h ;                                      /* TECLADO_ESTADO */
     asm mov byteEstado,al
     if ((byteEstado & 0x21) == 0x21)      /* hay byte procedente del raton */
@@ -463,8 +465,8 @@ void procesarRaton ( word_t parW0, int parX, int parY )
 //  static int CReal ;
 
     er.W0 = parW0 ;
-    er.X = parX ;
-    er.Y = parY ;
+    er.X  = parX ;
+    er.Y  = parY ;
 
     er.F = er.Y >> 3 ;                                          /* F = Y/8 */
     er.C = er.X >> 3 ;                                          /* C = X/8 */
@@ -688,22 +690,30 @@ void far handlerRatonNulo ( void )
 {
 }
 
-void far handlerRaton ( dword_t y, word_t x, word_t s )
+/* ver documentacion de la int 15h AX=C20x */
+
+void far handlerRaton ( word_t cero, word_t incY, word_t incX, word_t s )
 {
     static bool_t priVez = TRUE ;       /* para ignorar los incrementos .. */
-    static int incX = 0 ;               /* .. X,Y iniciales que son basura */
-	static int incY = 0 ;    
-    static int X1 ;
-    static int Y1 ;
+                                        /* .. X,Y iniciales que son basura */
+    static int X1 = 0 ;                                            /* DATA */
+    static int Y1 = 0 ;                                            /* DATA */
 
+//	*(pointer_t)MK_FP(0xB800, 0x0000) = '*' ;                     /* traza */
+	
 	setraw_DS() ;                         /* establecemos el DS del driver */
 	  
-    if (priVez)
+    if (priVez) 
+	{
+		incX = 0 ;
+	    incY = 0 ;
         priVez = FALSE ;       /* Ignoro la primera lectura por ser basura */
+	}	
     else
     {
-        incX = x ;
-        incY = (word_t)(y >> 16) ; /* Tienen sentido respecto a MOVING/SIZING y */
+//      incX = x ;
+//      incY = (word_t)(y >> 16) ;
+//      incY = y ;            /* Tienen sentido respecto a MOVING/SIZING y */
         er.B0 = s ;             /* (s & BITS_IGN) | (M.stat & ~BITS_IGN) ; */
     }                                             /* Respeto los que habia */
 //                                         /* Considero el bit de signo .. */
@@ -712,12 +722,12 @@ void far handlerRaton ( dword_t y, word_t x, word_t s )
     X1 = (er.X + incX) ;
     Y1 = (er.Y - incY) ;
 
-    if (X1 < 0)             er.X = 0 ;
-    else if (X1 >= maxX)    er.X = maxX-1 ;
-    else                    er.X = X1 ;
+    if      (X1 < 0)     er.X = 0 ;
+    else if (X1 >= maxX) er.X = maxX - 1 ;
+    else                 er.X = X1 ;
 
-    if (Y1 < 0)             er.Y = 0 ;
-    else if (Y1 >= maxYAct) er.Y = maxYAct-1 ;
+    if      (Y1 < 0)        er.Y = 0 ;
+    else if (Y1 >= maxYAct) er.Y = maxYAct - 1 ;
     else                    er.Y = Y1 ;
 }
 
@@ -732,14 +742,17 @@ void disablePS2 ( void )
 	
 asm
 {
-    xor bx,bx ;  
+//  mov ax,0C201h ;                          
+//  int 15h ;                                          /* reset => disable */
+
+    mov bh,0 ;  
     mov ax,0C200h ;                                       /* set mouse off */
     int 15h ;
 	
 //  @1: jmp @1                         /* para depurar y comprobar CF == 0 */
 	
-//	xor bx,bx ;
-    mov es,bx ;
+	xor bx,bx ;
+    mov es,bx ;                                        /* ES:BX==0000:0000 */
     mov ax,0C207h ;                     /* borrar mouse handler (ES:BX==0) */
     int 15h ;
 	
@@ -757,11 +770,18 @@ int desintegrarRaton ( tipoRaton_t tipoRaton )
     {
     case msdos : uninstallMouseEventHandler(ratonHandler) ; break ; 
     case ps2   : disablePS2() ;         
-                 /* no funciona bien en qemu ya que al mover el raton se   */
-                 /* queda la maquina flipada. Una solucion es inhibir las  */
-                 /* interrupciones en el PIC 8259A (IMR)                   */
-                 /* establecerIMR(valorIMR() | (1 << IRQ_RATON)) ;         */	  
+                 /* no funciona bien en qemu 2.11.0 ya que en ese momento  */
+				 /* al mover el raton se queda la consola sin encontrar    */
+				 /* caracteres en el bufer del teclado (leerTeclaBDA) a    */
+				 /* pesar de que los codigos de scan se reciben de manera  */
+				 /* correcta. Aunque inhiba las interrupciones en el PIC   */
+				 /* 8259A (IMR) eso no resuelve nada ya que sigue sin      */
+				 /* funcionar leerTeclaBDA.                                */
 //				 establecerIMR(valorIMR() | (1 << IRQ_RATON)) ;         /* */
+                 /* No obstante en la version de qemu 0.14.1 compilada por */
+				 /* Takeda no se da este problema, por lo que hay que      */
+				 /* concluir que es un error de la version 2.11.0 de qemu. */
+				 /* Notificar a www.qemu.org.                              */
     }
     return(res) ;
 }
@@ -919,7 +939,7 @@ noPS2:
 /* desintegarRaton se ha movido mas arriba para poder ser utilizado por la */
 /* funcion finishRaton en caso de que REDUCIR_DRIVER valga TRUE.           */
 
-void disablePS2 ( void ) ;
+void disablePS2 ( void ) ;                      /* implementado mas arriba */
 
 void enablePS2 ( handler_t handler )
 {
@@ -928,7 +948,7 @@ void enablePS2 ( handler_t handler )
     handlerWord = FP_OFF(handler) ;
 asm 
 {
-    mov bx,0 ;
+    mov bh,0 ;
     mov ax,0C200h ;                                       /* set mouse off */
     int 15h ;
 

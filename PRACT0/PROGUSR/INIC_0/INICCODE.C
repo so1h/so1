@@ -22,7 +22,9 @@
 #include "iniccode.h"                                            /* inic_0 */
 //                                                         /* valor normal */
 #define RETARDO TRUE                                       /*    TRUE      */ 
+//#define RETARDO FALSE                                    /*    TRUE      */ 
 #define TIMER   TRUE                                       /*    TRUE      */
+//#define TIMER   FALSE                                    /*    TRUE      */
 #define CONSOLA TRUE                                       /*    TRUE      */ 
 #define RELOJ   TRUE                                       /*    TRUE      */ 
 #define RATON   TRUE                                       /*    TRUE      */ 

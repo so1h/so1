@@ -4,5 +4,4 @@
 /*    codigo comun de la llamadas kill y de cerrar ventana con el raton    */
 /* ----------------------------------------------------------------------- */
 
-void doKill ( pindx_t pindx ) ;                /* el proceso pindx termina */
-
+int doKill ( pindx_t pindx ) ;                 /* el proceso pindx termina */

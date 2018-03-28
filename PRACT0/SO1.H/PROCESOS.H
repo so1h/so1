@@ -41,7 +41,7 @@ extern trama_t far * tramaProceso ;
 extern trama_t far * tramaTarea ;
 
 /* Pueden ocurrir interrupciones mientras se atiende una llamada al        */
-/* sistema, por eso hay que distinguir entre la pila del proceso que hace  */
+/* sistema. Por eso hay que distinguir entre la pila del proceso que hace  */
 /* la llamada, y la pila del proceso/sistema interrumpido. Esto ocurre     */
 /* por ejemplo cuando durante la llamada al sistema se leen sectores del   */
 /* disco con la int 13 del bios. Dicha int 13 permite las interrupciones,  */
@@ -52,6 +52,8 @@ extern trama_t far * tramaTarea ;
 
 extern int indProcesoActual ;           /* indice del proceso en ejecucion */
 
+extern descProceso_t * ptrDPActual ;     /* &descProceso[indProcesoActual] */
+                                                /* para acelerar el acceso */
 extern int indProcesoDeSuperficie ;
 
 extern dword_t contRodajas ;                        /* contador de rodajas */
@@ -90,11 +92,3 @@ int eliminarProcIndx ( pindx_t pindx ) ;          /* elimina proceso pindx */
 int matarProcIndx ( pindx_t pindx ) ;                /* mata proceso pindx */
 
 #endif /* PROCESOS_H */
-
-
-
-
-
-
-
-

@@ -89,6 +89,7 @@ void so1_manejador_03 ( void )                         /* ah = 3 ; int SO1 */
             transferirBPFR(ptrPFR, tramaProceso->AL) ;
 		}
         break ;
+		
     case 0x03 :                                                  /* 0x0303 */
 	    {
 		    descriptor_de_fichero_t far * df ;
@@ -100,6 +101,7 @@ void so1_manejador_03 ( void )                         /* ah = 3 ; int SO1 */
                 inicTablaFichAbiertos() ;     /* borramos la tabla de f.a. */
 		}	
         break ;
+		
     case 0x04 :                                                  /* 0x0304 */
 	    {
             info_t far * info ;
@@ -115,6 +117,7 @@ void so1_manejador_03 ( void )                         /* ah = 3 ; int SO1 */
             info->ptrDebugWord = (word_t far *)MK_FP(_DS, FP_OFF(&debugWord)) ;
 		}
         break ;
+		
     case 0x05 :                                                  /* 0x0305 */
         tramaProceso->AX = (word_t)unidadLogicaActual ;         /* getdisk */
         break ;
@@ -133,6 +136,7 @@ void so1_manejador_03 ( void )                         /* ah = 3 ; int SO1 */
                 (ffblk_t far *)MK_FP(tramaProceso->DS, tramaProceso->DX)
             ) ;
         break ;
+		
     case 0x07 :                                                  /* 0x0307 */
         tramaProceso->AX = (word_t)
             findNextSo1(                                    /* findNextSo1 */

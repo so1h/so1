@@ -1,0 +1,185 @@
+
+#.autodepend
+
+.path.obj = .;..\_OCULTOS;..\..\SO1PUB\OBJ;..\..\SO1\OBJ
+
+disquete: ..\..\DISQUETE\$(PROGRAMA).bin
+
+..\..\DISQUETE\$(PROGRAMA).bin: $(PROGRAMA).bin
+  @echo.
+  SPINIC $(PROGRAMA).bin $(SPINICIAL)
+# @SPINIC $(PROGRAMA).bin
+  @echo.
+  @if exist $@ del $@
+  @if not exist ..\..\DISQUETE mkdir ..\..\DISQUETE
+  copy $(PROGRAMA).bin ..\..\DISQUETE
+
+$(PROGRAMA).bin: $(PROGRAMA).obj $(OBJS2LINK:,=)
+  @if not exist $(PROGRAMA).obj. @copy ..\_OCULTOS\$(PROGRAMA).obj . > NUL
+  @echo.
+# $(LINKER) $(OPCIONES_LR) $(OBJS2LINK) name $(PROGRAMA).BIN
+  @copy &&|
+$(OPCIONES_LR) \
+$(OBJS2LINK) \
+name
+| ops.lnk > nul
+  $(LINKER) @ops.lnk $(PROGRAMA).BIN
+  @if exist ops.lnk erase ops.lnk
+
+!if ($(COMPILACIONDIRECTA))
+
+#$(PROGRAMA).obj: $(PROGRAMA).c
+.c.obj:
+  @echo.
+  @copy &&|
+$(CFLAGS_DIR) -ms
+| ops.cmp > nul
+  @echo ------- $(CC) @ops.cmp $&.c -o $&.obj > CON
+  @$(CC) @ops.cmp -o$&.obj $&.c
+  @if exist ops.cmp erase ops.cmp
+  @echo.
+
+!else
+
+#$(PROGRAMA).obj: $(PROGRAMA).asm
+.asm.obj:
+!if $(TASM32) == TRUE
+  @copy &&|
+$(AFLAGS)
+| ops.ens > nul
+  @copy &&|
+, $&.obj, $&.lst
+| of.ens > nul
+  $(AS) @ops.ens $&.asm @of.ens
+  @if exist ops.ens erase ops.ens
+  @if exist of.ens erase of.ens
+!else
+  $(AS) $(AFLAGS) -Fl $&.asm
+# $(AS) $(AFLAGS) $&.asm
+!endif
+
+#$(PROGRAMA).asm: $(PROGRAMA).c
+.c.asm:
+  @echo.
+  @copy &&|
+$(CFLAGS_AS)
+| ops.cmp > nul
+  @if "$(DEBUG)" == "" (echo ------- $(CC) @ops.cmp $&.c > CON)
+  @if "$(DEBUG)" == "" ($(CC) @ops.cmp $&.c)
+  @if not "$(DEBUG)" == "" (echo ------- $(CC) @ops.cmp -v $&.c > CON)
+  @if not "$(DEBUG)" == "" ($(CC) @ops.cmp -v $&.c)
+  @if exist ops.cmp erase ops.cmp
+  @echo.
+
+!endif
+
+clean: pule
+  @if exist $(PROGRAMA).bin erase $(PROGRAMA).bin
+
+pule:
+  @if exist $(PROGRAMA).exe erase $(PROGRAMA).exe
+  @if exist $(PROGRAMA).obj erase $(PROGRAMA).obj
+  @if exist $(PROGRAMA).asm erase $(PROGRAMA).asm
+  @if exist $(PROGRAMA).lst erase $(PROGRAMA).lst
+  @if exist $(PROGRAMA).map erase $(PROGRAMA).map
+  @if exist $(PROGRAMA).bak erase $(PROGRAMA).bak
+  @if exist ops.lnk erase ops.lnk
+  @if exist *.TR erase *.TR
+  @if exist *.TD erase *.TD
+
+build: clean disquete
+
+show:
+  @if exist SOURCE\*.C move SOURCE\*.C .
+
+hide:
+  @if not exist SOURCE mkdir SOURCE
+  @if exist *.C move *.C SOURCE
+  @if not exist _OCULTOS mkdir _OCULTOS
+  @if exist *.OBJ move /Y *.OBJ ../_OCULTOS
+
+delsrc:
+  @if exist SOURCE\*.C del SOURCE\*.C
+  
+lst: 
+  @echo.
+  @copy &&|
+$(CFLAGS_AS)
+| ops.cmp > nul
+  @if "$(DEBUG)" == "" (echo ------- $(CC) @ops.cmp $(PROGRAMA).C > CON)
+  @if "$(DEBUG)" == "" ($(CC) @ops.cmp $(PROGRAMA).C)
+  @if not "$(DEBUG)" == "" (echo ------- $(CC) @ops.cmp -v $(PROGRAMA).C > CON)
+  @if not "$(DEBUG)" == "" ($(CC) @ops.cmp -v $(PROGRAMA).C)
+  @if exist ops.cmp erase ops.cmp
+  @echo.
+!if $(TASM32) == TRUE
+  @copy &&|
+$(AFLAGS)
+| ops.ens > nul
+  @copy &&|
+, $(PROGRAMA).obj, $(PROGRAMA).lst
+| of.ens > nul
+  $(AS) @ops.ens $&.asm @of.ens
+  @if exist ops.ens erase ops.ens
+  @if exist of.ens erase of.ens
+!else
+  $(AS) $(AFLAGS) -Fl $(PROGRAMA).asm
+# $(AS) $(AFLAGS) $(PROGRAMA).C.asm
+!endif
+
+run:
+  @echo.
+  cd ..\..\disquete
+  @copy &&|
+@mode con cols=80 lines=25
+@so1.exe
+@exit
+| so1.cmd > nul
+  @if %MSYSTEM%==MINGW64 (echo --------start so1.cmd & start so1.cmd)
+  @if NOT %MSYSTEM%==MINGW64 (echo --------so1.cmd & so1.cmd)
+# @if %MSYSTEM%==MINGW64 (start so1.exe)
+# @if NOT %MSYSTEM%==MINGW64 (so1.exe)
+
+runcom:
+  cd ..\..\disquete
+  cd ..\disquete
+  @copy /Y ..\so1\so1.com so1.com
+  @copy &&|
+@mode con cols=80 lines=25
+@msdos so1.com
+@exit
+| so1.bat > nul
+  @if %MSYSTEM%==MINGW64 (echo --------start so1.bat & start so1.bat)
+  @if NOT %MSYSTEM%==MINGW64 (echo --------so1.bat & so1.bat)
+# @if %MSYSTEM%==MINGW64 (start msdos ..\so1\so1.com)
+# @if NOT %MSYSTEM%==MINGW64 (msdos ..\so1\so1.com)
+  
+rundosbox:
+  @echo.
+# cd ..\..\disquete
+# start $(UUSB):\Interno\dosbox-0.74\dosbox.exe so1.exe -noconsole -exit
+  start $(UUSB):\Interno\dosbox-0.74\dosbox.exe ..\..\so1dbox.bat -noconsole -exit
+
+rundosboxdbg:
+  @echo.
+# cd ..\disquete
+# start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe so1.exe -noconsole -exit
+  start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe ..\..\so1dbox.bat -noconsole -exit
+
+help:
+# echo off & color 07 & title help & msg * "Hola"
+  @"echo."
+  @"echo    relacion de objetivos disponibles:"
+  @"echo."
+  @"echo    make            genera el programa de usuario $(PROGRAMA).BIN"
+  @"echo    make pule       borra todo salvo $(PROGRAMA).BIN, $(PROGRAMA).C y MAKEFILE"
+  @"echo    make clean      borra todo salvo $(PROGRAMA).C y MAKEFILEs"
+  @"echo    make build      borra y genera nuevo fichero $(PROGRAMA).BIN"
+  @"echo    make lst        genera nuevo fichero de listado $(PROGRAMA).LST"
+  @"echo    make run        ejecuta SO1.EXE en el directorio DISQUETE (Player)"
+  @"echo    make runcom     ejecuta SO1.COM en el directorio DISQUETE (Player)"
+  @"echo    make rundosbox  ejecuta SO1.EXE en el directorio DISQUETE (DOSBox)"
+  @"echo    make show       mueve los ficheros .C de los directorios SOURCE"
+  @"echo    make hide       mueve los ficheros .C a los directorios SOURCE"
+  @"echo                    y guarda los .OBJ en los directorios _OCULTOS"
+  @"echo    make help       muestra esta ayuda sobre los objetivos disponibles"

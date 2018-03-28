@@ -48,38 +48,38 @@ typedef struct {                                     /* master boot record */
   (tamCodigoMBR + sizeof(dword_t) + sizeof(word_t))         /* 446 = 0x1BE */
 
 typedef struct {                          /* Bloque de Parametros del BIOS */
-  word_t  bytesPorSector ;
-  byte_t  sectoresPorCluster ;
-  word_t  sectoresReservados ;
-  byte_t  numeroDeFATs ;
-  word_t  entradasDirRaiz ;
-  word_t  sectores16 ;
-  byte_t  tipoDeMedio ;
-  word_t  sectoresPorFAT ;
-  word_t  sectoresPorPista ;            /* Extended BPB additions(DOS 4.0) */
-  word_t  cabezas ;
-  dword_t primerSector ;
-  dword_t sectores ;
-} BPB_t ;
+  word_t  bytesPorSector ;                                     /*  2 bytes */
+  byte_t  sectoresPorCluster ;                                 /*  1 byte  */
+  word_t  sectoresReservados ;                                 /*  2 bytes */
+  byte_t  numeroDeFATs ;                                       /*  1 byte  */
+  word_t  entradasDirRaiz ;                                    /*  2 bytes */
+  word_t  sectores16 ;                                         /*  2 bytes */
+  byte_t  tipoDeMedio ;                                        /*  1 byte  */
+  word_t  sectoresPorFAT ;                                     /*  2 bytes */
+  word_t  sectoresPorPista ;  /* Extended BPB adds(DOS 4.0) */ /*  2 bytes */ 
+  word_t  cabezas ;                                            /*  2 bytes */
+  dword_t primerSector ;                                       /*  4 bytes */
+  dword_t sectores ;                                           /*  4 bytes */
+} BPB_t ;                                                      /* 25 bytes */
 
 #define tamBR        512                                          /* 0x200 */
 
 #define tamCodigoBR  448                                          /* 0x1C0 */
 
 typedef struct {                   /* plantilla para el sector de arranque */
-  byte_t  instJMP [2] ;
-  byte_t  instNOP ;
-  char    OEM [8] ;
-  BPB_t   BPB ;                           /* Bloque de Parametros del BIOS */
-  byte_t  unidad ;
-  byte_t  relleno ;
-  byte_t  signaturaExt ;
-  dword_t numeroDeSerie ;
-  char    etiqueta [11] ;
-  char    SF [8] ;
-  byte_t  codigo [448] ;
-  byte_t  signatura [2] ;
-} boot_t ;
+  byte_t  instJMP [2] ;                                       /*   2 bytes */  
+  byte_t  instNOP ;                                           /*   1 bytes */
+  char    OEM [8] ;                                           /*   8 bytes */
+  BPB_t   BPB ;           /* Bloque de Parametros del BIOS */ /*  27 bytes */
+  byte_t  unidad ;                                            /*   1 byte  */
+  byte_t  relleno ;                                           /*   1 byte  */
+  byte_t  signaturaExt ;                                      /*   1 byte  */
+  dword_t numeroDeSerie ;                                     /*   4 bytes */
+  char    etiqueta [11] ;                                     /*  11 bytes */
+  char    SF [8] ;                                            /*   8 bytes */
+  byte_t  codigo [448] ;                                      /* 448 bytes */
+  byte_t  signatura [2] ;                                     /*   2 bytes */
+} boot_t ;                                                    /* 512 bytes */
 
 #if (sizeof(boot_t) != tamBR)
 #error el tipo boot_t debe ocupar exactamente 512 bytes (un sector)
@@ -90,31 +90,31 @@ typedef struct {                   /* plantilla para el sector de arranque */
 #define maxUL 10       /* maximo numero de unidades logicas A, B, C, D, .. */
 
 typedef struct {                         /* unidad logica (particion, BPB) */
-  int ufindx ;                               /* indice de la unidad fisica */
-  int indParticion ;                             /* indice de la particion */
+  byte_t ufindx ;                            /* indice de la unidad fisica */
+  byte_t indParticion ;                          /* indice de la particion */
   char letra ;                       /* letra de la unidad: A, B, C, D, .. */
   BPB_t BPB ;               /* bloque de parametros del BIOS (superbloque) */
-} descUnidadLogica_t ;
+} descUnidadLogica_t ;                        /* 1 + 1 + 1 + 25 = 28 bytes */
 
 #define maxUF 4                       /* maximo numero de unidades fisicas */
 
 typedef struct {                                          /* unidad fisica */
-  int unidadBIOS ;    /* numero de la unidad segun el BIOS: 0x00, 0x80, .. */
+  byte_t unidadBIOS ; /* numero de la unidad segun el BIOS: 0x00, 0x80, .. */
   byte_t contUL ;                            /* numero de unidades logicas */
   descParticion_t descParticion [maxParticiones] ;
-  int ulindx [maxParticiones] ;         /* indices de las unidades logicas */
-} descUnidadFisica_t ;
+  byte_t ulindx [maxParticiones] ;      /* indices de las unidades logicas */
+} descUnidadFisica_t ;                        /* 1 + 1 + 16 + 1 = 19 bytes */
 
 typedef struct {                                  /* entrada de directorio */
-  byte_t  nombre [8] ;
-  byte_t  ext [3] ;
-  byte_t  atr ;
-  byte_t  relleno [10] ;
-  word_t  hora ;
-  word_t  fecha ;
-  word_t  primerCluster ;
-  dword_t tam ;
-} entrada_t ;
+  byte_t  nombre [8] ;                                         /*  8 bytes */
+  byte_t  ext [3] ;                                            /*  3 bytes */
+  byte_t  atr ;                                                /*  1 byte  */
+  byte_t  relleno [10] ;                                       /* 10 bytes */
+  word_t  hora ;                                               /*  2 bytes */
+  word_t  fecha ;                                              /*  2 bytes */
+  word_t  primerCluster ;                                      /*  2 bytes */
+  dword_t tam ;                                                /*  4 bytes */
+} entrada_t ;                                                  /* 32 bytes */
 
 #define bytesPorEntrada sizeof(entrada_t)                            /* 32 */
 

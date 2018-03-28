@@ -155,8 +155,7 @@ void inicializarC2c ( c2c_t far * c2c, dobleEnlace_t far * e, int cabecera, bool
 /* Estos invariantes se podrían relajar para permitir que la memoria que   */
 /* utilizan los enlaces se comparta entre varias colas disjuntas, como por */
 /* ejemplo la cola de descriptores de proceso libres y la cola de          */
-/* descriptores de proceso preparados. Lo mismo se puede aplicar a las     */
+/* descriptores de proceso preparados. Lo mismo puede aplicarse a las     */
 /* diferentes colas de procesos bloqueados siempre que sean disjuntas.     */
 /*                                                                         */
 /***************************************************************************/
-

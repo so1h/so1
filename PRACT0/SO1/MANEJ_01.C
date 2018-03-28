@@ -54,7 +54,7 @@ int indiceTFA ( const char far * nombre )
 {
     int df, dfs ;
     for ( df = 0 ; df < dfMax ; df++ ) 
-        if (((dfs = descProceso[indProcesoActual].tfa[df].dfs) != -1) &&
+        if (((dfs = ptrDPActual->tfa[df].dfs) != -1) &&
             (!strncmp(descFichero[dfs].nombre, nombre, 8)))
             return(df) ;
     return(-1) ;
@@ -64,7 +64,7 @@ int nuevaEntradaTFA ( void )
 {
     int df ;
     for ( df = 0 ; df < dfMax ; df++ )
-        if (descProceso[indProcesoActual].tfa[df].dfs < 0) 
+        if (ptrDPActual->tfa[df].dfs < 0) 
             return(df) ;
     return(-1) ;
 }
@@ -102,7 +102,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
         if (df >= 0)                       /* fichero ya abierto (proceso) */
 		{
 //          printStrBIOS("\n fichero ya abierto \n") ;  			
-            dfs = descProceso[indProcesoActual].tfa[df].dfs ;
+            dfs = ptrDPActual->tfa[df].dfs ;
             rindx = descFichero[dfs].rindx ;
         }
         else                               /* fichero no abierto (proceso) */
@@ -126,10 +126,10 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
             if ((df = nuevaEntradaTFA()) >= 0) 
 			{
                 if (dfs1 > 0) dfs = dfs1 ;
-                descProceso[indProcesoActual].nfa++ ;
-                descProceso[indProcesoActual].tfa[df].modoAp = modoAp ;
-                descProceso[indProcesoActual].tfa[df].dfs = dfs ;
-                descProceso[indProcesoActual].tfa[df].pos = 0 ;
+                ptrDPActual->nfa++ ;
+                ptrDPActual->tfa[df].modoAp = modoAp ;
+                ptrDPActual->tfa[df].dfs = dfs ;
+                ptrDPActual->tfa[df].pos = 0 ;
                 if ((modoAp & 0x0007) == O_RDONLY) descFichero[dfs].contAp_L++ ;
                 else if ((modoAp & 0x0007) == O_WRONLY) descFichero[dfs].contAp_E++ ;
             }
@@ -143,16 +143,16 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
         res = -1 ;
         if ((0 <= df) && (df < dfMax)) 
 		{
-            dfs = descProceso[indProcesoActual].tfa[df].dfs ;
+            dfs = ptrDPActual->tfa[df].dfs ;
             if ((0 <= dfs) && (dfs < dfsMax)) 
 			{
                 rindx = descFichero[dfs].rindx ;
 //              printStrBIOS("\n close dfs = ") ; printDecBIOS(dfs, 1) ; 
-                descProceso[indProcesoActual].nfa-- ;
-                modoAp = descProceso[indProcesoActual].tfa[df].modoAp ;
+                ptrDPActual->nfa-- ;
+                modoAp = ptrDPActual->tfa[df].modoAp ;
                 if ((modoAp & 0x0007) == O_RDONLY) descFichero[dfs].contAp_L-- ;
                 else if ((modoAp & 0x0007) == O_WRONLY) descFichero[dfs].contAp_E-- ;
-                descProceso[indProcesoActual].tfa[df].dfs = -1 ;
+                ptrDPActual->tfa[df].dfs = -1 ;
                 descRecurso[rindx].release(dfs) ;
                 res = 0 ;
             }
@@ -172,12 +172,12 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
             if (nbytes == 0) res = 0 ;
             else 
 			{
-                dfs = descProceso[indProcesoActual].tfa[df].dfs ;
+                dfs = ptrDPActual->tfa[df].dfs ;
                 if ((0 <= dfs) && (dfs < dfsMax)) 
 			    {
                     rindx = descFichero[dfs].rindx ;
                     if ((0 <= rindx) && (rindx < maxRecursos))
-                       modoAp = descProceso[indProcesoActual].tfa[df].modoAp ;
+                       modoAp = ptrDPActual->tfa[df].modoAp ;
                     dir = MK_FP(tramaProceso->ES, tramaProceso->DX) ;
                     switch (tramaProceso->AL) 
 				    {
@@ -203,7 +203,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
                         break ;
                     }
                     if (res > 0)
-                        descProceso[indProcesoActual].tfa[df].pos += res ;
+                        ptrDPActual->tfa[df].pos += res ;
                 }
             }
         }
@@ -214,7 +214,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
         df = tramaProceso->BX ;                                  /* lseek */
         posNueva = -1L ;
         if ((0 <= df) && (df < dfMax)) {
-            dfs = descProceso[indProcesoActual].tfa[df].dfs ;
+            dfs = ptrDPActual->tfa[df].dfs ;
             if ((0 <= dfs) && (dfs < dfsMax)) 
 			{
                 rindx = descFichero[dfs].rindx ;
@@ -226,7 +226,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
 					{
                         posNueva = descRecurso[rindx].lseek(dfs, pos, whence) ;
                         if (posNueva >= (long)0)
-                            descProceso[indProcesoActual].tfa[df].pos = posNueva ;
+                            ptrDPActual->tfa[df].pos = posNueva ;
                     }
                 }
             }
@@ -242,7 +242,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
         res = -1 ;
         if ((0 <= df) || (df < dfMax)) 
 		{
-            modoAp = descProceso[indProcesoActual].tfa[df].modoAp ;
+            modoAp = ptrDPActual->tfa[df].modoAp ;
             res = 0 ;
 
             if (cmd == F_GETFD) res = modoAp ;
@@ -250,7 +250,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
 			{
                 modoAp = modoAp & ~(O_APPEND | O_NONBLOCK) ;
                 modoAp = modoAp | (arg & (O_APPEND | O_NONBLOCK)) ;
-                descProceso[indProcesoActual].tfa[df].modoAp = modoAp ;
+                ptrDPActual->tfa[df].modoAp = modoAp ;
             }
 /*
             switch (cmd) 
@@ -274,7 +274,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
         res = -1 ;
         if ((0 <= df) || (df < dfMax)) 
 		{
-            dfs = descProceso[indProcesoActual].tfa[df].dfs ;
+            dfs = ptrDPActual->tfa[df].dfs ;
             if ((0 <= dfs) && (dfs < dfsMax)) 
 			{
                 rindx = descFichero[dfs].rindx ;

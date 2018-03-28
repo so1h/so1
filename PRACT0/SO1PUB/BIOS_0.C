@@ -6,7 +6,7 @@
 
 #include <so1pub.h\tipos.h>                                        /* retf */
 #include <so1pub.h\printgen.h>
-#include <so1pub.h\biosdata.h>
+#include <so1pub.h\biosdata.h>                              /* ptrBiosArea */
 #include <so1pub.h\bios_0.h>
 #include <so1pub.h\pantalla.h>                                /* atrNormal */
 
@@ -15,166 +15,201 @@
 /* ----------------------------------------------------------------------- */
 /* tipo de ordenador */
 
-byte_t tipoOrdenador ( void ) {
-  byte_t far * ptr = MK_FP(0xFFFF, 0x000E) ;
-  return(*ptr) ;
+byte_t tipoOrdenador ( void ) 
+{
+    byte_t far * ptr = MK_FP(0xFFFF, 0x000E) ;
+    return(*ptr) ;
 }
 
 /* reinicio */
 
 #if (FALSE)
-void rebootBIOS ( void ) {
-  asm int 19h
+void rebootBIOS ( void ) 
+{
+    asm int 19h
 }
 #endif
 
-void rebootLegacy ( void ) {
-  asm {
-    push 0F000h ;                   /* equivalente a call F000:FFF0 reboot */
-    push 0FFF0h ;
-    retf ;
-  }
+void rebootLegacy ( void ) 
+{
+    asm 
+	{
+        push 0F000h ;               /* equivalente a call F000:FFF0 reboot */
+        push 0FFF0h ;
+        retf ;
+    }
 }
 
 /* Teclado (int 16h) */
 
-byte_t tipoTeclado ( void ) {
-  byte_t res ;
-  asm mov ah,09h
-  asm int 16h
-  asm mov res,ah
-  return(res) ;
+byte_t tipoTeclado ( void ) 
+{
+    asm 
+	{
+		mov ah,09h ;
+        int 16h ;
+	}
+	return(_AH) ;
 }
 
 #if (FALSE)
 
-byte_t leerTeclaBIOS ( void ) {                /* bloqueante en bucle BIOS */
-  char car ;
-  asm mov ah,00h ;                    /* Llamada al BIOS: Leer del teclado */
-  asm int 16h ;
-  asm mov car,ah ;                         /* ah = codigo scan introducido */
-  return(car) ;
+byte_t leerTeclaBIOS ( void )                  /* bloqueante en bucle BIOS */
+{
+    asm 
+    {
+	    mov ah,00h ;                  /* Llamada al BIOS: Leer del teclado */
+        int 16h ;
+        mov car,ah ;                       
+    }
+    return(_AH) ;                          /* ah = codigo scan introducido */
 }
 
-byte_t leerTeclaExtBIOS ( void ) {        /* bloqueante en bucle BIOS [AT] */
-  char car ;
-  asm mov ah,10h ;    /* Llamada al BIOS: Leer teclado extendido 101 teclas*/
-  asm int 16h ;
-  asm mov car,ah ;                         /* ah = codigo scan introducido */
-  return(car) ;
+byte_t leerTeclaExtBIOS ( void )          /* bloqueante en bucle BIOS [AT] */
+{
+    asm 
+	{ 
+	    mov ah,10h ;  /* Llamada al BIOS: Leer teclado extendido 101 teclas*/
+        int 16h ;
+    }
+	return(_AH) ;
 }
 
-char leerCarBIOS ( void ) {                    /* bloqueante en bucle BIOS */
-  char car ;
-  asm mov ah,00h                      /* Llamada al BIOS: Leer del teclado */
-  asm int 16h
-  asm mov car,al                        /* al = caracter ascii introducido */
-  return(car) ;     /* al == 0 => a continuacion: caracter ascii extendido */
+char leerCarBIOS ( void )                      /* bloqueante en bucle BIOS */
+{
+    asm 
+	{
+		mov ah,00h ;                  /* Llamada al BIOS: Leer del teclado */
+        int 16h ;
+    }                                   /* al = caracter ascii introducido */
+    return(_AL) ;   /* al == 0 => a continuacion: caracter ascii extendido */
 }
 
 #endif
 
 /* leerTeclaBIOS parece que deja permitidas las interrupciones             */
 
-word_t leerTeclaBIOS ( void ) {                /* bloqueante en bucle BIOS */
-  word_t w ;
-  asm mov ah,00h ;                    /* Llamada al BIOS: Leer del teclado */
-  asm int 16h ;
-  asm mov w,ax ;       /* ah = codigo scan introducido al = caracter ASCII */
-  return(w) ;
+word_t leerTeclaBIOS ( void )                  /* bloqueante en bucle BIOS */
+{
+    asm 
+	{
+		mov ah,00h ;                  /* Llamada al BIOS: Leer del teclado */
+        int 16h ;
+    }                  /* ah = codigo scan introducido al = caracter ASCII */
+    return(_AX) ;
 }
 
-word_t leerTeclaExtBIOS ( void ) {             /* bloqueante en bucle BIOS */
-  word_t w ;
-  asm mov ah,10h ;    /* Llamada al BIOS: Leer teclado extendido 101 teclas*/
-  asm int 16h ;
-  asm mov w,ax ;       /* ah = codigo scan introducido al = caracter ASCII */
-  return(w) ;
+word_t leerTeclaExtBIOS ( void )               /* bloqueante en bucle BIOS */
+{
+    asm 
+	{
+		mov ah,10h ;  /* Llamada al BIOS: Leer teclado extendido 101 teclas*/
+        int 16h ;
+    }                  /* ah = codigo scan introducido al = caracter ASCII */
+    return(_AX) ;
 }
 
-word_t teclaListaBIOS ( void ) {            /* no bloqueante en bucle BIOS */
-  word_t w ;
-  asm mov ah,01h
-  asm int 16h
-  asm jne hayTecla
-  return(0) ;
+word_t teclaListaBIOS ( void )              /* no bloqueante en bucle BIOS */
+{
+    asm 
+	{
+		mov ah,01h ;
+        int 16h ;
+        jne hayTecla ;
+	}
+    return(0) ;
 hayTecla:
-  asm mov w,ax
-  return(w) ;                             /* al = caracter, ah = scan code */
+    return(_AX) ;                         /* al = caracter, ah = scan code */
 }
 
 /* Teclado (Bios Data Area)  (no alteran/permiten el flag de interrupcion) */
 
-word_t leerTeclaListaBDA ( void ) {
-  word_t w = 0x0000 ;
-  word_t start = ptrBiosArea->KBD_start ;
-  word_t end1 = ptrBiosArea->KBD_end1 ;
-  word_t out = ptrBiosArea->KBD_bufhead ;
-  word_t in = ptrBiosArea->KBD_buftail ;
-  int extended = ptrBiosArea->KBD_status.KBD_AT ;
-  char ascii_code ;
-  byte_t scan_code ;
-  if (out != in) {
-    /* w = *((word_t far *)MK_FP(0x040, out)) ; */
-    w = ptrBiosArea->KBD_buffer[(out-start)/2] ;
-    ascii_code = (char)w ;
-    scan_code = (byte_t)(w >> 8) ;
-    if (((ascii_code == (char)0xF0) && (scan_code != 0)) ||    /* 0xF0 liberacion tecla teclado 84 teclas */
-        ((ascii_code == (char)0xE0) && !extended))             /* 0xE0 teclado de 101 teclas */
-      w = w & 0xFF00 ;
-    out = out + 2 ;
-    if (out >= end1) out = start ;
-    ptrBiosArea->KBD_bufhead = out ;
-  }
-  return(w) ;
+word_t leerTeclaListaBDA ( void ) 
+{
+    word_t w   = 0x0000 ;
+    word_t out = ptrBiosArea->KBD_bufhead ;
+    word_t in  = ptrBiosArea->KBD_buftail ;
+    if (out != in) 
+	{
+        word_t start = ptrBiosArea->KBD_start ;
+        word_t end1  = ptrBiosArea->KBD_end1 ;
+        int extended = ptrBiosArea->KBD_status.KBD_AT ;
+        char ascii_code ;
+        byte_t scan_code ;
+        /* w = *((word_t far *)MK_FP(0x040, out)) ; */
+        w = ptrBiosArea->KBD_buffer[(out-start)/2] ;
+        ascii_code = (char)w ;
+        scan_code = (byte_t)(w >> 8) ;
+        if (((ascii_code == (char)0xF0) && (scan_code != 0)) ||    /* 0xF0 liberacion tecla teclado 84 teclas */
+            ((ascii_code == (char)0xE0) && !extended))             /* 0xE0 teclado de 101 teclas */
+            w = w & 0xFF00 ;
+        out = out + 2 ;
+        if (out >= end1) out = start ;
+        ptrBiosArea->KBD_bufhead = out ;
+    }
+    return(w) ;
 }
 
-word_t teclaListaBDA ( void ) {
-  word_t w = 0x0000 ;
-  word_t start = ptrBiosArea->KBD_start ;
-  word_t out = ptrBiosArea->KBD_bufhead ;
-  word_t in = ptrBiosArea->KBD_buftail ;
-  if (out != in)
-//  w = *((word_t far *)MK_FP(0x040, out)) ; 
-    w = ptrBiosArea->KBD_buffer[(out-start)/2] ;
-  return(w) ;
+word_t teclaListaBDA ( void ) 
+{
+    word_t w   = 0x0000 ;
+    word_t out = ptrBiosArea->KBD_bufhead ;
+    word_t in  = ptrBiosArea->KBD_buftail ;
+    if (out != in)
+    {
+        word_t start = ptrBiosArea->KBD_start ;
+//      w = *((word_t far *)MK_FP(0x040, out)) ; 
+        w = ptrBiosArea->KBD_buffer[(out-start)/2] ;
+	}
+    return(w) ;
 }
 
-void cambiarTeclaListaBDA ( word_t w ) {
-  word_t start = ptrBiosArea->KBD_start ;
-  word_t out = ptrBiosArea->KBD_bufhead ;
-  word_t in = ptrBiosArea->KBD_buftail ;
-  if (out != in)
-//  w = *((word_t far *)MK_FP(0x040, out)) ; 
-    ptrBiosArea->KBD_buffer[(out-start)/2] = w ;
+void cambiarTeclaListaBDA ( word_t w ) 
+{
+    word_t out = ptrBiosArea->KBD_bufhead ;
+    word_t in  = ptrBiosArea->KBD_buftail ;
+    if (out != in)
+	{
+        word_t start = ptrBiosArea->KBD_start ;
+//      w = *((word_t far *)MK_FP(0x040, out)) ; 
+        ptrBiosArea->KBD_buffer[(out-start)/2] = w ;
+	}
 }	
 
 /* Timer */
 
-void esperarTicsBIOS ( word_t tics ) {
-  dword_t contTics0 ;
-  contTics0 = ptrBiosArea->BIOS_timer ;
-  while (ptrBiosArea->BIOS_timer <= (contTics0 + tics)) { } ;
+void esperarTicsBIOS ( word_t tics ) 
+{
+    dword_t contTics0 = ptrBiosArea->BIOS_timer ;
+    while (ptrBiosArea->BIOS_timer <= (contTics0 + tics)) { } ;
 }
 
 /* Pantalla (int 10h) */
 
 #pragma warn -rvl
 
-int printCarRawBIOS ( char car, byte_t pag ) {
-  asm mov al,car
-  asm mov bh,pag
-  asm mov bl,07h
-  asm mov cx,1
-  asm mov ah,09h        /* Llamada al BIOS: Escribir caracter por pantalla */
-  /* asm mov ah,0ah */  /* Llamada al BIOS: Escribir caracter por pantalla */
-  asm int 10h
+int printCarRawBIOS ( char car, byte_t pag ) 
+{
+    asm 
+	{  
+	    mov al,car ;
+        mov bh,pag ;
+        mov bl,07h ;
+        mov cx,1 ;
+        mov ah,09h ;  /* Llamada al BIOS: Escribir caracter por pantalla */
+//      mov ah,0ah ;  /* Llamada al BIOS: Escribir caracter por pantalla */
+        asm int 10h ;
+	}
 }
 
-int printCarBIOS ( char car ) {
-  asm mov al,car
-  asm mov ah,0eh        /* Llamada al BIOS: Escribir caracter por pantalla */
-  asm int 10h
+int printCarBIOS ( char car ) 
+{
+    asm 
+	{  
+	    mov al,car ;
+        mov ah,0eh ;  /* Llamada al BIOS: Escribir caracter por pantalla */
+        int 10h ;
+	}
 }
 
 int printCarPagBIOS ( char car, byte_t pag ) {

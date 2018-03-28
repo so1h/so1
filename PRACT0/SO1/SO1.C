@@ -18,7 +18,7 @@
 #include <so1.h\llamadas.h>                                     /* isr_SO1 */
 #include <so1.h\gm.h>          /* inicGM, k_buscarBloque, k_devolverBloque */
 //#include <so1.h\gp.h>                                        /* k_inicGP */
-#include <so1.h\db.h>                                            /* inicDB */
+#include <so1.h\db.h>           /* segBuferSO1, segBuferSeguro, DB, inicDB */
 #include <so1.h\recursos.h>                   /* inicRecursos, destruirRec */
 #include <so1.h\procesos.h>     /* descProceso, ... , inicProcesos, c2cPFR */ 
 #include <so1.h\minifs.h>              /* inicMinisfMSDOS, inicMinisfFAT12 */
@@ -26,6 +26,7 @@
 #include <so1.h\plot.h>                                         /* finPlot */
 #include <so1.h\ajustes.h>   /* modoSO1, guardarDS_SO1, IMRInicial, CS_SO1 */
 //                                                           /* unidadBIOS */
+#include <so1.h\ajustsp.h>                                       /* SP0_DB */
 #include <so1.h\so1dbg.h>    /* inicTeclado, leerScancode, esperarScancode */
 #include <so1.h\s0.h>                    /* mirarLoQueHay, MostrarLoQueHay */
 //       /* hayDOS, hayNT, hayQemu, hayBochs, hayDBox, hayNTVDM, hayFake86 */
@@ -107,20 +108,7 @@ void main ( void )                             /* interrupciones inhibidas */
     descProceso[indProcesoActual].gid = 0 ;                        /* root */
 
     E(inicGM()) ;         /* asigna memoria para el proceso 0. rec_gm "GM" */
-
-    E(inicDB()) ;                                           /* rec_db "DB" */
-
-    if ((modoSO1() == modoSO1_Bin) || (modoSO1() == modoSO1_Bs))
-    {
-        printStrBIOS("\n unidadBIOS = 0x") ;
-        printHexBIOS(unidadBIOS(), 2) ;
-        inicSF(unidadBIOS()) ;  /* asigna memoria a segBuferSO1 y FAT (GM) */
-        assert(inicMinisfFAT() == 0, "\a\n so1(): ERROR minisfFAT") ;
-        inicTablaFichAbiertos() ;
-    }
-    else
-        assert(inicMinisfMSDOS() == 0, "\a\n so1(): ERROR minisfMSDOS") ;
-
+	
     E(inicTVI()) ;    /* inicializamos la tabla de vectores de interrucion */
 
     IMRInicial = valorIMR() ;          /* tomamos nota del IMR (pic 8259A) */
@@ -159,6 +147,20 @@ void main ( void )                             /* interrupciones inhibidas */
     /* Dejar que el proceso inicial lleve a cabo las inicializaciones.     */
     /* Con esto se reduce en gran medida el tamanio de SO1.BIN.            */
 
+	E(pid = thread(DB, SP0_DB, 0x0000)) ;                     /* driver DB */
+    strcpy(descProceso[indice(pid)].comando, "DB") ;
+	
+    if ((modoSO1() == modoSO1_Bin) || (modoSO1() == modoSO1_Bs))
+    {
+        printStrBIOS("\n unidadBIOS = 0x") ;
+        printHexBIOS(unidadBIOS(), 2) ;
+        inicSF(unidadBIOS()) ;  /* asigna memoria a segBuferSO1 y FAT (GM) */
+        assert(inicMinisfFAT() == 0, "\a\n so1(): ERROR minisfFAT") ;
+        inicTablaFichAbiertos() ;
+    }
+    else
+        assert(inicMinisfMSDOS() == 0, "\a\n so1(): ERROR minisfMSDOS") ;
+
 //  mostrarFlags() ;                                  /* para comprobacion */
     asm sti ;                             /* permitimos las interrupciones */
 //  mostrarFlags() ;                                  /* para comprobacion */
@@ -170,7 +172,8 @@ void main ( void )                             /* interrupciones inhibidas */
     if ((pid = createProcess("INIC_0", "INIC_0 6 18")) > 0)   
     {                                                   /* numConsolas = 6 */ 
         /* inic */ /* GP */                          /* ticsPorRodaja = 18 */ 
-        pindx = descProceso[indProcesoActual].c2cHijos.primero ;
+//      pindx = descProceso[indProcesoActual].c2cHijos.primero ;
+        pindx = indice(pid) ;
         descProceso[pindx].uid = 1 ;
         descProceso[pindx].gid = 1 ;
         waitpid(pid, (int far *)&status) ;

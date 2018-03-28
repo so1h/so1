@@ -42,6 +42,11 @@ extern void so1_manejador_03 ( void ) ;                      /* 0: retardo */
 extern void so1_manejador_04 ( void ) ;                 /* 0: activarTraza */
 //                                                  /* 1: analizarProcesos */
 
+extern void so1_manejador_05 ( void ) ;      /* 0 sendrec 1:send 2:receive */
+//                                                     /* 3: notify 4:echo */
+
+extern void so1_manejador_06 ( void ) ;                       /* 0: system */
+
 extern void so1_manejador_07 ( void ) ;            /* 0: kill 1: sigaction */
 //                                                   /* 2: alarm  3: pause */
 
@@ -57,9 +62,10 @@ manejador_t manejador [ ] =                   /*   tabla de manejadores    */
     so1_manejador_03,                         /* 0x03 obtenInfo            */
     so1_manejador_04,                         /* 0x04 activarTraza         */
     so1_manejador_Nulo,                       /* 0x05                      */
-    so1_manejador_Nulo,                       /* 0x06                      */
-  so1_manejador_Nulo,                       /* 0x07 señales              */
-//    so1_manejador_07,                         /* 0x07 señales              */
+//  so1_manejador_Nulo,                       /* 0x06 system               */
+    so1_manejador_06,                         /* 0x06 system               */
+    so1_manejador_Nulo,                       /* 0x07 señales              */
+//  so1_manejador_07,                         /* 0x07 señales              */
     so1_manejador_Nulo,                       /* 0x08                      */
     so1_manejador_Nulo,                       /* 0x09                      */
     so1_manejador_Nulo,                       /* 0x0A                      */
@@ -121,4 +127,3 @@ void far isr_SO1 ( void )
     /* los parametros de salida de la llamada al sistema estan en la trama */
 
 }
-

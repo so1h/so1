@@ -1,0 +1,31 @@
+
+PROGRAMA = INFO
+
+# primer fichero objeto (..\..\so1pub\lib\startlib.lib)
+# segundo fichero objeto (..\..\so1pub\obj\ajustusr.obj)
+# ultimo fichero objeto (..\so1pub\obj\fincode.obj)
+
+OBJS2LINK =                      \
+..\..\startfin\lib\startlib.lib, \
+..\..\so1pub\obj\ajustusr.obj,   \
+$(PROGRAMA).obj,                 \
+..\..\so1pub\lib\ll_s_so1.lib,   \
+..\..\so1pub\obj\tipos.obj,      \
+..\..\so1pub\obj\stdio.obj,      \
+..\..\so1pub\obj\vsprintf.obj,   \
+..\..\so1pub\obj\ctype.obj,      \
+..\..\so1pub\obj\strings.obj,    \
+..\..\so1pub\obj\msdos.obj,      \
+..\..\crtl\obj\h_ldiv.obj,       \
+..\..\crtl\obj\h_lursh.obj,      \
+..\..\crtl\obj\h_llsh.obj,       \
+..\..\crtl\obj\f_lxmul.obj,      \
+..\..\crtl\obj\n_lxmul.obj,      \
+..\..\startfin\lib\finlib.lib
+
+#puntero de pila inicial (finBSS = 0x1C60 < 0x1FFE)
+
+SPINICIAL = 1FFE
+
+!include "..\..\MKFILE0"
+!include "..\MAKEUSR"

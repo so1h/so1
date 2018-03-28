@@ -32,6 +32,7 @@ PROGS =   \
   sh/       \
   sighello/ \
   time/     \
+  thread/   \
   ver_args/ \
             \
 # drivers:

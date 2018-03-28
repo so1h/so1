@@ -39,7 +39,7 @@ void SIG_DFL ( int sig )  ;     /* se mata al proceso tras recibir la señal */
 
 extern __sighandler_t __sighandler [ ] ;
 
-void __handlerReturn ( int errorAX ) ;
+int __handlerReturn ( int errorAX ) ;
 
 typedef dword_t sigset_t ; /* ??????????? */
 

@@ -19,7 +19,7 @@ void SIG_DFL ( int sig )        /* se mata al proceso tras recibir la señal */
     exit(0) ;           /* en el estado de terminacion indicar la señal sig */
 }
 
-void __handlerReturn ( int errorAX ) 
+int __handlerReturn ( int errorAX ) 
 {
 	if (errorAX == 0) 
 		return(_AX) ;
