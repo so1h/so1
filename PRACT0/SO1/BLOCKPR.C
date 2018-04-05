@@ -76,9 +76,13 @@ void far bloquearProcesoActual ( rindx_t rindx )          /* nivel 1 (o 2) */
 {
     establecerDS_SO1() ;         /* establecer el segmento de datos de SO1 */
                            /* esta funcion puede ser llamada por un driver */
-    descProceso[indProcesoActual].trama = tramaProceso ;
-    descProceso[indProcesoActual].estado = bloqueado ;
-    descProceso[indProcesoActual].esperandoPor = rindx ;
-
+//  descProceso[indProcesoActual].trama = tramaProceso ;
+//  descProceso[indProcesoActual].estado = bloqueado ;
+//  descProceso[indProcesoActual].esperandoPor = rindx ;
+     
+	ptrDPActual->trama        = tramaProceso ;
+	ptrDPActual->estado       = bloqueado ;
+	ptrDPActual->esperandoPor = rindx ;
+	
     buscarNuevoProcesoActual() ;
 }

@@ -35,9 +35,9 @@ iniccode.obj,                    \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (finBSS = 19D6 < 1CFE)
+#puntero de pila inicial (finBSS = 118A < 12FE)
 
-SPINICIAL = 1CFE
+SPINICIAL = 12FE
 
 !include "..\..\MKFILE0"
 !include "..\MAKEUSR"

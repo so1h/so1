@@ -57,16 +57,16 @@ static void transferirBPFR ( bloquePFR_t far * ptrPFR, byte_t regAL )
         copiarDescRecursos(ptrPFR) ;                     /* requiere e2PFR */
     }
 
-    ptrPFR->c2cPFR[DPLibres].e    = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescProceso) ;
-    ptrPFR->c2cPFR[DPOcupados].e  = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescProceso) ;
-    ptrPFR->c2cPFR[PPreparados].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2Preparados) ;
-    ptrPFR->c2cPFR[PUrgentes].e   = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2Urgentes) ;
-    ptrPFR->c2cPFR[POrdenados].e  = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2POrdenados) ;
-    ptrPFR->c2cPFR[PDormidos].e   = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2PDormidos) ;
-    ptrPFR->c2cPFR[DFLibres].e    = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescFichero) ;
-    ptrPFR->c2cPFR[DFOcupados].e  = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescFichero) ;
-    ptrPFR->c2cPFR[DRLibres].e    = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescRecurso) ;
-    ptrPFR->c2cPFR[DROcupados].e  = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescRecurso) ;
+    ptrPFR->c2cPFR[DPLibres   ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescProceso) ;
+    ptrPFR->c2cPFR[DPOcupados ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescProceso) ;
+    ptrPFR->c2cPFR[PPreparados].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2Procesos) ;
+    ptrPFR->c2cPFR[PUrgentes  ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2Procesos) ;
+    ptrPFR->c2cPFR[PDormidos  ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2Procesos) ;
+    ptrPFR->c2cPFR[POrdenados ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2POrdenados) ;
+    ptrPFR->c2cPFR[DFLibres   ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescFichero) ;
+    ptrPFR->c2cPFR[DFOcupados ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescFichero) ;
+    ptrPFR->c2cPFR[DRLibres   ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescRecurso) ;
+    ptrPFR->c2cPFR[DROcupados ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescRecurso) ;
 
     if (regAL == 0x01) 
 	{

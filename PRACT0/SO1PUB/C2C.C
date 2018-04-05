@@ -33,5 +33,5 @@ void inicializarC2c( c2c_t far * c2c, dobleEnlace_t far * e, int cabecera, bool_
   c2c->cabecera = cabecera ;
   c2c->numElem = 0 ;
   c2c->e = e ;
-  inicEnlace()
+  inicEnlace() ;                                          /* macro de c2c.h*/
 }

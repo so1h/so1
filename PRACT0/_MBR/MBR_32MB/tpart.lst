@@ -1,0 +1,133 @@
+JWasm v2.12pre, Nov 27 2013
+tpart.asm
+                                	.286
+                                	ifndef	??version
+                                	else
+                                $comm	macro	name,dist,size,count
+ >                              	comm	dist name[size]:BYTE:count
+ >                              	endm
+                                	endif
+00000000                        _TEXT	segment byte public 'CODE'
+                                _TEXT	ends
+                                DGROUP	group	_DATA,_BSS
+                                	assume	cs:_TEXT,ds:DGROUP
+00000000                        _DATA	segment word public 'DATA'
+00000000                        d@	label	byte
+00000000                        d@w	label	word
+00000000                        _DATA	ends
+00000000                        _BSS	segment word public 'BSS'
+00000000                        b@	label	byte
+00000000                        b@w	label	word
+00000000                        _BSS	ends
+00000000                        _DATA	segment word public 'DATA'
+00000000                        _startBin	label	word
+00000000  80                    	db	128
+00000001  01                    	db	1
+00000002  01                    	db	1
+00000003  00                    	db	0
+00000004  04                    	db	4
+00000005  0F                    	db	15
+00000006  3F                    	db	63
+00000007  40                    	db	64
+00000008  3F                    	db	63
+00000009  00                    	db	0
+0000000A  00                    	db	0
+0000000B  00                    	db	0
+0000000C  B1                    	db	177
+0000000D  FF                    	db	255
+0000000E  00                    	db	0
+0000000F  00                    	db	0
+00000010  00                    	db	0
+00000011  00                    	db	0
+00000012  00                    	db	0
+00000013  00                    	db	0
+00000014  00                    	db	0
+00000015  00                    	db	0
+00000016  00                    	db	0
+00000017  00                    	db	0
+00000018  00                    	db	0
+00000019  00                    	db	0
+0000001A  00                    	db	0
+0000001B  00                    	db	0
+0000001C  00                    	db	0
+0000001D  00                    	db	0
+0000001E  00                    	db	0
+0000001F  00                    	db	0
+00000020  00                    	db	0
+00000021  00                    	db	0
+00000022  00                    	db	0
+00000023  00                    	db	0
+00000024  00                    	db	0
+00000025  00                    	db	0
+00000026  00                    	db	0
+00000027  00                    	db	0
+00000028  00                    	db	0
+00000029  00                    	db	0
+0000002A  00                    	db	0
+0000002B  00                    	db	0
+0000002C  00                    	db	0
+0000002D  00                    	db	0
+0000002E  00                    	db	0
+0000002F  00                    	db	0
+00000030  00                    	db	0
+00000031  00                    	db	0
+00000032  00                    	db	0
+00000033  00                    	db	0
+00000034  00                    	db	0
+00000035  00                    	db	0
+00000036  00                    	db	0
+00000037  00                    	db	0
+00000038  00                    	db	0
+00000039  00                    	db	0
+0000003A  00                    	db	0
+0000003B  00                    	db	0
+0000003C  00                    	db	0
+0000003D  00                    	db	0
+0000003E  00                    	db	0
+0000003F  00                    	db	0
+00000040                        s@	label	byte
+00000040                        _DATA	ends
+00000000                        _TEXT	segment byte public 'CODE'
+00000000                        _TEXT	ends
+                                	public	_startBin
+                                	end
+
+
+Macros:
+
+                N a m e                 Type
+
+$comm  . . . . . . . . . . . . .        Proc
+@CatStr  . . . . . . . . . . . .        Func
+@Environ . . . . . . . . . . . .        Func
+@InStr . . . . . . . . . . . . .        Func
+@SizeStr . . . . . . . . . . . .        Func
+@SubStr  . . . . . . . . . . . .        Func
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+$$SYMBOLS  . . . . . . . . . . .        32 Bit   00000081 Byte    Private 'DEBSYM'
+$$TYPES  . . . . . . . . . . . .        32 Bit   00000004 Byte    Private 'DEBTYP'
+_TEXT  . . . . . . . . . . . . .        16 Bit   0000     Byte    Public  'CODE'
+DGROUP . . . . . . . . . . . . .        GROUP
+_DATA  . . . . . . . . . . . . .        16 Bit   0040     Word    Public  'DATA'
+_BSS . . . . . . . . . . . . . .        16 Bit   0000     Word    Public  'BSS'
+
+
+Symbols:
+
+                N a m e                 Type       Value     Attr
+
+??version  . . . . . . . . . . .        Text   0504
+?debug . . . . . . . . . . . . .        Text   ;
+_startBin  . . . . . . . . . . .        Word               0h _DATA Public 
+b@ . . . . . . . . . . . . . . .        Byte               0h _BSS 
+b@w  . . . . . . . . . . . . . .        Word               0h _BSS 
+d@ . . . . . . . . . . . . . . .        Byte               0h _DATA 
+d@w  . . . . . . . . . . . . . .        Word               0h _DATA 
+s@ . . . . . . . . . . . . . . .        Byte              40h _DATA 
+
+tpart.asm: 110 lines, 2 passes, 0 ms, 0 warnings, 0 errors

@@ -161,13 +161,25 @@ void main ( void )                             /* interrupciones inhibidas */
     else
         assert(inicMinisfMSDOS() == 0, "\a\n so1(): ERROR minisfMSDOS") ;
 
+    /* Aqui procedemos a permitir las interrupciones de manera que el      */
+	/* proceso 0 (SO1) sea un proceso completamente normal. No obstante    */
+    /* todo funcionaria bien si no se hace esto ya que el proceso INIC_0   */
+    /* siempre toma el control con las interrupciones permitidas, y lo     */
+    /* mismo el resto de los procesos. Mientras tanto el proceso 0 siempre */
+    /* va a estar bloqueado esperando la terminacion del proceso INIC_0.   */
+    /* el unico problema seria al terminar el proceso INIC_0 que el        */
+    /* proceso 0 impidiera de alguna manera la terminacion de los demas    */
+    /* procesos.                                                           */  	
+	
 //  mostrarFlags() ;                                  /* para comprobacion */
     asm sti ;                             /* permitimos las interrupciones */
-//  mostrarFlags() ;                                  /* para comprobacion */
+	printLnBIOS() ;
+    mostrarFlags() ;                                  /* para comprobacion */
+	printLnBIOS() ;
 
 #if (CON_PROCESO_INICIAL)          /* se utiliza un proceso inicial de SO1 */
 
-    printStrBIOS("\n creando el proceso inicial INIC: \"INIC_0 6 18\"") ;
+    printStrBIOS("\n creando el proceso inicial: \"INIC_0 6 18\" (CON0..CON6 y 18 tics/rodaja)") ;
 
     if ((pid = createProcess("INIC_0", "INIC_0 6 18")) > 0)   
     {                                                   /* numConsolas = 6 */ 
@@ -385,6 +397,4 @@ void tirarSistema ( word_t loQueHay, int timeout )
     restaurarPantallaInicial() ;
 
     tirarS0(loQueHay) ;
-
 }
-

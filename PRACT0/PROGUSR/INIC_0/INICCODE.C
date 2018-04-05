@@ -4,7 +4,7 @@
 /*                    codigo del proceso inicial de SO1                    */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\ll_s_so1.h>         /* exec, waitpid, getpid, open, ... */
+#include <so1pub.h\ll_s_so1.h>  /* exec, waitpid, getpid, open, yield, ... */
 #include <so1pub.h\stdio.h>                    /* printf, getchar, putchar */
 #include <so1pub.h\escribir.h>            /* escribirStr, escribirDec, ... */
 //#include <so1pub.h\put.h>               /* putCar, putLn, putStr, putDec */
@@ -20,6 +20,7 @@
 #include <so1pub.h\interpre.h>                      /* interpretarComandos */
 
 #include "iniccode.h"                                            /* inic_0 */
+
 //                                                         /* valor normal */
 #define RETARDO TRUE                                       /*    TRUE      */ 
 //#define RETARDO FALSE                                    /*    TRUE      */ 
@@ -28,18 +29,17 @@
 #define CONSOLA TRUE                                       /*    TRUE      */ 
 #define RELOJ   TRUE                                       /*    TRUE      */ 
 #define RATON   TRUE                                       /*    TRUE      */ 
+//#define RATON   FALSE                                    /*    TRUE      */ 
 
 void esperarFichero ( char far * nombre ) /* espera hasta abrir el fichero */
 {
     int df ;
-    while ((df = open(nombre, O_RDONLY)) < 0)
+
+    while ((df = open(nombre, O_RDONLY)) < 0) 
     {
-//      printCarBIOS('.') ;                      /* para indicar la espera */
-        printStrBIOS(nombre) ;  /* para indicar la espera y el dispositivo */
-//      printStrHastaBIOS(nombre, 3, FALSE) ;                      /* idem */
-//      printCarBIOS(nombre[0]) ;                                  /* idem */
-        printCarBIOS(' ') ;
-    }
+		printCarBIOS('.') ;
+		yield() ;
+	}
     close(df) ; 
 }
 
@@ -54,7 +54,7 @@ int inic_0 ( word_t numConsolas, word_t ticsPorRodaja )
     int status ;
 //  int timeout ;
     int dfCon ;
-    char strArg [16] ;
+    char strCmd [16] ;
     char nombre [9] ;
     int anioBIOS ;
 
@@ -73,16 +73,16 @@ int inic_0 ( word_t numConsolas, word_t ticsPorRodaja )
     /* la ejecucion de otros procesos.                                     */
 
 #if (RETARDO)
-    if ((pid = createProcess("RETARDO", "RETARDO -q &")) < 0)        /* GP */
-    {
+	strcpy(strCmd, "RETARDO -q &") ; 
+    if ((pid = createProcess("RETARDO", strCmd)) < 0)                /* GP */
         printStrBIOS(
-            "\a\n fallo al arrancar RETARDO"
-            "\n pid = "
+		    strprintf(
+                "\a\n fallo al arrancar RETARDO"
+                "\n pid = %i", pid
+		    )	
         ) ;
-        printIntBIOS(pid, 1) ;
-    }
+    printStrBIOS(strprintf("\n \"%s\"", strCmd)) ;
     esperarFichero("RETARDO") ;
-    printStrBIOS(", RETARDO&") ;
 
     /* qemu se retarda de mas, por lo que lo tratamos de manera especial   */
 
@@ -98,22 +98,15 @@ int inic_0 ( word_t numConsolas, word_t ticsPorRodaja )
 #endif /* RETARDO */
 
 #if (TIMER)
-	printStrBIOS(
-        strprintf(
-		    "\n inicTimer(%i) ... ticsPorRodaja = %i ", 
-			ticsPorRodaja,
-            ticsPorRodaja			
-		)
-	) ;
-	sprintf(strArg, "TIMER %d &", ticsPorRodaja) ;
-    if ((pid = createProcess("TIMER", strArg)) < 0) /* timer 18 & */ /* GP */
-    {       
+	sprintf(strCmd, "TIMER %i &", ticsPorRodaja) ;
+    if ((pid = createProcess("TIMER", strCmd)) < 0) /* timer 18 & */ /* GP */
         printStrBIOS(
-            "\a\n fallo al arrancar el timer"
-            "\n pid = "
-        ) ;
-        printIntBIOS(pid, 1) ;
-    }
+		    strprintf(
+                "\a\n fallo al arrancar el timer"
+                "\n pid = %i", pid
+            ) 
+		) ;
+    printStrBIOS(strprintf(", \"%s\"", strCmd)) ;
     esperarFichero("TIMER") ;
 
     /* aqui ya se multiplexa la CPU entre los procesos no bloqueados       */
@@ -122,37 +115,35 @@ int inic_0 ( word_t numConsolas, word_t ticsPorRodaja )
 
     /* mostrarFlags() ; */
 
-    printStrBIOS(strprintf("\n inicConsola(%i) ", numConsolas)) ;
-
 #if (CONSOLA) 
 
     ll_buscarBloque(                                                 /* GM */
 	    (((numConsolas+1)*sizeof(descConsola_t))+15)/16
 	) ; 
     
-    sprintf(strArg, "CONSOLA -q %d &", numConsolas) ;
-    if ((pid = createProcess("CONSOLA", strArg)) < 0)                /* GP */
-    {
-        printStrBIOS(
-            "\a\n fallo al arrancar la consola"
-            "\n pid = "
-        ) ;
-        printIntBIOS(pid, 1) ;
-    }
-	
-    for ( i = 0 ; i < numConsolas ; i++ )   /* esperamos a que terminen de */
-    	esperarFichero(strprintf("CON%i", i)) ;    /* crearse las consolas */
-		
-#endif /* CONSOLA */
+    sprintf(strCmd, "CONSOLA -q %i &", numConsolas) ;
+    printStrBIOS(strprintf(", \"%s\"\n ", strCmd)) ;
 
-    printLnBIOS() ;
+    if ((pid = createProcess("CONSOLA", strCmd)) < 0)                /* GP */
+        printStrBIOS(
+            strprintf(		    
+                "\a\n fallo al arrancar la consola"
+                "\n pid = ", pid
+			) 
+        ) ;	
+//	printStrBIOS("\n creando consolas: ") ;
+	printStrBIOS("\r creando consolas: ") ;    /* \r para ocultar la linea */
+    for ( i = 0 ; i <= numConsolas ; i++ )  /* esperamos a que terminen de */
+	{                                        /* crearse todas las consolas */
+	    printStrBIOS(strprintf("CON%i ", i)) ;
+    	esperarFichero(strprintf("CON%i", i)) ;                         
+	}
+#endif /* CONSOLA */
 
     /* aqui tenemos ya (6) consolas CON0, ... , CON5 disponibles para E/S  */
 	/* no obstante seguimos utilizando printStrBIOS para que no se nos     */
 	/* descoloque la pantalla inicial (nueva posicion del cursor).         */
 	
-    mostrarFlags() ;
-
     /* Tanto la llamada createProcess como la ejecucion del driver CONSOLA */
     /* necesitan asignar un bloque de memoria para el proceso creado o     */
     /* para las consolas mediante la llamada al sistema ll_buscarBloque    */
@@ -173,13 +164,16 @@ int inic_0 ( word_t numConsolas, word_t ticsPorRodaja )
 
     ) ;
 
+    printStrBIOS("(CON0 E/S estandar)") ;
+		
     /* aqui el proceso INIC ya utiliza CON0 como entrada/salida estandar   */
 
     /* while (TRUE) { car = leer(STDIN) ; putCar(STDOUT, car) ; }          */
 
     /* leer(STDIN) ; */  /* permite interrupciones mientras esta bloqueado */
 
-    printStrBIOS("\n\n comandos: ") ;
+//  printStrBIOS("\n arrancando procesos de login: ") ;
+    printStrBIOS("\n") ;
 	
     for ( i = 1 ; i <= numConsolas/2 ; i++ )   /* creacion procesos de login */
     {
@@ -193,18 +187,16 @@ int inic_0 ( word_t numConsolas, word_t ticsPorRodaja )
         open(nombre, O_WRONLY) ;       /* a CONi para que los procesos hijos */
         open(nombre, O_WRONLY) ;       /* trabajen con la consola CONi       */   
 		
-        if ((pid = createProcess("LOGIN", "LOGIN")) < 0)               /* GP */
-        {
+        sprintf(strCmd, "LOGIN &") ;
+        if ((pid = createProcess("LOGIN", strCmd)) < 0)                /* GP */
             printStrBIOS(
 			    strprintf(
 				    "\a\n fallo al arrancar LOGIN en %s (pid = %i)", 
-					nombre, 
-					pid
+					nombre, pid
 				) 
 			) ;
-        }
-        printStrBIOS("LOGIN&") ;
-        if (i < numConsolas/2) printStrBIOS(", ") ;
+        printStrBIOS(strprintf(" \"%s\" (%s)", strCmd, nombre)) ;		
+        if (i < numConsolas/2) printStrBIOS(",") ;
     }
 
     /* aqui, ya tenemos logines (LOGIN.BIN) en CON1, CON2, CON3            */
@@ -216,32 +208,34 @@ int inic_0 ( word_t numConsolas, word_t ticsPorRodaja )
     open("CON0", O_WRONLY) ;
     open("CON0", O_WRONLY) ;
 
+    printStrBIOS("\n arrancando drivers: ") ;	
+	
 #if (RELOJ)
-    if ((pid = createProcess("RELOJ", "RELOJ -q &")) < 0)            /* GP */
-    {
+    sprintf(strCmd, "RELOJ -q &") ;
+    if ((pid = createProcess("RELOJ", strCmd)) < 0)                  /* GP */
         printStrBIOS(
-            "\a\n fallo al arrancar el reloj"
-            "\n pid = "
+		    strprintf(
+                "\a\n fallo al arrancar el reloj"
+                "\n pid = %i", pid
+			)
         ) ;
-        printIntBIOS(pid, 1) ;
-    }
+    printStrBIOS(strprintf("\"%s\"", strCmd)) ;		
     esperarFichero("RELOJ") ;
-    printStrBIOS(", RELOJ&") ;
 #endif
 
 #if (RATON)
     if (strncmp(ptrFechaBios, "01/01/99", 8))                /* no hayVDos */
     {
-        if ((pid = createProcess("RATON", "RATON -q &")) < 0)        /* GP */
-        {
+		sprintf(strCmd, "RATON -q &") ;
+        if ((pid = createProcess("RATON", strCmd)) < 0)              /* GP */
             printStrBIOS(
-                "\a\n fallo al arrancar el raton"
-                "\n pid = "
+			    strprintf(
+                    "\a\n fallo al arrancar el raton"
+                    "\n pid = %i", pid
+				)
             ) ;
-            printIntBIOS(pid, 1) ;
-        }
+        printStrBIOS(strprintf(", \"%s\" ", strCmd)) ;		
         esperarFichero("RATON") ;
-        printStrBIOS(", RATON&") ;
     }
 #endif
 
@@ -279,26 +273,10 @@ int inic_0 ( word_t numConsolas, word_t ticsPorRodaja )
     if ((pid = createProcess("INFO", "info")) > 0)                   /* GP */
         waitpid(pid, (int far *)&status) ;                           /* GP */
     else
-        printf("\n") ;
-
-    printf("\n flags = %04X", valorFlags()) ;
-	
-    if (getpid() != 0)
-    {
         putchar('\n') ;
-        asm sti ;                         /* permitimos las interrupsiones */
-    }
-    else                                        /* esto no deberia suceder */
-    {
-        printf(" se van a permitir las interrupciones ... \n") ;
-        assert((valorFlags() & 0x0200) == 0x0000,
-               "\n so1(): ERROR ints. no inhibidas") ;
-        asm sti ;                         /* permitimos las interrupsiones */
-        printf("\n flags = %04X interrupciones permitidas \n", valorFlags()) ;
-        assert((valorFlags() & 0x0200) == 0x0200,
-               "\a\n so1(): ERROR ints. no permitidas") ;
-    }
 
+    printf("\n flags = %04X\n", valorFlags()) ;
+	
 	/* conmutamos a la consola CON1 con el comando "consola -c 1"          */
 	
     if ((pid = createProcess("CONSOLA", "consola -c 1")) > 0)        /* GP */

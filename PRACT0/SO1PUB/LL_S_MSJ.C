@@ -5,61 +5,67 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\tipos.h>
+#include <so1pub.h\ll_s_msj.h>                                /* mensaje_t */
 
 #define ANY (-1) 
 
 /* comparar con MINIX3\lib\i386\rts\_ipc.s */
 
-int send ( pindx_t pindx, void * msj ) 
+int send ( pindx_t pindx, mensaje_t * msj ) 
 {
     asm 
 	{
-		mov dx, pindx ;
-		les bx, msj ;
-		mov ax,0x0501 ;
+		mov bx, pindx ;
+	    mov dx, msj ;
+		mov ax,SEND ;
 		int nVIntSO1 ;
 	}
+	return(_AX) ;
 }
 
-int receive ( pindx_t pindx, void * msj ) 
+int receive ( pindx_t pindx, mensaje_t * msj ) 
 {
     asm 
 	{
-		mov dx, pindx ;
-		les bx, msj ;
-		mov ax,0x0502 ;
+		mov bx, pindx ;
+	    mov dx, msj ;
+		mov ax,RECEIVE ;
 		int nVIntSO1 ;
 	}
+	return(_AX) ;
 }
 
-int sendrec ( pindx_t pindx, void * msj ) 
+int sendrec ( pindx_t pindx, mensaje_t * msj ) 
 {
     asm 
 	{
-		mov dx, pindx ;
-		les bx, msj ;
-		mov ax,0x0500 ;
+		mov bx, pindx ;
+		mov dx, msj ;
+		mov ax,SENDREC ;
 		int nVIntSO1 ;
 	}
+	return(_AX) ;
 }
 
 int notify ( pindx_t pindx ) 
 {
     asm 
 	{
-		mov dx, pindx ;
-		mov ax,0x0503 ;
+		mov bx, pindx ;
+		mov ax,NOTIFY ;
 		int nVIntSO1 ;
 	}
+	return(_AX) ;
 }
 
-int echo ( pindx_t pindx, void * msj ) 
+int echo ( pindx_t pindx, mensaje_t * msj ) 
 {
     asm 
 	{
-		mov dx, pindx ;
-		les bx, msj ;
-		mov ax,0x0504 ;		
+		mov bx, pindx ;
+		mov dx, msj ;
+		mov ax,ECHO ;		
 		int nVIntSO1 ;
 	}
+	return(_AX) ;
 }

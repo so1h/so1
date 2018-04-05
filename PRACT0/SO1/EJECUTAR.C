@@ -27,7 +27,8 @@ pid_t kk_fork ( void )
     pindx_t pindx ;
     word_t SS_NuevoProceso ;
 	trama_t far * tramaNuevoProceso ;
-    word_t tam = descProceso[indProcesoActual].tam ;
+    word_t tam = ptrDPActual->tam ;
+	descProceso_t * ptrDPPindx ;
 
 //  if (c2cPFR[DPOcupados].numElem >= (maxProcesos-1))    /* ya comprobado */
 //      return(-1) ;
@@ -39,7 +40,7 @@ pid_t kk_fork ( void )
 		
     memcpy_fd(
 	    MK_FP(segmento, 0x0000), 
-	    MK_FP(descProceso[indProcesoActual].CSProc, 0x0000), 
+	    MK_FP(ptrDPActual->CSProc, 0x0000), 
 		16UL*(dword_t)tam
 	) ;
 	
@@ -48,53 +49,55 @@ pid_t kk_fork ( void )
     pindx = desencolarPC2c((ptrC2c_t)&c2cPFR[DPLibres]) ;
     encolarPC2c(pindx, (ptrC2c_t)&c2cPFR[DPOcupados]) ;
 
+	ptrDPPindx = (descProceso_t *)&descProceso[pindx] ; 
+	
 	/* copia del contenido del antiguo descriptor de proceso */
 	
     memcpy(
-	    &descProceso[pindx], 
-		&descProceso[indProcesoActual], 
+	    ptrDPPindx, 
+		ptrDPActual,
 		sizeof(descProceso_t)
 	) ;
 
 	/* calculo de la direccion de la trama del nuevo proceso */
 	
-    SS_NuevoProceso = segmento
-                        + (FP_SEG(descProceso[indProcesoActual].trama)
-                        - descProceso[indProcesoActual].CSProc) ;
-
-	tramaNuevoProceso = MK_FP(
-        SS_NuevoProceso, FP_OFF(descProceso[indProcesoActual].trama)
-    ) ;
+    SS_NuevoProceso = 
 	
-    descProceso[pindx].trama = tramaNuevoProceso ;
+	    segmento + (FP_SEG(tramaProceso) - ptrDPActual->CSProc) ;
+	
+	tramaNuevoProceso = 
+	
+	    MK_FP(SS_NuevoProceso, FP_OFF(tramaProceso)) ;
+	
+    ptrDPPindx->trama = tramaNuevoProceso ;
 
     /* retoque de algunos registros del nuevo proceso, ya que la mayoria   */
 	/* tienen ya el valor correcto debido a la copia del espacio de        */
 	/* direccionamiento de pila                                            */
 	
-    descProceso[pindx].CSProc = segmento ;
+    ptrDPPindx->CSProc = segmento ;
 	
     tramaNuevoProceso->DS = SS_NuevoProceso ;
     tramaNuevoProceso->ES = SS_NuevoProceso ;
-//  tramaNuevoProceso->DI = descProceso[indProcesoActual].trama->DI ;
-//  tramaNuevoProceso->SI = descProceso[indProcesoActual].trama->SI ;
-//  tramaNuevoProceso->BP = descProceso[indProcesoActual].trama->BP ;
-//  tramaNuevoProceso->SP = descProceso[indProcesoActual].trama->SP ;
-//  tramaNuevoProceso->BX = descProceso[indProcesoActual].trama->BX ;
-//  tramaNuevoProceso->DX = descProceso[indProcesoActual].trama->DX ;
-//  tramaNuevoProceso->CX = descProceso[indProcesoActual].trama->CX ;
-//  tramaNuevoProceso->AX = descProceso[indProcesoActual].trama->AX ;
-//  tramaNuevoProceso->IP = descProceso[indProcesoActual].trama->IP ;
+//  tramaNuevoProceso->DI = tramaProceso->DI ;
+//  tramaNuevoProceso->SI = tramaProceso->SI ;
+//  tramaNuevoProceso->BP = tramaProceso->BP ;
+//  tramaNuevoProceso->SP = tramaProceso->SP ;
+//  tramaNuevoProceso->BX = tramaProceso->BX ;
+//  tramaNuevoProceso->DX = tramaProceso->DX ;
+//  tramaNuevoProceso->CX = tramaProceso->CX ;
+//  tramaNuevoProceso->AX = tramaProceso->AX ;
+//  tramaNuevoProceso->IP = tramaProceso->IP ;
     tramaNuevoProceso->CS = segmento ;
-//  tramaNuevoProceso->Flags = descProceso[indProcesoActual].trama->Flags ;
+//  tramaNuevoProceso->Flags = tramaProceso->Flags ;
 
     registrarEnPOrdenados(pindx) ;
 
-    descProceso[pindx].pid = nuevoPid() ;
-    descProceso[pindx].hpindx = -1 ;
-    inicPC2c(&descProceso[pindx].c2cHijos, &e2PFR.e2Hijos, maxProcesos + pindx, TRUE) ;
-    descProceso[pindx].ppindx = indProcesoActual ;
-    encolarPC2c(pindx, (ptrC2c_t)&descProceso[indProcesoActual].c2cHijos) ;
+    ptrDPPindx->pid = nuevoPid() ;
+    ptrDPPindx->hpindx = -1 ;
+    inicPC2c(&ptrDPPindx->c2cHijos, &e2PFR.e2Hijos, maxProcesos + pindx, TRUE) ;
+    ptrDPPindx->ppindx = indProcesoActual ;
+    encolarPC2c(pindx, (ptrC2c_t)&ptrDPActual->c2cHijos) ;
 
     return(pindx) ;
 }
@@ -106,6 +109,7 @@ pid_t kk_thread ( void * (* funcion) (void * arg), word_t SP0, void * arg )
 	trama_t far * tramaNuevoProceso ;
 	word_t far * ptrWord ;
 	cabecera_t far * cabecera ;
+	descProceso_t * ptrDPPindx ;
 
 //  if (c2cPFR[DPOcupados].numElem >= (maxProcesos-1))    /* ya comprobado */
 //      return(-1) ;
@@ -115,11 +119,13 @@ pid_t kk_thread ( void * (* funcion) (void * arg), word_t SP0, void * arg )
     pindx = desencolarPC2c((ptrC2c_t)&c2cPFR[DPLibres]) ;
     encolarPC2c(pindx, (ptrC2c_t)&c2cPFR[DPOcupados]) ;
 
+	ptrDPPindx = (descProceso_t *)&descProceso[pindx] ; 
+	
 	/* copia del contenido del antiguo descriptor de proceso */
 	
     memcpy(
-	    &descProceso[pindx], 
-		&descProceso[indProcesoActual], 
+	    ptrDPPindx, 
+		ptrDPActual,
 		sizeof(descProceso_t)
 	) ;
 
@@ -130,7 +136,7 @@ pid_t kk_thread ( void * (* funcion) (void * arg), word_t SP0, void * arg )
         SS_NuevoProceso, SP0 - sizeof(trama_t) - 5*sizeof(word_t)
     ) ;
 
-    descProceso[pindx].trama = tramaNuevoProceso ;
+    ptrDPPindx->trama = tramaNuevoProceso ;
 
     /* registros del nuevo proceso */
 	
@@ -146,8 +152,7 @@ pid_t kk_thread ( void * (* funcion) (void * arg), word_t SP0, void * arg )
     tramaNuevoProceso->AX = 0x0000 ;
     tramaNuevoProceso->IP = (word_t)funcion ;
     tramaNuevoProceso->CS = tramaProceso->CS ;
-    tramaNuevoProceso->Flags = 
-	    (descProceso[indProcesoActual].trama->Flags & 0xF000) | 0x0202 ;
+    tramaNuevoProceso->Flags = (tramaProceso->Flags & 0xF000) | 0x0202 ;
 
 	ptrWord = MK_FP(SS_NuevoProceso, SP0) ;
 	
@@ -161,11 +166,11 @@ pid_t kk_thread ( void * (* funcion) (void * arg), word_t SP0, void * arg )
 	
 //  registrarEnPOrdenados(pindx) ;
 	
-    descProceso[pindx].pid = nuevoPid() ;
-    descProceso[pindx].hpindx = -1 ;
-    inicPC2c(&descProceso[pindx].c2cHijos, &e2PFR.e2Hijos, maxProcesos + pindx, TRUE) ;
-    descProceso[pindx].ppindx = indProcesoActual ;
-    encolarPC2c(pindx, (ptrC2c_t)&descProceso[indProcesoActual].c2cHijos) ;
+    ptrDPPindx->pid = nuevoPid() ;
+    ptrDPPindx->hpindx = -1 ;
+    inicPC2c(&ptrDPPindx->c2cHijos, &e2PFR.e2Hijos, maxProcesos + pindx, TRUE) ;
+    ptrDPPindx->ppindx = indProcesoActual ;
+    encolarPC2c(pindx, (ptrC2c_t)&ptrDPPindx->c2cHijos) ;
 
     return(pindx) ;
 }

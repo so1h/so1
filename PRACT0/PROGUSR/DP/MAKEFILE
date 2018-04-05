@@ -23,9 +23,9 @@ $(PROGRAMA).obj,                 \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (finBSS = 2DB2 < 2FFE)
+#puntero de pila inicial (finBSS = 33B6 < 37FE)
 
-SPINICIAL = 2FFE
+SPINICIAL = 37FE
 
 !include "..\..\MKFILE0"
 !include "..\MAKEUSR"

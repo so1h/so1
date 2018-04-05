@@ -32,10 +32,10 @@
 #include <so1.h\dokill.h>                                        /* doKill */
 
 #define bloquearEsperandoHijo( hpindx )                                     \
-                                                                            \
-    ptrDPActual->hpindx = hpindx ;                         \
+{                                                                           \
+    ptrDPActual->hpindx = hpindx ;                                          \
     bloquearProcesoActual(rec_hijo) ;                                       \
-
+}                                                                           \
 
 void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
 {
@@ -66,15 +66,16 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
         ptrDPActual->trama = tramaProceso ;          /* salvamos el estado */
 
         if      (tramaProceso->AL == 0x01)                         /* fork */
-            pindx = kk_fork() ;
+            pindx = kk_fork() ;                                    /* ==== */
         else if (tramaProceso->AL == 0x0d)                       /* thread */
-            pindx = kk_thread(
-			            (funcion_t)tramaProceso->BX, 
-						tramaProceso->CX, 
-						(void *)tramaProceso->DX
+            pindx = kk_thread(                                   /* ====== */
+			            (funcion_t)tramaProceso->BX,            /* funcion */
+						tramaProceso->CX,                           /* SP0 */
+						(void *)tramaProceso->DX                    /* arg */
 					) ;
-		else {                                            /* createProcess */
-            pindx = preEjecutar(
+		else /* tramaProceso->AL == 0x00 */
+		{                                                 /* createProcess */
+            pindx = preEjecutar(                          /* ============= */ 
                 MK_FP(tramaProceso->CX, tramaProceso->BX),/* CX:BX nombre  */
                 MK_FP(tramaProceso->ES, tramaProceso->DX),/* ES:DX comando */
                 -1                                    /* createProcess: -1 */
@@ -168,6 +169,7 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
     case 0x03 :                                                 /* waitpid */
         hpid = tramaProceso->BX ;                          /* pid del hijo */
         hpindx = indice(hpid) ;
+        
         if ((hpid >= 0) && (hpindx == -1))               /* hpid no existe */
             tramaProceso->BX = -1 ;                          /* pidDifunto */
         else 
@@ -177,8 +179,8 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
                 i = 0 ;
                 while ((i < maxProcesos) &&                        /* hijo */
                        ((descProceso[i].ppindx != indProcesoActual) ||  
-                       (descProceso[i].estado != bloqueado) ||   /* zombie */
-                       (descProceso[i].esperandoPor != rec_zombie)))  
+                        (descProceso[i].estado != bloqueado) ||  /* zombie */
+                        (descProceso[i].esperandoPor != rec_zombie)))  
                     i++ ;
                 if (i < maxProcesos) hpindx = i ;    /* primer hijo zombie */
                 else hpindx = -1 ;
@@ -187,54 +189,52 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
                 (descProceso[hpindx].ppindx == indProcesoActual) &&
                 (descProceso[hpindx].estado == bloqueado) &&
                 (descProceso[hpindx].esperandoPor == rec_zombie)) 
-				{
-                    tramaProceso->AX = descProceso[hpindx].status ;   /* status */
-                    tramaProceso->BX = descProceso[hpindx].pid ;  /* pidDifunto */
-                    eliminarProcIndx(hpindx) ;
+			{
+                tramaProceso->AX = descProceso[hpindx].status ;  /* status */
+                tramaProceso->BX = descProceso[hpindx].pid ; /* pidDifunto */
+                eliminarProcIndx(hpindx) ;
 
-                    eliminarPC2c(
-					    hpindx, 
-						(ptrC2c_t)&ptrDPActual->c2cHijos
-					) ;
+                eliminarPC2c(hpindx, (ptrC2c_t)&ptrDPActual->c2cHijos) ;
 
-                }
-                else                             /* no hay hijo(s) zombies */
+            }
+            else                                 /* no hay hijo(s) zombies */
+			{
+                noStatus = tramaProceso->DX ;
+                if (hpid != -1) 
 				{
-                    noStatus = tramaProceso->DX ;
-                    if (hpid != -1) 
+                    if (noStatus) 
 					{
-                        if (noStatus) {
-                            descProceso[hpindx].noStatus = TRUE ;
-                            tramaProceso->BX = 0 ;           /* pidDifunto */
+                        descProceso[hpindx].noStatus = TRUE ;
+                        tramaProceso->BX = 0 ;               /* pidDifunto */
                     }
                     else bloquearEsperandoHijo(hpindx) ;
                 }
                 else if (noStatus) 
-				{
+			    {
                     i = 0 ;
                     while (i < maxProcesos) 
-					{                                              /* hijo */
+			        {                                              /* hijo */
                         if (descProceso[i].ppindx == indProcesoActual) 
-                        descProceso[i].noStatus = TRUE ;
+                            descProceso[i].noStatus = TRUE ;
                         i++ ;
                     }
                     tramaProceso->BX = 0 ;                   /* pidDifunto */
                 }
                 else 
-				{	
+			    {	
                     i = 0 ;
                     while ((i < maxProcesos) &&
                            (descProceso[i].ppindx != indProcesoActual))  /* hijo */
                         i++ ;
-                        if (i < maxProcesos)             /* hay algun hijo */
-						{
-                            ptrDPActual->hpindx = -1 ;
-//                         if (indProcesoActual == indProcesoDeSuperficie)
-//                         focalizarWin(descProceso[i].win) ;
-                           bloquearProcesoActual(rec_hijo) ;
-                        }
-                        else                               /* no hay hijos */
-                           tramaProceso->BX = -1 ;           /* pidDifunto */
+                    if (i < maxProcesos)                 /* hay algun hijo */
+			    	{
+                        ptrDPActual->hpindx = -1 ;
+//                      if (indProcesoActual == indProcesoDeSuperficie)
+//                      focalizarWin(descProceso[i].win) ;
+                        bloquearProcesoActual(rec_hijo) ;
+                    }
+                    else                                   /* no hay hijos */
+                        tramaProceso->BX = -1 ;              /* pidDifunto */
                 }
             }
         }
@@ -295,7 +295,7 @@ void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */
         break ;
 //                                                               /* 0x000d */
 //  case 0x0d : ;                                                /* thread */
-//      /* esta implementada arriba con el fork */	
+//      /* esta implementada arriba con fork y createProcess */	
 
                                                                  /* 0x000e */
     case 0x0e :                                                   /* yield */

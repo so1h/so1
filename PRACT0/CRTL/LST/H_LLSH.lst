@@ -1,0 +1,86 @@
+JWasm v2.12pre, Nov 27 2013
+ASM\H_LLSH.ASM
+                                ;[]-----------------------------------------------------------------[]
+                                ;|      H_LLSH.ASM -- long shift left                                |
+                                ;[]-----------------------------------------------------------------[]
+
+                                ;
+                                ;       C/C++ Run Time Library - Version 5.0
+                                ;
+                                ;       Copyright (c) 1987, 1992 by Borland International
+                                ;       All Rights Reserved.
+                                ;
+
+                                ;       INCLUDE RULES.ASI
+
+00000000                        _TEXT   segment public byte 'CODE'
+                                        assume  cs:_TEXT
+                                        public  LXLSH@
+                                        public  F_LXLSH@
+                                        public  N_LXLSH@
+
+00000000                        N_LXLSH@:
+00000000  5B                            pop     bx                      ;fix up for far return
+00000001  0E                            push    cs
+00000002  53                            push    bx
+00000003                        LXLSH@:
+00000003                        F_LXLSH@:
+00000003  80F910                        cmp     cl,16
+00000006  7310                          jae     lsh@small
+00000008  8BD8                          mov     bx,ax                   ; save the low bits
+0000000A  D3E0                          shl     ax,cl                   ; now shift each half
+0000000C  D3E2                          shl     dx,cl
+                                ;
+                                ;                       We now have a hole in DX where the upper bits of
+                                ;                       AX should have been shifted.  So we must take our
+                                ;                       copy of AX and do a reverse shift to get the proper
+                                ;                       bits to be or'ed into DX.
+                                ;
+0000000E  F6D9                          neg     cl
+00000010  80C110                        add     cl,16
+00000013  D3EB                          shr     bx,cl
+00000015  0BD3                          or      dx,bx
+00000017  CB                            retf
+00000018                        lsh@small:
+00000018  80E910                        sub     cl,16                   ; for shifts more than 15, do this
+                                                                        ; short sequence.
+0000001B  92                            xchg    ax,dx
+0000001C  33C0                          xor     ax,ax                   ; We have now done a shift by 16.
+0000001E  D3E2                          shl     dx,cl                   ; Now shift the remainder.
+00000020  CB                            retf
+00000021                        _TEXT   ends
+                                        end
+
+
+Macros:
+
+                N a m e                 Type
+
+@CatStr  . . . . . . . . . . . .        Func
+@Environ . . . . . . . . . . . .        Func
+@InStr . . . . . . . . . . . . .        Func
+@SizeStr . . . . . . . . . . . .        Func
+@SubStr  . . . . . . . . . . . .        Func
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+$$SYMBOLS  . . . . . . . . . . .        32 Bit   00000072 Byte    Private 'DEBSYM'
+$$TYPES  . . . . . . . . . . . .        32 Bit   00000004 Byte    Private 'DEBTYP'
+_TEXT  . . . . . . . . . . . . .        16 Bit   0021     Byte    Public  'CODE'
+
+
+Symbols:
+
+                N a m e                 Type       Value     Attr
+
+??version  . . . . . . . . . . .        Text   0504
+?debug . . . . . . . . . . . . .        Text   ;
+F_LXLSH@ . . . . . . . . . . . .        L Near             3h _TEXT Public 
+LXLSH@ . . . . . . . . . . . . .        L Near             3h _TEXT Public 
+N_LXLSH@ . . . . . . . . . . . .        L Near             0h _TEXT Public 
+lsh@small  . . . . . . . . . . .        L Near            18h _TEXT 
+
+ASM\H_LLSH.ASM: 50 lines, 2 passes, 0 ms, 0 warnings, 0 errors

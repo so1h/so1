@@ -17,7 +17,9 @@
 
 //#define SP0_SF    0x5FFE                   /* puntero de pila inicial SF */
 
-#define SPInicial 0x33FE                /* puntero de pila del proceso SO1 */
+#define SPInicial 0x37FE                /* puntero de pila del proceso SO1 */
+//                          /* maxProcesos = 20 */ /* finBSS = 3570 < 3FFE */ /* 20 */
+//#define SPInicial 0x33FE                /* puntero de pila del proceso SO1 */
 //                          /* maxProcesos = 20 */ /* finBSS = 2FCA < 33FE */ /* 20 */
 //#define SPInicial 0x2FFE              /* puntero de pila del proceso SO1 */ 
 //                          /* maxProcesos = 16 */ /* finBSS = 2C18 < 2FFE */ /* 16 */

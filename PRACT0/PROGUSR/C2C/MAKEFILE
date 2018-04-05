@@ -22,9 +22,9 @@ $(PROGRAMA).obj,                 \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (finBSS = 0x2C1A < 0x2FFE)
+#puntero de pila inicial (finBSS = 0x3230 < 0x33FE)
 
-SPINICIAL = 2FFE
+SPINICIAL = 33FE
 
 previo: disquete
   @echo.

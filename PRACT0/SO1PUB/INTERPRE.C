@@ -20,7 +20,6 @@
                                                 /* getdiskDOS, setdiskDOS, */
                                                  /* getcurdirDOS, chdirDOS */
 
-
 char prompt [ tamComando ] = "SO1> " ;           /* puede contener caminos */
 
 
@@ -77,11 +76,11 @@ void interpretar_exit ( void ) {
     if (simb == s_numero) { num = num1*num ; simb = s_exit ; return ; }
     printf(" formato exit [num] ") ;
   }
-  else {                  /* exit tecleado en la consola */
+  else {                                    /* exit tecleado en la consola */
     printf(
       "\a\n"
       "\n"
-      " comando no permitido en la consola (use shutdown) \n"
+      " comando no permitido en la consola (use shutdown o halt) \n"
     ) ;
   }
   simb = s_nulo ;
@@ -99,12 +98,12 @@ void interpretar_salida ( simb_t simbolo ) {
       simbAux = simbolo ;
       if (getuid() == 0) {                                         /* root */
         saltarBlancos() ; obtenSimb() ;
-        if (simb == s_fin) { num = 0 ; simb = /* simbAux */ s_shutdn ; return ; }
+        if (simb == s_fin   ) { num = 0 ; simb = /* simbAux */ s_shutdn ; return ; }
         if (simb == s_numero) { simb = /* simbAux */ s_shutdn ; return ; }
         printf(" formato ") ;
-        if (simbAux == s_halt) printf("halt") ;
-        else if (simbAux == s_reboot) printf("reboot") ;
-        else printf("shutdown") ;
+        if      (simbAux == s_halt  ) printf("halt"    ) ;
+        else if (simbAux == s_reboot) printf("reboot"  ) ;
+        else                          printf("shutdown") ;
         printf(" [num] ") ;
       }
       else {                        /* usuario intentado cerrar el sistema */
@@ -541,10 +540,10 @@ int interpretarComandos ( void ) {
     case s_nulo   : printf("\a comando incorrecto ") ; break ;
     case s_fin    : break ;                                 /* linea vacia */
     case s_echo   : printf("\n%s", &comando[inCmd][5]) ; break ;
-    case s_exit   : interpretar_salida(s_exit) ; break ;            /* num */
-    case s_halt   : interpretar_salida(s_halt) ; break ;            /* num */
-    case s_reboot : interpretar_salida(s_reboot) ; break ;          /* num */
-    case s_shutdn : interpretar_salida(s_shutdn) ; break ;          /* num */
+    case s_exit   : ;
+    case s_halt   : ;
+    case s_reboot : ;
+    case s_shutdn : interpretar_salida(simb) ; break ;              /* num */
     case s_su     : setuid(0) ; setgid(0) ; break ;
     case s_cls    : putchar('\f') ; break ;
     case s_ver    : interpretar_ver() ; break ;
@@ -571,7 +570,10 @@ int interpretarComandos ( void ) {
             printf(" status = %i", status) ;
         }
         else                                                 /* background */
+        {
+//        printf("\n waitpid pid = %i", pid) ;	
           waitpid(pid, (int far *)NULL) ;       /* no espera nada del hijo */
+        }
       }
       else {
 //      printf("\n error: str = %s", (char *)str) ;

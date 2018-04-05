@@ -61,7 +61,8 @@ manejador_t manejador [ ] =                   /*   tabla de manejadores    */
     so1_manejador_02,                         /* 0x02 soporte para drivers */
     so1_manejador_03,                         /* 0x03 obtenInfo            */
     so1_manejador_04,                         /* 0x04 activarTraza         */
-    so1_manejador_Nulo,                       /* 0x05                      */
+//  so1_manejador_Nulo,                       /* 0x05 send                 */
+    so1_manejador_05,                         /* 0x06 send                 */
 //  so1_manejador_Nulo,                       /* 0x06 system               */
     so1_manejador_06,                         /* 0x06 system               */
     so1_manejador_Nulo,                       /* 0x07 señales              */

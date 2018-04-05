@@ -23,7 +23,7 @@ OBJS0 = obj\ajustes.obj  \
         obj\manej_02.obj \
         obj\manej_03.obj \
         obj\manej_04.obj \
-#       obj\manej_05.obj \
+        obj\manej_05.obj \
         obj\manej_06.obj \
 #       obj\manej_07.obj \
         obj\plot.obj     \

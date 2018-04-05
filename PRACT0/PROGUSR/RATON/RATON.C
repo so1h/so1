@@ -1231,7 +1231,6 @@ int instalarRaton ( bool_t conMensajes )
 {
     int res ;
     rti_t rtiRatonOrg ;                  /* rti antes de instalar el raton */
-	
     res = comprobarAmpersand() ;
     if (res != 0) return(res) ;
     obtenInfoSO1(dirDescSO1) ;               /* obtenemos los datos de SO1 */

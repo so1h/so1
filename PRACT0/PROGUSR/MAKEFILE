@@ -47,6 +47,7 @@ DIRS          = $(PROGS:/=)
 DIRS.clean    = $(PROGS:/=.clean)
 DIRS.pule     = $(PROGS:/=.pule)
 DIRS.disquete = $(PROGS:/=.disquete)
+DIRS.spinic   = $(PROGS:/=.spinic)
 DIRS.show     = $(PROGS:/=.show)
 DIRS.hide     = $(PROGS:/=.hide)
 DIRS.delsrc   = $(PROGS:/=.delsrc)
@@ -82,6 +83,13 @@ pule: $(DIRS.pule)
 $(DIRS.pule):
   cd $*
   @"$(MAKE) pule" | extraer +l 1
+  @cd ..
+
+spinic: $(DIRS.spinic)
+
+$(DIRS.spinic):
+  cd $*
+  @"$(MAKE) spinic" | extraer +l 1
   @cd ..
 
 show: $(DIRS.show)
@@ -168,6 +176,7 @@ help:
   @"echo    make run        ejecuta SO1.EXE en el directorio DISQUETE (Player)"
   @"echo    make runcom     ejecuta SO1.COM en el directorio DISQUETE (Player)"
   @"echo    make rundosbox  ejecuta SO1.EXE en el directorio DISQUETE (DOSBox)"
+  @"echo    make spinic     ejecuta spinic para cada programa de usuario"
   @"echo    make show       mueve los ficheros .C de los directorios SOURCE"
   @"echo    make hide       mueve los ficheros .C a los directorios SOURCE"
   @"echo                    y guarda los .OBJ en los directorios _OCULTOS"

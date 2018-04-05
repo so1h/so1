@@ -162,20 +162,19 @@ void mem ( bool_t mostrarTodos )
             ) ;
             break ;
         }
+//		getchar() ;                                     /* para depuracion */
     }
-
-    printf("\n") ;
-	
+    printf("\n") ;	
 }
 
 int main ( int argc, char * argv [ ] )
 {
-    if (argc == 1) mem(TRUE) ;
+    if (argc == 1) mem(TRUE) ;                /* muestra todos los bloques */
     else if (argc == 2)
         if (!strcmpu(argv[1], "-h")) help() ;
-        else if (!strcmpu(argv[1], "-l")) mem(FALSE) ;
+        else if (!strcmpu(argv[1], "-l")) mem(FALSE) ;  /* solo los libres */
         else formato() ;
     else formato() ;
-//	getchar() ;
+//	getchar() ;                      /* para estimar el tamanio de la pila */
 	return(0) ;
 }

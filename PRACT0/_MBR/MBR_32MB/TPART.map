@@ -1,0 +1,67 @@
+JWlink Version 1.9beta 13
+Portions Copyright (c) 1985-2002 Sybase, Inc. All Rights Reserved.
+Created on:       18/03/28 02:29:32
+Executable Image: TPART.bin
+creating a DOS executable
+
+
+                        +------------+
+                        |   Groups   |
+                        +------------+
+
+Group                           Address              Size
+=====                           =======              ====
+
+DGROUP                          0000:0000            00000040
+
+
+
+                        +--------------+
+                        |   Segments   |
+                        +--------------+
+
+Segment                Class          Group          Address         Size
+=======                =====          =====          =======         ====
+
+_TEXT                  CODE           AUTO           0000:0000       00000000
+_DATA                  DATA           DGROUP         0000:0000       00000040
+_BSS                   BSS            DGROUP         0004:0000       00000000
+
+
+                        +----------------+
+                        |   Memory Map   |
+                        +----------------+
+
+* = unreferenced symbol
++ = symbol only referenced locally
+
+Address        Symbol
+=======        ======
+
+Module: TPART.obj(tpart.asm)
+0000:0000      _startBin
+
+
+                        +---------------------+
+                        |   Module Segments   |
+                        +---------------------+
+
+! = 32-bit segment
+c = initialized communal data
+
+Module          Segment               Class           Address         Size
+======          =======               =====           =======         ====
+
+tpart.asm       _TEXT                 CODE           0000:0000        00000000
+                _DATA                 DATA           0000:0000        00000040
+                _BSS                  BSS            0004:0000        00000000
+
+
+                        +-----------------------+
+                        |   Linker Statistics   |
+                        +-----------------------+
+
+Stack size:  fffe (65534.)
+Memory size:  0040 (64.)
+Entry point address: 0000:0000
+Link time: 00:00.00

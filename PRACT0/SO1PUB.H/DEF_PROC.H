@@ -46,6 +46,8 @@ typedef struct {
     pindx_t  ppindx ;                           /* pindx del proceso padre */\
     pindx_t  hpindx ;       /* pindx del hijo por el que se esta esperando */\
     c2c_t    c2cHijos ;                          /* cola de procesos hijos */\
+	c2c_t    c2cEmisores ;             /* cola de procesos emisores (send) */\
+	c2c_t    c2cReceptores ;      /* cola de procesos receptores (receive) */\
                                                          /*----Memoria---- */\
     word_t   CSProc ;       /* segmento de codigo = inicio de la particion */\
     word_t   tamCodigo ;                     /* tamaño del codigo en bytes */\
@@ -170,27 +172,31 @@ typedef struct {                        /* ver startUserCode en AJUSTUSR.C */
 
 typedef struct {
     union {
-        dobleEnlace_t Libres [ maxProcesos + 1 ] ;                 /* Pila */
-        dobleEnlace_t Ocupados [maxProcesos + 2 ] ;     /* Pila + Eliminar */
+        dobleEnlace_t Libres     [ maxProcesos + 1 ] ;             /* Pila */
+        dobleEnlace_t Ocupados   [ maxProcesos + 2 ] ;  /* Pila + Eliminar */
     } e2DescProceso ;
     union {
-        dobleEnlace_t Libres [ dfsMax + 1 ] ;                         /* P */
-        dobleEnlace_t Ocupados [ dfsMax + 2 ] ;                   /* P + E */
+        dobleEnlace_t Libres     [ dfsMax + 1 ] ;                     /* P */
+        dobleEnlace_t Ocupados   [ dfsMax + 2 ] ;                 /* P + E */
     } e2DescFichero ;
     union {
-        dobleEnlace_t Libres [ maxRecursos + 1 ] ;                    /* P */
-        dobleEnlace_t Ocupados [ maxRecursos + 2 ] ;              /* P + E */
+        dobleEnlace_t Libres     [ maxRecursos + 1 ] ;                /* P */
+        dobleEnlace_t Ocupados   [ maxRecursos + 2 ] ;            /* P + E */
     } e2DescRecurso ;
-    dobleEnlace_t e2Hijos [ maxProcesos + maxProcesos ] ;  /* P+E de hijos */
-    dobleEnlace_t e2Preparados [ maxProcesos + 1 ] ; /* Cola de preparados */  /* unir en una sola cola */
-    dobleEnlace_t e2Urgentes [ maxProcesos + 1 ] ; /* Desbloqueados urgent */  /* ver prepararDesbloqueadosUrgentes */
-    dobleEnlace_t e2POrdenados [ maxProcesos + 1 ] ;        /* Particiones */
-    dobleEnlace_t e2PDormidos [ maxProcesos + 1 ] ;            /* Dormidos */
-    dobleEnlace_t e2FichRec [ dfsMax + maxRecursos ] ;    /* Fich. de Rec. */
+    dobleEnlace_t e2Hijos        [ 2 * maxProcesos ] ;   /* P + E de hijos */
+    union {
+	    dobleEnlace_t Emisores   [ 2 * maxProcesos ] ;       /* emisores   */ /* send */ 
+	    dobleEnlace_t Receptores [ 3 * maxProcesos ] ;       /* receptores */ /* receive */
+        dobleEnlace_t Preparados [ 3 * maxProcesos + 1 ] ;   /* preparados */ 
+        dobleEnlace_t Urgentes   [ 3 * maxProcesos + 2 ] ;   /* urgentes   */ 
+        dobleEnlace_t Dormidos   [ 3 * maxProcesos + 3 ] ;   /* Dormidos   */ 
+    } e2Procesos ;     	
+    dobleEnlace_t e2POrdenados   [ maxProcesos + 1 ] ;      /* Particiones */
+    dobleEnlace_t e2FichRec      [ dfsMax + maxRecursos ] ; /* Fich. de R. */
 } e2PFR_t ;
 
 typedef enum {
-    DPLibres, DPOcupados, PPreparados, PUrgentes, POrdenados, PDormidos,
+    DPLibres, DPOcupados, PPreparados, PUrgentes, PDormidos, POrdenados, 
     DFLibres, DFOcupados,
     DRLibres, DROcupados,
     numColasPFR

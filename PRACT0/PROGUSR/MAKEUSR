@@ -166,6 +166,10 @@ rundosboxdbg:
 # start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe so1.exe -noconsole -exit
   start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe ..\..\so1dbox.bat -noconsole -exit
 
+spinic:
+  @echo.
+  spinic $(PROGRAMA).BIN  
+  
 help:
 # echo off & color 07 & title help & msg * "Hola"
   @"echo."
@@ -179,6 +183,7 @@ help:
   @"echo    make run        ejecuta SO1.EXE en el directorio DISQUETE (Player)"
   @"echo    make runcom     ejecuta SO1.COM en el directorio DISQUETE (Player)"
   @"echo    make rundosbox  ejecuta SO1.EXE en el directorio DISQUETE (DOSBox)"
+  @"echo    make spinic     ejecuta spinic $(PROGRAMA).BIN para conocer su pila"  
   @"echo    make show       mueve los ficheros .C de los directorios SOURCE"
   @"echo    make hide       mueve los ficheros .C a los directorios SOURCE"
   @"echo                    y guarda los .OBJ en los directorios _OCULTOS"
