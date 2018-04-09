@@ -5,14 +5,12 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\tipos.h>
-#include <so1pub.h\ll_s_msj.h>                                /* mensaje_t */
-
-#define ANY (-1) 
+#include <so1pub.h\ll_s_msj.h>                           /* mensaje_t, ANY */
 
 /* comparar con MINIX3\lib\i386\rts\_ipc.s */
 
 int send ( pindx_t pindx, mensaje_t * msj ) 
-{
+{	
     asm 
 	{
 		mov bx, pindx ;
@@ -23,7 +21,7 @@ int send ( pindx_t pindx, mensaje_t * msj )
 	return(_AX) ;
 }
 
-int receive ( pindx_t pindx, mensaje_t * msj ) 
+int receive ( pindx_t pindx, mensaje_t * msj )      /* pindx puede ser ANY */
 {
     asm 
 	{
@@ -58,7 +56,9 @@ int notify ( pindx_t pindx )
 	return(_AX) ;
 }
 
-int echo ( pindx_t pindx, mensaje_t * msj ) 
+#if (FALSE)
+
+int echo ( pindx_t pindx, mensaje_t * msj )      /* no lo necesitaremos */
 {
     asm 
 	{
@@ -69,3 +69,5 @@ int echo ( pindx_t pindx, mensaje_t * msj )
 	}
 	return(_AX) ;
 }
+
+#endif

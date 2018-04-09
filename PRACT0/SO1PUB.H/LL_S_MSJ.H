@@ -11,7 +11,13 @@
 
 #define mensaje_t void                                   /* cualquier cosa */
 
-#define tamMensaje 16                              /* mensajes de 16 bytes */
+#define tamMensaje 32                              /* mensajes de 32 bytes */
+
+typedef struct {
+	pindx_t pindxOrg ;           /* pindx del proceso que envia el mensaje */
+	word_t tipo ;                                      /* tipo del mensaje */
+	char info [ 28 ] ;    /* tamMensaje - sizeof(pindx_t) - sizeof(word_t) */
+} mensaje_0_t ; 
 
 #define nVIntSO1 0x60 
 
@@ -27,12 +33,12 @@
 
 int send ( pindx_t pindx, mensaje_t * msj ) ;
 
-int receive ( pindx_t pindx, mensaje_t * msj ) ;
+int receive ( pindx_t pindx, mensaje_t * msj ) ;    /* pindx puede ser ANY */
 
 int sendrec ( pindx_t pindx, mensaje_t * msj ) ;
 
 int notify ( pindx_t pindx ) ;
 
-int echo ( pindx_t pindx, mensaje_t * msj ) ;
+int echo ( pindx_t pindx, mensaje_t * msj ) ;       /* no lo necesitaremos */
 
 #endif /* LL_S_MSJ_H */

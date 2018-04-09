@@ -14,4 +14,3 @@ int toupper ( int car ) ;
 int isprint ( int car ) ;
 
 #endif /* CTYPE_H */
-

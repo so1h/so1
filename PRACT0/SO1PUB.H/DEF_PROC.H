@@ -48,6 +48,7 @@ typedef struct {
     c2c_t    c2cHijos ;                          /* cola de procesos hijos */\
 	c2c_t    c2cEmisores ;             /* cola de procesos emisores (send) */\
 	c2c_t    c2cReceptores ;      /* cola de procesos receptores (receive) */\
+    dword_t  notificaciones ; /* mapa de bits de notificaciones pendientes */\
                                                          /*----Memoria---- */\
     word_t   CSProc ;       /* segmento de codigo = inicio de la particion */\
     word_t   tamCodigo ;                     /* tamaño del codigo en bytes */\
@@ -190,13 +191,16 @@ typedef struct {
         dobleEnlace_t Preparados [ 3 * maxProcesos + 1 ] ;   /* preparados */ 
         dobleEnlace_t Urgentes   [ 3 * maxProcesos + 2 ] ;   /* urgentes   */ 
         dobleEnlace_t Dormidos   [ 3 * maxProcesos + 3 ] ;   /* Dormidos   */ 
+        dobleEnlace_t ReceptAny  [ 3 * maxProcesos + 4 ] ;   /* Dormidos   */ 
     } e2Procesos ;     	
     dobleEnlace_t e2POrdenados   [ maxProcesos + 1 ] ;      /* Particiones */
     dobleEnlace_t e2FichRec      [ dfsMax + maxRecursos ] ; /* Fich. de R. */
 } e2PFR_t ;
 
 typedef enum {
-    DPLibres, DPOcupados, PPreparados, PUrgentes, PDormidos, POrdenados, 
+	PPreparados, PUrgentes, PDormidos, PReceptAny, 
+	POrdenados,
+    DPLibres, DPOcupados,  
     DFLibres, DFOcupados,
     DRLibres, DROcupados,
     numColasPFR

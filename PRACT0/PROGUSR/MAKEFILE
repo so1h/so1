@@ -27,6 +27,7 @@ PROGS =   \
   login/    \
   meapila/  \
   mem/      \
+  menum/    \
   mouse/    \
   ps/       \
   sh/       \

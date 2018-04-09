@@ -74,4 +74,4 @@ d@ . . . . . . . . . . . . . . .        Byte               0h _DATA
 d@w  . . . . . . . . . . . . . .        Word               0h _DATA 
 s@ . . . . . . . . . . . . . . .        Byte               0h _DATA 
 
-ASM\findata.asm: 44 lines, 2 passes, 16 ms, 1 warnings, 0 errors
+ASM\findata.asm: 44 lines, 2 passes, 0 ms, 1 warnings, 0 errors

@@ -216,7 +216,8 @@ void mostrarProcesos ( void )
             else
 				printf("%-*.*s", lMaxStrEstado-1, lMaxStrEstado-1, 
 			                    strEstado[descProceso[i].estado]) ;
-            if ((descProceso[i].estado == bloqueado) && (descProceso[i].esperandoPor == rec_zombie))
+            if ((descProceso[i].estado == bloqueado) && 
+			    (descProceso[i].esperandoPor == rec_zombie))
                 continue ;
 
             if (descProceso[i].pid != getpid())
@@ -254,6 +255,8 @@ void mostrarProcesos ( void )
 
 void mostrarCamposPrincipales ( pindx_t ind )
 {
+	int i ; 
+	dword_t mapaBits ;                   /* mapa de bits de notificaciones */
     word_t Flgs ;
     word_t regIP ;
     estado_t estado ;
@@ -271,11 +274,11 @@ void mostrarCamposPrincipales ( pindx_t ind )
 
 	printf(
 	    ""                                                               "\n"
-        " descProceso[%i].pid          = %i  (pindx = %i)"               "\n"
-        " descProceso[%i].ppindx       = %i"                             "\n"
-        " descProceso[%i].uid          = %i"                             "\n"
-        " descProceso[%i].gid          = %i"                             "\n"
-        " descProceso[%i].estado       = %s (%i)",
+        " descProceso[%i].pid            = %i  (pindx = %i)"             "\n"
+        " descProceso[%i].ppindx         = %i"                           "\n"
+        " descProceso[%i].uid            = %i                     "    //"\n"
+        " descProceso[%i].gid"          "= %i"                           "\n"
+        " descProceso[%i].estado         = %s (%i)",
         ind, descProceso[ind].pid, ind,
         ind, descProceso[ind].ppindx,
         ind, descProceso[ind].uid,
@@ -287,7 +290,7 @@ void mostrarCamposPrincipales ( pindx_t ind )
     {
         esperandoPor = descProceso[ind].esperandoPor ;
 		
-        printf("\n descProceso[%i].esperandoPor = ", ind) ;
+        printf("\n descProceso[%i].esperandoPor   = ", ind) ;
 		
         if (esperandoPor >= 0)
             printf("\"%s\"", descRecurso[esperandoPor].nombre) ;
@@ -299,24 +302,35 @@ void mostrarCamposPrincipales ( pindx_t ind )
         switch (esperandoPor)
         {
         case rec_hijo   :
-	        printf("\n descProceso[%i].hpindx       = %i", ind, descProceso[ind].hpindx) ;
+	        printf("\n descProceso[%i].hpindx         = %i", ind, descProceso[ind].hpindx) ;
             break ;
         case rec_zombie :
-	        printf("\n descProceso[%i].noStatus     = ", ind) ;
+	        printf("\n descProceso[%i].noStatus       = ", ind) ;
             if (descProceso[ind].noStatus) 
 				printf("TRUE") ;
             else 
 				printf("FALSE") ;
-	        printf("\n descProceso[%i].status       = %i", ind, descProceso[ind].status) ;
+	        printf("\n descProceso[%i].status         = %i", ind, descProceso[ind].status) ;
             break ;
         default :
             ;
         }
     }
 	
-	printf("\n descProceso[%i].c2cHijos     = ", ind) ;
+	printf("\n descProceso[%i].c2cHijos       = ", ind) ;
 	ePC2c((ptrC2c_t)&descProceso[ind].c2cHijos) ;
-    printf("\n descProceso[%i].tamFichero   = %04lX = %li", 
+	printf("\n descProceso[%i].notificaciones = ", ind) ;
+	mapaBits = descProceso[ind].notificaciones ;
+    for ( i = 0 ; i < 8 ; i++ ) 
+	{
+		eNibble(mapaBits >> 4*(7-i)) ; 
+		putchar(' ') ;
+	}
+	printf("\n descProceso[%i].c2cEmisores    = ", ind) ;
+	ePC2c((ptrC2c_t)&descProceso[ind].c2cEmisores) ;
+	printf("\n descProceso[%i].c2cReceptores  = ", ind) ;
+	ePC2c((ptrC2c_t)&descProceso[ind].c2cReceptores) ;
+    printf("\n descProceso[%i].tamFichero     = %04lX = %li", 
 	    ind, (dword_t)descProceso[ind].tamFichero, (dword_t)descProceso[ind].tamFichero, 1
 	) ;
     if ((info.modoSO1 == modoSO1_Exe) && (ind == 0))
@@ -324,11 +338,11 @@ void mostrarCamposPrincipales ( pindx_t ind )
     
 	printf("\n") ;
     printf(
-	    " descProceso[%i].programa     = \"%s\""                         "\n" 
-	    " descProceso[%i].comando      = \"%s\""                         "\n"
-	    " descProceso[%i].tamCodigo    = %X"                             "\n"
-	    " descProceso[%i].desplBSS     = %04X"                           "\n"
-	    " descProceso[%i].desplPila    = %04X"                           "\n",
+	    " descProceso[%i].programa       = \"%s\""                       "\n" 
+	    " descProceso[%i].comando        = \"%s\""                       "\n"
+	    " descProceso[%i].tamCodigo      = %X"                           "\n"
+	    " descProceso[%i].desplBSS       = %04X"                         "\n"
+	    " descProceso[%i].desplPila      = %04X"                         "\n",
      	ind, descProceso[ind].programa,
         ind, descProceso[ind].comando,
 		ind, descProceso[ind].tamCodigo,
@@ -349,21 +363,21 @@ void mostrarCamposPrincipales ( pindx_t ind )
     }
 
     printf(
-	    " descProceso[%i].trama        = %04X:%04X", 
+	    " descProceso[%i].trama          = %04X:%04X", 
 		ind, seg((pointer_t)descProceso[ind].trama), 
 		off((pointer_t)descProceso[ind].trama)
 	) ;
 	
-    printf("%s      Flags:  0Nnp  ODIT  SZ0A  0P1C \n", espacio) ;
+    printf("%s    Flags:  0Nnp  ODIT  SZ0A  0P1C \n", espacio) ;
     printf(
-	    " descProceso[%i].CSProc       = %04X    %s               ----  ----  ----  ---- \n"
-	    " descProceso[%i].tam          = %04X Ps %s",
+	    " descProceso[%i].CSProc         = %04X    %s             ----  ----  ----  ---- \n"
+	    " descProceso[%i].tam            = %04X Ps %s",
         ind, descProceso[ind].CSProc, espacio,
 	    ind, descProceso[ind].tam, espacio
     ) ;
 		
     Flgs = descProceso[ind].trama->Flags ;
-	printf("               ") ;
+	printf("             ") ;
     eNibble((Flgs >> 12) & 0x000F) ;
     printf("  ") ;
     eNibble((Flgs >> 8) & 0x000F) ;

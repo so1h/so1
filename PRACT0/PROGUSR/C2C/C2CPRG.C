@@ -59,7 +59,7 @@ void ePC2c ( ptrC2c_t ptrC2c, char opcion)
 
 void formato ( void )
 {
-    printf(" formato: COLA [ num | -n | -e | -h ] ") ;
+    printf(" formato: C2C [ num | -n | -e | -h ] ") ;
 }
 
 void help ( void )
@@ -67,7 +67,7 @@ void help ( void )
     printf(
         ""                                                                  "\n"
         ""                                                                  "\n"
-        " formato : COLA [ num | -n | -e | -h ]"                            "\n"
+        " formato : C2C [ num | -n | -e | -h ]"                            "\n"
         ""                                                                  "\n"
         "      -n : muestra todas las colas sin mas detalles"               "\n"
         "      -e : muestra ademas numElen, primero y cabecera"             "\n"

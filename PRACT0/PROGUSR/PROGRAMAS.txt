@@ -24,6 +24,7 @@ Lista de programas de SO1 presentes en X:\SO\PRACT0\PROGUSR
   - LOGIN    programa de entrada a sistema (login: "usuario" pwd: "alumno")
   - MEAPILA  permite calcular el espacio de pila libre de un proceso
   - MEM      muestra el uso de la memoria (bloques libres y ocupados)
+  - MENUM    programa para probar el paso de mensajes (send, receive, ...)
   - MOUSE    ilustra el acceso al dispositivo de raton (fichero RATON)
   - PS       muestra el estado de los procesos existentes
   - SH       interprete de comandos de SO1

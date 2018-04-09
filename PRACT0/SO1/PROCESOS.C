@@ -492,12 +492,13 @@ void inicProcesos ( void )
 
 /*  inicializamos colas: */
 
-    inicPC2c(&c2cPFR[DPLibres   ], &e2PFR.e2DescProceso, maxProcesos,         TRUE) ;
-    inicPC2c(&c2cPFR[DPOcupados ], &e2PFR.e2DescProceso, maxProcesos + 1,     TRUE) ;
-    inicPC2c(&c2cPFR[PPreparados], &e2PFR.e2Procesos,    3 * maxProcesos,     TRUE) ;
-    inicPC2c(&c2cPFR[PUrgentes  ], &e2PFR.e2Procesos,    3 * maxProcesos + 1, TRUE) ;
-    inicPC2c(&c2cPFR[PDormidos  ], &e2PFR.e2Procesos,    3 * maxProcesos + 2, TRUE) ;
-    inicPC2c(&c2cPFR[POrdenados ], &e2PFR.e2POrdenados,  maxProcesos,         FALSE) ;
+    inicPC2c(&c2cPFR[DPLibres    ], &e2PFR.e2DescProceso, maxProcesos,         TRUE) ;
+    inicPC2c(&c2cPFR[DPOcupados  ], &e2PFR.e2DescProceso, maxProcesos + 1,     TRUE) ;
+    inicPC2c(&c2cPFR[PPreparados ], &e2PFR.e2Procesos,    3 * maxProcesos,     TRUE) ;
+    inicPC2c(&c2cPFR[PUrgentes   ], &e2PFR.e2Procesos,    3 * maxProcesos + 1, TRUE) ;
+    inicPC2c(&c2cPFR[PDormidos   ], &e2PFR.e2Procesos,    3 * maxProcesos + 2, TRUE) ;
+    inicPC2c(&c2cPFR[PReceptAny  ], &e2PFR.e2Procesos,    3 * maxProcesos + 3, TRUE) ;
+    inicPC2c(&c2cPFR[POrdenados  ], &e2PFR.e2POrdenados,  maxProcesos,         FALSE) ;
 
     for ( i = maxProcesos-1 ; i > 0 ; i-- ) 
 	{
@@ -511,6 +512,7 @@ void inicProcesos ( void )
         inicPC2c(&ptrDPi->c2cHijos,      &e2PFR.e2Hijos,    maxProcesos + i,     TRUE) ;
         inicPC2c(&ptrDPi->c2cEmisores,   &e2PFR.e2Procesos, maxProcesos + i,     TRUE) ;
         inicPC2c(&ptrDPi->c2cReceptores, &e2PFR.e2Procesos, 2 * maxProcesos + i, TRUE) ;
+		ptrDPi->notificaciones = 0x00000000L ; 
         apilarPC2c(i, (ptrC2c_t)&c2cPFR[DPLibres]) ;         /* apilamos i */
         ptrDPi->trama = (trama_t far *)NULL ;
         ptrDPi->CSProc = 0x0000 ;
@@ -533,6 +535,7 @@ void inicProcesos ( void )
     inicPC2c(&ptrDP0->c2cHijos, &e2PFR.e2Hijos, maxProcesos + 0, TRUE) ;
     inicPC2c(&ptrDP0->c2cEmisores,   &e2PFR.e2Procesos, maxProcesos + 0,     TRUE) ;
     inicPC2c(&ptrDP0->c2cReceptores, &e2PFR.e2Procesos, 2 * maxProcesos + 0, TRUE) ;
+	ptrDP0->notificaciones = 0x00000000L ; 
     apilarPC2c(0, (ptrC2c_t)&c2cPFR[DPOcupados]) ;           /* apilamos 0 */
     apilarPC2c(0, (ptrC2c_t)&c2cPFR[POrdenados]) ;           /* apilamos 0 */
     ptrDP0->trama = (trama_t far *)MK_FP(DS_SO1, cabecera->SP0-sizeof(trama_t)) ;

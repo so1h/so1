@@ -47,6 +47,7 @@
 /*    algun criterio.                                                      */
 
 #include <so1pub.h\ll_s_exc.h>                                   /* thread */
+#include <so1pub.h\ll_s_msj.h>                             /* receive, ANY */
 #include <so1pub.h\bios_0.h>                 /* print(Car/Dec/Int/Str)BIOS */
 #include <so1pub.h\strings.h>                            /* strcpy, strlen */
 #include <so1pub.h\def_sf.h>                              /* mbr_t, boot_t */
@@ -533,10 +534,16 @@ void * DB ( void * arg ) ;
 //void * DB ( void * arg )
 void * DB ( )
 {
+    peticionDB_t peticion ;	
+ 
     inicDB() ;
 
-    macro_user2system() ;
-    bloquearProcesoActual(rec_db) ;
-	
+	for ( ; ; ) 
+	{
+//		user2system() ;
+//		bloquearProcesoActual(rec_db) ;	
+		receive(ANY, &peticion) ;
+		
+	}
     return(0) ;
 }
