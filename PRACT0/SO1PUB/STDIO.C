@@ -17,7 +17,7 @@ int putchar ( char car )
 
 extern int vsprintf ( char far * buf, const char far * fmt, va_list args ) ;
 
-char bufer [ 2000 ] ;	
+static char bufer [ 2000 ] ;	
 
 static int writeStr ( const char * str )        /* sustituye a escribirStr */
 {

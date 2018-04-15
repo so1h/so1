@@ -9,7 +9,8 @@ OBJS2LINK =                      \
 ..\..\startfin\lib\startlib.lib, \
 ..\..\so1pub\obj\ajustusr.obj,   \
 $(PROGRAMA).obj,                 \
-..\..\so1pub\lib\ll_s_so1.lib,   \
+..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib,   \
+#..\..\so1pub\lib\ll_s_so1.lib,   \
 ..\..\so1pub\obj\stdio.obj,      \
 ..\..\so1pub\obj\vsprintf.obj,   \
 ..\..\crtl\obj\h_ldiv.obj,       \
@@ -25,4 +26,3 @@ SPINICIAL = 17FE
 
 !include "..\..\MKFILE0"
 !include "..\MAKEUSR"
-

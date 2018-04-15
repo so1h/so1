@@ -5,7 +5,8 @@
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\tipos.h>                       /* MK_FP, FP_SEG, FP_OFF */
-#include <so1pub.h\ll_s_exc.h>  /* createProcess, waitpid, exit, open, ... */
+//#include <so1pub.h\ll_s_exc.h>  /* createProcess, waitpid, exit, open, ... */
+#include <so1pub.h\ll_s_so1.h>  /* createProcess, waitpid, exit, open, ... */
 #include <so1pub.h\strings.h>                           /* strcpy, strlcpy */
 #include <so1pub.h\escribir.h>     /* escribirStr, escribirInt, escribirLn */
 #include <so1pub.h\biosdata.h>                             /* ptrFechaBios */

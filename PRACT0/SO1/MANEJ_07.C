@@ -4,18 +4,18 @@
 /*          manejador de las llamadas al sistema del grupo AH = 07         */
 /* ----------------------------------------------------------------------- */
 
+#include <so1pub.h\ll_s_so1.h>       /* KILL, SIGACTION, ALARM, PAUSE, ... */
 #include <so1pub.h\ll_s_sig.h>
-#include <so1pub.h\tipos.h>
 #include <so1.h\procesos.h>
 #include <so1.h\blockpr.h>                        /* bloquearProcesoActual */
 #include <so1pub.h\memory.h>                                     /* memcpy */
 
 void so1_manejador_07 ( void ) {                       /* ah = 7 ; int SO1 */
 
-    switch (tramaProceso->AL) 
+    switch (tramaProceso->AX) 
 	{
 	                                                               	
-    case 0x00 :                                                    /* 0x00 */
+    case KILL :                                                  /* 0x0700 */
    	   	{                                                          /* kill */
 		   	int sig ;
    			pid_t pid ;
@@ -78,7 +78,7 @@ void so1_manejador_07 ( void ) {                       /* ah = 7 ; int SO1 */
             }				
             break ;
         }
-    case 0x01 :                                                    /* 0x01 */
+    case SIGACTION :                                             /* 0x0701 */
 	    {                                                     /* sigaction */
 			int sig = tramaProceso->SI ;
 			struct sigaction * act ;
@@ -91,21 +91,21 @@ void so1_manejador_07 ( void ) {                       /* ah = 7 ; int SO1 */
 			__sighandler[sig] = act->sa_handler ;
             break ;
         }
-    case 0x02 :                                                    /* 0x02 */
+    case ALARM :                                                 /* 0x0702 */
 	    {                                                         /* alarm */
             word_t seconds = tramaProceso->CX ;
 			/* poner callBack en el timer */
 			
 			break ;
         }
-    case 0x03 :  
-	    {	                                                       /* 0x03 */
+    case PAUSE :  
+	    {	                                                     /* 0x0703 */
 	                                                              /* pause */
 			bloquearProcesoActual(rec_senial) ;													  
             break ;
         }
-    case 0x04 :  
-	    {	                                                       /* 0x04 */
+    case SIGSUSPEND :  
+	    {	                                                     /* 0x0704 */
 	                                                         /* sigsuspend */
 			bloquearProcesoActual(rec_senial) ;													  
             break ;

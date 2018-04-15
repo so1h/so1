@@ -16,7 +16,6 @@
 #include <so1pub.h\ll_s_exc.h>                            /* exec, killpid */
 #include <so1pub.h\ll_s_sig.h>         /* kill, sigaction, sigalarm, pause */ 
 
-
 /* ----------------------------------------------------------------------- */
 /* -                                                                     - */
 /* -     Llamadas al sistema implementadas mediante traps (int 0x60)     - */
@@ -25,9 +24,126 @@
 
 /* Numero de vector de interrupcion utilizado por el sistema SO1.          */
 
-#define nVIntSO1     0x60
+#define nVIntSO1      0x60
 
-pid_t createProcess ( const char far * nombre, /* declarada en ll_s_exec.h */
+/* Codigos de operacion (en el registro AX) de las llamadas al sistema     */        
+
+/* ======================================================================= */
+/* gestion de procesos  (AX = 0x00xx)                                      */
+/* ======================================================================= */
+
+#define CREATEPROCESS         0x0000   /* createProcess(nombre, comando)   */
+#define FORK                  0x0001   /* fork()                           */
+#define EXEC                  0x0002   /* exec(nombre, comando)            */   
+#define WAITPID               0x0003   /* waitpid(pid, &status)            */
+#define EXIT                  0x0004   /* exit(status)                     */
+#define GETPID                0x0005   /* getpid()                         */
+#define GETPINDX              0x0006   /* getpindx()                       */  
+#define GETPPID               0x0007   /* getppid()                        */
+#define GETUID                0x0008   /* getuid()                         */ 
+#define SETUID                0x0009   /* setuid(uid)                      */
+#define GETGID                0x000a   /* getgid()                         */ 
+#define SETGID                0x000b   /* setgid(gid)                      */
+#define KILLPID               0x000c   /* killpid(pid)                     */ 
+#define THREAD                0x000d   /* thread(funcion, SP0, arg)        */
+#define YIELD                 0x000e   /* yield()                          */
+
+/* ======================================================================= */
+/* ops. de ficheros     (AX = 0x01xx)                                      */
+/* ======================================================================= */
+
+#define OPEN                  0x0100   /* open(nombre, modoAp)             */
+#define CLOSE                 0x0101   /* close(df)                        */
+#define READ                  0x0102   /* read(df, dir, n)                 */
+#define AIO_READ              0x0103   /* aio_read(df, dir, n)             */
+#define WRITE                 0x0104   /* write(df, dir, n)                */
+#define AIO_WRITE             0x0105   /* aio_write(df, dir, n)            */
+#define LSEEK                 0x0106   /* lseek(df, pos, whence)           */  
+#define FCNTL                 0x0107   /* fcntl(df, cmd, ... )             */ 
+#define IOCTL                 0x0108   /* ioctl(df, request, ... )         */  
+
+/* ======================================================================= */
+/* manejo de drivers    (AX = 0x02xx)                                      */
+/* ======================================================================= */
+
+#define OBTENINFOSO1          0x0200   /* obtenInfoSO1(dSO1)               */
+#define CREARRECURSO          0x0201   /* crearRecurso(dR)                 */
+#define CREARFICHERO          0x0202   /* crearFichero(nombre, rindx)      */
+#define ESPERARDESINSTALACION 0x0203   /* esperarDesinstalacion( ... )     */
+#define DESTRUIRRECURSO       0x0204   /* destruirRecurso(nombre, matando) */
+#define ENCOLARCCBRECURSO     0x0205   /* encolarCcbRecurso(cb, nombre)    */
+#define ELIMINARCCBRECURSO    0x0206   /* eliminarCcbRecurso(cb, nombre)   */                
+
+/* ======================================================================= */
+/* obtenInfo y otras    (AX = 0x03xx)                                      */
+/* ======================================================================= */
+
+#define OBTENINFOPS           0x0300   /* obtenInfoPS(&dP,&e2FFR,&c2cPFR)  */
+#define OBTENINFOMEM          0x0301   /* obtenInfoMEM(&dP,&e2FFR, ... )   */
+#define OBTENINFOPFR          0x0302   /* obtenInfoPFR(&dP,&dF,&dR, ... )  */
+#define OBTENINFOFAB          0x0303   /* obtenInfoFAB(&df)                */    
+#define OBTENINFOINFO         0x0304   /* obtenInfoINFO(&info)             */ 
+#define GETDISK               0x0305   /* getdisk()                        */
+#define FINDFIRST             0x0306   /* listarDirectorio(unidad, rec)    */
+#define FINDNEXT              0x0307   /* unidadLogicaLista(unidadLogica)  */
+
+/* ======================================================================= */
+/* analizarProcesos     (AX = 0x04xx)                               (plot) */
+/* ======================================================================= */
+
+#define ACTIVARTRAZA          0x0400    /* activarTraza(numInstr,pid)      */
+#define ANALIZARPROCESOS      0x0401    /* analizarProcesos(Ok)            */
+
+/* ======================================================================= */
+/* paso de mensajes     (AX = 0x05xx)                         (tipo minix) */
+/* ======================================================================= */
+
+#define SEND                  0x0500    /* send(pindx, &msj)               */
+#define RECEIVE               0x0501    /* receive(pindx, &msj)            */
+#define SENDREC               0x0502    /* sendrec(pindx, &msj)            */
+#define NOTIFY                0x0503    /* notify(pindx)                   */
+#define ECHO                  0x0506    /* echo(pindx, &msj)               */
+
+/* ======================================================================= */
+/* user2system          (AX = 0x06xx)                       (experimental) */
+/* ======================================================================= */
+
+#define USER2SYSTEM           0x0600    /* user2system()                   */
+
+/* ======================================================================= */
+/* manejo de seniales   (AX = 0x07xx)                                      */
+/* ======================================================================= */
+
+#define KILL                  0x0700    /* kill(pid, sig)                  */ 
+#define SIGACTION             0x0701    /* sigaction(sig, &act, &oact)     */
+#define ALARM                 0x0702    /* alarm(seconds)                  */ 
+#define PAUSE                 0x0703    /* pause()                         */ 
+#define SIGSUSPEND            0x0704    /* sigsuspend(sig)                 */
+
+/* ----------------------------------------------------------------------- */
+/* -                                                                     - */
+/* -         Llamadas al sistema implementadas mediante ficheros         - */
+/* -         ===================================================         - */
+/* ----------------------------------------------------------------------- */
+
+/* ======================================================================= */
+/*                        Gestion de memoria ("GM")                        */
+/* ======================================================================= */
+
+/* ll_buscarBloque(tam)                       // read(dfGM, &w, 2)         */
+/* ll_devolverBloque(segmento, tam)           // read(dfGM, &dw, 4)        */
+/* ll_tamBloqueMax()                          // aio_read(dfGM, &tam, 2)   */  
+
+/* ======================================================================= */
+/*                        retardoActivo ("RETARDO")                        */
+/* ======================================================================= */
+
+/* ----------------------------------------------------------------------- */
+/* retardoActivo(nVueltas)                    // read/write(dfRET, &dw, 4) */
+/* ----------------------------------------------------------------------- */
+
+
+pid_t createProcess ( const char far * nombre, 
                       const char far * comando ) ;
 
 /* ----------------------------------------------------------------------- */
@@ -60,7 +176,7 @@ pid_t fork ( void ) ;
 /* ----------------------------------------------------------------------- */
 
 
-int exec ( const char far * nombre,          /* declarada en ll_s_exec.h */
+int exec ( const char far * nombre,         
            const char far * comando ) ;
 
 /* ----------------------------------------------------------------------- */
@@ -77,7 +193,7 @@ int exec ( const char far * nombre,          /* declarada en ll_s_exec.h */
 /* ----------------------------------------------------------------------- */
 
 
-pid_t waitpid ( pid_t pid, int far * statloc );/* declarada en ll_s_exec.h */
+pid_t waitpid ( pid_t pid, int far * statloc ) ;
 
 /* ----------------------------------------------------------------------- */
 /* El proceso que ejecuta esta llamada queda bloqueado hasta que el        */
@@ -87,7 +203,7 @@ pid_t waitpid ( pid_t pid, int far * statloc );/* declarada en ll_s_exec.h */
 /* ----------------------------------------------------------------------- */
 
 
-void exit ( int status ) ;                     /* declarada en ll_s_exec.h */
+void exit ( int status ) ;                  
 
 /* ----------------------------------------------------------------------- */
 /* Esta llamada al sistema termina el proceso (en ejecucion) que la        */
@@ -134,7 +250,7 @@ uid_t getuid ( void ) ;
 /* ----------------------------------------------------------------------- */
 
 
-int setuid ( uid_t uid ) ;                     /* declarada en ll_s_exec.h */
+int setuid ( uid_t uid ) ;                    
 
 /* ----------------------------------------------------------------------- */
 /* Esta llamada al sistema establece el uid del proceso que la ejecuta.    */
@@ -149,7 +265,7 @@ gid_t getgid ( void ) ;
 /* ----------------------------------------------------------------------- */
 
 
-int setgid ( gid_t gid ) ;                     /* declarada en ll_s_exec.h */
+int setgid ( gid_t gid ) ;                   
 
 /* ----------------------------------------------------------------------- */
 /* Esta llamada al sistema establece el gid del proceso que la ejecuta.    */
@@ -175,23 +291,23 @@ int killpid ( int pid ) ;            /* mata directamente sin enviar señal */
 #define SEEK_END   2        /* lseek se posiciona desde el final           */
 
 int open ( const char far * nombre, modoAp_t modoAp ) ;
-                                               /* declarada en ll_s_exec.h */
-int close ( int df ) ;                         /* declarada en ll_s_exec.h */
+                                              
+int close ( int df ) ;                        
 
 int read ( int df, pointer_t dir, word_t nbytes ) ;
 
 int aio_read ( int df, pointer_t dir, word_t nbytes ) ;
 
 int write ( int df, pointer_t dir, word_t nbytes ) ;
-                                               /* declarada en ll_s_exec.h */
+                                            
 int aio_write ( int df, pointer_t dir, word_t nbytes ) ;
 
 long int lseek ( int df, long int pos, word_t whence  ) ;
-                                               /* declarada en ll_s_exec.h */
+                                             
 int fcntl ( int df, word_t cmd, word_t arg ) ;
                                                
 int ioctl ( int df, word_t request, word_t arg ) ;
-                                               /* declarada en ll_s_exec.h */
+                                             
 /* drivers */
 
 void obtenInfoSO1 ( descSO1_t far * descSO1 ) ;
@@ -220,7 +336,7 @@ typedef struct {
   c2c_t         far * c2cPFR ;
 } bloquePFR_t ;
 
-void obtenInfoPS ( descProceso_t far * descProceso,         /* ax = 0601h */
+void obtenInfoPS ( descProceso_t far * descProceso,        
                    e2PFR_t       far * e2PFR,
                    c2c_t         far * c2cPFR ) ;
 
@@ -231,7 +347,7 @@ void obtenInfoPS ( descProceso_t far * descProceso,         /* ax = 0601h */
 /* ----------------------------------------------------------------------- */
 
 
-void obtenInfoMEM ( descProceso_t far * descProceso,         /* ax = 0602h */
+void obtenInfoMEM ( descProceso_t far * descProceso,       
                     e2PFR_t       far * e2PFR,
                     c2c_t         far * c2cPFR,
                     ptrBloque_t       * listaLibres,
@@ -245,7 +361,7 @@ void obtenInfoMEM ( descProceso_t far * descProceso,         /* ax = 0602h */
 /* ----------------------------------------------------------------------- */
 
 
-void obtenInfoPFR ( descProceso_t far * descProceso,         /* ah = 0603h */
+void obtenInfoPFR ( descProceso_t far * descProceso,       
                     descFichero_t far * descFichero,
                     descRecurso_t far * descRecurso,
                     e2PFR_t       far * e2PFR,
@@ -278,6 +394,8 @@ void obtenInfoINFO ( info_t far * info ) ;
 /* getdisk devuelve el numero de la unidad logica actual de SO1            */
 
 int getdisk ( void ) ;
+
+int procesarEntrada ( ffblk_t * ffblk ) ;              /* funcion auxiliar */
 
 int findFirst ( byte_t unidadLogica, ffblk_t * ffblk ) ;
 
@@ -337,10 +455,3 @@ dword_t retardoActivo ( dword_t nVueltas ) ;
 /* ----------------------------------------------------------------------- */
 
 #endif /* LL_S_SO1_H */
-
-
-
-
-
-
-

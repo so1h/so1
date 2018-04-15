@@ -23,12 +23,6 @@ typedef struct {
 
 #define ANY ((pindx_t)0xFAD1)           /* para la comunicacion asimetrica */
 
-#define SEND    0x0500
-#define RECEIVE 0x0501
-#define SENDREC 0x0502
-#define NOTIFY  0x0503
-#define ECHO    0x0504
-
 /* comparar con MINIX3\include\minix\_ipc.h */
 
 int send ( pindx_t pindx, mensaje_t * msj ) ;

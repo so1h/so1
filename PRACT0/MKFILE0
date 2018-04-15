@@ -10,7 +10,7 @@
 # UTMP letra de la unidad temporal %TMP%\-so-
 # UUSB letra de la unidad usb
 
-# (Para compilar SO1 rápidamente COMPILACIONDIRECTA = 1)
+# (Para compilar SO1 rapidamente COMPILACIONDIRECTA = 1)
 # (Para compilar LMLDR COMPILACIONDIRECTA = 0)
 
 COMPILACIONDIRECTA = 1   

@@ -48,6 +48,9 @@
 
 #include <so1pub.h\ll_s_exc.h>                                   /* thread */
 #include <so1pub.h\ll_s_msj.h>                             /* receive, ANY */
+
+#include <so1.h\k_msj.h>                                         /* k_send */
+
 #include <so1pub.h\bios_0.h>                 /* print(Car/Dec/Int/Str)BIOS */
 #include <so1pub.h\strings.h>                            /* strcpy, strlen */
 #include <so1pub.h\def_sf.h>                              /* mbr_t, boot_t */
@@ -73,6 +76,8 @@ pindx_t pindxSrvDB ;                                 /* pindx del servidor */
 
 peticionDB_t peticionDB ;
 
+
+
 dobleEnlace_t ePeticionDB [ maxProcesos + 1 ] = { { 0, 0 } } ;
 
 c2c_t bloqueadosEsperandoHacerPeticionDB = { 0, 0, 0, NULL } ;
@@ -91,13 +96,12 @@ static int far releaseDB ( int dfs )
     return(0) ;
 }
 
-static int far readDB ( int dfs, pointer_t dir, word_t nbytes )
+static int far opDB ( int dfs, pointer_t dir, word_t nbytes, byte_t cmd ) 
 {
     int df ;
     int db ;
     modoAp_t modoAp ;
     int err ;
-    byte_t cmd ;
     dword_t pos1 ;
     dword_t pos2 ;
     word_t cont ;
@@ -122,22 +126,17 @@ static int far readDB ( int dfs, pointer_t dir, word_t nbytes )
     pos2 = pos1 + nbytes - 1 ;
 
     sectorLogico1 = primerSector + (pos1 >> 9) ;
+    if (sectorLogico1 > ultimoSector) return(0) ;
     despl1 = pos1 & (512 - 1) ;
 
     sectorLogico2 = primerSector + (pos2 >> 9) ;
-    despl1 = pos2 & (512 - 1) ;
-
-    if (sectorLogico1 > ultimoSector) return(0) ;
-    if (sectorLogico2 > ultimoSector)
+    if (sectorLogico2 <= ultimoSector)
+        despl2 = pos2 & (512 - 1) ;
+    else
     {
         sectorLogico2 = ultimoSector ;
-        despl2 = 512 ;
+        despl2 = 511 ;
     }
-
-    if (tramaProceso->AL == 0x02)                           /* readDB read */
-        cmd = cmd_read_sector ;
-    else /* tramaProceso->AL == 0x04 */                   /* writeDB write */
-        cmd = cmd_write_sector ;
 
     cont = 0 ;
     for ( s = sectorLogico1 ; s <= sectorLogico2 ; s++ )
@@ -145,8 +144,24 @@ static int far readDB ( int dfs, pointer_t dir, word_t nbytes )
 #if (TRUE)
         err = opSectorDB(s, db, ptrBuferSO1, cmd) ;
 #else
-        /* preguntar si el servidor no esta bloqueado */
-        if ((descProceso[pindxSrvDB].estado != bloqueado) ||
+        /* preguntar si el servidor esta bloqueado (receive) */
+	
+        if ((descProceso[pindxSrvDB].estado == bloqueado) &&
+            (descProceso[pindxSrvDB].esperandoPor == rec_db))
+		{
+            peticionDB.pindxOrg = indProcesoActual ;
+			peticionDB.tipo = 0 ;
+            peticionDB.sectorLogico = s ;         /* mejor dir, nbytes y cmd */         
+            peticionDB.db = db ;
+            peticionDB.dir = ptrBuferSO1 ;
+            peticionDB.cmd = cmd ;
+			k_send(pindxSrvDB, &peticionDB) ;
+		}				
+        bloquearProcesoActual(rec_db) ;
+
+////////////////////////////////
+		
+    	if ((descProceso[pindxSrvDB].estado != bloqueado) ||
             (descProceso[pindxSrvDB].esperandoPor != rec_db))
         {
             /* bloquearse en otro caso en rec_db */
@@ -168,22 +183,35 @@ static int far readDB ( int dfs, pointer_t dir, word_t nbytes )
 #endif
         if (err != 0) break ;
         if (s == sectorLogico1) despl_a = despl1 ; else despl_a = 0 ;
-        if (s < sectorLogico2) despl_b = 512 ; else despl_a = despl2 ;
-        for ( despl = despl_a ; despl < despl_b ; despl++ )
+        if (s < sectorLogico2) despl_b = 511 ; else despl_b = despl2 ;
+        for ( despl = despl_a ; despl <= despl_b ; despl++ )
             *dir++ = ptrBuferSO1[despl] ;
-        cont = cont + despl_b - despl_a ;
-    }
+        cont = cont + despl_b - despl_a + 1 ;
+    }	
+//  descProceso[indProcesoActual].tfa[df].pos += cont ; /* se hace despues */
     return(cont) ;
+}
+
+static int far readDB ( int dfs, pointer_t dir, word_t nbytes )
+{
+	return(opDB(dfs, dir, nbytes, cmd_read_sector)) ;
 }
 
 static int far aio_readDB ( int dfs, pointer_t dir, word_t nbytes )
 {
+    mensaje_0_t peticion ;
+
+    strcpy(peticion.info, "peticion a aio_readDB") ;
+//  while(TRUE) ;
+//  k_send(1, &peticion) ;
+//  k_send(pindxSrvDB, &peticion) ;
+    k_notify(pindxSrvDB) ;
     return(0) ;
 }
 
 static int far writeDB ( int dfs, pointer_t dir, word_t nbytes )
 {
-    return(readDB(dfs, dir, nbytes)) ;           /* tramaProceso->AL == 0x02 */
+    return(opDB(dfs, dir, nbytes, cmd_write_sector)) ; 
 }
 
 static int far aio_writeDB ( int dfs, pointer_t dir, word_t nbytes )
@@ -193,7 +221,27 @@ static int far aio_writeDB ( int dfs, pointer_t dir, word_t nbytes )
 
 static long far lseekDB ( int dfs, long pos, word_t whence )
 {
-  return(-1L) ;
+	int db ;
+    int df ;
+	long posActual ;
+    long tam ;
+    
+    db = descFichero[dfs].menor ;
+	df = tramaProceso->BX ;
+	posActual = descProceso[indProcesoActual].tfa[df].pos ;
+    tam = d_bloque[db].numSectores*d_bloque[db].bytesPorSector ;
+	
+	switch (whence)
+	{
+	case SEEK_SET : posActual = pos       ; break ;
+	case SEEK_CUR : // while(TRUE) ;
+	                posActual += pos      ; break ;
+	case SEEK_END : posActual = tam + pos ; break ;	
+	default       : posActual = -1L ; 
+	}
+	if ((0 <= posActual) && (posActual <= tam))  
+	    descProceso[indProcesoActual].tfa[df].pos = posActual ;
+    return(posActual) ;
 }
 
 static int far fcntlDB ( int dfs, word_t cmd, word_t arg )
@@ -323,7 +371,7 @@ void * servicioDB ( )
     return((void *)0) ;
 }
 
-void inicDB ( void ) 
+void inicDB ( void )
 {
     int i, j, k ;
     byte_t tipoUnidad ;
@@ -339,9 +387,10 @@ void inicDB ( void )
     boot_t far * boot ;
     word_t sectoresPorCilindro ;
     int error ;
-    pid_t pidSrvDB ;                                   /* pid del servidor */
-
     descRecurso_t dR ;
+
+//  pindxSrvDB = getpindx() ;
+    pindxSrvDB = indProcesoActual ;            /* pindx del servidor de DB */
 
     dR.tipo = rDB ;
     strcpy(dR.nombre, "DB") ;
@@ -469,6 +518,7 @@ int opSectorDB ( dword_t sectorLogico, int db, pointer_t dir, byte_t cmd )
         err = opSectorCSH ((CSH_t *)&CSH, unidadBIOS, dirAux, cmd ) ;
     }
     else err = opSectorLBA(sectorLogico, unidadBIOS, dirAux, cmd) ;
+	
     if ((!err) && (posibleErr9) && (cmd == cmd_read_sector))
         memcpy(dir, dirAux, 512) ;
     return(err) ;
@@ -534,16 +584,25 @@ void * DB ( void * arg ) ;
 //void * DB ( void * arg )
 void * DB ( )
 {
-    peticionDB_t peticion ;	
- 
+    peticionDB_t peticion ;
+    mensaje_0_t respuesta ;
+
     inicDB() ;
 
-	for ( ; ; ) 
-	{
-//		user2system() ;
-//		bloquearProcesoActual(rec_db) ;	
-		receive(ANY, &peticion) ;
+    for ( ; ; )
+    {
+//      user2system() ;
+//      bloquearProcesoActual(rec_db) ;
+        receive(ANY, &peticion) ;
+	
+        asm sti ;		
+        /* procesar peticion */
+		asm cli ;
 		
-	}
+		/* mirar si hay mas peticiones pendientes */
+		
+        strcpy(respuesta.info, "respuesta de DB") ;
+        send(peticion.pindxOrg, &respuesta) ;
+    }
     return(0) ;
 }

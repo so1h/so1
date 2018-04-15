@@ -4,11 +4,11 @@
 /*          manejador de las llamadas al sistema del grupo AH = 05         */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\tipos.h>                                     /* pindx_t */
+#include <so1pub.h\ll_s_so1.h>     /* SEND, RECEIVE, SENDREC, NOTIFY, ECHO */
+#include <so1pub.h\ll_s_msj.h>                          /* ANY, tamMensaje */
 #include <so1pub.h\ptrc2c.h>                /* encolarPC2c, desencolarPC2c */
 #include <so1pub.h\memory.h>                                     /* memcpy */
 #include <so1pub.h\strings.h>                                    /* strcpy */
-#include <so1pub.h\ll_s_msj.h>                          /* ANY, tamMensaje */
 #include <so1.h\procesos.h>                             /* descProceso, .. */
 #include <so1.h\blockpr.h>                        /* bloquearProcesoActual */
  
@@ -19,10 +19,11 @@
 /*                                                                         */
 /* Si se admitera asimetria en el envio (send(ANY, msj)) se requeriria     */
 /* el uso de timestamps en las operaciones para que por ejemplo al enviar  */
-/* si hay receptores normales y ANY elegir como destinatario al que tenga  */
-/* menor timestamp (es decir hay ejecutado receive antes). Mantener los    */
-/* timestamp puede tener un coste cuando se agote el contador y deban      */
-/* reordenarse los timestamp asignados. Por suerte nos ahorramos esto.     */ 
+/* si hay receptores normales y ANY, se pueda elegir como destinatario al  */
+/* que tenga menor timestamp (es decir el que ha ejecutado el receive      */
+/* antes). Mantener los timestamp puede tener un coste cuando se agote el  */
+/* contador y deban reordenarse los timestamp asignados. Por suerte nos    */
+/* ahorramos esto.                                                         */ 
 
 /* comparar con MINIX3\kernel\proc.c */
 
@@ -99,8 +100,8 @@ void transmitirMensaje ( trama_t far * tramaPOrigen,
 {
 	mensaje_0_t far * origen ;
 	mensaje_0_t far * destino ;
-	origen  = MK_FP(tramaPOrigen ->DS, tramaPOrigen ->DX) ;
-    destino = MK_FP(tramaPDestino->DS, tramaPDestino->DX) ;
+	origen  = MK_FP(tramaPOrigen ->ES, tramaPOrigen ->DX) ;
+    destino = MK_FP(tramaPDestino->ES, tramaPDestino->DX) ;
     memcpy(destino, origen, tamMensaje) ;     
 	destino->pindxOrg = pindxOrg ;
 }
@@ -108,7 +109,7 @@ void transmitirMensaje ( trama_t far * tramaPOrigen,
 void recogerNotificacion ( pindx_t pindx ) 
 {
     mensaje_0_t far * destino ;               /* cocinamos la notificacion */
-    destino = (mensaje_0_t far *)MK_FP(tramaProceso->DS, tramaProceso->DX) ;
+    destino = (mensaje_0_t far *)MK_FP(tramaProceso->ES, tramaProceso->DX) ;
     destino->pindxOrg = pindx ;                   /* recibimos el mensaje  */ 
     destino->tipo = 0 ;                     
 	strcpy((char far *)&destino->info, "notificacion") ;
@@ -224,11 +225,11 @@ void so1_manejador_05 ( void ) {                       /* ah = 5 ; int SO1 */
 		         ((pindxRes = destinatarioFinal(pindx)) != -1)) 														   
 		{
 			mensaje_0_t mensaje ;
-            word_t valorDS = tramaProceso->DS ;                /* salvamos */ 
+            word_t valorES = tramaProceso->ES ;                /* salvamos */ 
 //			mensaje.pindxOrg = indProcesoActual ;
 			mensaje.tipo = 0 ;                 /* mensaje de notificacion */
 			strcpy((char far *)&mensaje.info, "notificacion") ;
-         	tramaProceso->DS = DS_SO1 ;         
+         	tramaProceso->ES = DS_SO1 ;         
 			tramaProceso->DX = FP_OFF(&mensaje) ;
 			transmitirMensaje(tramaProceso, descProceso[pindxRes].trama, indProcesoActual) ;  
             ptrDPPindx = (descProceso_t *)&descProceso[pindxRes] ;
@@ -238,7 +239,7 @@ void so1_manejador_05 ( void ) {                       /* ah = 5 ; int SO1 */
 //          /* o el proceso que se acaba de desbloquear.                   */			
 //          encolarPC2c(pindxRes, &c2cPFR[PPreparados]) ;
             encolarPC2c(pindxRes, &c2cPFR[PUrgentes]) ; 
-			tramaProceso->DS = valorDS ;                    /* restauramos */
+			tramaProceso->ES = valorES ;                    /* restauramos */
 	        tramaProceso->AX = 0x0000 ;                           /* exito */
 	    }
         else         /* sin bloquearse dejar constancia de la notificacion */ 

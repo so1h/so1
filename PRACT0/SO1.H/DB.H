@@ -37,11 +37,14 @@ typedef struct {
 } d_bloque_t ;
 
 typedef struct {  
-    pindx_t   pindx ;                    /* proceso que solicita el sector */
-    dword_t   sectorLogico ;                    /* numero de sector logico */
-    int       db ;                      /* dispositivo de bloques (unidad) */
-    pointer_t dir ;                                /* direccion de memoria */
-    byte_t    cmd ;                                             /* comando */
-} peticionDB_t ;
+    pindx_t   pindxOrg ;                 /* proceso que solicita el sector */ /*  2 bytes */
+	word_t    tipo ;                                                           /* 2 bytes */  
+//  -------------------------------	
+    dword_t   sectorLogico ;                    /* numero de sector logico */ /*  4 bytes */
+    int       db ;                      /* dispositivo de bloques (unidad) */ /*  2 bytes */
+    pointer_t dir ;                                /* direccion de memoria */ /*  4 bytes */
+    byte_t    cmd ;                                             /* comando */ /*  1 byte  */
+	byte_t    relleno [ 32 - 15 ] ;
+} peticionDB_t ;                                                  /* total */ /* 32 bytes */    
 									
 #endif /* DB_H */

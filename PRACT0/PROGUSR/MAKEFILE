@@ -52,6 +52,7 @@ DIRS.spinic   = $(PROGS:/=.spinic)
 DIRS.show     = $(PROGS:/=.show)
 DIRS.hide     = $(PROGS:/=.hide)
 DIRS.delsrc   = $(PROGS:/=.delsrc)
+DIRS.lst      = $(PROGS:/=.lst)
 
 do: $(DIRS:help=)
   cd help
@@ -114,6 +115,13 @@ $(DIRS.delsrc):
   @"$(MAKE) delsrc" | extraer +l 1
   @cd ..
 
+lst: $(DIRS.lst)
+
+$(DIRS.lst):
+  cd $*
+  @"$(MAKE) lst" | extraer +l 1
+  @cd ..
+  
 run:
   cd ..\disquete
   @copy &&|
@@ -174,6 +182,7 @@ help:
   @"echo    make pule       borra todo salvo los .BIN, fuentes y MAKEFILEs"
   @"echo    make clean      borra todo salvo los fuentes y MAKEFILEs"
   @"echo    make build      borra todo y genera nuevos ficheros .bin"
+  @"echo    make lst        genera nuevo fichero de listado .LST"
   @"echo    make run        ejecuta SO1.EXE en el directorio DISQUETE (Player)"
   @"echo    make runcom     ejecuta SO1.COM en el directorio DISQUETE (Player)"
   @"echo    make rundosbox  ejecuta SO1.EXE en el directorio DISQUETE (DOSBox)"

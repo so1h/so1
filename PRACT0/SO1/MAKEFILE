@@ -14,6 +14,7 @@ OBJS0 = obj\ajustes.obj  \
         obj\bios.obj     \
         obj\dbgword.obj  \
         obj\dokill.obj   \
+        obj\dowait.obj   \
         obj\ejecutar.obj \
         obj\matrix.obj \
         obj\interrup.obj \
@@ -26,6 +27,7 @@ OBJS0 = obj\ajustes.obj  \
         obj\manej_05.obj \
         obj\manej_06.obj \
 #       obj\manej_07.obj \
+		obj\k_msj.obj    \
         obj\plot.obj     \
         obj\procesos.obj \
         obj\recursos.obj \
@@ -64,6 +66,7 @@ $(OBJSConComa:.obj=.obj,)      \
 ..\so1pub\obj\put.obj,         \
 ..\so1pub\obj\pantalla.obj,    \
 #..\so1pub\lib\ll_s_so1.lib,   \
+#..\so1pub\ll_s_so1\lib\ll_s_so1.lib,   \
 ..\so1pub\lib\ll_s_exc.lib,    \
 ..\so1pub\lib\ll_s_u2s.lib,    \
 ..\so1pub\lib\ll_s_msj.lib,    \

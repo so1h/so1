@@ -4,9 +4,21 @@
 /*          manejador de las llamadas al sistema del grupo AH = 03         */
 /* ----------------------------------------------------------------------- */
 
+/* ----------------------------------------------------------------------- */
+/* AX: 0300H ==> obtenInfoPS                                               */
+/* AX: 0301H ==> obtenInfoMEM                                              */
+/* AX: 0302H ==> obtenInfoPFR                                              */
+/* AX: 0303H ==> obtenInfoFAB                                              */
+/* AX: 0304H ==> obtenInfoINFO                                             */
+/* AX: 0305H ==> getdisk                                                   */
+/* AX: 0306H ==> findFirstSo1                                              */
+/* AX: 0307H ==> findNextSo1                                               */
+/* ----------------------------------------------------------------------- */
+
+#include <so1pub.h\ll_s_so1.h>           /* OBTENINFOPS, OBTENINFOMEM, ... */
 #include <so1pub.h\tipos.h>                               /* MK_FP, FP_SEG */
+#include <so1pub.h\ptrc2c.h>                                   /* ptrC2c_t */
 #include <so1pub.h\memory.h>                                     /* memcpy */
-#include <so1pub.h\ll_s_so1.h>
 #include <so1.h\dbgword.h>                                    /* debugWord */
 #include <so1.h\ajustsp.h>                                      /* SP0_SO1 */
 #include <so1.h\ajustes.h>        /* CS_SO1, desplCab, IMRInicial, modoSO1 */
@@ -45,30 +57,37 @@ static void copiarDescRecursos ( bloquePFR_t far * ptrPFR )
     }
 }
 
-static void transferirBPFR ( bloquePFR_t far * ptrPFR, byte_t regAL ) 
+static void transferirBPFR ( bloquePFR_t far * ptrPFR, word_t regAX ) 
 {
+	
+	ptrC2c_t ptrC2cPFR ;
+	e2PFR_t far * ptrE2PFR ; 
+	
     memcpy(ptrPFR->e2PFR, &e2PFR, sizeof(e2PFR_t)) ;
     memcpy(ptrPFR->c2cPFR, &c2cPFR, numColasPFR*sizeof(c2c_t)) ;
 
     copiarDescProcesos(ptrPFR) ;                         /* requiere e2PFR */
-    if (regAL == 0x02) 
+    if (regAX == OBTENINFOPFR) 
 	{
         copiarDescFicheros(ptrPFR) ;                     /* requiere e2PFR */
         copiarDescRecursos(ptrPFR) ;                     /* requiere e2PFR */
     }
 
-    ptrPFR->c2cPFR[DPLibres   ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescProceso) ;
-    ptrPFR->c2cPFR[DPOcupados ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescProceso) ;
-    ptrPFR->c2cPFR[PPreparados].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2Procesos) ;
-    ptrPFR->c2cPFR[PUrgentes  ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2Procesos) ;
-    ptrPFR->c2cPFR[PDormidos  ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2Procesos) ;
-    ptrPFR->c2cPFR[POrdenados ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2POrdenados) ;
-    ptrPFR->c2cPFR[DFLibres   ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescFichero) ;
-    ptrPFR->c2cPFR[DFOcupados ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescFichero) ;
-    ptrPFR->c2cPFR[DRLibres   ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescRecurso) ;
-    ptrPFR->c2cPFR[DROcupados ].e = (dobleEnlace_t far *)&(ptrPFR->e2PFR->e2DescRecurso) ;
+	ptrC2cPFR = (ptrC2c_t)&ptrPFR->c2cPFR[0] ;
+	ptrE2PFR = (e2PFR_t far *)&ptrPFR->e2PFR[0] ; 
+	 
+    ptrC2cPFR[DPLibres   ].e = (dobleEnlace_t far *)&(ptrE2PFR->e2DescProceso) ;
+    ptrC2cPFR[DPOcupados ].e = (dobleEnlace_t far *)&(ptrE2PFR->e2DescProceso) ;
+    ptrC2cPFR[PPreparados].e = (dobleEnlace_t far *)&(ptrE2PFR->e2Procesos) ;
+    ptrC2cPFR[PUrgentes  ].e = (dobleEnlace_t far *)&(ptrE2PFR->e2Procesos) ;
+    ptrC2cPFR[PDormidos  ].e = (dobleEnlace_t far *)&(ptrE2PFR->e2Procesos) ;
+    ptrC2cPFR[POrdenados ].e = (dobleEnlace_t far *)&(ptrE2PFR->e2POrdenados) ;
+    ptrC2cPFR[DFLibres   ].e = (dobleEnlace_t far *)&(ptrE2PFR->e2DescFichero) ;
+    ptrC2cPFR[DFOcupados ].e = (dobleEnlace_t far *)&(ptrE2PFR->e2DescFichero) ;
+    ptrC2cPFR[DRLibres   ].e = (dobleEnlace_t far *)&(ptrE2PFR->e2DescRecurso) ;
+    ptrC2cPFR[DROcupados ].e = (dobleEnlace_t far *)&(ptrE2PFR->e2DescRecurso) ;
 
-    if (regAL == 0x01) 
+    if (regAX == OBTENINFOMEM) 
 	{
         tramaProceso->AX = FP_SEG(listaLibres) ;
         tramaProceso->DX = tamBloqueMax ;
@@ -77,20 +96,20 @@ static void transferirBPFR ( bloquePFR_t far * ptrPFR, byte_t regAL )
 
 void so1_manejador_03 ( void )                         /* ah = 3 ; int SO1 */
 {
-    switch (tramaProceso->AL) 
+    switch (tramaProceso->AX) 
 	{
-    case 0x00 :                                /* obtenInfoPS  *//* 0x0300 */
-    case 0x01 :                                /* obtenInfoMEM *//* 0x0301 */
-    case 0x02 :                                /* obtenInfoPFR *//* 0x0302 */
+    case OBTENINFOPS  :                        /* obtenInfoPS  *//* 0x0300 */
+    case OBTENINFOMEM :                        /* obtenInfoMEM *//* 0x0301 */
+    case OBTENINFOPFR :                        /* obtenInfoPFR *//* 0x0302 */
 	    {
             bloquePFR_t far * ptrPFR ;
             ptrPFR = (bloquePFR_t far *)
 			    MK_FP(tramaProceso->ES, tramaProceso->BX) ;
-            transferirBPFR(ptrPFR, tramaProceso->AL) ;
+            transferirBPFR(ptrPFR, tramaProceso->AX) ;
 		}
         break ;
 		
-    case 0x03 :                                                  /* 0x0303 */
+    case OBTENINFOFAB :                                          /* 0x0303 */
 	    {
 		    descriptor_de_fichero_t far * df ;
             df = (descriptor_de_fichero_t far *)           /* obtenInfoFAB */
@@ -102,7 +121,7 @@ void so1_manejador_03 ( void )                         /* ah = 3 ; int SO1 */
 		}	
         break ;
 		
-    case 0x04 :                                                  /* 0x0304 */
+    case OBTENINFOINFO :                                         /* 0x0304 */
 	    {
             info_t far * info ;
             cabecera_t far * cabecera ;
@@ -118,28 +137,21 @@ void so1_manejador_03 ( void )                         /* ah = 3 ; int SO1 */
 		}
         break ;
 		
-    case 0x05 :                                                  /* 0x0305 */
+    case GETDISK :                                               /* 0x0305 */ 
         tramaProceso->AX = (word_t)unidadLogicaActual ;         /* getdisk */
         break ;
 
-#if (FALSE)
-    case 0x05 :                                                  /* 0x0305 */
-        tramaProceso->AX = (word_t)                   /* unidadLogicaLista */
-            unidadLogicaListaSo1(tramaProceso->BL) ;
-        break ;
-#endif
-
-    case 0x06 :                                                  /* 0x0306 */
+    case FINDFIRST :                                             /* 0x0306 */
         tramaProceso->AX = (word_t)
-            findFirstSo1(                                  /* findFirstSo1 */
+            findFirstSo1(                                     /* findFirst */
                 tramaProceso->BL,
                 (ffblk_t far *)MK_FP(tramaProceso->DS, tramaProceso->DX)
             ) ;
         break ;
 		
-    case 0x07 :                                                  /* 0x0307 */
+    case FINDNEXT :                                              /* 0x0307 */
         tramaProceso->AX = (word_t)
-            findNextSo1(                                    /* findNextSo1 */
+            findNextSo1(                                       /* findNext */
                 (ffblk_t far *)MK_FP(tramaProceso->DS, tramaProceso->DX)
             ) ;
       break ;

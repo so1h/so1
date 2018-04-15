@@ -14,18 +14,14 @@
 /* AX: 0206H ==> eliminarCcbRecurso                                        */
 /* ----------------------------------------------------------------------- */
 
+#include <so1pub.h\ll_s_so1.h>          /* OBTENINFOSO1, CREARRECURSO, ... */ 
 #include <so1pub.h\strings.h>                                    /* strcmp */
 #include <so1pub.h\memory.h>                                     /* memcpy */
-#include <so1pub.h\ll_s_so1.h>
-#include <so1pub.h\ccb.h>
-#include <so1pub.h\bios_0.h>
-#include <so1.h\ajustes.h>
-#include <so1.h\ajustsp.h>
-#include <so1.h\interrup.h>
-#include <so1.h\procesos.h>
-#include <so1.h\blockpr.h>
-#include <so1.h\recursos.h>
-#include <so1.h\gm.h>
+#include <so1.h\ajustsp.h>                                      /* SP0_SO1 */
+#include <so1.h\interrup.h>                                       /* VIOrg */
+#include <so1.h\blockpr.h>           /* indProcesoActual, ptrDPActual, ... */
+#include <so1.h\recursos.h>            /* crearRec, crearFich, destruirRec */
+#include <so1.h\gm.h>                                  /* k_devolverBloque */
 
 void cargarDescSO1 ( descSO1_t far * descSO1 ) 
 {
@@ -54,21 +50,20 @@ void cargarDescSO1 ( descSO1_t far * descSO1 )
     descSO1->bloquearProcesoActual    = MK_FP(_CS, (word_t)bloquearProcesoActual) ;
 }
 
-extern void so1_manejador_02 ( )                       /* ah = 8 ; int SO1 */
+extern void so1_manejador_02 ( )                       /* ah = 2 ; int SO1 */
 {
-    switch (tramaProceso->AL) 
+    switch (tramaProceso->AX) 
 	{
 
-    case 0x00 :                                                  /* 0x0200 */
+    case OBTENINFOSO1 :                                          /* 0x0200 */
 	{                                                      /* obtenInfoSO1 */
         descSO1_t far * descSO1 ;                         
-		
         descSO1 = MK_FP(tramaProceso->ES, tramaProceso->BX) ;
         cargarDescSO1(descSO1) ;
         break ;
     }
 	
-    case 0x01 :                                                  /* 0x0201 */
+    case CREARRECURSO :                                          /* 0x0201 */
 	{                                                      /* crearRecurso */
         descRecurso_t far * dR ;                          
         rindx_t rindx ;
@@ -79,7 +74,7 @@ extern void so1_manejador_02 ( )                       /* ah = 8 ; int SO1 */
         break ;
     }
 	
-    case 0x02 :                                                  /* 0x0202 */
+    case CREARFICHERO :                                          /* 0x0202 */
 	{                                                      /* crearFichero */
         char far * nombre ;                               
         rindx_t rindx ;
@@ -94,8 +89,7 @@ extern void so1_manejador_02 ( )                       /* ah = 8 ; int SO1 */
         break ;
     }   
 	
-	
-    case 0x03 :                                                  /* 0x0203 */
+    case ESPERARDESINSTALACION :                                 /* 0x0203 */
 	{                                             /* esperarDesinstalacion */
         rindx_t r ;
         word_t tamDATA       = tramaProceso->BX ;    /* BX = tamDATA       */
@@ -114,6 +108,8 @@ extern void so1_manejador_02 ( )                       /* ah = 8 ; int SO1 */
 		    word_t nuevoDS ; 
 		    word_t nuevoSP0 ;
 		    trama_t far * nuevaTramaProceso ;
+			ptrC2c_t ptrC2cDROcupados ;
+			descRecurso_t * ptrDRr ; 
   	
 	     	tamDATA       = (tamDATA + 0x000F) & 0xFFF0 ;         /* bytes */
 	        finCodeDriver = (finCodeDriver + 0x000F) & 0xFFF0 ;
@@ -130,33 +126,34 @@ extern void so1_manejador_02 ( )                       /* ah = 8 ; int SO1 */
             nuevoDS = tramaProceso->CS + nuevoSegDatosSR ;  
             segBloqueLibre = nuevoDS + (tamDATA >> 4) + tamPilaPs ;
 
-            r = c2cPFR[DROcupados].primero ;/* actualizar DS en call backs */
-            while (r != c2cPFR[DROcupados].cabecera) 
+			ptrC2cDROcupados = (ptrC2c_t)&c2cPFR[DROcupados] ;
+            r = ptrC2cDROcupados->primero ; /* actualizar DS en call backs */
+            while (r != ptrC2cDROcupados->cabecera) 
 	    	{
-                if (descRecurso[r].pindx == indProcesoActual) 
+				ptrDRr = (descRecurso_t *)&descRecurso[r] ;
+                if (ptrDRr->pindx == indProcesoActual) 
 			    {
-				    if (descRecurso[r].ccb->arg != NULL) 
-			            descRecurso[r].ccb->arg = 
-			                MK_FP(nuevoDS, FP_OFF(descRecurso[r].ccb->arg)) ;  		
-                    descRecurso[r].ccb = MK_FP(nuevoDS, FP_OFF(descRecurso[r].ccb)) ; 
+				    if (ptrDRr->ccb->arg != NULL) 
+			            ptrDRr->ccb->arg = 
+			                MK_FP(nuevoDS, FP_OFF(ptrDRr->ccb->arg)) ;  		
+                    ptrDRr->ccb = MK_FP(nuevoDS, FP_OFF(ptrDRr->ccb)) ; 
                 }
                 else 
 		    	{
 			    	int i, j ;
-				    j = descRecurso[r].ccb->out ;
-    				for ( i = 0 ; i < descRecurso[r].ccb->num ; i++ ) 
+				    j = ptrDRr->ccb->out ;
+    				for ( i = 0 ; i < ptrDRr->ccb->num ; i++ ) 
 	    			{
-                        if (FP_SEG(descRecurso[r].ccb->callBack[j]) == tramaProceso->DS)
-			    			descRecurso[r].ccb->callBack[j] = 
-				                MK_FP(nuevoDS, FP_OFF(descRecurso[r].ccb->callBack[j])) ;
-                        j = (j + 1) % (descRecurso[r].ccb->max) ;
+                        if (FP_SEG(ptrDRr->ccb->callBack[j]) == tramaProceso->DS)
+			    			ptrDRr->ccb->callBack[j] = 
+				                MK_FP(nuevoDS, FP_OFF(ptrDRr->ccb->callBack[j])) ;
+                        j = (j + 1) % (ptrDRr->ccb->max) ;
     				}	
 	     		}
-                r = c2cPFR[DROcupados].e[r].sig ;
+                r = ptrC2cDROcupados->e[r].sig ;
             } 
 
 	    	memcpy(      /* copia de los primeros tamDATA bytes de la DATA */
-//		        MK_FP(tramaProceso->CS, finCodeDriver),         /* destino */
 		        MK_FP(nuevoDS, 0x0000),                         /* destino */
 		        MK_FP(tramaProceso->DS, 0x0000),    /* comienzo de la DATA */
                 tamDATA
@@ -211,7 +208,7 @@ extern void so1_manejador_02 ( )                       /* ah = 8 ; int SO1 */
         break ; 
     }                                         
                    
-    case 0x04 :                                                  /* 0x0204 */
+    case DESTRUIRRECURSO :                                       /* 0x0204 */
     {                                                   /* destruirRecurso */    
         tramaProceso->AX =
             destruirRec(
@@ -220,17 +217,17 @@ extern void so1_manejador_02 ( )                       /* ah = 8 ; int SO1 */
 			) ;
         break ;
     }                
-
 	                                                    /* 0x0205 y 0x0206 */
-    case 0x05 : ;                                     /* encolarCcbRecurso */
-    case 0x06 :                                      /* eliminarCcbRecurso */
+    case ENCOLARCCBRECURSO  : ;                       /* encolarCcbRecurso */
+    case ELIMINARCCBRECURSO :                        /* eliminarCcbRecurso */
 	{
         callBack_t cb ;
         rindx_t rindx ;
         bool_t enc = FALSE ;
         int res ;
-        rindx = c2cPFR[DROcupados].primero ;              /* ver si existe */
-        while (rindx != c2cPFR[DROcupados].cabecera) 
+		ptrC2c_t ptrC2cDROcupados = (ptrC2c_t)&c2cPFR[DROcupados] ;
+        rindx = ptrC2cDROcupados->primero ;               /* ver si existe */
+        while (rindx != ptrC2cDROcupados->cabecera) 
 		{
             if (!strcmp(descRecurso[rindx].nombre,
                         MK_FP(tramaProceso->CX, tramaProceso->BX))) 
@@ -238,18 +235,18 @@ extern void so1_manejador_02 ( )                       /* ah = 8 ; int SO1 */
                 enc = TRUE ;
                 break ;                                  /* sale del bucle */
             }
-            rindx = c2cPFR[DROcupados].e[rindx].sig ;
+            rindx = ptrC2cDROcupados->e[rindx].sig ;
         }
         if (!enc) res = -1 ;                       /* el recurso no existe */
         else 
 		{
             cb = MK_FP(tramaProceso->ES, tramaProceso->DX) ;
-            switch (tramaProceso->AL) 
+            switch (tramaProceso->AX) 
 			{
-            case 0x05 :                                  
+            case ENCOLARCCBRECURSO :                                  
                 res = encolarCcb(cb, descRecurso[rindx].ccb) ;   
                 break ;                                  /* 0, -1, ..., -3 */
-            case 0x06 :
+            case ELIMINARCCBRECURSO :
                 res = eliminarCcb(cb, descRecurso[rindx].ccb) ;  
                 break ;                                  /* 0, -1, ..., -4 */
             }

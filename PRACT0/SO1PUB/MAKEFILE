@@ -22,6 +22,7 @@ OBJS = ajustusr.obj  bios_0.obj    comundrv.obj  \
        bios_crt.obj  memvideo.obj  debug.obj     \
        bios_rat.obj  telon.obj     leercmd.obj   \
        ll_s_exc.lib  ll_s_so1.lib  stdio.obj     \
+#      stdio.obj     \
        usrdbg.obj    vsprintf.obj  memory.obj    \ 
 	   ll_s_u2s.lib  ll_s_msj.lib \
 #      startcode.obj startdata.obj startbss.obj  \
@@ -30,6 +31,7 @@ OBJS = ajustusr.obj  bios_0.obj    comundrv.obj  \
 all: $(OBJS)
   @if not exist LIB mkdir LIB
   @echo.
+!if 1  
 # @tlib LIB\ll_s_so1.lib - LIB\ll_s_exec.lib > NUL
 # tlib LIB\ll_s_so1.lib + LIB\ll_s_exec.lib
 # @tlib LIB\startlib.lib - OBJ\startcode.obj - OBJ\startdata.obj - OBJ\startbss.obj  > NUL
@@ -50,6 +52,18 @@ all: $(OBJS)
 # (tlib LIB\finlib.lib   + OBJ\fincode.obj  ) | extraer +l 1
 # (tlib LIB\finlib.lib   + OBJ\findata.obj  ) | extraer +l 1
 # (tlib LIB\finlib.lib   + OBJ\finbss.obj   ) | extraer +l 1
+  cd ll_s_so1
+  $(MAKE)
+  @echo.
+  cd ..
+!else
+  cd ll_s_so1
+  $(MAKE)
+  @echo.
+  cd ..
+  @if exist lib\ll_s_so1.lib erase lib\ll_s_so1.lib
+  copy ll_s_so1\lib\ll_s_so1.lib lib\*
+!endif
 
 .obj.lib:
   @if not exist LIB mkdir LIB
@@ -119,9 +133,14 @@ $(AFLAGS)
 #.h.c:
 #  touch $@
 
-clean: lib obj asm lst stderr.txt stdout.txt tags tags.idx
+#clean: lib obj asm lst stderr.txt stdout.txt tags tags.idx
+clean: lib obj asm stderr.txt stdout.txt tags tags.idx
   @if exist *.err del *.err
   @if exist lib\*.bak del lib\*.bak
+  @if exist lst\*lst del lst\*.lst
+  cd ll_s_so1
+  @$(MAKE) clean > nul
+  @cd ..
 
 show:
   @if exist SOURCE\*.C move SOURCE\*.C .
@@ -139,7 +158,8 @@ delsrc:
 stderr.txt stdout.txt tags tags.idx:
   @if exist $* del $*
 
-lib obj asm lst:
+#lib obj asm lst:
+lib obj asm:
   @if exist $&\*.$& del $&\*.$&
 
 build: clean all

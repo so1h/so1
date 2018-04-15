@@ -11,7 +11,8 @@ OBJS2LINK =                      \
 #
 $(PROGRAMA).obj,                 \
 #
-..\..\so1pub\lib\ll_s_so1.lib,   \
+..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib,   \
+#..\..\so1pub\lib\ll_s_so1.lib,   \
 ..\..\so1pub\obj\comundrv.obj,   \
 ..\..\so1pub\obj\ctype.obj,      \  
 ..\..\so1pub\obj\stdio.obj,      \
@@ -29,7 +30,4 @@ $(PROGRAMA).obj,                 \
 SPINICIAL = 25FE
 
 !include "..\..\MKFILE0"
-
-COMPILACIONDIRECTA = 0
-
 !include "..\MAKEUSR"

@@ -31,21 +31,24 @@
 /* (callbacks) para que se ejecuten desde la isr(s) asociada(s) al driver. */
 /* ----------------------------------------------------------------------- */
 
-#include <so1pub.h\strings.h>                           /* strcmp, strncmp */
+#include <so1pub.h\ll_s_so1.h>                   /* OPEN, CLOSE, READ, ... */
 #include <so1pub.h\tipos.h>                                       /* MK_FP */
+#include <so1pub.h\strings.h>                           /* strcmp, strncmp */
+#include <so1pub.h\ptrc2c.h>                                   /* ptrC2c_t */
 #include <so1.h\procesos.h>    /* descProceso, descFihero, descRecurso ... */ 
 #include <so1.h\minifs.h>                                        /* rec_sf */
 
 //#include <so1.h\bios.h>                                  /* printStrBIOS */
 
-int indiceTFAS ( const char far * nombre ) /* puede mejorarse con la cola c2c de ficheros */
+int indiceTFAS ( const char far * nombre ) 
 {
     int dfs ;
-    dfs = c2cPFR[DFOcupados].primero ;                   /* ver si existe ya */
-    while (dfs != c2cPFR[DFOcupados].cabecera) 
+	ptrC2c_t ptrC2cDFOcupados = (ptrC2c_t)&c2cPFR[DFOcupados] ;
+    dfs = ptrC2cDFOcupados->primero ;                  /* ver si existe ya */
+    while (dfs != ptrC2cDFOcupados->cabecera) 
 	{
         if (!strcmp(descFichero[dfs].nombre, nombre)) return(dfs) ;
-        dfs = c2cPFR[DFOcupados].e[dfs].sig ;
+        dfs = ptrC2cDFOcupados->e[dfs].sig ;
     }
     return(-1) ;
 }
@@ -63,9 +66,13 @@ int indiceTFA ( const char far * nombre )
 int nuevaEntradaTFA ( void ) 
 {
     int df ;
+	dfa_t * ptrDfa = (dfa_t *)&ptrDPActual->tfa ; 
     for ( df = 0 ; df < dfMax ; df++ )
-        if (ptrDPActual->tfa[df].dfs < 0) 
+	{
+        if (ptrDfa->dfs < 0) 
             return(df) ;
+		ptrDfa++ ;
+	}
     return(-1) ;
 }
 
@@ -85,9 +92,9 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
     word_t cmd ;                                                  /* fcntl */
     word_t arg ;
 
-    switch (tramaProceso->AL) 
+    switch (tramaProceso->AX) 
 	{
-    case 0x00 :                                                  /* 0x0100 */
+    case OPEN :                                                  /* 0x0100 */
         modoAp = tramaProceso->DX ;                                /* open */
         nombre = MK_FP(tramaProceso->ES, tramaProceso->BX) ;
         df = -1 ;                                           /* por defecto */
@@ -138,7 +145,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
         tramaProceso->AX = df ;
         break ;
 
-    case 0x01 :                                                  /* 0x0101 */
+    case CLOSE :                                                 /* 0x0101 */
         df = tramaProceso->BX ;                                   /* close */
         res = -1 ;
         if ((0 <= df) && (df < dfMax)) 
@@ -160,10 +167,10 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
         tramaProceso->AX = res ;
         break ;
 
-    case 0x02 :                                 /* read      */ /* 0x0102 */
-    case 0x03 :                                 /* aio_read  */ /* 0x0103 */
-    case 0x04 :                                 /* write     */ /* 0x0104 */
-    case 0x05 :                                 /* aio_write */ /* 0x0105 */
+    case READ      :                             /* read      */ /* 0x0102 */
+    case AIO_READ  :                             /* aio_read  */ /* 0x0103 */
+    case WRITE     :                             /* write     */ /* 0x0104 */
+    case AIO_WRITE :                             /* aio_write */ /* 0x0105 */
         df = tramaProceso->BX ;
         res = -1 ;
         if ((0 <= df) && (df < dfMax)) 
@@ -179,23 +186,23 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
                     if ((0 <= rindx) && (rindx < maxRecursos))
                        modoAp = ptrDPActual->tfa[df].modoAp ;
                     dir = MK_FP(tramaProceso->ES, tramaProceso->DX) ;
-                    switch (tramaProceso->AL) 
+                    switch (tramaProceso->AX) 
 				    {
-                    case 0x02 :                                    /* read */
-                    case 0x03 :                                /* aio_read */
+                    case READ     :                                /* read */
+                    case AIO_READ :                            /* aio_read */
                         if ((modoAp & 0x0007) == O_RDONLY) 
 					    {
-                            if (tramaProceso->AL == 0x02)
+                            if (tramaProceso->AX == READ)
                                 res = descRecurso[rindx].read(dfs, dir, nbytes) ;
                             else
                                 res = descRecurso[rindx].aio_read(dfs, dir, nbytes) ;
                         }
                         break ;
-                    case 0x04 :                                   /* write */
-                    case 0x05 :                               /* aio_write */
+                    case WRITE     :                              /* write */
+                    case AIO_WRITE :                          /* aio_write */
                         if ((modoAp & 0x0007) == O_WRONLY) 
 						{
-                            if (tramaProceso->AL == 0x04)
+                            if (tramaProceso->AX == WRITE)
                                 res = descRecurso[rindx].write(dfs, dir, nbytes) ;
                             else
                                 res = descRecurso[rindx].aio_write(dfs, dir, nbytes) ;
@@ -210,7 +217,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
         tramaProceso->AX = res ;
         break ;
 
-    case 0x06 :                                                 /* 0x0106 */
+    case LSEEK :                                                /* 0x0106 */
         df = tramaProceso->BX ;                                  /* lseek */
         posNueva = -1L ;
         if ((0 <= df) && (df < dfMax)) {
@@ -235,7 +242,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
         tramaProceso->BX = (word_t)(posNueva >> 16) ;
         break ;
 
-    case 0x07 :                                                 /* 0x0107 */
+    case FCNTL :                                                /* 0x0107 */
         df = tramaProceso->BX ;                                  /* fcntl */
         cmd = tramaProceso->CX ;
         arg = tramaProceso->DX ;
@@ -267,8 +274,8 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
         tramaProceso->AX = res ;
         break ;
 		
-    case 0x08 :                                                  /* 0x0108 */
-        df = tramaProceso->BX ;                                   /* fcntl */
+    case IOCTL :                                                 /* 0x0108 */
+        df = tramaProceso->BX ;                                   /* ioctl */
         cmd = tramaProceso->CX ;
         arg = tramaProceso->DX ;
         res = -1 ;

@@ -63,23 +63,24 @@ pid_t createProcess ( const char far * nombre,               /* ax = 0000h */
 /* cero (0) al proceso hijo, y el pid del proceso hijo, al proceso padre.  */
 /* El proceso hijo hereda todos los ficheros que tenia abiertos el proceso */
 /* padre.                                                                  */
-/* Si por algun motivo no se puede crear el proceso hijo, la llamada fork  */
+/* Si por algun motivo no puede crearse el proceso hijo, la llamada fork  */
 /* devuelve un valor negativo indicando el tipo de error ocurrido.         */
 /* ----------------------------------------------------------------------- */
 
 pid_t fork ( void ) {                                        /* ax = 0001h */
-  pid_t hpid ;
 #if (FALSE)
+  pid_t hpid ;
   if (dfGP == -1) dfGP = open("GP", O_RDONLY) ;
   read(dfGP, (pointer_t)&hpid, 2) ;
-#else
-  asm {
-    mov ax,0001h ;
-    int nVIntSO1 ;
-    mov hpid,dx
-  }
-#endif
   return(hpid) ;
+#else
+    asm 
+	{
+        mov ax,FORK ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
+#endif
 }
 
 
@@ -143,14 +144,14 @@ void exit ( int status ) ;                                   /* ax = 0004h */
 /* la ejecuta.                                                             */
 /* ----------------------------------------------------------------------- */
 
-pid_t getpid ( void ) {                                      /* ax = 0005h */
-  pid_t pid ;
-  asm {
-    mov ax,0005h ;
-    int nVIntSO1 ;
-    mov pid,bx ;
-  }
-  return(pid) ;
+pid_t getpid ( void )                                        /* ax = 0005h */
+{
+    asm 
+	{
+        mov ax,GETPID ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -160,14 +161,14 @@ pid_t getpid ( void ) {                                      /* ax = 0005h */
 /* que la ejecuta.                                                         */
 /* ----------------------------------------------------------------------- */
 
-pindx_t getpindx ( void ) {                                  /* ax = 0006h */
-  pindx_t pindx ;
-  asm {
-    mov ax,0006h ;
-    int nVIntSO1 ;
-    mov pindx,bx ;
-  }
-  return(pindx) ;
+pindx_t getpindx ( void )                                    /* ax = 0006h */
+{
+    asm 
+	{
+        mov ax,GETPINDX ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -177,14 +178,14 @@ pindx_t getpindx ( void ) {                                  /* ax = 0006h */
 /* padre del proceso que la ejecuta.                                       */
 /* ----------------------------------------------------------------------- */
 
-pid_t getppid ( void ) {                                     /* ax = 0007h */
-  pid_t ppid ;
-  asm {
-    mov ax,0007h ;
-    int nVIntSO1 ;
-    mov ppid,bx ;
-  }
-  return(ppid) ;
+pid_t getppid ( void )                                       /* ax = 0007h */
+{
+    asm 
+	{
+        mov ax,GETPPID ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -194,14 +195,14 @@ pid_t getppid ( void ) {                                     /* ax = 0007h */
 /* que la ejecuta.                                                         */
 /* ----------------------------------------------------------------------- */
 
-uid_t getuid ( void ) {                                      /* ax = 0008h */
-  uid_t uid ;
-  asm {
-    mov ax,0008h ;
-    int nVIntSO1 ;
-    mov uid,bx ;
-  }
-  return(uid) ;
+uid_t getuid ( void )                                        /* ax = 0008h */
+{
+    asm 
+	{
+        mov ax,GETUID ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -220,14 +221,14 @@ int setuid ( uid_t uid ) ;                                   /* ax = 0009h */
 /* que la ejecuta.                                                         */
 /* ----------------------------------------------------------------------- */
 
-pid_t getgid ( void ) {                                      /* ax = 000ah */
-  gid_t gid ;
-  asm {
-    mov ax,000ah ;
-    int nVIntSO1 ;
-    mov gid,bx ;
-  }
-  return(gid) ;
+pid_t getgid ( void )                                        /* ax = 000ah */
+{
+    asm 
+	{
+        mov ax,GETGID ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -287,46 +288,44 @@ int open ( const char far * nombre, modoAp_t modoAp ) ;
 
 int close ( int df ) ;                      /* implementada en ll_s_exec.h */
 
-int read ( int df, pointer_t dir, word_t nbytes ) {
-  int res ;
-  asm {
-    mov bx,df ;
-    les dx,dir ;
-    mov cx,nbytes ;
-    mov ax,0102h ;
-    int nVIntSO1 ;
-    mov res,ax ;
-  }
-  return(res) ;
+int read ( int df, pointer_t dir, word_t nbytes ) 
+{
+    asm {
+        mov bx,df ;
+        les dx,dir ;
+        mov cx,nbytes ;
+        mov ax,READ ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
-int aio_read ( int df, pointer_t dir, word_t nbytes ) {
-  int res ;
-  asm {
-    mov bx,df ;
-    les dx,dir ;
-    mov cx,nbytes ;
-    mov ax,0103h ;
-    int nVIntSO1 ;
-    mov res,ax ;
-  }
-  return(res) ;
+int aio_read ( int df, pointer_t dir, word_t nbytes ) 
+{
+    asm {
+        mov bx,df ;
+        les dx,dir ;
+        mov cx,nbytes ;
+        mov ax,AIO_READ ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
 int write ( int df, pointer_t dir, word_t nbytes ) ;
                                             /* implementada en ll_s_exec.h */
 
-int aio_write ( int df, pointer_t dir, word_t nbytes ) {
-  int res ;
-  asm {
-    mov bx,df ;
-    les dx,dir ;
-    mov cx,nbytes ;
-    mov ax,0105h ;
-    int nVIntSO1 ;
-    mov res,ax ;
-  }
-  return(res) ;
+int aio_write ( int df, pointer_t dir, word_t nbytes ) 
+{
+    asm 
+	{
+        mov bx,df ;
+        les dx,dir ;
+        mov cx,nbytes ;
+        mov ax,AIO_WRITE ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
                                             /* implementada en ll_s_exec.h */
 long lseek ( int df, long pos, word_t whence  ) ; 
@@ -338,10 +337,11 @@ long lseek ( int df, long pos, word_t whence  ) ;
 /* el descriptor de fichero df.                                            */
 /* ----------------------------------------------------------------------- */
 
-char leer ( int df ) {
+char leer ( int df ) 
+{
   char car ;
   int n = read(df, (pointer_t)&car, 1) ;
-  if (n < 1) car = (char)0 ;
+  if (n < 1) car = '\0' ;
   return(car) ;
 }
 
@@ -370,17 +370,17 @@ char leerAsciiListo ( int df ) {
   return(car) ;
 }
                                           
-int fcntl ( int df, word_t cmd, word_t arg  ) {
-  word_t res ;
-  asm {
-    mov bx,df ;
-    mov cx,cmd ;
-    mov dx,arg ;
-    mov ax,0107h ;
-    int nVIntSO1 ;
-    mov res,ax ;
-  }
-  return((bool_t)res) ;
+int fcntl ( int df, word_t cmd, word_t arg  ) 
+{
+    asm 
+	{
+        mov bx,df ;
+        mov cx,cmd ;
+        mov dx,arg ;
+        mov ax,FCNTL ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
                                             /* implementada en ll_s_exec.h */
 int ioctl ( int df, word_t cmd, word_t arg  ) ;
@@ -397,98 +397,103 @@ int ioctl ( int df, word_t cmd, word_t arg  ) ;
 /* 0206: eliminarCcbRecurso(cb, nombre)                                    */
 /* ======================================================================= */
 
-void obtenInfoSO1 ( descSO1_t far * descSO1 ) {
-  asm {
-    les bx,descSO1 ;
-    mov ax,0200h ;
-    int nVIntSO1 ;
-  }
+void obtenInfoSO1 ( descSO1_t far * descSO1 ) 
+{
+    asm 
+	{
+        les bx,descSO1 ;
+        mov ax,OBTENINFOSO1 ;
+        int nVIntSO1 ;
+    }
 }
 
-rindx_t crearRecurso ( descRecurso_t far * dR ) {
-  rindx_t rindx ;
-  asm les bx,dR
-  asm mov ax,0201h
-  asm int nVIntSO1
-  asm mov rindx,ax
-  return(rindx) ;
+rindx_t crearRecurso ( descRecurso_t far * dR ) 
+{
+    asm 
+	{
+		les bx,dR ;
+        mov ax,CREARRECURSO ;
+        int nVIntSO1 ;
+	}
+    return(_AX) ;
 }
 
 dfs_t crearFichero ( const char far * nombre,
                      rindx_t          rindx,
                      word_t           menor,
-                     tipoFichero_t    tipo ) {
-  int res ;
-  asm {
-    les bx,nombre ;
-    mov cx,rindx ;
-    mov dx,menor ;
-    mov si,tipo ;
-    mov ax,0202h ;
-    int nVIntSO1 ;
-    mov res,ax ;
-  }
-  return(res) ;
+                     tipoFichero_t    tipo ) 
+{
+    asm 
+	{
+        les bx,nombre ;
+        mov cx,rindx ;
+        mov dx,menor ;
+        mov si,tipo ;
+        mov ax,CREARFICHERO ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
-int esperarDesinstalacion ( word_t tamDATA, ... ) {
-  int res ;
-  word_t finCodeDriver = 0x0000 ;
-  word_t finishDriver = 0x0000 ;
-  word_t tamPila = 0x0000 ;
-  if (tamDATA != 0x0000)
-	finCodeDriver = *((word_t far *)((pointer_t)&tamDATA + 1*sizeof(word_t))) ;
-	finishDriver  = *((word_t far *)((pointer_t)&tamDATA + 2*sizeof(word_t))) ;
-	tamPila       = *((word_t far *)((pointer_t)&tamDATA + 3*sizeof(word_t))) ;
-  asm {
-	mov bx,tamDATA ;
-	mov cx,finCodeDriver ;
-	mov dx,finishDriver ;
-	mov si,tamPila ;
-    mov ax,0203h ;
-    int nVIntSO1 ;
-    mov res,ax ;
-  }
-  return(res) ;
+int esperarDesinstalacion ( word_t tamDATA, ... ) 
+{
+    if (tamDATA != 0x0000) 
+	{
+        word_t finCodeDriver ;
+		word_t finishDriver ;
+        word_t tamPila ;
+	    finCodeDriver = *((word_t far *)((pointer_t)&tamDATA + 1*sizeof(word_t))) ;
+	    finishDriver  = *((word_t far *)((pointer_t)&tamDATA + 2*sizeof(word_t))) ;
+	    tamPila       = *((word_t far *)((pointer_t)&tamDATA + 3*sizeof(word_t))) ;
+        asm 
+     	{
+	        mov cx,finCodeDriver ;
+     	    mov dx,finishDriver ;
+    	    mov si,tamPila ;
+	    }
+	}
+	asm 
+	{
+	    mov bx,tamDATA ;
+        mov ax,ESPERARDESINSTALACION ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
 int destruirRecurso ( char far * nombre, bool_t matando ) 
 {
-  int res ;
-  asm {
-    les bx,nombre ;
-	mov cx,matando ;
-    mov ax,0204h ;
-    int nVIntSO1 ;
-    mov res,ax ;
-  }
-  return(res) ;
+    asm {
+        les bx,nombre ;
+	    mov cx,matando ;
+        mov ax,DESTRUIRRECURSO ;
+        int nVIntSO1 ;
+    }
+	return(_AX) ;
 }
 
-int encolarCcbRecurso ( callBack_t cb, const char far * nombre ) {
-  int res ;
-  asm {
-    les bx,nombre ;                                       /* ES:BX         */
-    mov cx,es ;                                           /* CX:BX nombre  */
-    les dx,cb ;                                           /* ES:DX cb      */
-    mov ax,0205h ;
-    int nVIntSO1 ;
-    mov res,ax ;
-  }
-  return(res) ;
+int encolarCcbRecurso ( callBack_t cb, const char far * nombre ) 
+{
+    asm {
+        les bx,nombre ;                                   /* ES:BX         */
+        mov cx,es ;                                       /* CX:BX nombre  */
+        les dx,cb ;                                       /* ES:DX cb      */
+        mov ax,ENCOLARCCBRECURSO ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
-int eliminarCcbRecurso ( callBack_t cb, const char far * nombre ) {
-  int res ;
-  asm {
-    les bx,nombre ;                                       /* ES:BX         */
-    mov cx,es ;                                           /* CX:BX nombre  */
-    les dx,cb ;                                           /* ES:DX cb      */
-    mov ax,0206h ;
-    int nVIntSO1 ;
-    mov res,ax ;
-  }
-  return(res) ;
+int eliminarCcbRecurso ( callBack_t cb, const char far * nombre ) 
+{
+    asm {
+        les bx,nombre ;                                   /* ES:BX         */
+        mov cx,es ;                                       /* CX:BX nombre  */
+        les dx,cb ;                                       /* ES:DX cb      */
+        mov ax,ELIMINARCCBRECURSO ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
 /* ======================================================================= */
@@ -513,21 +518,22 @@ int eliminarCcbRecurso ( callBack_t cb, const char far * nombre ) {
 
 void obtenInfoPS ( descProceso_t far * descProceso,         /* ax = 0300h */
                    e2PFR_t       far * e2PFR,
-                   c2c_t         far * c2cPFR ) {
+                   c2c_t         far * c2cPFR ) 
+{
+    bloquePFR_t bPFR ;
 
-  bloquePFR_t bPFR ;
+    bloquePFR_t far * ptrPFR = (bloquePFR_t far *)&bPFR ;
 
-  bloquePFR_t far * ptrPFR = (bloquePFR_t far *)&bPFR ;
+    bPFR.descProceso = descProceso ;
+    bPFR.e2PFR = e2PFR ;
+    bPFR.c2cPFR = c2cPFR ;
 
-  bPFR.descProceso = descProceso ;
-  bPFR.e2PFR = e2PFR ;
-  bPFR.c2cPFR = c2cPFR ;
-
-  asm {
-    les bx,ptrPFR ;
-    mov ax,0300h ;
-    int nVIntSO1 ;
-  }
+    asm 
+	{
+        les bx,ptrPFR ;
+        mov ax,OBTENINFOPS ;
+        int nVIntSO1 ;
+    }
 }
 
 /* ----------------------------------------------------------------------- */
@@ -543,29 +549,29 @@ void obtenInfoMEM ( descProceso_t far * descProceso,         /* ax = 0301h */
                     e2PFR_t       far * e2PFR,
                     c2c_t         far * c2cPFR,
                     ptrBloque_t       * listaLibres,
-                    word_t            * tamBlqMax ) {
+                    word_t            * tamBlqMax ) 
+{
+    bloquePFR_t bPFR ;
+    word_t segmento ;
+    word_t tam ;
 
-  bloquePFR_t bPFR ;
-  word_t segmento ;
-  word_t tam ;
+    bloquePFR_t far * ptrPFR = (bloquePFR_t far *)&bPFR ;
 
-  bloquePFR_t far * ptrPFR = (bloquePFR_t far *)&bPFR ;
+    bPFR.descProceso = descProceso ;
+    bPFR.e2PFR = e2PFR ;
+    bPFR.c2cPFR = c2cPFR ;
 
-  bPFR.descProceso = descProceso ;
-  bPFR.e2PFR = e2PFR ;
-  bPFR.c2cPFR = c2cPFR ;
+    asm 
+	{
+        les bx,ptrPFR ;
+        mov ax,OBTENINFOMEM ;
+        int nVIntSO1 ;
 
-  asm {
-    les bx,ptrPFR ;
-    mov ax,0301h ;
-    int nVIntSO1 ;
-
-    mov segmento,ax ;
-    mov tam,dx ;
-  }
-  *listaLibres = (ptrBloque_t)MK_FP(segmento, 0x0000) ;
-  *tamBlqMax = tam ;
-
+        mov segmento,ax ;
+        mov tam,dx ;
+    }
+    *listaLibres = (ptrBloque_t)MK_FP(segmento, 0x0000) ;
+    *tamBlqMax = tam ;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -582,23 +588,24 @@ void obtenInfoPFR ( descProceso_t far * descProceso,         /* ah = 0302h */
                     descFichero_t far * descFichero,
                     descRecurso_t far * descRecurso,
                     e2PFR_t       far * e2PFR,
-                    c2c_t         far * c2cPFR ) {
+                    c2c_t         far * c2cPFR ) 
+{
+    bloquePFR_t bPFR ;
 
-  bloquePFR_t bPFR ;
+    bloquePFR_t far * ptrPFR = (bloquePFR_t far *)&bPFR ;
 
-  bloquePFR_t far * ptrPFR = (bloquePFR_t far *)&bPFR ;
+    bPFR.descProceso = descProceso ;
+    bPFR.descFichero = descFichero ;
+    bPFR.descRecurso = descRecurso ;
+    bPFR.e2PFR = e2PFR ;
+    bPFR.c2cPFR = c2cPFR ;
 
-  bPFR.descProceso = descProceso ;
-  bPFR.descFichero = descFichero ;
-  bPFR.descRecurso = descRecurso ;
-  bPFR.e2PFR = e2PFR ;
-  bPFR.c2cPFR = c2cPFR ;
-
-  asm {
-    les bx,ptrPFR ;
-    mov ax,0302h ;
-    int nVIntSO1 ;
-  }
+    asm 
+	{
+        les bx,ptrPFR ;
+        mov ax,OBTENINFOPFR ;
+        int nVIntSO1 ;
+    }
 }
 
 /* ----------------------------------------------------------------------- */
@@ -608,12 +615,14 @@ void obtenInfoPFR ( descProceso_t far * descProceso,         /* ah = 0302h */
 /* direccion indicada por df.                                              */
 /* ----------------------------------------------------------------------- */
 
-void obtenInfoFAB ( descriptor_de_fichero_t far * df ) {     /* ax = 0303h */
-  asm {
-    les bx,df ;
-    mov ax,0303h ;
-    int nVIntSO1 ;
-  }
+void obtenInfoFAB ( descriptor_de_fichero_t far * df )       /* ax = 0303h */
+{
+    asm 
+	{
+        les bx,df ;
+        mov ax,OBTENINFOFAB ;
+        int nVIntSO1 ;
+    }
 }
 
 /* ----------------------------------------------------------------------- */
@@ -623,72 +632,54 @@ void obtenInfoFAB ( descriptor_de_fichero_t far * df ) {     /* ax = 0303h */
 /* de la direccion indicada por df.                                        */
 /* ----------------------------------------------------------------------- */
 
-void obtenInfoINFO ( info_t far * info ) {                   /* ax = 0304h */
-  asm {
-    les bx,info
-    mov ax,0304h
-    int nVIntSO1
-  }
+void obtenInfoINFO ( info_t far * info )                     /* ax = 0304h */
+{
+    asm 
+    {
+        les bx,info ;
+        mov ax,OBTENINFOINFO ;
+        int nVIntSO1 ;
+    }
 }
 
-int getdisk ( void ) {
-  int unidadLogica ;
-  asm {
-    mov ax,0305h
-    int nVIntSO1
-    mov unidadLogica,ax
-  }
-  return(unidadLogica) ;
+int getdisk ( void ) 
+{
+    asm {
+        mov ax,GETDISK ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;                                          /* unidadLogica */
 }
 
-#if (FALSE)
-
-/* ----------------------------------------------------------------------- */
-/* int unidadLogicaLista(unidadLogica)                                     */
-/* ----------------------------------------------------------------------- */
-/* Esta llamada al sistema permite saber si la unidad indicada esta lista  */
-/* para acceder fisicamente a ella.                                        */
-/* ----------------------------------------------------------------------- */
-
-int unidadLogicaLista ( byte_t unidadLogica ) {              /* ax = 0306h */
-  int err ;
-  asm {
-    mov bl,unidadLogica ;
-    mov ax,0305h ;
-    int nVIntSO1 ;
-    mov err,ax ;
-  }
-  return(err) ;
-}
-
-#endif
-
-int procesarEntrada ( ffblk_t * ffblk ) {              /* funcion auxiliar */
-  entrada_t far * entrada = (entrada_t far *)ffblk->buffer ;
-  int i = ffblk->bindx ;
-  int j, k ;
-  ffblk->ff_attrib = entrada[i].atr ;
-  ffblk->ff_ftime = entrada[i].hora ;
-  ffblk->ff_fdate = entrada[i].fecha ;
-  ffblk->ff_fsize = entrada[i].tam ;
-  j = 0 ;
-  while ((j < 8) && (entrada[i].nombre[j] != ' ')) {
-    ffblk->ff_name[j] = entrada[i].nombre[j] ;
-    j++ ;
-  }
-  if (entrada[i].ext[0] != ' ') {
-    ffblk->ff_name[j] = '.' ;
-    j++ ;
-  }
-  k = 0 ;
-  while ((k < 3) && (entrada[i].ext[k] != ' ')) {
-    ffblk->ff_name[j] = entrada[i].ext[k] ;
-    k++ ;
-    j++ ;
-  }
-  ffblk->ff_name[j] = (char)0 ;
-  /* entrada[i].primerCluster ; */
-  return(0) ;
+int procesarEntrada ( ffblk_t * ffblk )                /* funcion auxiliar */
+{
+    entrada_t far * entrada = (entrada_t far *)ffblk->buffer ;
+    int i = ffblk->bindx ;
+    int j, k ;
+    ffblk->ff_attrib = entrada[i].atr ;
+    ffblk->ff_ftime = entrada[i].hora ;
+    ffblk->ff_fdate = entrada[i].fecha ;
+    ffblk->ff_fsize = entrada[i].tam ;
+    j = 0 ;
+    while ((j < 8) && (entrada[i].nombre[j] != ' ')) 
+	{
+        ffblk->ff_name[j] = entrada[i].nombre[j] ;
+        j++ ;
+    }
+    if (entrada[i].ext[0] != ' ') {
+        ffblk->ff_name[j] = '.' ;
+        j++ ;
+    }
+    k = 0 ;
+    while ((k < 3) && (entrada[i].ext[k] != ' ')) 
+	{
+        ffblk->ff_name[j] = entrada[i].ext[k] ;
+        k++ ;
+        j++ ;
+    }
+    ffblk->ff_name[j] = '\0' ;
+    /* entrada[i].primerCluster ; */
+    return(0) ;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -698,18 +689,20 @@ int procesarEntrada ( ffblk_t * ffblk ) {              /* funcion auxiliar */
 
 #include <so1pub.h\bios_0.h>
 
-int findFirst ( byte_t unidadLogica, ffblk_t * ffblk ) {
-  int res ;
-  asm {
-    mov bl,unidadLogica ;
-    mov dx,ffblk ;
-    mov ax,0306h ;
-    int nVIntSO1 ;                                     /* ffblk->bindx = 0 */
-    mov res,ax ;
-  }
-  if (res == 0)
-    procesarEntrada(ffblk) ;
-  return(res) ;
+int findFirst ( byte_t unidadLogica, ffblk_t * ffblk ) 
+{
+    int res ;
+    asm 
+	{
+        mov bl,unidadLogica ;
+        mov dx,ffblk ;
+        mov ax,FINDFIRST ;
+        int nVIntSO1 ;                                 /* ffblk->bindx = 0 */
+        mov res,ax ;
+    }
+    if (res == 0)
+        procesarEntrada(ffblk) ;
+    return(res) ;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -717,30 +710,34 @@ int findFirst ( byte_t unidadLogica, ffblk_t * ffblk ) {
 /* ----------------------------------------------------------------------- */
 /* ----------------------------------------------------------------------- */
 
-int findNext ( ffblk_t * ffblk ) {
-  entrada_t far * entrada = (entrada_t far *)ffblk->buffer ;
-  int res ;
-  int i ;
-  for ( i = ++ffblk->bindx ; i < 16 ; i++ )
-    if ((entrada[i].nombre[0] != 0x00) && (entrada[i].nombre[0] != 0xE5))
-      break ;
-  ffblk->bindx = i ;
-  if (ffblk->bindx < 16) {
-    procesarEntrada(ffblk) ;
-    return(0) ;
-  }
-  else {
-    ffblk->eindx += 16 ;
-    asm {
-      mov dx,ffblk ;
-      mov ax,0307h ;
-      int nVIntSO1 ;                                   /* ffblk->bindx = 0 */
-      mov res,ax ;
+int findNext ( ffblk_t * ffblk ) 
+{
+    entrada_t far * entrada = (entrada_t far *)ffblk->buffer ;
+    int res ;
+    int i ;
+    for ( i = ++ffblk->bindx ; i < 16 ; i++ )
+        if ((entrada[i].nombre[0] != 0x00) && (entrada[i].nombre[0] != 0xE5))
+            break ;
+    ffblk->bindx = i ;
+    if (ffblk->bindx < 16) 
+	{
+        procesarEntrada(ffblk) ;
+        return(0) ;
     }
-    if (res == 0)
-      procesarEntrada(ffblk) ;
-    return(res) ;
-  }
+    else 
+	{
+        ffblk->eindx += 16 ;
+        asm 
+		{
+            mov dx,ffblk ;
+            mov ax,FINDNEXT ;
+            int nVIntSO1 ;                             /* ffblk->bindx = 0 */
+            mov res,ax ;
+        }
+        if (res == 0)
+            procesarEntrada(ffblk) ;
+        return(res) ;
+    }
 }
 
 /* ======================================================================= */
@@ -762,14 +759,15 @@ int findNext ( ffblk_t * ffblk ) {
 /* visualizadas por el puerto serie 0, al valor numInstr.                  */
 /* ----------------------------------------------------------------------- */
 
-void activarTraza ( word_t numInstr,
-                    pid_t pid ) {                            /* ax = 0700h */
-  asm {
-    mov bx,numInstr ;
-    mov dx,pid ;
-    mov ax,0400h ;
-    int nVIntSO1 ;
-  }
+void activarTraza ( word_t numInstr, pid_t pid )             /* ax = 0700h */
+{
+    asm 
+	{
+        mov bx,numInstr ;
+        mov dx,pid ;
+        mov ax,ACTIVARTRAZA ;
+        int nVIntSO1 ;
+    }
 }
 
 /* ----------------------------------------------------------------------- */
@@ -780,13 +778,14 @@ void activarTraza ( word_t numInstr,
 /* informaci¢n se envia periodicamente cada tic de reloj.                  */
 /* ----------------------------------------------------------------------- */
 
-void analizarProcesos ( bool_t Ok ) {                        /* ax = 0701h */
-  asm {
-    mov ax,Ok ;              /* pasamos a SO1 el parametro Ok en el flag Z */
-    and ax,ax ;                                     /* activamos los flags */
-    mov ax,0401h ;
-    int nVIntSO1 ;
-  }
+void analizarProcesos ( bool_t Ok )                          /* ax = 0701h */
+{
+    asm {
+        mov ax,Ok ;          /* pasamos a SO1 el parametro Ok en el flag Z */
+        and ax,ax ;                                 /* activamos los flags */
+        mov ax,ANALIZARPROCESOS ;
+        int nVIntSO1 ;
+    }
 }
 
 /* ----------------------------------------------------------------------- */
@@ -799,29 +798,32 @@ void analizarProcesos ( bool_t Ok ) {                        /* ax = 0701h */
 /*                        Gestion de memoria ("GM")                        */
 /* ======================================================================= */
 
-word_t ll_buscarBloque ( word_t tam ) {
-  word_t w = tam ;
-  int dfGM = open("GM", O_RDONLY) ;
-  if (dfGM < 0) return(0x0000) ;
-  read(dfGM, (pointer_t)&w, 2) ;
-  return(w) ;
+word_t ll_buscarBloque ( word_t tam ) 
+{
+    word_t w = tam ;
+    int dfGM = open("GM", O_RDONLY) ;
+    if (dfGM < 0) return(0x0000) ;
+    read(dfGM, (pointer_t)&w, 2) ;
+    return(w) ;
 }
 
-bool_t ll_devolverBloque ( word_t segmento, word_t tam ) {
-  word_t w [2] ;
-  int dfGM = open("GM", O_RDONLY) ;
-  if (dfGM < 0) return(FALSE) ;
-  w[0] = segmento ;
-  w[1] = tam ;
-  return(read(dfGM, (pointer_t)&w, 4) == 4) ;
+bool_t ll_devolverBloque ( word_t segmento, word_t tam ) 
+{
+    word_t w [2] ;
+    int dfGM = open("GM", O_RDONLY) ;
+    if (dfGM < 0) return(FALSE) ;
+    w[0] = segmento ;
+    w[1] = tam ;
+    return(read(dfGM, (pointer_t)&w, 4) == 4) ;
 }
 
-word_t ll_tamBloqueMax ( void ) {
-  word_t tam ;
-  int dfGM = open("GM", O_RDONLY) ;
-  if (dfGM < 0) return(0x0000) ;
-  aio_read(dfGM, (pointer_t)&tam, 2) ;
-  return(tam) ;
+word_t ll_tamBloqueMax ( void ) 
+{
+    word_t tam ;
+    int dfGM = open("GM", O_RDONLY) ;
+    if (dfGM < 0) return(0x0000) ;
+    aio_read(dfGM, (pointer_t)&tam, 2) ;
+    return(tam) ;
 }
 
 /* ======================================================================= */
@@ -839,91 +841,31 @@ word_t ll_tamBloqueMax ( void ) {
 /* se utiliza en el bucle de retardo mencionado.                           */
 /* ----------------------------------------------------------------------- */
 
-dword_t retardoActivo ( dword_t nVueltas ) {
-  int df ;
-  dword_t res = (dword_t)0 ;
-  retardarProceso_t retardarProceso ;
-  dword_t nVueltasRetardo ;
-  if ((df = open("RETARDO", O_RDONLY)) < 0) return((dword_t)-1) ;
-  switch (nVueltas) {
-  case (dword_t)0 :
-    *((pointer_t)&retardarProceso) = 0x01 ;
-    read(df, (pointer_t)&retardarProceso, 4) ;
-    retardarProceso() ;
-    break ;
-  case (dword_t)1 :
-    *((pointer_t)&nVueltasRetardo) = 0x00 ;
-    read(df, (pointer_t)&nVueltasRetardo, 4) ;
-    res = nVueltasRetardo ;
-    break ;
-  default :
+dword_t retardoActivo ( dword_t nVueltas ) 
+{
+    int df ;
+    dword_t res = (dword_t)0 ;
+    retardarProceso_t retardarProceso ;
+    dword_t nVueltasRetardo ;
+    if ((df = open("RETARDO", O_RDONLY)) < 0) return((dword_t)-1) ;
+    switch (nVueltas) {
+    case (dword_t)0 :
+        *((pointer_t)&retardarProceso) = 0x01 ;
+        read(df, (pointer_t)&retardarProceso, 4) ;
+        retardarProceso() ;
+        break ;
+    case (dword_t)1 :
+        *((pointer_t)&nVueltasRetardo) = 0x00 ;
+        read(df, (pointer_t)&nVueltasRetardo, 4) ;
+        res = nVueltasRetardo ;
+        break ;
+    default :
+        close(df) ;
+        df = open("RETARDO", O_WRONLY) ;
+        nVueltasRetardo = nVueltas ;
+        write(df, (pointer_t)&nVueltasRetardo, 4) ;
+        break ;
+    }
     close(df) ;
-    df = open("RETARDO", O_WRONLY) ;
-    nVueltasRetardo = nVueltas ;
-    write(df, (pointer_t)&nVueltasRetardo, 4) ;
-    break ;
-  }
-  close(df) ;
-  return(res) ;
-}
-
-/* --------------------------------------------------------------------- */
-/*                               semaforos                               */
-/* --------------------------------------------------------------------- */
-/*           funciones de interfaz para el manejo de semaforos           */
-/* --------------------------------------------------------------------- */
-
-#define semMax 10
-
-int sem_inic (unsigned int sem,     /* codigo de operacion en ax = 0500h */
-              unsigned int valor  ) {
-  if (sem >= semMax) return(-1) ;
-  asm mov bx,sem
-  asm mov dx,valor
-  asm mov ax,0500h                                 /* AH = 05h y AL = 00 */
-  asm int nVIntSO1     /* nVIntSO1 es el numero de vector de int. de SO1 */
-  return(0) ;
-}
-
-int sem_bajar (unsigned int sem ) { /* codigo de operacion en ax = 0501h */
-  if (sem >= semMax) return(-1) ;
-  asm mov bx,sem
-  asm mov ax,0501h                                 /* AH = 05h y AL = 01 */
-  asm int nVIntSO1     /* nVIntSO1 es el numero de vector de int. de SO1 */
-  return(0) ;
-}
-
-int sem_subir (unsigned int sem ) { /* codigo de operacion en ah = 0502h */
-  if (sem >= semMax) return(-1) ;
-  asm mov bx,sem
-  asm mov ax,0502h                                 /* AH = 05h y AL = 02 */
-  asm int nVIntSO1     /* nVIntSO1 es el numero de vector de int. de SO1 */
-  return(0) ;
-}
-
-/* --------------------------------------------------------------------- */
-/*                                 buzones                               */
-/* --------------------------------------------------------------------- */
-/*             funciones de interfaz para el paso de mensajes            */
-/* --------------------------------------------------------------------- */
-
-#define Capacidad 2  /* Capacidad de los buzones, puede ser 0, 1, 2, ... */
-#define mboxMax 10                   /* 10 buzones (mailbox) como maximo */
-int mbox_send ( unsigned   mbox,    /* codigo de operacion en ah = 0e00h */
-                void far * msj ) {
-  if (mbox >= mboxMax) return(-1) ;
-  asm mov dx,mbox
-  asm les bx,msj                   /* es = SEGMENT msj, bx = OFFSET  msj */
-  asm mov ax,0600h
-  asm int nVIntSO1     /* nVIntSO1 es el numero de vector de int. de SO1 */
-  return(0) ;
-}
-int mbox_receive ( unsigned   mbox, /* codigo de operacion en ah = 0e01h */
-                   void far * msj ) {
-  if (mbox >= mboxMax) return(-1) ;
-  asm mov dx,mbox
-  asm les bx,msj                   /* es = SEGMENT msj, bx = OFFSET  msj */
-  asm mov ax,0601h
-  asm int nVIntSO1     /* nVIntSO1 es el numero de vector de int. de SO1 */
-  return(0) ;
+    return(res) ;
 }

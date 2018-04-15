@@ -23,27 +23,28 @@
 char prompt [ tamComando ] = "SO1> " ;           /* puede contener caminos */
 
 
-void cambiarPromptDOS ( int unidad ) {    /* actualiza camino en el prompt */
-  char directorio [ MAXPATH ] ;
-  int i, j ;
-  getcurdirDOS(unidad, (char *)directorio) ;
-  prompt[0] = 'A' + unidad ;
-  prompt[1] = ':' ;
-  prompt[2] = '\\' ;
-  j = 3 ;
-  for ( i = 0 ; directorio[i] != (char)0 ; i++ )
-    prompt[j++] = directorio[i] ;
-  prompt[j++] = '>' ;
-  prompt[j++] = ' ' ;
-  prompt[j] = (char)0 ;
+void cambiarPromptDOS ( int unidad )   /* actualiza el camino en el prompt */
+{
+    char directorio [ MAXPATH ] ;
+    int i, j ;
+    getcurdirDOS(unidad, (char *)directorio) ;
+    prompt[0] = 'A' + unidad ;
+    prompt[1] = ':' ;
+    prompt[2] = '\\' ;
+    j = 3 ;
+    for ( i = 0 ; directorio[i] != '\0' ; i++ )
+        prompt[j++] = directorio[i] ;
+    prompt[j++] = '>' ;
+    prompt[j++] = ' ' ;
+    prompt[j  ] = '\0' ;
 }
 
 /* redireccion de la entrada/salida estandar (y de error) a un dispositivo */
 
 static char strStd [  ] [ 16 ] = {
-  "entrada",
-  "salida",
-  "salida de error"
+    "entrada",
+    "salida",
+    "salida de error"
 } ;
 
 int redirigirSTDIO ( char * nombreDispositivo ) {
@@ -118,15 +119,17 @@ void interpretar_salida ( simb_t simbolo ) {
 
 /* --------- interpretacion del comando ver ------------------------------ */
 
-void interpretar_ver ( void ) {
-  obtenStr() ;
-  printf("\n\n SO1 [Version 1.7 (02-02-2018)] ") ;
-  if ((str[0] == '-') && (str[1] == 'C') && (str[2] == (char)0)) {
-    printf(
-	    "\n\n Compilacion: __TURBOC__ == 0x%04X %s %s\n", 
-	    __TURBOC__, __DATE__, __TIME__
-	) ;
-  }
+void interpretar_ver ( void )
+{
+    printf("\n\n SO1 [Version 1.7 (15-04-2018)] \n") ;
+    obtenStr() ;
+    if (!strcmp(str, "-C"))
+    {
+        printf(
+            "\n Compilacion: __TURBOC__ == 0x%04X %s %s\n",
+            __TURBOC__, __DATE__, __TIME__
+        ) ;
+    }
 }
 
 /* --------- interpretacion del comando ptos ----------------------------- */
@@ -145,7 +148,7 @@ void escribirPtos ( void ) {
   }
   printf("\n") ;
 //  contCol = 1 ;
-  while (leerAsciiListo(STDIN) == (char)0) {
+  while (leerAsciiListo(STDIN) == '\0') {
     retardoActivo(0) ;
     putchar(carPtos) ;
     if (opcion == 'V') carPtos = '0' + ((carPtos - '0' + 1) % 10) ;
@@ -181,13 +184,13 @@ void interpretar_status ( bool_t * mostrarStatus ) {
   }
   if (simb == s_ident) {
     if (str[0] == 'O') {
-      if ((str[1] == 'N') && (str[2] == (char)0)) {
+      if ((str[1] == 'N') && (str[2] == '\0')) {
         *mostrarStatus = TRUE ;
         printf(" (activado) ") ;
         simb = s_status ;
         return ;
       }
-      if ((str[1] == 'F') && (str[2] == 'F') && (str[3] == (char)0)) {
+      if ((str[1] == 'F') && (str[2] == 'F') && (str[3] == '\0')) {
         *mostrarStatus = FALSE ;
         printf(" (desactivado) ") ;
         simb = s_status ;
@@ -206,41 +209,41 @@ void listarDirectorio ( byte_t unidadLogica, char opcion ) ;
 void listarDirectorioHost ( char * camino, char opcion ) ;
 
 void interpretar_dir ( bool_t host, int unidadLogica ) {
-  char camino [ tamComando ] ; 
+  char camino [ tamComando ] ;
   bool_t esCmdDir = (toupper(str[0]) == 'D') ;
 //escribirStr(" ** str = \"") ; escribirStr(str) ; escribirStr("\"") ;
-  if (!host) {                                        /* (dir|ls) [/W|-l] */ 
+  if (!host) {                                        /* (dir|ls) [/W|-l] */
     obtenStr() ;
-	if (esCmdDir && (str[0] == '/') && (toupper(str[1]) == 'W') && (str[2] == (char)0))
+    if (esCmdDir && (str[0] == '/') && (toupper(str[1]) == 'W') && (str[2] == '\0'))
       listarDirectorio(unidadLogica, 'W') ;
-    else if (!esCmdDir && (str[0] == '-') && (toupper(str[1]) == 'L') && (str[2] == (char)0))
+    else if (!esCmdDir && (str[0] == '-') && (toupper(str[1]) == 'L') && (str[2] == '\0'))
       listarDirectorio(unidadLogica, ' ') ;
     else {
-	  if (esCmdDir) 
+      if (esCmdDir)
         listarDirectorio(unidadLogica, ' ') ;
-      else 
-        listarDirectorio(unidadLogica, 'W') ; 
-	}
+      else
+        listarDirectorio(unidadLogica, 'W') ;
+    }
   }
   else {                             /* (dir|ls) [camino] [/w|-l] [camino] */
     obtenStr() ;
     strcpy(camino, str) ;
-	if (esCmdDir && (str[0] == '/') && (toupper(str[1]) == 'W') && (str[2] == (char)0)) {
-	  obtenStr() ;
+    if (esCmdDir && (str[0] == '/') && (toupper(str[1]) == 'W') && (str[2] == '\0')) {
+      obtenStr() ;
       listarDirectorioHost((char *)str, 'W') ;
-	}
-    else if (!esCmdDir && (str[0] == '-') && (toupper(str[1]) == 'L') && (str[2] == (char)0)) {
-	  obtenStr() ;
+    }
+    else if (!esCmdDir && (str[0] == '-') && (toupper(str[1]) == 'L') && (str[2] == '\0')) {
+      obtenStr() ;
       listarDirectorioHost((char *)str, ' ') ;
-	}
+    }
     else {
-	  obtenStr() ;
-	  if (esCmdDir) {
-	    if ((str[0] == '/') && (toupper(str[1]) == 'W') && (str[2] == (char)0)) 
+      obtenStr() ;
+      if (esCmdDir) {
+        if ((str[0] == '/') && (toupper(str[1]) == 'W') && (str[2] == '\0'))
           listarDirectorioHost((char *)camino, 'W') ;
-	    else 
+        else
           listarDirectorioHost((char *)camino, ' ') ;
-	  }
+      }
       else
         listarDirectorioHost((char *)camino, 'W') ;
     }
@@ -288,7 +291,7 @@ void interpretar_cd ( bool_t host, int unidad, bool_t hayDOS ) {
   }
   if (hayDOS) {
     obtenStr() ;
-    for ( i = 0 ; str[i] != (char)0 ; i++ ) ;
+    for ( i = 0 ; str[i] != '\0' ; i++ ) ;
     if (str[i-1] == '*') {
       if (findfirstDOS((char *)str, (struct ffblk *)&fcb, FA_DIREC) == 0)
         chdirDOS((char *)fcb.ff_name) ;
@@ -378,7 +381,7 @@ void interpretar_traza ( void ) {
       }
     else if ((simb == s_ident) &&                    /* todos los procesos */
              (str[0] == 'A') && (str[1] == 'L') &&
-             (str[2] == 'L') && (str[3] == (char)0))
+             (str[2] == 'L') && (str[3] == '\0'))
       activarTraza(num1, (pid_t)(-1)) ;
     else {
       printf("\a se esperaba un pid, nada o \"all\"") ;
@@ -411,7 +414,7 @@ int resultado ;
   case -5 : ;
   case -6 : ;
   case -7 : printf("\a no ha podido abrirse \"%s\"") ;
-            if (resultado != -4) 
+            if (resultado != -4)
               printf(" como %s estandar ", strStd[-resultado-5]) ;
             simb = s_nulo ;
             break ;
@@ -509,14 +512,14 @@ int interpretarComandos ( void ) {
 
     inicScanner() ;                   /* comienzo del analisis del comando */
     saltarBlancos() ;
-    if (car == (char)0) simb = s_fin ;
+    if (car == '\0') simb = s_fin ;
     else if (car == '!') ;                             /* comando anterior */
     else if (car == ':') simb = s_nohost ;                    /* comando : */
     else if (('A' <= car) && (car <= 'Z')) {
       identificador() ;
-//    escribirStr("\n str = \"") ; escribirStr(str) ; escribirStr("\"\n") ;	  
+//    escribirStr("\n str = \"") ; escribirStr(str) ; escribirStr("\"\n") ;
       if ((simb == s_ident) &&
-          (str[1] == (char)0) && (car == ':')) {             /* comando X: */
+          (str[1] == '\0') && (car == ':')) {                /* comando X: */
         unidad0 = str[0] - 'A' ;
         setdiskDOS(unidad0) ;
         unidad = getdiskDOS() ;
@@ -561,17 +564,17 @@ int interpretarComandos ( void ) {
 
     default      :                             /* ejecutar comando externo */
 
-      while ((car != '&') && (car != (char)0)) obtenCar() ;
+      while ((car != '&') && (car != '\0')) obtenCar() ;
       pid = createProcess(str, comando[inCmd]) ;
       if (pid > 0) {
         if (car != '&') {                                    /* foreground */
           waitpid(pid, (int far *)&status) ;
-          if (mostrarStatus) 
+          if (mostrarStatus)
             printf(" status = %i", status) ;
         }
         else                                                 /* background */
         {
-//        printf("\n waitpid pid = %i", pid) ;	
+//        printf("\n waitpid pid = %i", pid) ;
           waitpid(pid, (int far *)NULL) ;       /* no espera nada del hijo */
         }
       }
@@ -619,12 +622,12 @@ void mostrarEntradaOpcionW ( ffblk_t * ffblk ) {
   if (ffblk->ff_attrib & FA_DIREC)
     nombre[i++] = '[' ;
   j = 0 ;
-  while ((car = ffblk->ff_name[j++]) != (char)0) {
+  while ((car = ffblk->ff_name[j++]) != '\0') {
     nombre[i++] = car ;
   }
   if (ffblk->ff_attrib & FA_DIREC)
     nombre[i++] = ']' ;
-  nombre[i] = (char)0 ;
+  nombre[i] = '\0' ;
   printf("%-12s", (char *)nombre) ;
 
 }
@@ -639,24 +642,24 @@ void mostrarEntradaOpcionL ( ffblk_t * ffblk ) {
 
   putchar(' ') ;
   if (ffblk->ff_name[0] == '.') {
-    if (ffblk->ff_name[1] == (char)0)
+    if (ffblk->ff_name[1] == '\0')
       printf(".            ") ;
     else if ((ffblk->ff_name[1] == '.') &&
-             (ffblk->ff_name[2] == (char)0))
+             (ffblk->ff_name[2] == '\0'))
       printf("..           ") ;
   }
   else {
     for ( i = 0 ; (ffblk->ff_name[i] != '.') &&
-                  (ffblk->ff_name[i] != (char)0) ; i++ )
+                  (ffblk->ff_name[i] != '\0') ; i++ )
       putchar(ffblk->ff_name[i]) ;
-    if (ffblk->ff_name[i] == (char)0)
+    if (ffblk->ff_name[i] == '\0')
       for ( j = i ; j <= 12 ; j++ )
         putchar(' ') ;
     else {
       for ( j = i ; j <= 8 ; j++ )
         putchar(' ') ;
       i++ ;
-      for ( j = i ; ffblk->ff_name[j] != (char)0 ; j++ )
+      for ( j = i ; ffblk->ff_name[j] != '\0' ; j++ )
         putchar(ffblk->ff_name[j]) ;
       for ( k = 0 ; k <= (3 - (j - i)) ; k++ )
         putchar(' ') ;
@@ -668,8 +671,8 @@ void mostrarEntradaOpcionL ( ffblk_t * ffblk ) {
   else {
     miles = ffblk->ff_fsize / 1000 ;
     unidades = (unsigned int)(ffblk->ff_fsize % 1000) ;
-    if (miles > 0) 
-	  printf("%10li.%03i", miles, unidades) ;
+    if (miles > 0)
+      printf("%10li.%03i", miles, unidades) ;
     else printf("%14i", unidades) ;
   }
 
@@ -681,7 +684,7 @@ void mostrarEntradaOpcionL ( ffblk_t * ffblk ) {
   segs = 2*(ffblk->ff_ftime & 0x001F) ;
 
   printf(
-      "  %02i/%02i/%04i  %02i:%02i:%02i", 
+      "  %02i/%02i/%04i  %02i:%02i:%02i",
       dia, mes, anio, horas, mins, segs
   ) ;
 }
@@ -700,18 +703,18 @@ void listarDirectorioHost ( char * camino, char opcion ) {
 
   atr = FA_RDONLY | FA_HIDDEN | FA_SYSTEM | FA_LABEL | FA_DIREC | FA_ARCH ;
 
-  if (camino[0] == (char)0) strcpy(fspath, "*.*") ;
+  if (camino[0] == '\0') strcpy(fspath, "*.*") ;
   else if (!strcmp(camino, ".")) strcpy(fspath, "*.*") ;
   else if (!strcmp(camino, "..")) strcpy(fspath, "..\\*.*") ;
   else {
-    for ( i = 0 ; camino[i] != (char)0 ; i++ ) ;
+    for ( i = 0 ; camino[i] != '\0' ; i++ ) ;
     switch (camino[i-1]) {
       case '.'  : if (camino[i-2] == '.')
                     camino[i++] = '\\' ;
       case '\\' : camino[i++] = '*' ;
                   camino[i++] = '.' ;
                   camino[i++] = '*' ;
-                  camino[i++] = (char)0 ;
+                  camino[i++] = '\0' ;
     }
     strcpy(fspath, camino) ;
   }
@@ -719,10 +722,10 @@ void listarDirectorioHost ( char * camino, char opcion ) {
   if (findfirstDOS((char *)&fspath, (struct ffblk *)&fcb, atr) == -1) return ;
 
   if (fcb.ff_attrib & FA_DIREC) {
-    for ( i = 0 ; fspath[i] != (char)0 ; i++ )
+    for ( i = 0 ; fspath[i] != '\0' ; i++ )
       if ((fspath[i] == '*') || (fspath[i] == '?'))
         break ;
-    if (fspath[i] == (char)0) {
+    if (fspath[i] == '\0') {
       fspath[i++] = '\\' ;
       fspath[i++] = '*' ;
       fspath[i++] = '.' ;
@@ -788,7 +791,7 @@ int mostrarFicheroDOS ( char * nombre, word_t nFilas ) {
             contFilas = 0 ;
             printf("\n Presione cualquier tecla para continuar . . . ") ;
             car = getchar() ;
-			printf("\r                                               \r") ;
+            printf("\r                                               \r") ;
             if (car == ESC) {                        /* Salir con tecla Esc */
 //            closeDOS(df) ; */
               close(df) ;

@@ -13,7 +13,8 @@
 
 #include <so1pub.h\tipos.h>
 #include <so1pub.h\def_proc.h>
-#include <so1pub.h\ll_s_exc.h>                                 /* nVIntSO1 */
+#include <so1pub.h\ll_s_so1.h>                                 /* nVIntSO1 */
+//#include <so1pub.h\ll_s_exc.h>                               /* nVIntSO1 */
 
 /* ----------------------------------------------------------------------- */
 /* exec(nombre, comando)                                                   */
@@ -30,18 +31,17 @@
 /* ----------------------------------------------------------------------- */
 
 pid_t createProcess ( const char far * nombre,               /* ax = 0000h */
-                      const char far * comando ) {
-
-  word_t hpid ;
-  asm {
-    les bx,nombre ;                                       /* ES:BX         */
-    mov cx,es ;                                           /* CX:BX nombre  */
-    les dx,comando ;                                      /* ES:DX comando */
-    mov ax,0000h ;
-    int nVIntSO1 ;
-    mov hpid,dx ;
-  }
-  return(hpid) ;
+                      const char far * comando ) 
+{
+    asm 
+	{
+        les bx,nombre ;                                   /* ES:BX         */
+        mov cx,es ;                                       /* CX:BX nombre  */
+        les dx,comando ;                                  /* ES:DX comando */
+        mov ax,CREATEPROCESS ;
+        int nVIntSO1 ;
+    }
+	return(_AX) ;                               /* DX pid del proceso hijo */
 }
 
 /* ----------------------------------------------------------------------- */
@@ -59,18 +59,17 @@ pid_t createProcess ( const char far * nombre,               /* ax = 0000h */
 /* datros y pila.                                                          */
 /* ----------------------------------------------------------------------- */
 
-int exec ( const char far * nombre,                        /* ax = 0002h */
-           const char far * comando ) {
-  word_t err ;
-  asm {
-    les bx,nombre ;                                       /* ES:BX         */
-    mov cx,es ;                                           /* CX:BX nombre  */
-    les dx,comando ;                                      /* ES:DX comando */
-    mov ax,0002h ;
-    int nVIntSO1 ;
-    mov err,dx ;
-  }
-  return(err) ;
+int exec ( const char far * nombre,                          /* ax = 0002h */
+           const char far * comando ) 
+{
+    asm {
+        les bx,nombre ;                                   /* ES:BX         */
+        mov cx,es ;                                       /* CX:BX nombre  */
+        les dx,comando ;                                  /* ES:DX comando */
+        mov ax,EXEC ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
 
@@ -91,17 +90,17 @@ pid_t thread ( void * (* funcion) (void * arg), word_t SP0, void * arg )
 		mov bx,funcion ;
 		mov cx,SP0 ;
 		mov dx,arg ;
-		mov ax,000dh ;
+		mov ax,THREAD ;
 		int nVIntSO1 ;
-		mov ax,dx ;
 	}		
+	return(_AX) ;
 }
 
 void yield ( void ) 
 {
 	asm 
 	{ 
-	    mov ax,000eh ;
+	    mov ax,YIELD ;
 		int nVIntSO1 ;
 	}		
 }
@@ -120,26 +119,16 @@ void yield ( void )
 /* estado de terminación al padre.                                         */
 /* ----------------------------------------------------------------------- */
 
-pid_t waitpid ( pid_t pid, int far * statloc ) {             /* ax = 0003h */
-  pid_t pidDifunto ;
-  int status ;
-  bool_t noStatus = (statloc == (int far *)NULL) ;  /* el hijo puede morir */
-  if ((pid < 0) &&                                 /* sin enviar el status */
-      ((pid != -1) || noStatus))
-    return(-1) ;
-  asm {
-    mov bx,pid ;
-    mov dx,noStatus ;
-    mov ax,0003h ;
-    int nVIntSO1 ;
-  }
-  if (noStatus) return(0) ;
-  asm {
-    mov status,ax ;
-    mov pidDifunto,bx ;
-  }
-  *statloc = status ;
-  return(pidDifunto) ;
+pid_t waitpid ( pid_t pid, int far * statloc )               /* ax = 0003h */
+{
+	asm
+    {
+        mov bx,pid ;
+        les dx,statloc ;
+        mov ax,WAITPID ;
+        int nVIntSO1 ;
+	}
+	return(_AX) ;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -156,12 +145,14 @@ pid_t waitpid ( pid_t pid, int far * statloc ) {             /* ax = 0003h */
 /* el padre haga el waitpid correspondiente.                               */
 /* ----------------------------------------------------------------------- */
 
-void exit ( int status ) {                                   /* ax = 0004h */
-  asm {
-    mov bx,status ;
-    mov ax,0004h ;
-    int nVIntSO1 ;
-  }
+void exit ( int status )                                     /* ax = 0004h */
+{
+    asm 
+	{
+        mov bx,status ;
+        mov ax,EXIT ;
+        int nVIntSO1 ;
+    }
 }
 
 /* ----------------------------------------------------------------------- */
@@ -170,13 +161,15 @@ void exit ( int status ) {                                   /* ax = 0004h */
 /* Esta llamada al sistema establece el uid del proceso que la ejecuta.    */
 /* ----------------------------------------------------------------------- */
 
-int setuid ( uid_t uid ) {                                   /* ax = 0009h */
-  asm {
-    mov bx,uid ;
-    mov ax,0009h ;
-    int nVIntSO1 ;
-  }
-  return(0) ;
+int setuid ( uid_t uid )                                     /* ax = 0009h */
+{
+    asm 
+	{
+        mov bx,uid ;
+        mov ax,SETUID ;
+        int nVIntSO1 ;
+    }
+    return(0) ;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -185,13 +178,15 @@ int setuid ( uid_t uid ) {                                   /* ax = 0009h */
 /* Esta llamada al sistema establece el gid del proceso que la ejecuta.    */
 /* ----------------------------------------------------------------------- */
 
-int setgid ( gid_t gid ) {                                   /* ax = 000bh */
-  asm {
-    mov bx,gid ;
-    mov ax,000bh ;
-    int nVIntSO1 ;
-  }
-  return(0) ;
+int setgid ( gid_t gid )                                     /* ax = 000bh */
+{
+    asm 
+	{
+        mov bx,gid ;
+        mov ax,SETGID ;
+        int nVIntSO1 ;
+    }
+    return(0) ;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -207,15 +202,15 @@ int setgid ( gid_t gid ) {                                   /* ax = 000bh */
 /* En cualquier otro caso la llamada al sistema retorna el valor -2.       */
 /* ----------------------------------------------------------------------- */
 
-int killpid ( int pid ) {  /* mata directamente sin enviar señal. ah = 0ch */                    
-  int codRetorno ;
-  asm {
-    mov dx,pid ;
-    mov ax,000ch ;
-    int nVIntSO1 ;
-    mov codRetorno,bx ;
-  }
-  return((int)codRetorno) ;
+int killpid ( int pid )    /* mata directamente sin enviar señal. ah = 0ch */  
+{                  
+    asm 
+    {
+        mov dx,pid ;
+        mov ax,KILLPID ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -225,16 +220,16 @@ int killpid ( int pid ) {  /* mata directamente sin enviar señal. ah = 0ch */
 /* resultado el correspondiente descriptor de fichero.                     */
 /* ----------------------------------------------------------------------- */
 
-int open ( const char far * nombre, modoAp_t modoAp ) {
-  int df ;
-  asm {
-    les bx,nombre ;
-    mov dx,modoAp ;
-    mov ax,0100h ;
-    int nVIntSO1 ;
-    mov df,ax ;
-  }
-  return(df) ;
+int open ( const char far * nombre, modoAp_t modoAp ) 
+{
+    asm 
+	{
+        les bx,nombre ;
+        mov dx,modoAp ;
+        mov ax,OPEN ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;                                                    /* df */
 }
 
 /* ----------------------------------------------------------------------- */
@@ -244,58 +239,52 @@ int open ( const char far * nombre, modoAp_t modoAp ) {
 /* de fichero indicado.                                                    */
 /* ----------------------------------------------------------------------- */
 
-int close ( int df ) {
-  int res ;
-  asm {
-    mov bx,df ;
-    mov ax,0101h ;
-    int nVIntSO1 ;
-    mov res,ax ;
-  }
-  return(res) ;
+int close ( int df ) 
+{
+    asm 
+	{
+        mov bx,df ;
+        mov ax,CLOSE ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
-int write ( int df, pointer_t dir, word_t nbytes ) {
-  int res ;
-  asm {
-    mov bx,df ;
-    les dx,dir ;
-    mov cx,nbytes ;
-    mov ax,0104h ;
-    int nVIntSO1 ;
-    mov res,ax ;
-  }
-  return(res) ;
+int write ( int df, pointer_t dir, word_t nbytes ) 
+{
+    asm 
+	{
+        mov bx,df ;
+        les dx,dir ;
+        mov cx,nbytes ;
+        mov ax,WRITE ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
-long int lseek ( int df, long pos, word_t whence  ) {
-  dword_t res ;
-  word_t res_L ;
-  word_t res_H ;
-  asm {
-    mov bx,df ;
-    les dx,pos ;
-    mov cx,whence ;
-    mov ax,0106h ;
-    int nVIntSO1 ;
-    mov res_L,ax ;
-    mov res_H,bx ;
-  }
-  res = (((dword_t)res_H) << 16) | res_L ;
-  return(res) ;
+long lseek ( int df, long pos, word_t whence  ) 
+{
+    asm {
+        mov bx,df ;
+        les dx,pos ;
+        mov cx,whence ;
+        mov ax,LSEEK ;
+        int nVIntSO1 ;
+    }
+    return((((long)_BX) << 16) | _AX) ; 
 }
 
-int ioctl ( int df, word_t cmd, word_t arg  ) {
-  int res ;
-  asm {
-    mov bx,df ;
-    mov cx,cmd ;
-    mov dx,arg ;
-    mov ax,0108h ;
-    int nVIntSO1 ;
-    mov res,ax ;
-  }
-  return((bool_t)res) ;
+int ioctl ( int df, word_t cmd, word_t arg  ) 
+{
+    asm {
+        mov bx,df ;
+        mov cx,cmd ;
+        mov dx,arg ;
+        mov ax,IOCTL ;
+        int nVIntSO1 ;
+    }
+    return(_AX) ;
 }
 
 #endif /* LL_S_EXEC_H */
