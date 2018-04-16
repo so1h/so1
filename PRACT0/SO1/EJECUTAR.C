@@ -170,7 +170,7 @@ pid_t kk_thread ( void * (* funcion) (void * arg), word_t SP0, void * arg )
     ptrDPPindx->hpindx = -1 ;
     inicPC2c(&ptrDPPindx->c2cHijos, &e2PFR.e2Hijos, maxProcesos + pindx, TRUE) ;
     ptrDPPindx->ppindx = indProcesoActual ;
-    encolarPC2c(pindx, (ptrC2c_t)&ptrDPPindx->c2cHijos) ;
+//  encolarPC2c(pindx, (ptrC2c_t)&ptrDPActual->c2cHijos) ;  /* hijo thread */
 
     return(pindx) ;
 }

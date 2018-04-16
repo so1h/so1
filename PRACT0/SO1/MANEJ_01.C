@@ -38,7 +38,7 @@
 #include <so1.h\procesos.h>    /* descProceso, descFihero, descRecurso ... */ 
 #include <so1.h\minifs.h>                                        /* rec_sf */
 
-//#include <so1.h\bios.h>                                  /* printStrBIOS */
+#include <so1pub.h\bios_0.h>                               /* printStrBIOS */
 
 int indiceTFAS ( const char far * nombre ) 
 {
@@ -232,7 +232,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
                     if ((SEEK_SET <= whence) && (whence <= SEEK_END)) 
 					{
                         posNueva = descRecurso[rindx].lseek(dfs, pos, whence) ;
-                        if (posNueva >= (long)0)
+                        if (posNueva >= 0L)
                             ptrDPActual->tfa[df].pos = posNueva ;
                     }
                 }

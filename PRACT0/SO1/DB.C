@@ -7,7 +7,7 @@
 /* Driver de los dispositivos de bloques gestionados mediante la int 13    */
 /* del BIOS. El driver esta pensado para formar parte de la imagen del     */
 /* nucleo (SO1.BIN o SO1.EXE) aunque podria modificarse para ejecutarse    */
-/* como un comando (DB.BIN) si se resuleve el problema de como cargar el   */
+/* como un comando (DB.BIN) si se resuelve el problema de como cargar el   */
 /* driver desde el disco sin un driver de disco previo que cargue DB.BIN.  */
 /*                                                                         */
 /* Hay muchas versiones posibles:                                          */
@@ -33,7 +33,7 @@
 /*    exclusion mutua bloqueando los procesos en una cola que podria       */
 /*    llamarse bloqueadosEsperandoHacerPeticionDB. Tras ser desbloqueados  */
 /*    por el servidor los procesos irian cumplimentando sus peticiones de  */
-/*    sectores tras lo cual desbloquearian al servidor y se bloquearian    */
+/*    sectores, tras lo cual desbloquearian al servidor y se bloquearian   */
 /*    en una cola bloqueadosEsperandoServicioPeticionDB.                   */
 /*                                                                         */
 /*    En ese caso la comunicacion seria sincrona. Podria mejorarse si      */
@@ -72,19 +72,17 @@ rindx_t rec_db ;                         /* recurso dispositivo de bloques */
 
 dfs_t dfs_db ;                        /* descriptor de fichero del sistema */
 
-pindx_t pindxSrvDB ;                                 /* pindx del servidor */
+pindx_t pindxSrvDB ;        /* pindx del servidor de peticiones read/write */
 
-peticionDB_t peticionDB ;
+peticionDB_t peticionDB [ maxProcesos ] ; 
 
+dobleEnlace_t eOpDB [ maxProcesos + 1 ] = { { 0, 0 } } ;
 
+c2c_t c2cOpDB = { 0, 0, 0, NULL } ;      /* cola de procesos peticionarios */
 
-dobleEnlace_t ePeticionDB [ maxProcesos + 1 ] = { { 0, 0 } } ;
+d_bloque_t d_bloque [ ] ;                                       /* forward */
 
-c2c_t bloqueadosEsperandoHacerPeticionDB = { 0, 0, 0, NULL } ;
-
-d_bloque_t d_bloque [ ] ;
-
-#pragma warn -par
+#pragma warn -par         /* para evitar el warning parametro no utilizado */
 
 static int far openDB ( int dfs, modoAp_t modo )
 {
@@ -98,98 +96,26 @@ static int far releaseDB ( int dfs )
 
 static int far opDB ( int dfs, pointer_t dir, word_t nbytes, byte_t cmd ) 
 {
-    int df ;
-    int db ;
-    modoAp_t modoAp ;
-    int err ;
-    dword_t pos1 ;
-    dword_t pos2 ;
-    word_t cont ;
-    dword_t s ;
-    int despl ;
-    int despl_a ;
-    int despl_b ;
-    dword_t sectorLogico1 ;
-    dword_t sectorLogico2 ;
-    int despl1 ;
-    int despl2 ;
-    dword_t primerSector ;
-    dword_t ultimoSector ;
+//  df == tramaProceso->BX 
+//  dir == MK_FP(tramaProceso->ES, tramaProceso->DX) 
+//  nbytes == tramaProceso->CX 
+//  cmd == (tramaProceso->AX == READ) ? cmd_read_sector : cmd_write_sector 	
 
-    df = tramaProceso->BX ;
-    db = descFichero[dfs].menor ;
-
-    primerSector = d_bloque[db].primerSector ;
-    ultimoSector = primerSector + d_bloque[db].numSectores - 1 ;
-
-    pos1 = descProceso[indProcesoActual].tfa[df].pos ;
-    pos2 = pos1 + nbytes - 1 ;
-
-    sectorLogico1 = primerSector + (pos1 >> 9) ;
-    if (sectorLogico1 > ultimoSector) return(0) ;
-    despl1 = pos1 & (512 - 1) ;
-
-    sectorLogico2 = primerSector + (pos2 >> 9) ;
-    if (sectorLogico2 <= ultimoSector)
-        despl2 = pos2 & (512 - 1) ;
-    else
-    {
-        sectorLogico2 = ultimoSector ;
-        despl2 = 511 ;
-    }
-
-    cont = 0 ;
-    for ( s = sectorLogico1 ; s <= sectorLogico2 ; s++ )
-    {
-#if (TRUE)
-        err = opSectorDB(s, db, ptrBuferSO1, cmd) ;
-#else
-        /* preguntar si el servidor esta bloqueado (receive) */
-	
-        if ((descProceso[pindxSrvDB].estado == bloqueado) &&
-            (descProceso[pindxSrvDB].esperandoPor == rec_db))
-		{
-            peticionDB.pindxOrg = indProcesoActual ;
-			peticionDB.tipo = 0 ;
-            peticionDB.sectorLogico = s ;         /* mejor dir, nbytes y cmd */         
-            peticionDB.db = db ;
-            peticionDB.dir = ptrBuferSO1 ;
-            peticionDB.cmd = cmd ;
-			k_send(pindxSrvDB, &peticionDB) ;
-		}				
-        bloquearProcesoActual(rec_db) ;
-
-////////////////////////////////
-		
-    	if ((descProceso[pindxSrvDB].estado != bloqueado) ||
-            (descProceso[pindxSrvDB].esperandoPor != rec_db))
-        {
-            /* bloquearse en otro caso en rec_db */
-            encolarPC2c(indProcesoActual, &bloqueadosEsperandoHacerPeticionDB) ;
-            bloquearProcesoActual(rec_db) ;
-        }
-        /* aqui sabemos que el servidor esta bloqueado */
-        /* hacer peticion */
-        peticionDB.pindx = indProcesoActual ;
-        peticionDB.sectorLogico = s ;
-        peticionDB.db = db ;
-        peticionDB.dir = ptrBuferSO1 ;
-        peticionDB.cmd = cmd ;
-        /* desbloquear al servidor */
-        descProceso[pindxSrvDB].estado = preparado ;
-        encolarPC2c(pindxSrvDB, &c2cPFR[PPreparados]) ;
-        /* bloquearse a la espera en rec_db */
-        bloquearProcesoActual(rec_db) ;
-#endif
-        if (err != 0) break ;
-        if (s == sectorLogico1) despl_a = despl1 ; else despl_a = 0 ;
-        if (s < sectorLogico2) despl_b = 511 ; else despl_b = despl2 ;
-        for ( despl = despl_a ; despl <= despl_b ; despl++ )
-            *dir++ = ptrBuferSO1[despl] ;
-        cont = cont + despl_b - despl_a + 1 ;
-    }	
-//  descProceso[indProcesoActual].tfa[df].pos += cont ; /* se hace despues */
-    return(cont) ;
+//  peticionDB[indProcesoActual].df     = tramaProceso->BX ;
+    peticionDB[indProcesoActual].db     = descFichero[dfs].menor ;
+    peticionDB[indProcesoActual].dir    = dir ;
+	peticionDB[indProcesoActual].nbytes = nbytes ;
+	peticionDB[indProcesoActual].cmd    = cmd ;	
+   	encolarPC2c(indProcesoActual, &c2cOpDB) ;	
+	if (descProceso[pindxSrvDB].estado == bloqueado)
+	{
+        k_notify(pindxSrvDB) ;
+//		descProceso[pindxSrvDB].estado = preparado ;             /* a pelo */
+//		encolarPC2c(pindxSrvDB, &c2cPFR[PUrgentes]) ;      /* (mas rapido) */
+//		encolarPC2c(pindxSrvDB, &c2cPFR[PPreparados]) ;        /* (normal) */
+    }		
+	bloquearProcesoActual(rec_db) ;      
+    return(_AX) ;                      /* no se ejecuta (evita el warning) */
 }
 
 static int far readDB ( int dfs, pointer_t dir, word_t nbytes )
@@ -199,13 +125,6 @@ static int far readDB ( int dfs, pointer_t dir, word_t nbytes )
 
 static int far aio_readDB ( int dfs, pointer_t dir, word_t nbytes )
 {
-    mensaje_0_t peticion ;
-
-    strcpy(peticion.info, "peticion a aio_readDB") ;
-//  while(TRUE) ;
-//  k_send(1, &peticion) ;
-//  k_send(pindxSrvDB, &peticion) ;
-    k_notify(pindxSrvDB) ;
     return(0) ;
 }
 
@@ -226,37 +145,42 @@ static long far lseekDB ( int dfs, long pos, word_t whence )
 	long posActual ;
     long tam ;
     
-    db = descFichero[dfs].menor ;
 	df = tramaProceso->BX ;
+    db = descFichero[dfs].menor ;
 	posActual = descProceso[indProcesoActual].tfa[df].pos ;
     tam = d_bloque[db].numSectores*d_bloque[db].bytesPorSector ;
-	
 	switch (whence)
 	{
 	case SEEK_SET : posActual = pos       ; break ;
-	case SEEK_CUR : // while(TRUE) ;
-	                posActual += pos      ; break ;
+	case SEEK_CUR : posActual += pos      ; break ;
 	case SEEK_END : posActual = tam + pos ; break ;	
 	default       : posActual = -1L ; 
 	}
-	if ((0 <= posActual) && (posActual <= tam))  
-	    descProceso[indProcesoActual].tfa[df].pos = posActual ;
     return(posActual) ;
 }
 
 static int far fcntlDB ( int dfs, word_t cmd, word_t arg )
 {
-  return(0) ;
+    return(0) ;
 }
 
 static int far ioctlDB ( int dfs, word_t request, word_t arg )
 {
-  return(0) ;
+	if (request == 1)                    /* copiamos d_bloque[db] a DS:arg */
+	{
+		int db = descFichero[dfs].menor ; 
+		memcpy(
+		    MK_FP(tramaProceso->DS, arg),
+		    &d_bloque[db], 
+			sizeof(d_bloque_t)
+		)	; 
+	}
+    return(0) ;
 }
 
 static int far eliminarDB ( pindx_t pindx )
 {
-  return(0) ;
+    return(0) ;
 }
 
 /* ----------------------------------------------------------------------- */
@@ -327,49 +251,8 @@ d_bloque_t d_bloque [ ] = {
 
 static descCcb_t descCcbDB = { 0, 0, 0, maxCbDB, NULL } ;
 
-//void mostrarDispositivosDeBloques ( d_bloque_t far * d_bloque ) ;
-void mostrarDispositivosDeBloques ( void ) ;
-
-void * servicioDB ( void * arg ) ;
-//void * servicioDB ( void * arg )
-void * servicioDB ( )
-{
-//  esperarDesinstalacion(0) ;
-//  bloquearProcesoActual(rec_db) ;        /* esperamos nueva peticion */ /* no puede hacerse */
-    while (TRUE) {
-//      (*(pointer_t)MK_FP(0xB800, (word_t)arg))++ ;
-        (*(pointer_t)MK_FP(0xB800, 0x0000))++ ;
-        yield() ; /* llamada yield todavia no */
-    }
-
-#if (FALSE)
-    pindx_t pindx ;
-    asm cli ;                              /* inhibimos las interrupciones */
-    while (TRUE)
-    {
-        bloquearProcesoActual(rec_db) ;        /* esperamos nueva peticion */
-        if (peticionDB.pindx < 0) break ;              /* fin del servidor */
-                                                   /* servimos la peticion */
-        opSectorDB(peticionDB.sectorLogico,  /* permite las interrupciones */
-                   peticionDB.db,
-                   peticionDB.dir,
-                   peticionDB.cmd
-        ) ;
-                       /* desbloqueamos al proceso que se acaba de atender */
-        asm cli ;                          /* inhibimos las interrupciones */
-        descProceso[peticionDB.pindx].estado = preparado ;
-        encolarPC2c(peticionDB.pindx, &c2cPFR[PPreparados]) ;
-
-        if (bloqueadosEsperandoHacerPeticionDB.numElem > 0)
-        {
-            pindx = desencolarPC2c(&bloqueadosEsperandoHacerPeticionDB) ;
-            descProceso[pindx].estado = preparado ;
-            encolarPC2c(pindx, &c2cPFR[PPreparados]) ;
-        }
-    }
-#endif
-    return((void *)0) ;
-}
+//void mostrarDispositivosDeBloques ( d_bloque_t far * d_bloque ) ; 
+void mostrarDispositivosDeBloques ( void ) ;                    /* forward */
 
 void inicDB ( void )
 {
@@ -413,12 +296,7 @@ void inicDB ( void )
 
     rec_db = crearRec(&dR) ;
 
-    inicPC2c(
-       &bloqueadosEsperandoHacerPeticionDB,
-       &ePeticionDB,
-       maxProcesos + 0,
-       FALSE
-    ) ;
+    inicPC2c(&c2cOpDB, &eOpDB, maxProcesos + 0, FALSE) ;
 
     segBuferSO1 = segBuferSeguro() ;                /* para poder leer las */
                                             /* tablas de particiones (MBR) */
@@ -478,7 +356,7 @@ void inicDB ( void )
 
 //  printStrBIOS("\n &d_bloque = ") ;
 //  printPtrBIOS(&d_bloque) ;
-//  /* mostrarDispositivosDeBloques falla con ese parametro d_bloque ???     */
+//  /* mostrarDispositivosDeBloques falla con ese parametro d_bloque ???   */
 //  mostrarDispositivosDeBloques((d_bloque_t far *)&d_bloque) ;
     mostrarDispositivosDeBloques() ;
 }
@@ -533,7 +411,6 @@ void mostrarDispositivosDeBloques ( void )
 //  printStrBIOS("\n d_bloque = ") ;
 //  printPtrBIOS(d_bloque) ;
 
-#if (TRUE)
     numUnidades = 0 ;     /* mostrar nombre de los dispositivos encontrados */
     for ( i = 0 ; i < dbMax ; i++ ) {
         if (d_bloque[i].tipoUnidad != 0x00) {
@@ -544,8 +421,7 @@ void mostrarDispositivosDeBloques ( void )
     }
     if (numUnidades == 0)
         k_devolverBloque(segBuferSO1, 512/16) ;
-#endif
-
+	
     for ( i = 0 ; i < dbMax ; i++ ) {            /* mostrar tabla d_bloque */
         if (d_bloque[i].tipoUnidad != 0x00) {
             dword_t daux ;
@@ -569,8 +445,8 @@ void mostrarDispositivosDeBloques ( void )
             printStrBIOS(" 0x") ;
             printLHexBIOS(d_bloque[i].numSectores, 8) ;
             printStrBIOS("  ") ;
-            daux = d_bloque[i].numSectores ;               /* sectores */
-            printLIntBIOS(daux/(2*1024), 3) ;                 /* bytes */
+            daux = d_bloque[i].numSectores ;                   /* sectores */
+            printLIntBIOS(daux/(2*1024), 3) ;                     /* bytes */
             printStrBIOS(",") ;
             printLIntBIOS(((10*daux)/(2*1024))%10, 1) ;
             printLIntBIOS(((100*daux)/(2*1024))%10, 1) ;
@@ -580,29 +456,109 @@ void mostrarDispositivosDeBloques ( void )
     }
 }
 
+int procesarPeticionDB ( pindx_t pindx ) 
+{
+	int df ;
+	int db ;                                     /* peticion actual db     */
+    pointer_t dir ;                              /* peticion actual dir    */
+    word_t nbytes ;                              /* peticion actual nbytes */
+	byte_t cmd ; 	                             /* peticion actual cmd    */	
+    dword_t primerSector ;
+    dword_t ultimoSector ;
+    dword_t pos1 ;
+    dword_t pos2 ;
+    dword_t sectorLogico1 ;
+    dword_t sectorLogico2 ;
+    int despl1 ;
+    int despl2 ;
+    int err ;
+    word_t cont ;
+    dword_t s ;
+    int despl ;
+    int despl_a ;
+    int despl_b ;
+
+    df = descProceso[pindx].trama->BX ;
+//  df     = peticionDB[pindx].df ;               /* peticion actual df     */
+    db     = peticionDB[pindx].db ;               /* peticion actual db     */
+    dir    = peticionDB[pindx].dir ;              /* peticion actual dir    */
+    nbytes = peticionDB[pindx].nbytes ;           /* peticion actual nbytes */
+    cmd    = peticionDB[pindx].cmd ;              /* peticion actual cmd    */
+	
+    primerSector = d_bloque[db].primerSector ;
+    ultimoSector = primerSector + d_bloque[db].numSectores - 1 ;
+
+    pos1 = descProceso[pindx].tfa[df].pos ;
+    pos2 = pos1 + nbytes - 1 ;
+
+    sectorLogico1 = primerSector + (pos1 >> 9) ;
+    if (sectorLogico1 > ultimoSector) return(0) ;
+    despl1 = pos1 & (512 - 1) ;
+
+    sectorLogico2 = primerSector + (pos2 >> 9) ;
+    if (sectorLogico2 <= ultimoSector)
+        despl2 = pos2 & (512 - 1) ;
+    else
+    {
+        sectorLogico2 = ultimoSector ;
+        despl2 = 511 ;
+    }
+
+    cont = 0 ;
+    for ( s = sectorLogico1 ; s <= sectorLogico2 ; s++ )
+    {
+        err = opSectorDB(s, db, ptrBuferSO1, cmd) ;		
+        if (err != 0) return(-1) ;
+        if (s == sectorLogico1) despl_a = despl1 ; else despl_a = 0 ;
+        if (s < sectorLogico2) despl_b = 511 ; else despl_b = despl2 ;
+        for ( despl = despl_a ; despl <= despl_b ; despl++ )
+            *dir++ = ptrBuferSO1[despl] ;
+        cont = cont + despl_b - despl_a + 1 ;
+    }	
+    descProceso[pindx].tfa[df].pos += cont ;	
+	return(cont) ;
+}
+
 void * DB ( void * arg ) ;
 //void * DB ( void * arg )
 void * DB ( )
 {
-    peticionDB_t peticion ;
-    mensaje_0_t respuesta ;
-
-    inicDB() ;
-
+	pindx_t pindx ;
+	mensaje_0_t notificacion ;                     /* para la notificacion */
+	int nbytes ;
+	
+	asm cli ;                              /* inhibinos las interrupciones */
+    
+	inicDB() ;                                           /* inicializacion */ 
+	
     for ( ; ; )
     {
-//      user2system() ;
-//      bloquearProcesoActual(rec_db) ;
-        receive(ANY, &peticion) ;
-	
+        if (c2cOpDB.numElem == 0)       /* si no hay peticiones pendientes */
+#if (TRUE)		
+    		receive(ANY, &notificacion) ;              /* esperar peticion */
+#else		
+		{
+			user2system() ; /* CF = 1 (system), CF = 0 (user) desbloqueado */
+            if (_FLAGS & 0x0001)  
+            {
+                tramaProceso->Flags &= 0xFFFE ;                  /* CF = 0 */
+                bloquearProcesoActual(rec_db) ;
+			}
+		}
+#endif 	
+        pindx = desencolarPC2c(&c2cOpDB) ;	
         asm sti ;		
-        /* procesar peticion */
-		asm cli ;
 		
-		/* mirar si hay mas peticiones pendientes */
-		
-        strcpy(respuesta.info, "respuesta de DB") ;
-        send(peticion.pindxOrg, &respuesta) ;
+		nbytes = procesarPeticionDB(pindx) ;	                        /* */
+				
+		asm cli ;                              
+        descProceso[pindx].trama->AX = nbytes ;
+     	descProceso[pindx].estado = preparado ;
+	    if (nbytes < 0) 
+	        encolarPC2c(pindx, &c2cPFR[PPreparados]) ;
+	    else 
+//	        encolarPC2c(pindx, &c2cPFR[PUrgentes]) ;  /* monopoliza la CPU */
+	        encolarPC2c(pindx, &c2cPFR[PPreparados]) ;
     }
     return(0) ;
 }

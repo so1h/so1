@@ -12,20 +12,26 @@
 #include <so1pub.h\strings.h>                           /* strcpy, strcmpu */
 #include <so1pub.h\scanner.h>                    /* inicScanner, obtenSimb */ 
 
+#define min( x, y ) ((x <= y) ? x : y ) 
+#define max( x, y ) ((x >= y) ? x : y ) 
+ 
+
 mensaje_0_t respuesta ;
 
-#define tamBufer 5120
+#define tamBufer 512
 
 byte_t bufer [ tamBufer ] ;
 
 int main ( int argc, char * argv [ ] ) 
 {
 	int df ;
-	word_t n ;
+	dword_t n ;
+	dword_t resto ;
     int nbytes ;
 	int i, j, k ;
 	dword_t tam ;
 	dword_t pos ;
+	dword_t posAux ;
 	dword_t posDespues ;
 	
 	if (argc < 2) return(0) ;
@@ -53,13 +59,33 @@ int main ( int argc, char * argv [ ] )
 	    	else return(0) ;
             saltarBlancos() ;
             numDec() ;
-    		if (simb != s_numero) return(0) ; 
-            n = num ;			
-			if (n > tamBufer) return(0) ;
+    		if (simb == s_numero) n = num ;
+			else if (simb == s_numeroLargo) n = numLargo ;
+			else return(0) ; 
+			
 			printf("\n pos = %li\n", pos) ;
+
    	        posDespues = lseek(df, pos, SEEK_SET) ;
          	printf("\n lseek(%i, %li, SEEK_SET) = %li\n", df, pos, posDespues) ;
-    	    nbytes = read(df, (pointer_t)&bufer, n) ;
+    	    
+			resto = n ;
+			posAux = pos ;
+			do 
+			{
+			    nbytes = read(df, (pointer_t)&bufer, min(resto, tamBufer)) ;
+				
+                for ( i = 0 ; i < nbytes ; i++ ) 
+	            {
+                    if ( i % 16 == 0) printf("\n %06lX: ", posAux + i ) ;	   
+                    printf("%02X ", bufer[i]) ;	
+	            }
+     			posAux = lseek(df, 0, SEEK_CUR) ;	
+                resto = resto - nbytes ;				
+			}
+            while (resto > 0) ;  			
+
+     	    printf("\n") ;
+			
 			posDespues = lseek(df, 0, SEEK_CUR) ;
 			printf("\n posDespues = %li\n", posDespues) ;
    	        tam = lseek(df, 0, SEEK_END) ;
@@ -68,12 +94,6 @@ int main ( int argc, char * argv [ ] )
 			    df, n, nbytes, posDespues, tam
 			) ;
 	
-            for ( i = 0 ; i < nbytes ; i++ ) 
-	        {
-                if ( i % 16 == 0) printf("\n %06lX: ", pos + i ) ;	   
-                printf("%02X ", bufer[i]) ;	
-	        }
-	     	printf("\n") ;
 		}
     }	
 #if (FALSE)	

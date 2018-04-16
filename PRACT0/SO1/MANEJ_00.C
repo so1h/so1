@@ -12,6 +12,7 @@
 #include <so1.h\procesos.h>         /* tramaProceso, c2cPFR, matarProcIndx */
 #include <so1.h\blockpr.h>          /* (bloquear/buscarNuevo)ProcesoActual */
 #include <so1.h\dokill.h>                                        /* doKill */
+#include <so1.h\dowait.h>                                        /* doWait */
 #include <so1pub.h\bios_0.h>                               /* printStrBIOS */
 
 void so1_manejador_00 ( void )                        /* ah = 00 ; int SO1 */

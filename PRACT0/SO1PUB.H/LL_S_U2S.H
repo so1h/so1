@@ -101,6 +101,7 @@
 #ifndef LL_S_U2S_H
 #define LL_S_U2S_H
 
+#include <so1pub.h\ll_s_so1.h>                              /* USER2SYSTEM */
 #include <so1.h\procesos.h>                                /* tramaProceso */
 
 #define nVIntSO1 0x60
@@ -108,7 +109,7 @@
 #define macro_user2system( )                                                 \
 	asm                                                                      \
     {                                                                        \
-		mov ax,0x0600 ;                                                      \
+		mov ax,USER2SYSTEM ;                                                 \
 		int nVIntSO1 ;                                                       \
 	}                                                                        \
 
