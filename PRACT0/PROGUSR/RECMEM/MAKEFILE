@@ -1,21 +1,23 @@
 
-PROGRAMA = PROGDB
+PROGRAMA = RECMEM
 
-# primer fichero objeto (..\so1pub\obj\ajustusr.obj)
+# primer fichero objeto (..\..\so1pub\lib\startlib.lib)
+# segundo fichero objeto (..\..\so1pub\obj\ajustusr.obj)
 # ultimo fichero objeto (..\so1pub\obj\fincode.obj)
 
 OBJS2LINK =                      \
 ..\..\startfin\lib\startlib.lib, \
 ..\..\so1pub\obj\ajustusr.obj,   \
+#
+..\..\so1pub\obj\memory.obj,     \
 $(PROGRAMA).obj,                 \
+#
 ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib,   \
 #..\..\so1pub\lib\ll_s_so1.lib,   \
-..\..\so1pub\lib\ll_s_msj.lib,   \
-..\..\so1pub\obj\tipos.obj,      \
-..\..\so1pub\obj\stdio.obj,      \
+..\..\so1pub\obj\comundrv.obj,   \
 ..\..\so1pub\obj\ctype.obj,      \
+..\..\so1pub\obj\stdio.obj,      \
 ..\..\so1pub\obj\vsprintf.obj,   \
-..\..\so1pub\obj\scanner.obj,    \
 ..\..\so1pub\obj\strings.obj,    \
 ..\..\crtl\obj\h_ldiv.obj,       \
 ..\..\crtl\obj\h_lursh.obj,      \
@@ -24,9 +26,9 @@ $(PROGRAMA).obj,                 \
 ..\..\crtl\obj\n_lxmul.obj,      \
 ..\..\startfin\lib\finlib.lib
 
-#puntero de pila inicial (finBSS = 0A3E < 0FFE)
+#puntero de pila inicial (finBSS = 0x23B8 < 0x24FE)
 
-SPINICIAL = 13FE
+SPINICIAL = 24FE
 
 !include "..\..\MKFILE0"
 !include "..\MAKEUSR"

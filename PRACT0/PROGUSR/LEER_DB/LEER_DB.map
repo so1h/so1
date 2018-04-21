@@ -1,0 +1,512 @@
+JWlink Version 1.9beta 13
+Portions Copyright (c) 1985-2002 Sybase, Inc. All Rights Reserved.
+Created on:       18/04/21 01:07:39
+Executable Image: LEER_DB.BIN
+creating a DOS executable
+
+
+                        +------------+
+                        |   Groups   |
+                        +------------+
+
+Group                           Address              Size
+=====                           =======              ====
+
+DGROUP                          01e4:000a            000016da
+
+
+
+                        +--------------+
+                        |   Segments   |
+                        +--------------+
+
+Segment                Class          Group          Address         Size
+=======                =====          =====          =======         ====
+
+_TEXT                  CODE           AUTO           0000:0000       00001e49
+_DATA                  DATA           DGROUP         01e4:000a       0000098e
+_BSS                   BSS            DGROUP         027d:0008       00000d4c
+
+
+                        +----------------+
+                        |   Memory Map   |
+                        +----------------+
+
+* = unreferenced symbol
++ = symbol only referenced locally
+
+Address        Symbol
+=======        ======
+
+Module: ..\..\startfin\lib\startlib.lib(ASM\startcode.asm)
+0000:0000*     _startCode
+Module: ..\..\startfin\lib\startlib.lib(ASM\startdata.asm)
+01e4:000a      _startData
+Module: ..\..\startfin\lib\startlib.lib(ASM\startbss.asm)
+01e4:0998*     _startBSS
+Module: ..\..\so1pub\obj\ajustusr.obj(ajustusr.c)
+01e4:005c*     _argv
+0000:0000      _startBin
+0000:0069      __setargv__
+Module: LEER_DB.obj(leer_db.c)
+0000:006a*     _formato
+0000:0077*     _help
+01e4:0998*     _bufer
+01e4:0086*     _listaDB
+0000:0094*     _escribirDB
+0000:0123*     _listarDispositivosDB
+0000:01b0      _main
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(createprocess.c)
+0000:06f5*     _createProcess
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(exec.c)
+0000:0707*     _exec
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(thread.c)
+0000:0719*     _thread
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(yield.c)
+0000:072c*     _yield
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(waitpid.c)
+0000:0732*     _waitpid
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(exit.c)
+0000:0742      _exit
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(setuid.c)
+0000:074f*     _setuid
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(setgid.c)
+0000:075e*     _setgid
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(killpid.c)
+0000:076d*     _killpid
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(open.c)
+0000:077a      _open
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(close.c)
+0000:078a      _close
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(write.c)
+0000:0797      _write
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(lseek.c)
+0000:07aa      _lseek
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(ioctl.c)
+0000:07bd      _ioctl
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(fork.c)
+0000:07d0*     _fork
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(getpid.c)
+0000:07d6*     _getpid
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(getpindx.c)
+0000:07dc*     _getpindx
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(getppid.c)
+0000:07e2*     _getppid
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(getuid.c)
+0000:07e8*     _getuid
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(getgid.c)
+0000:07ee*     _getgid
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(read.c)
+0000:07f4      _read
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(aio_read.c)
+0000:0807      _aio_read
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(aio_write.c)
+0000:081a*     _aio_write
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(leer.c)
+0000:082d      _leer
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(leerlisto.c)
+0000:0853*     _leerListo
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(leerasciilisto.c)
+0000:0879*     _leerAsciiListo
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(fcntl.c)
+0000:08bb*     _fcntl
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(obteninfoso1.c)
+0000:08ce*     _obtenInfoSO1
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(crearrecurso.c)
+0000:08db*     _crearRecurso
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(crearfichero.c)
+0000:08e8*     _crearFichero
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(esperardesinstalacion.c)
+0000:0902*     _esperarDesinstalacion
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(destruirrecurso.c)
+0000:0935*     _destruirRecurso
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(encolarccbrecurso.c)
+0000:0945*     _encolarCcbRecurso
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(eliminarccbrecurso.c)
+0000:0957*     _eliminarCcbRecurso
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(obteninfops.c)
+0000:0969*     _obtenInfoPS
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(obteninfomem.c)
+0000:09a4*     _obtenInfoMEM
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(obteninfopfr.c)
+0000:09fa*     _obtenInfoPFR
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(obteninfofab.c)
+0000:0a4d*     _obtenInfoFAB
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(obteninfoinfo.c)
+0000:0a5a*     _obtenInfoINFO
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(getdisk.c)
+0000:0a67*     _getdisk
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(procesarentrada.c)
+0000:0a6d      _procesarEntrada
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(findfirst.c)
+0000:0b93*     _findFirst
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(findnext.c)
+0000:0bb7*     _findNext
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(activartraza.c)
+0000:0c4f*     _activarTraza
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(analizarprocesos.c)
+0000:0c5f*     _analizarProcesos
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(ll_buscarbloque.c)
+0000:0c6e*     _ll_buscarBloque
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(ll_devolverbloque.c)
+0000:0ca6*     _ll_devolverBloque
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(ll_tambloquemax.c)
+0000:0ced*     _ll_tamBloqueMax
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(retardoactivo.c)
+0000:0d1f*     _retardoActivo
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(sig_ign.c)
+0000:0e00*     _SIG_IGN
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(sig_dfl.c)
+0000:0e01      _SIG_DFL
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(__sighandler.c)
+01e4:080c      ___sighandler
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(kill.c)
+0000:0e08*     _kill
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(sigaction.c)
+0000:0e1c*     _sigaction
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(alarm.c)
+0000:0e33*     _alarm
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(pause.c)
+0000:0e40*     _pause
+Module: ..\..\so1pub\ll_s_so1\lib\ll_s_so1.lib(sigsuspend.c)
+0000:0e46*     _sigsuspend
+Module: ..\..\so1pub\lib\ll_s_msj.lib(ll_s_msj.c)
+0000:0e4c*     _send
+0000:0e60*     _receive
+0000:0e74*     _sendrec
+0000:0e88*     _notify
+Module: ..\..\so1pub\obj\tipos.obj(tipos.c)
+0000:0e95*     _pointer
+0000:0ead*     _seg
+0000:0ec2*     _off
+0000:0ed7*     _incPtr
+Module: ..\..\so1pub\obj\stdio.obj(stdio.c)
+0000:0f00      _putchar
+0000:0f4f*     _sprintf
+0000:0f76*     _strprintf
+0000:0f9a      _printf
+0000:0fc6      _getchar
+Module: ..\..\so1pub\obj\ctype.obj(ctype.c)
+0000:0fcd*     _tolower
+0000:0ff6      _toupper
+0000:101f*     _isprint
+Module: ..\..\so1pub\obj\vsprintf.obj(vsprintf.c)
+0000:129e      _vsprintf
+Module: ..\..\so1pub\obj\scanner.obj(scanner.c)
+01e4:1368      _comando
+01e4:087e*     _inCmd
+01e4:0880*     _outCmd
+01e4:0882*     _nComandos
+01e4:0884*     _simbCmd
+01e4:0996*     _numCmds
+01e4:1688      _car
+01e4:168a*     _pos
+01e4:168c      _simb
+01e4:168e      _num
+01e4:1690      _numLargo
+01e4:1694*     _str
+0000:16ba      _inicScanner
+0000:16c6      _obtenCar
+0000:1ac4*     _obtenStr
+0000:16f9      _saltarBlancos
+0000:1706      _numDec
+0000:17d9*     _numHex
+0000:18c5*     _identificador
+0000:1a33*     _obtenSimb
+Module: ..\..\so1pub\obj\strings.obj(strings.c)
+0000:1af8*     _strlen
+0000:1b17*     _strcpy
+0000:1b46*     _strncpy
+0000:1b99*     _strlcpy
+0000:1bd9*     _strcmp
+0000:1c11      _strcmpu
+0000:1c63*     _strncmp
+0000:1cba      _strncmpu
+Module: ..\..\crtl\obj\h_ldiv.obj(ASM\H_LDIV.ASM)
+0000:1d2e*     LDIV@
+0000:1d2e*     F_LDIV@
+0000:1d2b*     N_LDIV@
+0000:1d35*     LUDIV@
+0000:1d35*     F_LUDIV@
+0000:1d32      N_LUDIV@
+0000:1d3d*     LMOD@
+0000:1d3d*     F_LMOD@
+0000:1d3a*     N_LMOD@
+0000:1d45*     LUMOD@
+0000:1d45*     F_LUMOD@
+0000:1d42      N_LUMOD@
+Module: ..\..\crtl\obj\h_lursh.obj(ASM\H_LURSH.ASM)
+0000:1ddc*     LXURSH@
+0000:1ddc*     F_LXURSH@
+0000:1dd9      N_LXURSH@
+Module: ..\..\crtl\obj\h_llsh.obj(ASM\H_LLSH.ASM)
+0000:1dfd*     LXLSH@
+0000:1dfd*     F_LXLSH@
+0000:1dfa      N_LXLSH@
+Module: ..\..\crtl\obj\f_lxmul.obj(ASM\F_LXMUL.ASM)
+0000:1e1b*     LXMUL@
+0000:1e1b*     F_LXMUL@
+Module: ..\..\crtl\obj\n_lxmul.obj(ASM\N_LXMUL.ASM)
+0000:1e32      N_LXMUL@
+Module: ..\..\startfin\lib\finlib.lib(ASM\fincode.asm)
+0000:1e49*     _finCode
+Module: ..\..\startfin\lib\finlib.lib(ASM\findata.asm)
+01e4:0998      _finData
+Module: ..\..\startfin\lib\finlib.lib(ASM\finbss.asm)
+01e4:16e4      _finBSS
+
+
+                        +---------------------+
+                        |   Module Segments   |
+                        +---------------------+
+
+! = 32-bit segment
+c = initialized communal data
+
+Module          Segment               Class           Address         Size
+======          =======               =====           =======         ====
+
+ASM\startcode.asm
+                _TEXT                 CODE           0000:0000        00000000
+                _DATA                 DATA           01e4:000a        00000000
+                _BSS                  BSS            027d:0008        00000000
+ASM\startdata.asm
+                _TEXT                 CODE           0000:0000        00000000
+                _DATA                 DATA           01e4:000a        00000000
+                _BSS                  BSS            027d:0008        00000000
+ASM\startbss.asm
+                _TEXT                 CODE           0000:0000        00000000
+                _DATA                 DATA           01e4:000a        00000000
+                _BSS                  BSS            027d:0008        00000000
+ajustusr.c      _TEXT                 CODE           0000:0000        0000006a
+                _DATA                 DATA           01e4:000a        0000007b
+                _BSS                  BSS            027d:0008        00000000
+leer_db.c       _TEXT                 CODE           0000:006a        0000068b
+                _DATA                 DATA           01e4:0086        00000769
+                _BSS                  BSS            027d:0008        00000200
+createprocess.c _TEXT                 CODE           0000:06f5        00000012
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+exec.c          _TEXT                 CODE           0000:0707        00000012
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+thread.c        _TEXT                 CODE           0000:0719        00000013
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+yield.c         _TEXT                 CODE           0000:072c        00000006
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+waitpid.c       _TEXT                 CODE           0000:0732        00000010
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+exit.c          _TEXT                 CODE           0000:0742        0000000d
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+setuid.c        _TEXT                 CODE           0000:074f        0000000f
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+setgid.c        _TEXT                 CODE           0000:075e        0000000f
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+killpid.c       _TEXT                 CODE           0000:076d        0000000d
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+open.c          _TEXT                 CODE           0000:077a        00000010
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+close.c         _TEXT                 CODE           0000:078a        0000000d
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+write.c         _TEXT                 CODE           0000:0797        00000013
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+lseek.c         _TEXT                 CODE           0000:07aa        00000013
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+ioctl.c         _TEXT                 CODE           0000:07bd        00000013
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+fork.c          _TEXT                 CODE           0000:07d0        00000006
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+getpid.c        _TEXT                 CODE           0000:07d6        00000006
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+getpindx.c      _TEXT                 CODE           0000:07dc        00000006
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+getppid.c       _TEXT                 CODE           0000:07e2        00000006
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+getuid.c        _TEXT                 CODE           0000:07e8        00000006
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+getgid.c        _TEXT                 CODE           0000:07ee        00000006
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+read.c          _TEXT                 CODE           0000:07f4        00000013
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+aio_read.c      _TEXT                 CODE           0000:0807        00000013
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+aio_write.c     _TEXT                 CODE           0000:081a        00000013
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+leer.c          _TEXT                 CODE           0000:082d        00000026
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+leerlisto.c     _TEXT                 CODE           0000:0853        00000026
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+leerasciilisto.c
+                _TEXT                 CODE           0000:0879        00000042
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+fcntl.c         _TEXT                 CODE           0000:08bb        00000013
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+obteninfoso1.c  _TEXT                 CODE           0000:08ce        0000000d
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+crearrecurso.c  _TEXT                 CODE           0000:08db        0000000d
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+crearfichero.c  _TEXT                 CODE           0000:08e8        0000001a
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+esperardesinstalacion.c
+                _TEXT                 CODE           0000:0902        00000033
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+destruirrecurso.c
+                _TEXT                 CODE           0000:0935        00000010
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+encolarccbrecurso.c
+                _TEXT                 CODE           0000:0945        00000012
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+eliminarccbrecurso.c
+                _TEXT                 CODE           0000:0957        00000012
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+obteninfops.c   _TEXT                 CODE           0000:0969        0000003b
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+obteninfomem.c  _TEXT                 CODE           0000:09a4        00000056
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+obteninfopfr.c  _TEXT                 CODE           0000:09fa        00000053
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+obteninfofab.c  _TEXT                 CODE           0000:0a4d        0000000d
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+obteninfoinfo.c _TEXT                 CODE           0000:0a5a        0000000d
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+getdisk.c       _TEXT                 CODE           0000:0a67        00000006
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+procesarentrada.c
+                _TEXT                 CODE           0000:0a6d        00000126
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+findfirst.c     _TEXT                 CODE           0000:0b93        00000024
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+findnext.c      _TEXT                 CODE           0000:0bb7        00000098
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+activartraza.c  _TEXT                 CODE           0000:0c4f        00000010
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+analizarprocesos.c
+                _TEXT                 CODE           0000:0c5f        0000000f
+                _DATA                 DATA           01e4:07f0        00000000
+                _BSS                  BSS            027d:0208        00000000
+ll_buscarbloque.c
+                _TEXT                 CODE           0000:0c6e        00000038
+                _DATA                 DATA           01e4:07f0        00000003
+                _BSS                  BSS            027d:0208        00000000
+ll_devolverbloque.c
+                _TEXT                 CODE           0000:0ca6        00000047
+                _DATA                 DATA           01e4:07f4        00000003
+                _BSS                  BSS            027d:0208        00000000
+ll_tambloquemax.c
+                _TEXT                 CODE           0000:0ced        00000032
+                _DATA                 DATA           01e4:07f8        00000003
+                _BSS                  BSS            027d:0208        00000000
+retardoactivo.c _TEXT                 CODE           0000:0d1f        000000e1
+                _DATA                 DATA           01e4:07fc        00000010
+                _BSS                  BSS            027d:0208        00000000
+sig_ign.c       _TEXT                 CODE           0000:0e00        00000001
+                _DATA                 DATA           01e4:080c        00000000
+                _BSS                  BSS            027d:0208        00000000
+sig_dfl.c       _TEXT                 CODE           0000:0e01        00000007
+                _DATA                 DATA           01e4:080c        00000000
+                _BSS                  BSS            027d:0208        00000000
+__sighandler.c  _TEXT                 CODE           0000:0e08        00000000
+                _DATA                 DATA           01e4:080c        00000028
+                _BSS                  BSS            027d:0208        00000000
+kill.c          _TEXT                 CODE           0000:0e08        00000014
+                _DATA                 DATA           01e4:0834        00000000
+                _BSS                  BSS            027d:0208        00000000
+sigaction.c     _TEXT                 CODE           0000:0e1c        00000017
+                _DATA                 DATA           01e4:0834        00000000
+                _BSS                  BSS            027d:0208        00000000
+alarm.c         _TEXT                 CODE           0000:0e33        0000000d
+                _DATA                 DATA           01e4:0834        00000000
+                _BSS                  BSS            027d:0208        00000000
+pause.c         _TEXT                 CODE           0000:0e40        00000006
+                _DATA                 DATA           01e4:0834        00000000
+                _BSS                  BSS            027d:0208        00000000
+sigsuspend.c    _TEXT                 CODE           0000:0e46        00000006
+                _DATA                 DATA           01e4:0834        00000000
+                _BSS                  BSS            027d:0208        00000000
+ll_s_msj.c      _TEXT                 CODE           0000:0e4c        00000049
+                _DATA                 DATA           01e4:0834        00000000
+                _BSS                  BSS            027d:0208        00000000
+tipos.c         _TEXT                 CODE           0000:0e95        0000006b
+                _DATA                 DATA           01e4:0834        00000000
+                _BSS                  BSS            027d:0208        00000000
+stdio.c         _TEXT                 CODE           0000:0f00        000000cd
+                _DATA                 DATA           01e4:0834        00000000
+                _BSS                  BSS            027d:0208        000007d0
+ctype.c         _TEXT                 CODE           0000:0fcd        00000077
+                _DATA                 DATA           01e4:0834        00000000
+                _BSS                  BSS            027d:09d8        00000000
+vsprintf.c      _TEXT                 CODE           0000:1044        00000676
+                _DATA                 DATA           01e4:0834        0000004a
+                _BSS                  BSS            027d:09d8        00000000
+scanner.c       _TEXT                 CODE           0000:16ba        0000043e
+                _DATA                 DATA           01e4:087e        0000011a
+                _BSS                  BSS            027d:09d8        0000037c
+strings.c       _TEXT                 CODE           0000:1af8        00000233
+                _DATA                 DATA           01e4:0998        00000000
+                _BSS                  BSS            027d:0d54        00000000
+ASM\H_LDIV.ASM  _TEXT                 CODE           0000:1d2b        000000ae
+ASM\H_LURSH.ASM _TEXT                 CODE           0000:1dd9        00000021
+ASM\H_LLSH.ASM  _TEXT                 CODE           0000:1dfa        00000021
+ASM\F_LXMUL.ASM _TEXT                 CODE           0000:1e1b        00000017
+ASM\N_LXMUL.ASM _TEXT                 CODE           0000:1e32        00000017
+ASM\fincode.asm _TEXT                 CODE           0000:1e49        00000000
+                _DATA                 DATA           01e4:0998        00000000
+                _BSS                  BSS            027d:0d54        00000000
+ASM\findata.asm _TEXT                 CODE           0000:1e49        00000000
+                _DATA                 DATA           01e4:0998        00000000
+                _BSS                  BSS            027d:0d54        00000000
+ASM\finbss.asm  _TEXT                 CODE           0000:1e49        00000000
+                _DATA                 DATA           01e4:0998        00000000
+                _BSS                  BSS            027d:0d54        00000000
+
+
+                        +-----------------------+
+                        |   Linker Statistics   |
+                        +-----------------------+
+
+Stack size:  fffe (65534.)
+Memory size:  3524 (13604.)
+Entry point address: 0000:0000
+Link time: 00:00.16

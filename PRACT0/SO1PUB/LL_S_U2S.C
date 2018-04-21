@@ -6,6 +6,10 @@
 
 #include <so1pub.h\ll_s_u2s.h>     /* macro_user2system, macro_system2user */
 
+/* Estas funciones intentan hacer lo mismo que la macro_user2system, pero  */
+/* parece que NO FUNCIONAN BIEN. Por tanto lo mejos es utilizar las macros */
+/* macro_user2system y system2user.                                        */
+
 void user2system ( void )
 {                                     
     asm pop bx ;                 /* (pila del usuario) dir de retorno a bx */

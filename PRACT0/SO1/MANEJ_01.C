@@ -239,7 +239,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
             }
         }
         tramaProceso->AX = (word_t)posNueva ;
-        tramaProceso->BX = (word_t)(posNueva >> 16) ;
+        tramaProceso->DX = (word_t)(posNueva >> 16) ;
         break ;
 
     case FCNTL :                                                /* 0x0107 */

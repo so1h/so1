@@ -118,6 +118,13 @@ void incPtr ( pointer_t far * p, word_t i ) ;
 
 #define peekb(a,b)      (*((byte_t far*)MK_FP((a),(b))))
 
+/* macros para evitar el warning al retornar un valor long en DX:AX        */
+/* poner en el retorno: return(MK_LONG) ; (Ver ASMRULES.H en Borland CRTL) */
+
+#define MK_LONG   (long)((void _seg *)(_DX) + (void near *)(_AX))
+
+#define MK_ULONG  (unsigned long)((void _seg *)(_DX) + (void near *)(_AX))
+
 /* deficiencias de algunos ensambladores (como el BASM) */
 
 #ifdef IDE

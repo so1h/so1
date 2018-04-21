@@ -67,12 +67,7 @@ void eFlags ( word_t flags )
 {
 	word_t mascara ;
     for ( mascara = 0x8000 ; mascara > 0 ; mascara >>= 1 ) 
-	{
-        if ((flags & mascara) != 0)
-            putchar('1') ;
-        else
-            putchar('0') ;
-	}
+		putchar('0' + ((flags & mascara) != 0)) ;
 }	
 
 word_t miIP ( void )

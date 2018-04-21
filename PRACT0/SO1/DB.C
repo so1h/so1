@@ -68,13 +68,16 @@
 
 #include <so1pub.h\ll_s_u2s.h>                 /* user2system, system2user */
 
+#define MOSTRARDISPOSITIVOS FALSE                        /* en el arranque */
+//#define MOSTRARDISPOSITIVOS TRUE                       /* en el arranque */
+
 rindx_t rec_db ;                         /* recurso dispositivo de bloques */
 
 dfs_t dfs_db ;                        /* descriptor de fichero del sistema */
 
 pindx_t pindxSrvDB ;        /* pindx del servidor de peticiones read/write */
 
-peticionDB_t peticionDB [ maxProcesos ] ; 
+peticionDB_t peticionDB [ maxProcesos ] ;
 
 dobleEnlace_t eOpDB [ maxProcesos + 1 ] = { { 0, 0 } } ;
 
@@ -94,33 +97,39 @@ static int far releaseDB ( int dfs )
     return(0) ;
 }
 
-static int far opDB ( int dfs, pointer_t dir, word_t nbytes, byte_t cmd ) 
+static int far opDB ( int dfs, pointer_t dir, word_t nbytes, byte_t cmd )
 {
-//  df == tramaProceso->BX 
-//  dir == MK_FP(tramaProceso->ES, tramaProceso->DX) 
-//  nbytes == tramaProceso->CX 
-//  cmd == (tramaProceso->AX == READ) ? cmd_read_sector : cmd_write_sector 	
+//  df == tramaProceso->BX
+//  dir == MK_FP(tramaProceso->ES, tramaProceso->DX)
+//  nbytes == tramaProceso->CX
+//  cmd == (tramaProceso->AX == READ) ? cmd_read_sector : cmd_write_sector
 
 //  peticionDB[indProcesoActual].df     = tramaProceso->BX ;
     peticionDB[indProcesoActual].db     = descFichero[dfs].menor ;
     peticionDB[indProcesoActual].dir    = dir ;
-	peticionDB[indProcesoActual].nbytes = nbytes ;
-	peticionDB[indProcesoActual].cmd    = cmd ;	
-   	encolarPC2c(indProcesoActual, &c2cOpDB) ;	
-	if (descProceso[pindxSrvDB].estado == bloqueado)
-	{
+    peticionDB[indProcesoActual].nbytes = nbytes ;
+    peticionDB[indProcesoActual].cmd    = cmd ;
+    encolarPC2c(indProcesoActual, &c2cOpDB) ;
+    if (descProceso[pindxSrvDB].estado == bloqueado)
+    {
+#if (0)
+        mensaje_0_t notificacion ;
+        k_send(pindxSrvDB, &notificacion) ;
+#elif(0)
         k_notify(pindxSrvDB) ;
-//		descProceso[pindxSrvDB].estado = preparado ;             /* a pelo */
-//		encolarPC2c(pindxSrvDB, &c2cPFR[PUrgentes]) ;      /* (mas rapido) */
-//		encolarPC2c(pindxSrvDB, &c2cPFR[PPreparados]) ;        /* (normal) */
-    }		
-	bloquearProcesoActual(rec_db) ;      
+#else
+        descProceso[pindxSrvDB].estado = preparado ;             /* a pelo */
+//      encolarPC2c(pindxSrvDB, &c2cPFR[PUrgentes]) ;      /* (mas rapido) */
+        encolarPC2c(pindxSrvDB, &c2cPFR[PPreparados]) ;        /* (normal) */
+#endif
+    }
+    bloquearProcesoActual(rec_db) ;
     return(_AX) ;                      /* no se ejecuta (evita el warning) */
 }
 
 static int far readDB ( int dfs, pointer_t dir, word_t nbytes )
 {
-	return(opDB(dfs, dir, nbytes, cmd_read_sector)) ;
+    return(opDB(dfs, dir, nbytes, cmd_read_sector)) ;
 }
 
 static int far aio_readDB ( int dfs, pointer_t dir, word_t nbytes )
@@ -130,7 +139,7 @@ static int far aio_readDB ( int dfs, pointer_t dir, word_t nbytes )
 
 static int far writeDB ( int dfs, pointer_t dir, word_t nbytes )
 {
-    return(opDB(dfs, dir, nbytes, cmd_write_sector)) ; 
+    return(opDB(dfs, dir, nbytes, cmd_write_sector)) ;
 }
 
 static int far aio_writeDB ( int dfs, pointer_t dir, word_t nbytes )
@@ -140,23 +149,26 @@ static int far aio_writeDB ( int dfs, pointer_t dir, word_t nbytes )
 
 static long far lseekDB ( int dfs, long pos, word_t whence )
 {
-	int db ;
+    int db ;
     int df ;
-	long posActual ;
+    long posActual ;
     long tam ;
-    
-	df = tramaProceso->BX ;
+
+    df = tramaProceso->BX ;
     db = descFichero[dfs].menor ;
-	posActual = descProceso[indProcesoActual].tfa[df].pos ;
+    posActual = descProceso[indProcesoActual].tfa[df].pos ;
     tam = d_bloque[db].numSectores*d_bloque[db].bytesPorSector ;
-	switch (whence)
-	{
-	case SEEK_SET : posActual = pos       ; break ;
-	case SEEK_CUR : posActual += pos      ; break ;
-	case SEEK_END : posActual = tam + pos ; break ;	
-	default       : posActual = -1L ; 
-	}
-    return(posActual) ;
+    switch (whence)
+    {
+    case SEEK_SET : posActual = pos       ; break ;
+    case SEEK_CUR : posActual += pos      ; break ;
+    case SEEK_END : posActual = tam + pos ; break ;
+    default       : return(-2L) ;
+    }
+    if ((0 <= posActual) && (posActual <= tam))
+        return(posActual) ;
+    else
+        return(-1L) ;
 }
 
 static int far fcntlDB ( int dfs, word_t cmd, word_t arg )
@@ -166,15 +178,15 @@ static int far fcntlDB ( int dfs, word_t cmd, word_t arg )
 
 static int far ioctlDB ( int dfs, word_t request, word_t arg )
 {
-	if (request == 1)                    /* copiamos d_bloque[db] a DS:arg */
-	{
-		int db = descFichero[dfs].menor ; 
-		memcpy(
-		    MK_FP(tramaProceso->DS, arg),
-		    &d_bloque[db], 
-			sizeof(d_bloque_t)
-		)	; 
-	}
+    if (request == 1)                    /* copiamos d_bloque[db] a DS:arg */
+    {
+        int db = descFichero[dfs].menor ;
+        memcpy(
+            MK_FP(tramaProceso->DS, arg),
+            &d_bloque[db],
+            sizeof(d_bloque_t)
+        )   ;
+    }
     return(0) ;
 }
 
@@ -251,7 +263,7 @@ d_bloque_t d_bloque [ ] = {
 
 static descCcb_t descCcbDB = { 0, 0, 0, maxCbDB, NULL } ;
 
-//void mostrarDispositivosDeBloques ( d_bloque_t far * d_bloque ) ; 
+//void mostrarDispositivosDeBloques ( d_bloque_t far * d_bloque ) ;
 void mostrarDispositivosDeBloques ( void ) ;                    /* forward */
 
 void inicDB ( void )
@@ -358,7 +370,9 @@ void inicDB ( void )
 //  printPtrBIOS(&d_bloque) ;
 //  /* mostrarDispositivosDeBloques falla con ese parametro d_bloque ???   */
 //  mostrarDispositivosDeBloques((d_bloque_t far *)&d_bloque) ;
+#if (MOSTRARDISPOSITIVOS)
     mostrarDispositivosDeBloques() ;
+#endif
 }
 
 int opSectorDB ( dword_t sectorLogico, int db, pointer_t dir, byte_t cmd )
@@ -396,11 +410,13 @@ int opSectorDB ( dword_t sectorLogico, int db, pointer_t dir, byte_t cmd )
         err = opSectorCSH ((CSH_t *)&CSH, unidadBIOS, dirAux, cmd ) ;
     }
     else err = opSectorLBA(sectorLogico, unidadBIOS, dirAux, cmd) ;
-	
+
     if ((!err) && (posibleErr9) && (cmd == cmd_read_sector))
         memcpy(dir, dirAux, 512) ;
     return(err) ;
 }
+
+#if (MOSTRARDISPOSITIVOS)
 
 //void mostrarDispositivosDeBloques ( d_bloque_t far * d_bloque )
 void mostrarDispositivosDeBloques ( void )
@@ -421,7 +437,7 @@ void mostrarDispositivosDeBloques ( void )
     }
     if (numUnidades == 0)
         k_devolverBloque(segBuferSO1, 512/16) ;
-	
+
     for ( i = 0 ; i < dbMax ; i++ ) {            /* mostrar tabla d_bloque */
         if (d_bloque[i].tipoUnidad != 0x00) {
             dword_t daux ;
@@ -456,13 +472,15 @@ void mostrarDispositivosDeBloques ( void )
     }
 }
 
-int procesarPeticionDB ( pindx_t pindx ) 
+#endif
+
+int procesarPeticionDB ( pindx_t pindx )
 {
-	int df ;
-	int db ;                                     /* peticion actual db     */
+    int df ;
+    int db ;                                     /* peticion actual db     */
     pointer_t dir ;                              /* peticion actual dir    */
     word_t nbytes ;                              /* peticion actual nbytes */
-	byte_t cmd ; 	                             /* peticion actual cmd    */	
+    byte_t cmd ;                                 /* peticion actual cmd    */
     dword_t primerSector ;
     dword_t ultimoSector ;
     dword_t pos1 ;
@@ -484,7 +502,7 @@ int procesarPeticionDB ( pindx_t pindx )
     dir    = peticionDB[pindx].dir ;              /* peticion actual dir    */
     nbytes = peticionDB[pindx].nbytes ;           /* peticion actual nbytes */
     cmd    = peticionDB[pindx].cmd ;              /* peticion actual cmd    */
-	
+
     primerSector = d_bloque[db].primerSector ;
     ultimoSector = primerSector + d_bloque[db].numSectores - 1 ;
 
@@ -507,58 +525,58 @@ int procesarPeticionDB ( pindx_t pindx )
     cont = 0 ;
     for ( s = sectorLogico1 ; s <= sectorLogico2 ; s++ )
     {
-        err = opSectorDB(s, db, ptrBuferSO1, cmd) ;		
+        err = opSectorDB(s, db, ptrBuferSO1, cmd) ;
         if (err != 0) return(-1) ;
         if (s == sectorLogico1) despl_a = despl1 ; else despl_a = 0 ;
         if (s < sectorLogico2) despl_b = 511 ; else despl_b = despl2 ;
         for ( despl = despl_a ; despl <= despl_b ; despl++ )
             *dir++ = ptrBuferSO1[despl] ;
         cont = cont + despl_b - despl_a + 1 ;
-    }	
-    descProceso[pindx].tfa[df].pos += cont ;	
-	return(cont) ;
+    }
+    descProceso[pindx].tfa[df].pos += cont ;
+    return(cont) ;
 }
 
 void * DB ( void * arg ) ;
 //void * DB ( void * arg )
 void * DB ( )
 {
-	pindx_t pindx ;
-	mensaje_0_t notificacion ;                     /* para la notificacion */
-	int nbytes ;
-	
-	asm cli ;                              /* inhibinos las interrupciones */
-    
-	inicDB() ;                                           /* inicializacion */ 
-	
+    pindx_t pindx ;
+    mensaje_0_t notificacion ;                     /* para la notificacion */
+    int nbytes ;
+
+    asm cli ;                              /* inhibinos las interrupciones */
+
+    inicDB() ;                                           /* inicializacion */
+
     for ( ; ; )
     {
         if (c2cOpDB.numElem == 0)       /* si no hay peticiones pendientes */
-#if (TRUE)		
-    		receive(ANY, &notificacion) ;              /* esperar peticion */
-#else		
-		{
-			user2system() ; /* CF = 1 (system), CF = 0 (user) desbloqueado */
-            if (_FLAGS & 0x0001)  
+#if (0)
+            receive(ANY, &notificacion) ;              /* esperar peticion */
+#else
+        {
+            macro_user2system() ; /* CF = 1 (system), CF = 0 (user) desbl. */
+            if (_FLAGS & 0x0001)
             {
                 tramaProceso->Flags &= 0xFFFE ;                  /* CF = 0 */
                 bloquearProcesoActual(rec_db) ;
-			}
-		}
-#endif 	
-        pindx = desencolarPC2c(&c2cOpDB) ;	
-        asm sti ;		
-		
-		nbytes = procesarPeticionDB(pindx) ;	                        /* */
-				
-		asm cli ;                              
+            }
+        }
+#endif
+        pindx = desencolarPC2c(&c2cOpDB) ;
+        asm sti ;
+
+        nbytes = procesarPeticionDB(pindx) ;                            /* */
+
+        asm cli ;
         descProceso[pindx].trama->AX = nbytes ;
-     	descProceso[pindx].estado = preparado ;
-	    if (nbytes < 0) 
-	        encolarPC2c(pindx, &c2cPFR[PPreparados]) ;
-	    else 
-//	        encolarPC2c(pindx, &c2cPFR[PUrgentes]) ;  /* monopoliza la CPU */
-	        encolarPC2c(pindx, &c2cPFR[PPreparados]) ;
+        descProceso[pindx].estado = preparado ;
+        if (nbytes < 0)
+            encolarPC2c(pindx, &c2cPFR[PPreparados]) ;
+        else
+//          encolarPC2c(pindx, &c2cPFR[PUrgentes]) ;  /* monopoliza la CPU */
+            encolarPC2c(pindx, &c2cPFR[PPreparados]) ;
     }
     return(0) ;
 }

@@ -102,7 +102,9 @@
 #define LL_S_U2S_H
 
 #include <so1pub.h\ll_s_so1.h>                              /* USER2SYSTEM */
+#include <so1pub.h\tipos.h>                                        /* retf */
 #include <so1.h\procesos.h>                                /* tramaProceso */
+#include <so1.h\ajustes.h>                                       /* CS_SO1 */
 
 #define nVIntSO1 0x60
 
@@ -119,9 +121,15 @@
 	    db 0xE8, 0x00, 0x00 ;                                /* call $ + 3 */\
 	    pop ax ;                                                             \
 	}                                                                        \
-	tramaProceso->IP = _AX + 13 ;                                            \
-	asm ret ;                                /* retorno de so1_manejador06 */\
-
+	tramaProceso->IP = _AX + 19 ;         /* instruccion siguiente al retf */\
+    asm                                                                      \
+	{                                                                        \
+		pop ax ;                                                             \
+	    push CS_SO1 ;                                                        \
+	    push ax ;                                                            \
+	    retf ;                               /* retorno de so1_manejador06 */\
+	}                                                                        \
+	
 void user2system ( void ) ;
 
 void system2user ( void ) ;

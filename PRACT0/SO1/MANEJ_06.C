@@ -9,11 +9,10 @@
 
 void so1_manejador_06 ( void ) {                       /* ah = 6 ; int SO1 */
 
-    bool_t Ok ;
-
-    switch (tramaProceso->AX) {
+    switch (tramaProceso->AX) 
+	{
 	  
-    case USER2SYSTEM :                                            /* 0x0600 */
+    case USER2SYSTEM :                                           /* 0x0600 */
                                                             /* user2system */ 				
 		tramaProceso->Flags |= 0x0001 ;                          /* CF = 1 */ 
 		asm stc ;                                                /* CF = 1 */

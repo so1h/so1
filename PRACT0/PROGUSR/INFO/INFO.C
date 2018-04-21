@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------- */
 /*                                  info.c                                 */
 /* ----------------------------------------------------------------------- */
-/*                       Un primer sistema operativo                       */
+/*            Informacion resumida de lo que hay en el sistema             */
 /* ----------------------------------------------------------------------- */
 
 #include <so1pub.h\ll_s_so1.h>    /* biblioteca de llamadas al sistema SO1 */
@@ -11,6 +11,8 @@
 #include <so1pub.h\biosdata.h>
 #include <so1pub.h\msdos.h>
 #include <so1pub.h\puertos.h>
+
+#include <so1.h\db.h>                              /* d_bloque_t, numMaxDB */
 
 descProceso_t descProceso [ maxProcesos ] ;
 
@@ -46,6 +48,14 @@ char strTipo [6][13] =
     "raton HP"
 } ;
 
+char listaDB [ ] [5] = { 
+    "FDA", "FDB", 
+	"HDA", "HDA1", "HDA2", "HDA3", "HDA4",
+    "HDB", "HDB1", "HDB2", "HDB3", "HDB4"
+} ;
+
+#define numMaxDB sizeof(listaDB)/sizeof(listaDB[0]) 
+
 /* ----------------------------------------------------------------------- */
 /* funcion memBIOS (<so1\memoria.c>)                                       */
 /* ----------------------------------------------------------------------- */
@@ -77,7 +87,11 @@ word_t valorIMR ( void )
 
 void info ( void )
 {
-
+	int df ; 
+	int res ;
+    int i ;	
+	int cont ;
+	d_bloque_t d_bloque ;
     word_t CS_SO1 ;
     word_t DS_SO1 ;
     word_t BSS_SO1 ;
@@ -88,7 +102,6 @@ void info ( void )
     dword_t nVueltasRetardo ;
     word_t ticsPorRodaja ;
     int dfTimer ;
-    word_t i ;
 
     CS_SO1 = descProceso[0].CSProc ;
     DS_SO1 = seg((pointer_t)descProceso[0].trama) ;            /* DS == SS */
@@ -188,6 +201,33 @@ void info ( void )
     }
 
     printf("\n") ;
+
+	cont = 0 ;
+	for ( i = 0 ; i < numMaxDB ; i++ ) 
+	{
+        df = open(listaDB[i], O_RDONLY) ;		
+		if (df < 0) continue ;
+      	res = ioctl(df, 1, (word_t)&d_bloque) ;
+		close(df) ;
+		cont++ ;
+    }
+
+	if (cont == 0) 
+	    printf("\n no hay dispositivos de bloques reconocidos por el BIOS") ;
+	else 	
+	{
+	    d_bloque_t d_bloque ;
+		printf("\n dispositivos de bloques BIOS: ") ;			
+    	for ( i = 0 ; i < numMaxDB ; i++ ) 
+	    {
+            df = open(listaDB[i], O_RDONLY) ;		
+		    if (df < 0) continue ;
+    	    res = ioctl(df, 1, (word_t)&d_bloque) ;
+            if (res != 0) continue ;
+            printf("%s ", d_bloque.nombre) ;  		
+	    }
+	}		
+	putchar('\n') ;
 
 /*
     resetRatonBIOS(&numBotones) ;
