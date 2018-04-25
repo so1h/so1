@@ -57,7 +57,7 @@ int help ( void ) {
     return(0) ;
 }
 
-#define tamBufer 512
+#define tamBufer 512L
 
 byte_t bufer [ tamBufer ] ;
 
@@ -99,9 +99,14 @@ int listarDispositivosDB ( void )
 	{
         df = open(listaDB[i], O_RDONLY) ;		
 		if (df < 0) continue ;
+		d_bloque.nombre[0] = '\0' ;
     	res = ioctl(df, 1, (word_t)&d_bloque) ;
 		close(df) ;
         if (res != 0) continue ;
+		if (((d_bloque.nombre[0] != 'F') && (d_bloque.nombre[0] != 'H')) ||
+		    (d_bloque.nombre[1] != 'D')) 
+            continue ;			
+		    
 		if (cont == 0) 
 		{
 			printf(			
@@ -172,7 +177,7 @@ int main ( int argc, char * argv [ ] )
 	{
 	    res = ioctl(df, 1, (word_t)&d_bloque) ; 
 	
-        printf("\n ioctl(\"%i\", 1, 0x%04X) = %i\n", df, (word_t)&d_bloque, res) ;
+        printf("\n ioctl(%i, 1, 0x%04X) = %i\n", df, (word_t)&d_bloque, res) ;
 	
 	    if (res >= 0) 
     	{
@@ -326,7 +331,7 @@ int main ( int argc, char * argv [ ] )
     if (pos_2 != pos_1 + n)
     {
         printf(
-            "\n solo han podido leerse %li de los %i bytes solicitados \n",
+            "\n solo han podido leerse %li de los %li bytes solicitados \n",
             pos_2-pos_1, n
         ) ;
         return(4) ;

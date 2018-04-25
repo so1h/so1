@@ -23,6 +23,7 @@ PROGS =   \
   inic_end/ \
   kill/     \
   killpid/  \
+  leer_db/  \
   leetimer/ \
   login/    \
   meapila/  \
@@ -32,6 +33,7 @@ PROGS =   \
   ps/       \
   sh/       \
   sighello/ \
+  test_sf/  \
   time/     \
   thread/   \
   ver_args/ \
@@ -40,6 +42,7 @@ PROGS =   \
 # -------
   consola/  \
   raton/    \
+  recmem/   \
   reloj/    \
   retardo/  \
   timer/    \

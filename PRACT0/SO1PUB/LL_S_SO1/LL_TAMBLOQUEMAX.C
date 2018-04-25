@@ -2,9 +2,10 @@
 
 word_t ll_tamBloqueMax ( void )
 {
-    word_t tam ;
-    int dfGM = open("GM", O_RDONLY) ;
-    if (dfGM < 0) return(0x0000) ;
-    aio_read(dfGM, (pointer_t)&tam, 2) ;
-    return(tam) ;
+	word_t tamBloqueMax ;
+    int df = open("GM", O_WRONLY) ;
+    if (df < 0) return(0x0000) ;
+	tamBloqueMax = ioctl(df, 2, 0) ;
+    close(df) ;	
+    return(tamBloqueMax) ;                           /* 2 ==> tamBloqueMax */
 }

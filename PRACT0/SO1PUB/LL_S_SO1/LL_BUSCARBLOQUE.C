@@ -2,9 +2,10 @@
 
 word_t ll_buscarBloque ( word_t tam )
 {
-    word_t w = tam ;
-    int dfGM = open("GM", O_RDONLY) ;
-    if (dfGM < 0) return(0x0000) ;
-    read(dfGM, (pointer_t)&w, 2) ;
-    return(w) ;
+	word_t segmento ;
+    int df = open("GM", O_WRONLY) ;
+    if (df < 0) return(0x0000) ;
+	segmento = ioctl(df, 0, tam) ;                   /* 0 ==> buscarBloque */
+	close(df) ;
+    return(segmento) ; 	
 }

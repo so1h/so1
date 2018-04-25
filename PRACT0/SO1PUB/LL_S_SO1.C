@@ -800,30 +800,32 @@ void analizarProcesos ( bool_t Ok )                          /* ax = 0701h */
 
 word_t ll_buscarBloque ( word_t tam ) 
 {
-    word_t w = tam ;
-    int dfGM = open("GM", O_RDONLY) ;
-    if (dfGM < 0) return(0x0000) ;
-    read(dfGM, (pointer_t)&w, 2) ;
-    return(w) ;
+	word_t segmento ;
+    int df = open("GM", O_WRONLY) ;
+    if (df < 0) return(0x0000) ;
+	segmento = ioctl(df, 0, tam) ;                   /* 0 ==> buscarBloque */
+	close(df) ;
+    return(segmento) ; 	
 }
 
 bool_t ll_devolverBloque ( word_t segmento, word_t tam ) 
 {
-    word_t w [2] ;
-    int dfGM = open("GM", O_RDONLY) ;
-    if (dfGM < 0) return(FALSE) ;
-    w[0] = segmento ;
-    w[1] = tam ;
-    return(read(dfGM, (pointer_t)&w, 4) == 4) ;
+	bool_t res ;
+    int df = open("GM", O_WRONLY) ;
+    if (df < 0) return(FALSE) ;
+	res = ioctl(df, 1, tam) ;                      /* 1 ==> devolverBloque */
+	close(df) ;
+    return(res) ; 	
 }
 
 word_t ll_tamBloqueMax ( void ) 
 {
-    word_t tam ;
-    int dfGM = open("GM", O_RDONLY) ;
-    if (dfGM < 0) return(0x0000) ;
-    aio_read(dfGM, (pointer_t)&tam, 2) ;
-    return(tam) ;
+	word_t tamBloqueMax ;
+    int df = open("GM", O_WRONLY) ;
+    if (df < 0) return(0x0000) ;
+	tamBloqueMax = ioctl(df, 2, 0) ;
+    close(df) ;	
+    return(tamBloqueMax) ;                           /* 2 ==> tamBloqueMax */
 }
 
 /* ======================================================================= */
@@ -844,26 +846,23 @@ word_t ll_tamBloqueMax ( void )
 dword_t retardoActivo ( dword_t nVueltas ) 
 {
     int df ;
-    dword_t res = (dword_t)0 ;
+	dword_t res = 0L ;                            /* resultado por defecto */
     retardarProceso_t retardarProceso ;
-    dword_t nVueltasRetardo ;
-    if ((df = open("RETARDO", O_RDONLY)) < 0) return((dword_t)-1) ;
     switch (nVueltas) {
-    case (dword_t)0 :
-        *((pointer_t)&retardarProceso) = 0x01 ;
+    case 0L :                                                        /* 0L */
+        if ((df = open("RETARDO", O_RDONLY)) < 0) return(-1L) ;
+        retardarProceso = (retardarProceso_t)1L ;              /* envio 1L */
         read(df, (pointer_t)&retardarProceso, 4) ;
-        retardarProceso() ;
+        retardarProceso() ;                /* bucle de retardo establecido */
         break ;
-    case (dword_t)1 :
-        *((pointer_t)&nVueltasRetardo) = 0x00 ;
-        read(df, (pointer_t)&nVueltasRetardo, 4) ;
-        res = nVueltasRetardo ;
+    case 1L :                                                        /* 1L */
+        if ((df = open("RETARDO", O_RDONLY)) < 0) return(-1L) ;
+        res = 0L ;                                             /* envio 0L */
+        read(df, (pointer_t)&res, 4) ;            /* res = nVueltasRetardo */ 
         break ;
-    default :
-        close(df) ;
-        df = open("RETARDO", O_WRONLY) ;
-        nVueltasRetardo = nVueltas ;
-        write(df, (pointer_t)&nVueltasRetardo, 4) ;
+    default :                                                     /* 2L .. */
+        if ((df = open("RETARDO", O_WRONLY)) < 0) return(-1L) ;
+        write(df, (pointer_t)&nVueltas, 4) ;
         break ;
     }
     close(df) ;

@@ -28,7 +28,7 @@ rindx_t rec_mem ;                                        /* esta en el BSS */
 
 int far openMem ( int dfs, modoAp_t modo )
 {
-    return(0) ;
+    return(dfs) ;
 }
 
 int far releaseMem ( int dfs )
@@ -61,7 +61,7 @@ int far readMem ( int dfs, pointer_t dir, word_t nbytes )
 
 int far aio_readMem ( int dfs, pointer_t dir, word_t nbytes )
 {
-    return(readMem(dfs, dir, nbytes)) ;
+    return(0) ;
 }
 
 int far writeMem ( int dfs, pointer_t dir, word_t nbytes )
@@ -87,7 +87,7 @@ int far writeMem ( int dfs, pointer_t dir, word_t nbytes )
 
 int far aio_writeMem ( int dfs, pointer_t dir, word_t nbytes ) 
 {
-    return(writeMem(dfs, dir, nbytes)) ;
+    return(0) ;
 }
 
 long far lseekMem ( int dfs, long pos, word_t whence )
@@ -104,7 +104,7 @@ long far lseekMem ( int dfs, long pos, word_t whence )
     tramaProceso = *ptrTramaProceso ;
     df = tramaProceso->BX ;
     indProcesoActual = *ptrIndProcesoActual ;
-    posActual = (word_t)ptrDescProceso[indProcesoActual].tfa[df].pos ;
+    posActual = ptrDescProceso[indProcesoActual].tfa[df].pos ;
     switch (whence)
     {
     case SEEK_SET : posActual = pos       ; break ;

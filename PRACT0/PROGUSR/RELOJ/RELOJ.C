@@ -50,7 +50,7 @@ void leerHora ( word_t * horas, word_t * minutos, word_t * segundos )
 
 int far openReloj ( int dfs, modoAp_t modo )
 {
-    return(0) ;
+    return(dfs) ;
 }
 
 int far releaseReloj ( int dfs )

@@ -60,7 +60,7 @@ dword_t contTics = 0 ;                                             /* DATA */
 
 int far openTimer ( int dfs, modoAp_t modo )
 {
-    return(0) ;
+    return(dfs) ;
 }
 
 int far releaseTimer ( int dfs )

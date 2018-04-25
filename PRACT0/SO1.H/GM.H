@@ -13,9 +13,9 @@
 #define tamParagrafo 16          /* un paragrafo son 16 bytes consecutivos */
 //                           /* comenzando en una direccion multiplo de 16 */
 
-extern word_t tamBloqueMax ;   /* mayor bloque de memoria libre disponible */
-
 extern ptrBloque_t listaLibres ;
+
+extern word_t k_tamBloqueMax ; /* mayor bloque de memoria libre disponible */
 
 word_t k_buscarBloque ( word_t tam ) ;
 

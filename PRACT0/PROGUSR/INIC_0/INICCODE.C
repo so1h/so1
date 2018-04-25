@@ -152,8 +152,11 @@ int inic_0 ( word_t numConsolas, word_t ticsPorRodaja )
 	/* fichero que abre el proceso inicial (SO1) sabemos que el descriptor */
 	/* devuelto es cero: fdGM = 0.                                         */
 
-    close(0) ; /* Cerramos "GM" para no interferir con la entrada estandar */
+//  close(0) ; /* Cerramos "GM" para no interferir con la entrada estandar */
 //             /* de INIT (STDIN) que todavia no se ha asociado a CON0.    */
+//             /* !!!!!! YA NO ES NECESARO close(0), ya que ahora en esas  */
+//             /* llamadas al sistema se halla allí ese close(df).         */ 
+
     assert(
 
         (open("CON0", O_RDONLY) == STDIN ) &&

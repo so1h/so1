@@ -20,7 +20,7 @@ dfs_t dfs_gm ;
 
 ptrBloque_t listaLibres ;            /* lista de bloques libres (cabecera) */
 
-word_t tamBloqueMax ;                          /* tamanio del mayor bloque */
+word_t k_tamBloqueMax ;                          /* tamanio del mayor bloque */
 
 word_t k_buscarBloque ( word_t tam )
 {
@@ -30,7 +30,7 @@ word_t k_buscarBloque ( word_t tam )
     word_t segmentoNuevo ;
     word_t tamOriginal ;         /* tamanio original del bloque encontrado */
 
-    if (tam > tamBloqueMax) return(0x0000) ;
+    if (tam > k_tamBloqueMax) return(0x0000) ;
 
     ptrBloque = MK_FP(listaLibres->sig, 0x0000) ;
     while (ptrBloque->tam < tam)
@@ -63,20 +63,20 @@ word_t k_buscarBloque ( word_t tam )
         ptrBloqueDe->ant = ptrBloque->ant ;
     }
 
-    if (tamOriginal == tamBloqueMax)            /* actualizar tamBloqueMax */
+    if (tamOriginal == k_tamBloqueMax)        /* actualizar k_tamBloqueMax */
     {
-        tamBloqueMax = 0 ;
+        k_tamBloqueMax = 0 ;
         ptrBloque = MK_FP(listaLibres->sig, 0x0000) ;
         while (ptrBloque != listaLibres)
         {
-            if (ptrBloque->tam > tamBloqueMax)
-                tamBloqueMax = ptrBloque->tam ;
+            if (ptrBloque->tam > k_tamBloqueMax)
+                k_tamBloqueMax = ptrBloque->tam ;
             ptrBloque = MK_FP(ptrBloque->sig, 0x0000) ;
         }
     }
 
-//  printStrBIOS(" tamBloqueMax = ") ;
-//  printHexBIOS(tamBloqueMax, 4) ;
+//  printStrBIOS(" k_tamBloqueMax = ") ;
+//  printHexBIOS(k_tamBloqueMax, 4) ;
 //  printStrBIOS(" Ps") ;
 
     return(segmento) ;
@@ -127,11 +127,11 @@ bool_t k_devolverBloque ( word_t segmento, word_t tam )
         ptrBloque = ptrBloqueIz ;
     }
 
-    if (ptrBloque->tam > tamBloqueMax)          /* actualizar tamBloqueMax */
-        tamBloqueMax = ptrBloque->tam ;
+    if (ptrBloque->tam > k_tamBloqueMax)      /* actualizar k_tamBloqueMax */
+        k_tamBloqueMax = ptrBloque->tam ;
 
-//  printStrBIOS("\n k_devolverBloque: tamBloqueMax = ") ;
-//  printHexBIOS(tamBloqueMax, 4) ;
+//  printStrBIOS("\n k_devolverBloque: k_tamBloqueMax = ") ;
+//  printHexBIOS(k_tamBloqueMax, 4) ;
 //  printStrBIOS(" Ps") ;
 
     return(TRUE) ;
@@ -139,71 +139,67 @@ bool_t k_devolverBloque ( word_t segmento, word_t tam )
 
 #pragma warn -par
 
-int far openGM ( int dfs, modoAp_t modo )
+static int far openGM ( int dfs, modoAp_t modo )
+{
+    return(dfs) ;
+}
+
+static int far releaseGM ( int dfs )
 {
     return(0) ;
 }
 
-int far releaseGM ( int dfs )
+static int far readGM ( int dfs, pointer_t dir, word_t nbytes )
 {
     return(0) ;
 }
 
-int far readGM ( int dfs, pointer_t dir, word_t nbytes )
-{
-    word_t far * tam = (word_t far *)dir ;
-    word_t far * segmento = (word_t far *)dir ;
-    if (nbytes == 2)
-    {
-        *segmento = k_buscarBloque(*tam) ;
-        return(nbytes) ;
-    }
-    return(-1) ;
-}
-
-int far aio_readGM ( int dfs, pointer_t dir, word_t nbytes )
-{
-    word_t far * ptrWord = (word_t far *)dir ;
-    word_t segmento ;
-    word_t tam ;
-    switch (nbytes)
-    {
-    case 2 : *ptrWord = tamBloqueMax ; return(nbytes) ;
-    case 4 : segmento = ptrWord[0] ;
-             tam = ptrWord[1] ;
-             if (k_devolverBloque(segmento, tam))
-               return(nbytes) ;
-    default : ;
-    }
-    return(-1) ;
-}
-
-int far writeGM ( int dfs, pointer_t dir, word_t nbytes )
+static int far aio_readGM ( int dfs, pointer_t dir, word_t nbytes )
 {
     return(0) ;
 }
 
-int far aio_writeGM ( int dfs, pointer_t dir, word_t nbytes )
+static int far writeGM ( int dfs, pointer_t dir, word_t nbytes )
 {
-    return(writeGM(dfs, dir, nbytes)) ;
+    return(0) ;
 }
 
-long far lseekGM ( int dfs, long pos, word_t whence )
+static int far aio_writeGM ( int dfs, pointer_t dir, word_t nbytes )
+{
+    return(0) ;
+}
+
+static long far lseekGM ( int dfs, long pos, word_t whence )
 {
     return(-1L) ;
 }
 
-int far fcntlGM ( int dfs, word_t cmd, word_t arg )
+static int far fcntlGM ( int dfs, word_t cmd, word_t arg )
 {
     return(0) ;
 }
 
-int far ioctlGM ( int dfs, word_t request, word_t arg )
+static int far ioctlGM ( int dfs, word_t request, word_t arg )
 {
-    return(0) ;
+	word_t tam ;
+	word_t segmento ;
+	word_t far * ptr ;
+	
+    switch(request)
+	{
+	case 0  : tam = arg ;                                  /* buscarBloque */
+	          return(k_buscarBloque(tam)) ;                
+	case 1  : ptr = MK_FP(tramaProceso->DS, arg) ;       /* devolverBloque */
+ 	          segmento = ptr[0] ;
+	          tam      = ptr[1] ;
+	          return(k_devolverBloque(segmento, tam)) ;
+	case 2  : return(k_tamBloqueMax) ; 	                 /* k_tamBloqueMax */
+	default : ;
+	}
+    return(-1) ;
 }
 
-int far eliminarGM ( pindx_t pindx )
+static int far eliminarGM ( pindx_t pindx )
 {
     return(0) ;
 }
@@ -272,7 +268,7 @@ void inicGM ( void )                             /* 1 paragrafo = 16 bytes */
     listaLibres->sig = FP_SEG(ptrBloque) ;
     listaLibres->ant = listaLibres->sig ;
 
-    tamBloqueMax = ptrBloque->tam ;
+    k_tamBloqueMax = ptrBloque->tam ;
 
 //  printStrBIOS(" \n inicGM: ptrBloque = ") ;
 //  printPtrBIOS((pointer_t)ptrBloque) ;

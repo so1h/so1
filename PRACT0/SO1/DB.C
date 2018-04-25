@@ -89,7 +89,7 @@ d_bloque_t d_bloque [ ] ;                                       /* forward */
 
 static int far openDB ( int dfs, modoAp_t modo )
 {
-    return(0) ;
+    return(dfs) ;
 }
 
 static int far releaseDB ( int dfs )
@@ -238,7 +238,7 @@ word_t segBuferSeguro ( void )                        /* seguro con el DMA */
     return(segBufer) ;
 }
 
-d_bloque_t d_bloque [ ] = {
+d_bloque_t d_bloque [ dbMax ] = {
 //  nombre  uBIOS tipoU  bPS   sPP  cab   cil    primerS       numS        i
 //  ======  ====  ====   ===   ===  ===  ====  ==========  ==========    ====
     "FDA" , 0x00, 0x00,  512,   18,   2,   80, 0x00000000, 0x00000000, /*  0 */
@@ -255,20 +255,12 @@ d_bloque_t d_bloque [ ] = {
     "HDB4", 0x81, 0x00,  512,   63,  16, 0x00, 0x00000000, 0x00000000  /* 11 */
 } ;
 
-#define dbMax (sizeof(d_bloque)/sizeof(d_bloque_t))
+//#define dbMax (sizeof(d_bloque)/sizeof(d_bloque_t))
 
-#pragma warn +par
-
-#define maxCbDB 0
-
-static descCcb_t descCcbDB = { 0, 0, 0, maxCbDB, NULL } ;
-
-//void mostrarDispositivosDeBloques ( d_bloque_t far * d_bloque ) ;
-void mostrarDispositivosDeBloques ( void ) ;                    /* forward */
-
-void inicDB ( void )
+int detectarDB ( void )          /* retorna el numero de unidades detectadas */
 {
     int i, j, k ;
+	int cont ;                    /* cuenta el numero de unidades detectadas */
     byte_t tipoUnidad ;
     CSH_t CSH, CSHMax ;
 
@@ -282,33 +274,6 @@ void inicDB ( void )
     boot_t far * boot ;
     word_t sectoresPorCilindro ;
     int error ;
-    descRecurso_t dR ;
-
-//  pindxSrvDB = getpindx() ;
-    pindxSrvDB = indProcesoActual ;            /* pindx del servidor de DB */
-
-    dR.tipo = rDB ;
-    strcpy(dR.nombre, "DB") ;
-    dR.ccb = (ccb_t)&descCcbDB ;
-    dR.ccb->arg = NULL ;
-    dR.pindx = indProcesoActual ;                                       /* */
-    dR.numVI = 0 ;
-
-    dR.open      = (open_t     )MK_FP(_CS, FP_OFF(openDB)) ;
-    dR.release   = (release_t  )MK_FP(_CS, FP_OFF(releaseDB)) ;
-    dR.read      = (read_t     )MK_FP(_CS, FP_OFF(readDB)) ;
-    dR.aio_read  = (aio_read_t )MK_FP(_CS, FP_OFF(aio_readDB)) ;
-    dR.write     = (write_t    )MK_FP(_CS, FP_OFF(writeDB)) ;
-    dR.aio_write = (aio_write_t)MK_FP(_CS, FP_OFF(aio_writeDB)) ;
-    dR.lseek     = (lseek_t    )MK_FP(_CS, FP_OFF(lseekDB)) ;
-    dR.fcntl     = (fcntl_t    )MK_FP(_CS, FP_OFF(fcntlDB)) ;
-    dR.ioctl     = (ioctl_t    )MK_FP(_CS, FP_OFF(ioctlDB)) ;
-
-    dR.eliminar  = (eliminar_t) MK_FP(_CS, FP_OFF(eliminarDB)) ;
-
-    rec_db = crearRec(&dR) ;
-
-    inicPC2c(&c2cOpDB, &eOpDB, maxProcesos + 0, FALSE) ;
 
     segBuferSO1 = segBuferSeguro() ;                /* para poder leer las */
                                             /* tablas de particiones (MBR) */
@@ -362,10 +327,63 @@ void inicDB ( void )
             d_bloque[i].primerSector = mbr->descParticion[i-k].primerSector ;
             d_bloque[i].numSectores = mbr->descParticion[i-k].sectores ;
         }
-        if (d_bloque[i].tipoUnidad != 0x00)
-            dfs_db = crearFich(d_bloque[i].nombre, rec_db, i, fedBloques) ;
     }
+    cont = 0 ;
+    for ( i = 0 ; i < dbMax ; i++ ) 
+        if (d_bloque[i].tipoUnidad != 0x00) 
+            cont++ ;
+    return(cont) ;		
+}
 
+#pragma warn +par
+
+#define maxCbDB 0
+
+static descCcb_t descCcbDB = { 0, 0, 0, maxCbDB, NULL } ;
+
+//void mostrarDispositivosDeBloques ( d_bloque_t far * d_bloque ) ;
+void mostrarDispositivosDeBloques ( void ) ;                    /* forward */
+
+//  /* inicDB devuelve el numero de dispositivos de bloques detectados     */
+
+int inicDB ( void )                                      /* inicializacion */
+{
+    int i ;
+	int cont ;
+    descRecurso_t dR ;
+
+    cont = detectarDB() ;   /* detectamos los dispositivos de bloques BIOS */ 
+	                        /* (d_bloque) e inicializaciamos segBuferSO1   */
+										 
+    if (cont == 0) return(0) ;               /* no se crea el recurso "DB" */
+										 
+    dR.tipo = rDB ;
+    strcpy(dR.nombre, "DB") ;
+    dR.ccb = (ccb_t)&descCcbDB ;
+    dR.ccb->arg = NULL ;
+    dR.pindx = indProcesoActual ;                                       /* */
+    dR.numVI = 0 ;
+
+    dR.open      = (open_t     )MK_FP(_CS, FP_OFF(openDB)) ;
+    dR.release   = (release_t  )MK_FP(_CS, FP_OFF(releaseDB)) ;
+    dR.read      = (read_t     )MK_FP(_CS, FP_OFF(readDB)) ;
+    dR.aio_read  = (aio_read_t )MK_FP(_CS, FP_OFF(aio_readDB)) ;
+    dR.write     = (write_t    )MK_FP(_CS, FP_OFF(writeDB)) ;
+    dR.aio_write = (aio_write_t)MK_FP(_CS, FP_OFF(aio_writeDB)) ;
+    dR.lseek     = (lseek_t    )MK_FP(_CS, FP_OFF(lseekDB)) ;
+    dR.fcntl     = (fcntl_t    )MK_FP(_CS, FP_OFF(fcntlDB)) ;
+    dR.ioctl     = (ioctl_t    )MK_FP(_CS, FP_OFF(ioctlDB)) ;
+
+    dR.eliminar  = (eliminar_t) MK_FP(_CS, FP_OFF(eliminarDB)) ;
+
+    rec_db = crearRec(&dR) ;
+
+    inicPC2c(&c2cOpDB, &eOpDB, maxProcesos + 0, FALSE) ;
+
+    for ( i = 0 ; i < dbMax ; i++ )  
+        if (d_bloque[i].tipoUnidad != 0x00) 
+            dfs_db = crearFich(d_bloque[i].nombre, rec_db, i, fedBloques) ;
+	
 //  printStrBIOS("\n &d_bloque = ") ;
 //  printPtrBIOS(&d_bloque) ;
 //  /* mostrarDispositivosDeBloques falla con ese parametro d_bloque ???   */
@@ -373,6 +391,7 @@ void inicDB ( void )
 #if (MOSTRARDISPOSITIVOS)
     mostrarDispositivosDeBloques() ;
 #endif
+    return(cont) ;
 }
 
 int opSectorDB ( dword_t sectorLogico, int db, pointer_t dir, byte_t cmd )
@@ -543,11 +562,15 @@ void * DB ( )
 {
     pindx_t pindx ;
     mensaje_0_t notificacion ;                     /* para la notificacion */
+//  int numDB ;
     int nbytes ;
 
     asm cli ;                              /* inhibinos las interrupciones */
 
-    inicDB() ;                                           /* inicializacion */
+//  numDB = inicDB() ;                              /* esta inicializacion */
+	                               /* antes del thread (por si no se crea) */
+//  pindxSrvDB = getpindx() ;
+    pindxSrvDB = indProcesoActual ;            /* pindx del servidor de DB */
 
     for ( ; ; )
     {

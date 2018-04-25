@@ -130,9 +130,9 @@
 /*                        Gestion de memoria ("GM")                        */
 /* ======================================================================= */
 
-/* ll_buscarBloque(tam)                       // read(dfGM, &w, 2)         */
-/* ll_devolverBloque(segmento, tam)           // read(dfGM, &dw, 4)        */
-/* ll_tamBloqueMax()                          // aio_read(dfGM, &tam, 2)   */  
+/* buscarBloque(tam)                          // read(dfGM, &w, 2)         */
+/* devolverBloque(segmento, tam)              // read(dfGM, &dw, 4)        */
+/* tamBloqueMax()                             // aio_read(dfGM, &tam, 2)   */  
 
 /* ======================================================================= */
 /*                        retardoActivo ("RETARDO")                        */
@@ -437,11 +437,11 @@ void analizarProcesos ( bool_t Ok ) ;
 /* -         ===================================================         - */
 /* ----------------------------------------------------------------------- */
 
-word_t ll_buscarBloque ( word_t tam ) ;
+word_t buscarBloque ( word_t tam ) ;
 
-bool_t ll_devolverBloque ( word_t segmento, word_t tam ) ;
+bool_t devolverBloque ( word_t segmento, word_t tam ) ;
 
-word_t ll_tamBloqueMax ( void ) ;
+word_t tamBloqueMax ( void ) ;
 
 dword_t retardoActivo ( dword_t nVueltas ) ;
 

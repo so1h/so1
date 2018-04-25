@@ -36,9 +36,11 @@
 #include <so1pub.h\strings.h>                           /* strcmp, strncmp */
 #include <so1pub.h\ptrc2c.h>                                   /* ptrC2c_t */
 #include <so1.h\procesos.h>    /* descProceso, descFihero, descRecurso ... */ 
-#include <so1.h\minifs.h>                                        /* rec_sf */
 
 #include <so1pub.h\bios_0.h>                               /* printStrBIOS */
+
+extern rindx_t rec_sf ;       /* debe haber un driver SF soportando rec_sf */ 
+                                            /* (ver so1_manejador_01.OPEN) */
 
 int indiceTFAS ( const char far * nombre ) 
 {
@@ -99,7 +101,7 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
         nombre = MK_FP(tramaProceso->ES, tramaProceso->BX) ;
         df = -1 ;                                           /* por defecto */
         if ((modoAp & (O_TEXT | O_BINARY)) == (O_TEXT | O_BINARY)) 
-		{	
+		{	                          /* no pueden ponerse simultameamente */
             tramaProceso->AX = df ;                                  /* -1 */
             break ;
         }
@@ -118,21 +120,17 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
             if (dfs >= 0)                  /* fichero ya abierto (sistema) */
                 rindx = descFichero[dfs].rindx ;
             else                           /* fichero no abierto (sistema) */
-//              rindx = rec_sf ;                    /* sistema de ficheros */
-            {
-                tramaProceso->AX = df ;                              /* -1 */
-                break ;
-			}
+              rindx = rec_sf ;                      /* sistema de ficheros */
         }
-//      printStrBIOS("\n manejador_01 dfs = ") ; printIntBIOS(dfs, 1) ; 
-//      printStrBIOS(" rindx = ") ; printIntBIOS(rindx, 1) ; 
-//      printLnBIOS() ; 			
-        if ((descRecurso[rindx].open != (open_t)NULL) &&
-            ((dfs1 = descRecurso[rindx].open(dfs, modoAp)) >= 0)) 
+#if (FALSE)		
+        printStrBIOS("\n manejador_01 dfs = ") ; printIntBIOS(dfs, 1) ; 
+        printStrBIOS(" rindx = ") ; printIntBIOS(rindx, 1) ; 
+        printLnBIOS() ;
+#endif
+        if ((dfs = descRecurso[rindx].open(dfs, modoAp)) >= 0)
 		{
             if ((df = nuevaEntradaTFA()) >= 0) 
 			{
-                if (dfs1 > 0) dfs = dfs1 ;
                 ptrDPActual->nfa++ ;
                 ptrDPActual->tfa[df].modoAp = modoAp ;
                 ptrDPActual->tfa[df].dfs = dfs ;
@@ -159,8 +157,8 @@ void so1_manejador_01 ( void )                         /* ah = 1 ; int SO1 */
                 modoAp = ptrDPActual->tfa[df].modoAp ;
                 if ((modoAp & 0x0007) == O_RDONLY) descFichero[dfs].contAp_L-- ;
                 else if ((modoAp & 0x0007) == O_WRONLY) descFichero[dfs].contAp_E-- ;
-                ptrDPActual->tfa[df].dfs = -1 ;
                 descRecurso[rindx].release(dfs) ;
+                ptrDPActual->tfa[df].dfs = -1 ;
                 res = 0 ;
             }
         }

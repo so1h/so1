@@ -136,7 +136,7 @@ bool_t leerEstadoRaton ( estadoRaton_t far * estado )
 
 int far openRaton ( int dfs, modoAp_t modo )
 {
-    return(0) ;
+    return(dfs) ;
 }
 
 int far releaseRaton ( int dfs )

@@ -196,7 +196,7 @@ void salvarConsolaDeSuperficie ( void )
 
 int far openConsola ( int dfs, modoAp_t modo )
 {
-    return(0) ;
+    return(dfs) ;
 }
 
 int far releaseConsola ( int dfs )

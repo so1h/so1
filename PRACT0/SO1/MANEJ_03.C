@@ -22,7 +22,7 @@
 #include <so1.h\dbgword.h>                                    /* debugWord */
 #include <so1.h\ajustsp.h>                                      /* SP0_SO1 */
 #include <so1.h\ajustes.h>        /* CS_SO1, desplCab, IMRInicial, modoSO1 */
-#include <so1.h\gm.h>                         /* listaLibres, tamBloqueMax */
+#include <so1.h\gm.h>                       /* listaLibres, k_tamBloqueMax */
 #include <so1.h\procesos.h>   /* descProceso, descFichero, descRecurso ... */
 #include <so1.h\sf.h>     /* findFirstSo1, findNextSo1, unidadLogicaActual */
 
@@ -90,7 +90,7 @@ static void transferirBPFR ( bloquePFR_t far * ptrPFR, word_t regAX )
     if (regAX == OBTENINFOMEM) 
 	{
         tramaProceso->AX = FP_SEG(listaLibres) ;
-        tramaProceso->DX = tamBloqueMax ;
+        tramaProceso->DX = k_tamBloqueMax ;
     }
 }
 

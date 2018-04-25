@@ -24,8 +24,6 @@ rindx_t rec_retardo ;                                    /* esta en el BSS */
 /*                   seccion de implementacion del driver                  */
 /* ----------------------------------------------------------------------- */
 
-bool_t retardando [ maxProcesos ] = { FALSE } ;   /* procesos retardandose */
-
 dword_t nVueltasRetardo = 0 ;                           /* esta en la DATA */
 
 #define cuerpoVuelta {                                                       \
@@ -54,12 +52,8 @@ int far retardarProceso ( void )
     save_DS0() ;                            /* guarda el DS anterior (SO1) */
     setraw_DS() ;           /* establece el DS correspondiente al programa */
 
-    if (!retardando[*ptrIndProcesoActual]) res = -1 ;
-    else
-    {
-        retardar(nVueltasRetardo) ;
-        res = 0 ;
-    }
+    retardar(nVueltasRetardo) ;
+    res = 0 ;
 
     restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
@@ -70,14 +64,12 @@ int far retardarProceso ( void )
 int far openRetardo ( int dfs, modoAp_t modo )
 {
     pindx_t indProcesoActual ;
-    int res = 0 ;
+    int res = -1 ;                                /* resultado por defecto */
 
     save_DS0() ;                            /* guarda el DS anterior (SO1) */
     setraw_DS() ;           /* establece el DS correspondiente al programa */
 
-    indProcesoActual = *ptrIndProcesoActual ;
-    if (retardando[indProcesoActual]) res = -1 ;
-    else retardando[indProcesoActual] = TRUE ;
+    if ((modo & O_RDONLY) || (modo & O_WRONLY)) res = dfs ;
 
     restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
@@ -85,40 +77,26 @@ int far openRetardo ( int dfs, modoAp_t modo )
 
 int far releaseRetardo ( int dfs )
 {
-    pindx_t indProcesoActual ;
-    int res = 0 ;
-
-    save_DS0() ;                            /* guarda el DS anterior (SO1) */
-    setraw_DS() ;           /* establece el DS correspondiente al programa */
-
-    indProcesoActual = *ptrIndProcesoActual ;
-    if (!retardando[indProcesoActual]) res = -1 ;
-    else retardando[indProcesoActual] = FALSE ;
-
-    restore_DS0() ;                               /* restaura el DS de SO1 */
-    return(res) ;
+    return(0) ;
 }
 
 int far readRetardo ( int dfs, pointer_t dir, word_t nbytes )
 {
-    pindx_t indProcesoActual ;
     int res = 4 ;
     dword_t far * ptrDWord = (dword_t far *)dir ;
 
     save_DS0() ;                            /* guarda el DS anterior (SO1) */
     setraw_DS() ;           /* establece el DS correspondiente al programa */
 
-    indProcesoActual = *ptrIndProcesoActual ;
-    if (!retardando[indProcesoActual]) res = -1 ;    /* fichero no abierto */
-    else if (nbytes != 4) res = -2 ;                  /* nbytes incorrecto */
+    if (nbytes != 4) res = -2 ;                       /* nbytes incorrecto */
     else
-        switch (dir[0])
+        switch (*ptrDWord)
         {
-        case 0x00 :
-            ptrDWord[0] = nVueltasRetardo ;
+        case 0L :
+            *ptrDWord = nVueltasRetardo ;
             break ;
-        case 0x01 :
-            ptrDWord[0] = (dword_t)MK_FP(_CS, FP_OFF(retardarProceso)) ;
+        case 1L :
+            *ptrDWord = (dword_t)MK_FP(_CS, FP_OFF(retardarProceso)) ;
             break ;
         default :
             res = -3 ;                   /* codigo de operacion incorrecto */
@@ -130,22 +108,19 @@ int far readRetardo ( int dfs, pointer_t dir, word_t nbytes )
 
 int far aio_readRetardo ( int dfs, pointer_t dir, word_t nbytes )
 {
-    return(readRetardo(dfs, dir, nbytes)) ;
+    return(-1) ;
 }
 
 int far writeRetardo ( int dfs, pointer_t dir, word_t nbytes )
 {
-    pindx_t indProcesoActual ;
     int res = 4 ;
     dword_t far * ptrDWord = (dword_t far *)dir ;
 
     save_DS0() ;                            /* guarda el DS anterior (SO1) */
     setraw_DS() ;           /* establece el DS correspondiente al programa */
 
-    indProcesoActual = *ptrIndProcesoActual ;
-    if (!retardando[indProcesoActual]) res = -1 ;    /* fichero no abierto */
-    else if (nbytes != 4) res = -2 ;
-    else nVueltasRetardo = ptrDWord[0] ;
+    if (nbytes != 4) res = -2 ;
+    else nVueltasRetardo = *ptrDWord ;
 
     restore_DS0() ;                               /* restaura el DS de SO1 */
     return(res) ;
@@ -158,7 +133,7 @@ int far aio_writeRetardo ( int dfs, pointer_t dir, word_t nbytes )
 
 long far lseekRetardo ( int dfs, long pos, word_t whence )
 {
-    return(-1L) ;
+    return(0L) ;
 }
 
 int far fcntlRetardo ( int dfs, word_t cmd, word_t arg )
@@ -173,7 +148,7 @@ int far ioctlRetardo ( int dfs, word_t request, word_t arg )
 
 int far eliminarRetardo ( pindx_t pindx )
 {
-    return(0) ;
+    return(-1) ;
 }
 
 int finishRetardo ( void )
@@ -292,8 +267,6 @@ int integrarRetardo ( bool_t conMensajes )
 
     nVueltasRetardo = valorRetardo() ;
 
-    for ( i = 0 ; i < maxProcesos ; i ++ ) retardando[i] = FALSE ;
-
     if (rec_retardo >= 0)
     {
         dfs = crearFichero("RETARDO", rec_retardo, 0, fedCaracteres) ;
@@ -354,7 +327,7 @@ int instalarRetardo ( bool_t conMensajes )
 #else
     esperarDesinstalacion(                           /* bloquea el proceso */
 //      FP_OFF(dirDescSO1) + sizeof(descSO1_t)
-//          + sizeof(retardando) + sizeof(nVueltasRetardo)
+//          + sizeof(nVueltasRetardo)
 //          + sizeof(descCcbRT) + 0*sizeof(callBack_t),         /* tamDATA */
         FP_OFF(&descCcbRT)
             + sizeof(descCcbRT) + maxCbRT*sizeof(callBack_t),   /* tamDATA */

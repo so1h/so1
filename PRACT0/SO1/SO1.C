@@ -22,7 +22,7 @@
 #include <so1.h\db.h>           /* segBuferSO1, segBuferSeguro, DB, inicDB */
 #include <so1.h\recursos.h>                   /* inicRecursos, destruirRec */
 #include <so1.h\procesos.h>     /* descProceso, ... , inicProcesos, c2cPFR */ 
-#include <so1.h\minifs.h>              /* inicMinisfMSDOS, inicMinisfFAT12 */
+#include <so1.h\sf_msdos.h>                                /* inicSF_MSDOS */
 #include <so1.h\sf.h>        /* inicSF, inicTablaFichAbiertos, segBuferSO1 */
 #include <so1.h\plot.h>                                         /* finPlot */
 #include <so1.h\ajustes.h>   /* modoSO1, guardarDS_SO1, IMRInicial, CS_SO1 */
@@ -86,8 +86,7 @@ void main ( void )                             /* interrupciones inhibidas */
     case modoSO1_Com :                                          /* SO1.COM */
     case modoSO1_Bs  :                   /* SO1.BIN arrancado con SYSLINUX */
         mostrarFlags() ;
-        printStrBIOS("=> SO1 v1.4.1 (C) Pedro Pablo Lopez Rodriguez") ;
-        printLnBIOS() ;
+        printStrBIOS("=> SO1 v1.4.1 (C) Pedro Pablo Lopez Rodriguez\n") ;
         assert((valorFlags() & 0x0200) == 0x0000,
                "\a\n so1(): ERROR ints. no inhibidas") ;    /* '\a' == BEL */
     }
@@ -148,19 +147,32 @@ void main ( void )                             /* interrupciones inhibidas */
     /* Dejar que el proceso inicial lleve a cabo las inicializaciones.     */
     /* Con esto se reduce en gran medida el tamanio de SO1.BIN.            */
 
-	E(pid = thread(DB, SP0_DB, 0x0000)) ;                     /* driver DB */
-    strcpy(descProceso[indice(pid)].comando, "DB") ;
+	if (inicDB() > 0)                 /* hay discos detectados por el BIOS */
+	{                                 /* asigna memoria a segBuferSO1 (GM) */ 
+	    E(pid = thread(DB, SP0_DB, 0x0000)) ;                 /* driver DB */
+        strcpy(descProceso[indice(pid)].comando, "DB") ;
+	}
+	
+    /* Ahora se necesita que haya un recurso rec_sf que haga de sistema de */
+    /* ficheros, de manera que cuando se abra un fichero con open(nombre,  */
+    /* O_CREAT) dentro del open si el fichero no esta previamente abierto  */
+    /* por el proceso (TFA) o por el sistema (TFAS) entonces debe de       */
+    /* abrirse ese nuevo fichero con la operación open del recurso rec_sf, */
+    /* es decir descRecurso[rec_sf].open(dfs, modoAp), siendo dfs un nuevo */
+    /* descriptor con descFichero[dfs].nombre == nombre.                   */
+    /* Para llegar a un VFS los puntos de montaje del sistema de ficheros  */
+    /* deben aludir a nuevos recursos de tipo sistema de ficheros rec_sf_i */ 	
 	
     if ((modoSO1() == modoSO1_Bin) || (modoSO1() == modoSO1_Bs))
     {
         printStrBIOS("\n unidadBIOS = 0x") ;
         printHexBIOS(unidadBIOS(), 2) ;
-        inicSF(unidadBIOS()) ;  /* asigna memoria a segBuferSO1 y FAT (GM) */
-        assert(inicMinisfFAT() == 0, "\a\n so1(): ERROR minisfFAT") ;
+        inicSF_FATBIOS(unidadBIOS()) ;  
+        inicSF(unidadBIOS()) ;                /* asigna memoria a FAT (GM) */
         inicTablaFichAbiertos() ;
     }
     else
-        assert(inicMinisfMSDOS() == 0, "\a\n so1(): ERROR minisfMSDOS") ;
+        assert(inicSF_MSDOS() == 0, "\a\n so1(): ERROR inicSF_MSDOS") ;
 
     /* Aqui procedemos a permitir las interrupciones de manera que el      */
 	/* proceso 0 (SO1) sea un proceso completamente normal. No obstante    */

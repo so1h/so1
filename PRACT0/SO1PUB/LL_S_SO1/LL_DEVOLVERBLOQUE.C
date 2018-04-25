@@ -2,10 +2,10 @@
 
 bool_t ll_devolverBloque ( word_t segmento, word_t tam )
 {
-    word_t w [2] ;
-    int dfGM = open("GM", O_RDONLY) ;
-    if (dfGM < 0) return(FALSE) ;
-    w[0] = segmento ;
-    w[1] = tam ;
-    return(read(dfGM, (pointer_t)&w, 4) == 4) ;
+	bool_t res ;
+    int df = open("GM", O_WRONLY) ;
+    if (df < 0) return(FALSE) ;
+	res = ioctl(df, 1, tam) ;                      /* 1 ==> devolverBloque */
+	close(df) ;
+    return(res) ; 	
 }

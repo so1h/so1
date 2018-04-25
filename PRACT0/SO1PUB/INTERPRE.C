@@ -68,53 +68,56 @@ int redirigirSTDIO ( char * nombreDispositivo ) {
 
 /* --------- interpretacion del comando exit ----------------------------- */
 
-void interpretar_exit ( void ) {
-  int num1 ;
-  if (getppid() != 0) {
-    saltarBlancos() ; obtenSimb() ; num1 = 1 ;
-    if (car == '-') { obtenCar() ; obtenSimb() ; num1 = -1 ; }
-    if (simb == s_fin) { num = 0 ; simb = s_exit ; return ; }
-    if (simb == s_numero) { num = num1*num ; simb = s_exit ; return ; }
-    printf(" formato exit [num] ") ;
-  }
-  else {                                    /* exit tecleado en la consola */
-    printf(
-      "\a\n"
-      "\n"
-      " comando no permitido en la consola (use shutdown o halt) \n"
-    ) ;
-  }
-  simb = s_nulo ;
+void interpretar_exit ( void ) 
+{
+    int signo = +1 ;
+    if (getppid() != 0) 
+	{
+        saltarBlancos() ; obtenSimb() ; 
+        if (car == '-') { obtenCar() ; obtenSimb() ; signo = -1 ; }
+        if (simb == s_fin) { num = 0 ; simb = s_exit ; return ; }
+        if (simb == s_numero) { num = signo*num ; simb = s_exit ; return ; }
+        printf(" formato exit [num] ") ;
+    }
+    else                                    /* exit tecleado en la consola */
+	{
+        printf(
+            "\a"                                                      "\n"
+            ""                                                        "\n"
+            " comando no permitido en la consola (use shutdown o halt) \n"
+        ) ;
+    }
+    simb = s_nulo ;
 }
 
 /* --------- interpretacion de los comandos halt, reboot y shutdown ------ */
 
-void interpretar_salida ( simb_t simbolo ) {
-  simb_t simbAux ;
-  switch (simbolo) {                       /* exit, halt, reboot, shutdown */
+void interpretar_salida ( simb_t simbolo ) 
+{
+    simb_t simbAux ;
+    switch (simbolo)                       /* exit, halt, reboot, shutdown */
+	{
     case s_exit   : interpretar_exit() ; return ;           /* simb = exit */
     case s_halt   : ;
     case s_reboot : ;
     case s_shutdn :
-      simbAux = simbolo ;
-      if (getuid() == 0) {                                         /* root */
-        saltarBlancos() ; obtenSimb() ;
-        if (simb == s_fin   ) { num = 0 ; simb = /* simbAux */ s_shutdn ; return ; }
-        if (simb == s_numero) { simb = /* simbAux */ s_shutdn ; return ; }
-        printf(" formato ") ;
-        if      (simbAux == s_halt  ) printf("halt"    ) ;
-        else if (simbAux == s_reboot) printf("reboot"  ) ;
-        else                          printf("shutdown") ;
-        printf(" [num] ") ;
-      }
-      else {                        /* usuario intentado cerrar el sistema */
-        printf(
-          "\a comando solo permitido para root "
-        ) ;
-    }
+        simbAux = simbolo ;
+        if (getuid() == 0)                                         /* root */
+		{
+            saltarBlancos() ; obtenSimb() ;
+            if (simb == s_fin   ) { num = 0 ; simb = /* simbAux */ s_shutdn ; return ; }
+            if (simb == s_numero) { simb = /* simbAux */ s_shutdn ; return ; }
+            printf(" formato ") ;
+            if      (simbAux == s_halt  ) printf("halt"    ) ;
+            else if (simbAux == s_reboot) printf("reboot"  ) ;
+            else                          printf("shutdown") ;
+            printf(" [num] ") ;
+        }
+        else                       /* usuario intentando cerrar el sistema */
+            printf("\a comando solo permitido para root ") ;
     default : ;
-  }
-  simb = s_nulo ;
+    }
+    simb = s_nulo ;
 }
 
 /* --------- interpretacion del comando ver ------------------------------ */

@@ -38,7 +38,8 @@ OBJS0 = obj\ajustes.obj  \
         obj\gm.obj       \
 #       obj\gp.obj       \
         obj\db.obj       \
-        obj\minifs.obj   \
+        obj\sf_msdos.obj \
+        obj\sf_fbios.obj \
 
 !if $(CON_PROCESO_INICIAL) == TRUE
 OBJS = $(OBJS0)

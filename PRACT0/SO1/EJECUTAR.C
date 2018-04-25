@@ -315,10 +315,10 @@ pindx_t preEjecutar ( const char far * nombre,
 #if (FALSE)
         printStrBIOS("\n tamFich = ") ;
         printLDecBIOS(tamFich, 1) ;
-        printStrBIOS(" tamBloqueMax = ") ;
-        printHexBIOS(tamBloqueMax, 4) ;
-        printStrBIOS(" 16*tamBloqueMax = ") ;
-        printLHexBIOS(16L*(long)tamBloqueMax, 8) ;
+        printStrBIOS(" k_tamBloqueMax = ") ;
+        printHexBIOS(k_tamBloqueMax, 4) ;
+        printStrBIOS(" 16*k_tamBloqueMax = ") ;
+        printLHexBIOS(16L*(long)k_tamBloqueMax, 8) ;
 #endif
 
     if (pindx >= 0) {                         /* pindx == indProcesoActual */
@@ -332,7 +332,7 @@ pindx_t preEjecutar ( const char far * nombre,
         k_devolverBloque(descProceso[pindx].CSProc, descProceso[pindx].tam) ;
     }
 
-    if ((tamFich > (dword_t)(16L*(long)tamBloqueMax)) ||
+    if ((tamFich > (dword_t)(16L*(long)k_tamBloqueMax)) ||
         ((tam = tamProceso(df)) == 0x0000) ||
         ((segmento = k_buscarBloque(tam)) == 0x0000)) 
 	{

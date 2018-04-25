@@ -12,7 +12,7 @@
 #include <so1pub.h\msdos.h>
 #include <so1pub.h\puertos.h>
 
-#include <so1.h\db.h>                              /* d_bloque_t, numMaxDB */
+#include <so1.h\db.h>                                 /* d_bloque_t, dbMax */
 
 descProceso_t descProceso [ maxProcesos ] ;
 
@@ -48,13 +48,11 @@ char strTipo [6][13] =
     "raton HP"
 } ;
 
-char listaDB [ ] [5] = { 
+char listaDB [ dbMax ] [5] = { 
     "FDA", "FDB", 
 	"HDA", "HDA1", "HDA2", "HDA3", "HDA4",
     "HDB", "HDB1", "HDB2", "HDB3", "HDB4"
 } ;
-
-#define numMaxDB sizeof(listaDB)/sizeof(listaDB[0]) 
 
 /* ----------------------------------------------------------------------- */
 /* funcion memBIOS (<so1\memoria.c>)                                       */
@@ -63,8 +61,8 @@ char listaDB [ ] [5] = {
 /* tambien en BIOS AREA 0000:0413 */
 word_t memBIOS ( void )    /* memoria reportada por el BIOS (en Kilobytes) */
 {
-    word_t numKBytes ;                            /* 1 Kilobyte = 1024 bytes */
-    asm int 12h                                       /* BIOS: memoria total */
+    word_t numKBytes ;                          /* 1 Kilobyte = 1024 bytes */
+    asm int 12h                                     /* BIOS: memoria total */
     asm mov numKBytes,ax
     return(numKBytes) ;
 }
@@ -203,11 +201,10 @@ void info ( void )
     printf("\n") ;
 
 	cont = 0 ;
-	for ( i = 0 ; i < numMaxDB ; i++ ) 
+	for ( i = 0 ; i < dbMax ; i++ ) 
 	{
         df = open(listaDB[i], O_RDONLY) ;		
 		if (df < 0) continue ;
-      	res = ioctl(df, 1, (word_t)&d_bloque) ;
 		close(df) ;
 		cont++ ;
     }
@@ -218,12 +215,16 @@ void info ( void )
 	{
 	    d_bloque_t d_bloque ;
 		printf("\n dispositivos de bloques BIOS: ") ;			
-    	for ( i = 0 ; i < numMaxDB ; i++ ) 
+    	for ( i = 0 ; i < dbMax ; i++ ) 
 	    {
             df = open(listaDB[i], O_RDONLY) ;		
+//			printf("\n\n open(\"%s\", O_RDONLY) = %i ", listaDB[i], df) ;
 		    if (df < 0) continue ;
     	    res = ioctl(df, 1, (word_t)&d_bloque) ;
+//			printf("\n\n ioctl(%i, 1, &d_bloque) = %i ", df, res) ;
+			close(df) ;
             if (res != 0) continue ;
+			if (strcmp(listaDB[i], d_bloque.nombre)) continue ; 
             printf("%s ", d_bloque.nombre) ;  		
 	    }
 	}		
@@ -251,6 +252,7 @@ int main ( void )
                  (c2c_t far *)&c2cPFR,
                  (ptrBloque_t *)&listaLibres,
                  (word_t *)&tamBlqMax) ;
+				 
     obtenInfoINFO((info_t far *)&informacion) ;
 
     info() ;

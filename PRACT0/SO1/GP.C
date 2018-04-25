@@ -55,7 +55,7 @@ int k_killpid ( int pid ) {
 }
 
 static int far openGP ( int dfs, modoAp_t modo ) {
-  return(0) ;
+  return(dfs) ;
 }
 
 static int far releaseGP ( int dfs ) {
@@ -71,7 +71,7 @@ typedef struct {
 
 #pragma option -w-par            /* omitir warning parameter is never used */
 
-int far readGP ( int dfs, pointer_t dir, word_t nbytes ) {
+static int far readGP ( int dfs, pointer_t dir, word_t nbytes ) {
   regParametros_t far * regParam = (regParametros_t far *)dir ;
   pid_t   far * pid     = (pid_t   far *)dir ;
   pindx_t far * pindx   = (pindx_t far *)dir ;
@@ -89,7 +89,7 @@ int far readGP ( int dfs, pointer_t dir, word_t nbytes ) {
   return(-1) ;
 }
 
-int far aio_readGP ( int dfs, pointer_t dir, word_t nbytes ) {
+static int far aio_readGP ( int dfs, pointer_t dir, word_t nbytes ) {
   pid_t far * pid = (pid_t far *)dir ;
   if (nbytes == 2) {
     *pid = k_waitpid(*pid, (int far *)dir) ;
@@ -98,13 +98,13 @@ int far aio_readGP ( int dfs, pointer_t dir, word_t nbytes ) {
   return(-1) ;
 }
 
-int far writeGP ( int dfs, pointer_t dir, word_t nbytes ) { /* exit, kill */
+static int far writeGP ( int dfs, pointer_t dir, word_t nbytes ) { /* exit, kill */
   if (nbytes == 2)
     k_exit(*((int far *)dir)) ;
   return(-1) ;
 }
 
-int far aio_writeGP ( int dfs, pointer_t dir, word_t nbytes ) {
+static int far aio_writeGP ( int dfs, pointer_t dir, word_t nbytes ) {
   pid_t far * pid = (pid_t far *)dir ;
   if (nbytes == 2) {
     *pid = k_kill(*pid) ;
@@ -113,15 +113,15 @@ int far aio_writeGP ( int dfs, pointer_t dir, word_t nbytes ) {
   return(-1) ;
 }
 
-int far lseekGP ( int dfs, long int pos, word_t whence ) {
+static int far lseekGP ( int dfs, long int pos, word_t whence ) {
   return(0) ;
 }
 
-int far fcntlGP ( int dfs, word_t cmd, word_t arg ) {
+static int far fcntlGP ( int dfs, word_t cmd, word_t arg ) {
   return(0) ;
 }
 
-int far ioctlGP ( int dfs, word_t request, word_t arg ) {
+static int far ioctlGP ( int dfs, word_t request, word_t arg ) {
   return(0) ;
 }
 
@@ -217,4 +217,3 @@ pid_t inicGP ( void ) {
   return(descProceso[pindx].pid) ;
 
 }
-
