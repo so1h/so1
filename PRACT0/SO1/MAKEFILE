@@ -26,11 +26,12 @@ OBJS0 = obj\ajustes.obj  \
         obj\manej_04.obj \
         obj\manej_05.obj \
         obj\manej_06.obj \
-#       obj\manej_07.obj \
+        obj\manej_07.obj \
 		obj\k_msj.obj    \
         obj\plot.obj     \
         obj\procesos.obj \
         obj\recursos.obj \
+        obj\units.obj    \
         obj\sf.obj       \
 #                        \
 #       drivers:         \

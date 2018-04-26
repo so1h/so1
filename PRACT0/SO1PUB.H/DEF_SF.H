@@ -90,7 +90,7 @@ typedef struct {                   /* plantilla para el sector de arranque */
 #define maxUL 10       /* maximo numero de unidades logicas A, B, C, D, .. */
 
 typedef struct {                         /* unidad logica (particion, BPB) */
-  byte_t db ;                                        /* indice en d_bloque */
+  int    db ;                                        /* indice en d_bloque */
   byte_t ufindx ;                            /* indice de la unidad fisica */
   byte_t indParticion ;                          /* indice de la particion */
   char letra ;                       /* letra de la unidad: A, B, C, D, .. */
@@ -100,7 +100,7 @@ typedef struct {                         /* unidad logica (particion, BPB) */
 #define maxUF 4                       /* maximo numero de unidades fisicas */
 
 typedef struct {                                          /* unidad fisica */
-  byte_t db ;             /* indice del dispositivo de bloques en d_bloque */
+  int    db ;             /* indice del dispositivo de bloques en d_bloque */
   byte_t unidadBIOS ; /* numero de la unidad segun el BIOS: 0x00, 0x80, .. */
   byte_t contUL ;                            /* numero de unidades logicas */
   descParticion_t descParticion [maxParticiones] ;

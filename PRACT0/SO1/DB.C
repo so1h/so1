@@ -83,7 +83,7 @@ dobleEnlace_t eOpDB [ maxProcesos + 1 ] = { { 0, 0 } } ;
 
 c2c_t c2cOpDB = { 0, 0, 0, NULL } ;      /* cola de procesos peticionarios */
 
-d_bloque_t d_bloque [ ] ;                                       /* forward */
+d_bloque_t d_bloque [ dbMax ] ;  
 
 #pragma warn -par         /* para evitar el warning parametro no utilizado */
 
@@ -394,6 +394,10 @@ int inicDB ( void )                                      /* inicializacion */
     return(cont) ;
 }
 
+#define normalizar( dir )                                                     \
+                                                                              \
+	(MK_FP(FP_SEG(dir) + (FP_OFF(dir) >> 4), FP_OFF(dir) & 0x000F))   
+
 int opSectorDB ( dword_t sectorLogico, int db, pointer_t dir, byte_t cmd )
 {
     int err ;
@@ -408,14 +412,16 @@ int opSectorDB ( dword_t sectorLogico, int db, pointer_t dir, byte_t cmd )
     CSH_t CSH ;
 
     if (db >= dbMax) return(-1) ;
+    if (d_bloque[db].tipoUnidad == 0x00) return(-1) ;
     unidadBIOS = d_bloque[db].unidadBIOS ;
+	dir = normalizar(dir) ;
     posibleErr9 = posibleErr9EnOpBIOS(FP_SEG(dir)) ;
     dirAux = dir ;
     if (posibleErr9)
     {
+        dirAux = ptrBuferSO1 ;
         if (cmd == cmd_write_sector)
             memcpy(dirAux, dir, 512) ;
-        dirAux = ptrBuferSO1 ;
     }
     if (unidadBIOS < 0x80)
     {

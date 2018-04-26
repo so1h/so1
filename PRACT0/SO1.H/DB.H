@@ -25,6 +25,8 @@ typedef struct {                             /* datos de un d.b. detectado */
 
 #define dbMax 12                                  /* numero maximo de d.b. */
 
+extern d_bloque_t d_bloque [ dbMax ] ;
+
 int inicDB ( void ) ;                                    /* inicializacion */
 
 //  /* inicDB devuelve el numero de dispositivos de bloques detectados     */
@@ -33,7 +35,7 @@ void * DB ( void * arg ) ;            /* funcion ejecutada por el servidor */
 
 extern pindx_t pindxSrvDB ;
 
-#define ptrBuferSO1 ((pointer_t)MK_FP(segBuferSO1, 0x0000))     
+#define ptrBuferSO1 ((pointer_t)MK_FP(segBuferSO1, 0x0000))   
 
 word_t segBuferSeguro ( void ) ;                      /* seguro con el DMA */
 

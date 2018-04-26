@@ -18,6 +18,7 @@
 #define hayFake86 0x0040
 #define hayVDos   0x0080
 #define hayMsdos  0x0100                 /* msdos player de Takeda Toshiya */
+#define hay86Box  0x0200                
 
 void mirarLoQueHay ( word_t * loQueHay ) ;
 

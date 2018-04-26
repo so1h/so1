@@ -24,6 +24,7 @@
 #include <so1.h\procesos.h>     /* descProceso, ... , inicProcesos, c2cPFR */ 
 #include <so1.h\sf_msdos.h>                                /* inicSF_MSDOS */
 #include <so1.h\sf.h>        /* inicSF, inicTablaFichAbiertos, segBuferSO1 */
+#include <so1.h\units.h>                       /* inicUnits, comprobarFats */
 #include <so1.h\plot.h>                                         /* finPlot */
 #include <so1.h\ajustes.h>   /* modoSO1, guardarDS_SO1, IMRInicial, CS_SO1 */
 //                                                           /* unidadBIOS */
@@ -167,7 +168,12 @@ void main ( void )                             /* interrupciones inhibidas */
     {
         printStrBIOS("\n unidadBIOS = 0x") ;
         printHexBIOS(unidadBIOS(), 2) ;
-        inicSF_FATBIOS(unidadBIOS()) ;  
+		
+		inicUnits() ;
+		assert(comprobarUnits(unidadBIOS()) != 0, 
+		       "\a\n so1(): ERROR comprobarUnits ") ;
+        inicSF_FATBIOS(unidadLogicaArranque) ;   /* asigna mem. a FAT (GM) */
+		
         inicSF(unidadBIOS()) ;                /* asigna memoria a FAT (GM) */
         inicTablaFichAbiertos() ;
     }

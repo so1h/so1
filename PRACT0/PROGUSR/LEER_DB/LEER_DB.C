@@ -73,7 +73,7 @@ void escribirDB ( d_bloque_t * d_bloque )
 {
 	dword_t daux = d_bloque->numSectores ;
     printf(
-        "\n     %-6s %02X %02X %3d %3d %2d %2d %6ld %6ld %3ld,%02ld MB ", 
+        "\n     %-6s %02X %02X %3d %3d %2d %3d %6ld %8ld %3ld,%02ld MB ", 
 	    d_bloque->nombre, 
 	    d_bloque->unidadBIOS, 
 		d_bloque->tipoUnidad, 
@@ -110,12 +110,12 @@ int listarDispositivosDB ( void )
 		if (cont == 0) 
 		{
 			printf(			
-			    ""                                                       "\n"
-			    ""                                                       "\n"
-			    " dispositivos de bloques detectados por el BIOS: "      "\n"
-			    ""                                                       "\n"
-			    "     nombre id ti b/s s/p hd cl primer numSec    MB    ""\n"
-                "     ------ -- -- --- --- -- -- ------ ------ ---------"        
+			    ""                                                          "\n"
+			    ""                                                          "\n"
+			    " dispositivos de bloques detectados por el BIOS: "         "\n"
+			    ""                                                          "\n"
+			    "     nombre id ti b/s s/p hd cls primer numSects    MB    ""\n"
+                "     ------ -- -- --- --- -- --- ------ -------- ---------"        
 			) ;
 		}
 		escribirDB(&d_bloque) ;

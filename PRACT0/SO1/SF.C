@@ -18,13 +18,13 @@
 
 /* ----------------- descriptores de unidades logicas -------------------- */
 
-int unidadLogicaActual = -1 ;
+extern int unidadLogicaActual = -1 ;
 
-int unidadFisicaActual = -1 ;
+extern int unidadFisicaActual = -1 ;
 
-descUnidadLogica_t descUnidadLogica [ maxUL ] ;
+extern descUnidadLogica_t descUnidadLogica [ maxUL ] ;
 
-descUnidadFisica_t descUnidadFisica [ maxUF ] ;
+extern descUnidadFisica_t descUnidadFisica [ maxUF ] ;
 
 /* ------------------------------- FAT12/16 ------------------------------ */
 /*            valores correspondientes a la unidad logica actual           */
