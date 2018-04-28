@@ -17,6 +17,8 @@
 #include <so1.h\procesos.h>       /* indProcesoActual, descProceso, c2cPFR */
 //                                    /* DPOcupados, DPLibres, maxProcesos */
 #include <so1.h\ajustes.h>                                     /* desplCab */
+#include <so1.h\units.h>
+#include <so1.h\fatunit.h>
 #include <so1.h\sf.h>
 
 //#include <so1.h\so1dbg.h>                            /* puntoDeParadaSO1 */

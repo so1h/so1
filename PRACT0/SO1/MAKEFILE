@@ -32,6 +32,7 @@ OBJS0 = obj\ajustes.obj  \
         obj\procesos.obj \
         obj\recursos.obj \
         obj\units.obj    \
+        obj\fatunit.obj  \
         obj\sf.obj       \
 #                        \
 #       drivers:         \

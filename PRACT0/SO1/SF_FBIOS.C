@@ -26,6 +26,8 @@
 #include <so1.h\ajustes.h>                                       /* CS_SO1 */
 #include <so1.h\procesos.h>                            /* indProcesoActual */
 #include <so1.h\recursos.h>                                    /* crearRec */
+#include <so1.h\units.h>                       /* inicUnits, comprobarFats */
+#include <so1.h\fatunit.h> 
 #include <so1.h\interrup.h>                                       /* VIOrg */
 #include <so1.h\plot.h>                                            /* plot */
 #include <so1.h\sf.h>                                   /* formatearNombre */
@@ -125,23 +127,25 @@ static int far eliminarSF ( pindx_t pindx )
 
 /* ----------------------------------------------------------------------- */
 
-int detectarUnidadesFAT ( void ) 
-{
-	
-}
-
 #pragma warn +par
 
 #define maxCbSF 0
 
 static descCcb_t descCcbSF = { 0, 0, 0, maxCbSF, NULL } ;
 
-int inicSF_FATBIOS ( byte_t unidadBIOS ) 
+int inicSF_FATBIOS ( void ) 
 {
     descRecurso_t dR ;
 
-//	detectarUnidadesFAT() ; -----------
+    inicUnits() ;
 	
+	assert(comprobarUnits(unidadBIOS()) == 0, 
+		   "\a\n inicSF_FATBIOS(): ERROR comprobarUnits ") ;
+	
+	inicFatUnit() ;
+	
+	inicTablaFichAbiertos() ; 
+		
     dR.tipo = rSF ;
     strcpy(dR.nombre, "SF_FATBIOS") ;
     dR.ccb = (ccb_t)&descCcbSF ;

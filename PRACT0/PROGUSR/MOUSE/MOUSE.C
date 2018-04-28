@@ -97,24 +97,10 @@ void mostrarEstado ( char opcion, word_t modo )
     {
         if ((nuevoEstado) || (opcion == 'F'))
         {
-
             printf(
-    			"\r [%02X, %02X, %02X] (", est.B0, est.B1, est.B2
-			) ;
-
-            if (est.incX < 0)
-                printf("-%3i", (~est.incX)+1) ;
-            else
-                printf("%4i", est.incX) ;
-			
-            putchar(',') ;
-			
-            if (est.incY < 0)
-                printf("-%3i", (~est.incY)+1) ;
-            else
-                printf("%4i", est.incY) ;
-
-            printf(")  (%3i, %3i) C = %2i F = %2i L = %i R = %i M = %i%6i", 
+    			"\r [%02X, %02X, %02X] (%4i,%4i)  (%3i, %3i) C = %2i F = %2i L = %i R = %i M = %i%6i", 
+				est.B0, est.B1, est.B2, 
+				est.incX, est.incY, 
 			    est.X, est.Y, 
 				est.C, est.F, 
 				est.botonIz, est.botonDe, est.botonMe, 

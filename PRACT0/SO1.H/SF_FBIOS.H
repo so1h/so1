@@ -24,8 +24,6 @@ extern rindx_t rec_sf ;                     /* recurso sistema de ficheros */
 
 extern dfs_t dfs_sf ;                       /* descriptor del fichero "SF" */
 
-
-
-int inicSF_FATBIOS ( byte_t unidadBIOS ) ;  
+int inicSF_FATBIOS ( void ) ;  
 
 #endif /* SF_FATBIOS_H */

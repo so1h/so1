@@ -47,24 +47,14 @@ void inicUnits ( void )            /* inicializa las unidades con d_bloque */
 		db = (ufindx % 2) + (ufindx / 2)*(2 + 4*(ufindx % 2)) ; 
 
         ptrDUFisica->contUL = 0 ;                                /* contUL */
+		for ( i = 0 ; i < maxParticiones ; i++ )
+            ptrDUFisica->ulindx[i] = -1 ;                        /* ulindx */
 		if (d_bloque[db].tipoUnidad == 0x00)
-        {		
             ptrDUFisica->db = -1 ;
-		    ptrDUFisica->unidadBIOS = -1 ;
-			for ( i = 0 ; i < maxParticiones ; i++ )
-                ptrDUFisica->descParticion[i].tipo = 0x00 ;  /* dParticion */
-		}
         else 
-        {
+        {				
             ptrDUFisica->db = db ;                                   /* db */
-		    ptrDUFisica->unidadBIOS = d_bloque[db].unidadBIOS ;   /* uBIOS */
-			if (ufindx >= 2)                             /* no es disquete */
-            {
-//				df = open(d_bloque[db].nombre, O_RDONLY) ;
-//				lseek(df, tamMBR-4*sizeof(descParticion_t)-2, SEEK_SET) ;
-//				read(df, &ptrDUFisica->descParticion, 4*sizeof(descParticion_t)) ;
-//				close(df) ;
-            }
+            ptrDUFisica->unidadBIOS = d_bloque[db].unidadBIOS ;   /* uBIOS */
 #if (MOSTRARUNIDADES)		
 	        printStrBIOS("\n ufindx = ") ;   
      		printIntBIOS(ufindx, 1) ;		    		
@@ -81,12 +71,10 @@ void inicUnits ( void )            /* inicializa las unidades con d_bloque */
 			}
 #endif 			
         }			
-		for ( i = 0 ; i < maxParticiones ; i++ )
-            ptrDUFisica->ulindx[i] = -1 ;                        /* ulindx */
     }
 	
 #if (MOSTRARUNIDADES)	
-    printStrBIOS("\n") ;	
+    printLnBIOS() ;	
 #endif	
 	
 	db = 0 ;
@@ -95,22 +83,13 @@ void inicUnits ( void )            /* inicializa las unidades con d_bloque */
     {
 		ptrDULogica = (descUnidadLogica_t *)&descUnidadLogica[ulindx] ;
 		if (d_bloque[db].tipoUnidad == 0x00)
-		{
     		ptrDULogica->db = -1 ;
-            ptrDULogica->ufindx = -1 ;
-            ptrDULogica->indParticion = -1 ;
-            ptrDULogica->letra = '$' ; 
-		}
 		else 
 		{
     		ptrDULogica->db = db ;
             ptrDULogica->ufindx = (ulindx < 2) ? ulindx : 2 + (ulindx - 2)/4 ;
             ptrDULogica->indParticion = (ulindx < 6) ? (ulindx - 2) : (ulindx - 6) ;
             ptrDULogica->letra = (ulindx < 2) ? 'A' + ulindx : letraUnidad++ ;
-//			df = open(d_bloque[db].nombre, O_RDONLY) ;
-//			lseek(df, bloque[db].primerSector*512, SEEK_SET) ;
-//			read(df, (pointer_t)&ptrDULogica->BPB, sizeof(BPB_t)) ;
-//			close(df) ;
 			if (ulindx >= 2) 
 			{	
 		        ufindx = ptrDULogica->ufindx ;
@@ -162,12 +141,13 @@ void inicUnits ( void )            /* inicializa las unidades con d_bloque */
 			{
 	            printStrBIOS(" contUL = ") ; 
 	            printIntBIOS(ptrDUFisica->contUL, 1) ; 
+				printStrBIOS(" [") ;
 				for ( k = 0 ; k < ptrDUFisica->contUL ; k++ )
 				{
 					printCarBIOS(' ') ;
      	            printIntBIOS(ptrDUFisica->ulindx[k], 1) ; 
 				}	
-
+				printStrBIOS(" ]") ;
 			}
 		}
     }
@@ -201,28 +181,37 @@ int comprobarUnits ( byte_t unidadBIOS )
     for ( ufindx = 0 ; ufindx < maxUF ; ufindx++ )     /* descUnidadFisica */
     {
    		ptrDUFisica = (descUnidadFisica_t *)&descUnidadFisica[ufindx] ;
+		db = ptrDUFisica->db ;  
+        if (db < 0) continue ; 
 		if (ptrDUFisica->unidadBIOS == unidadBIOS) 
 		{
             unidadFisicaArranque = ufindx ;	       /* unidadFisicaArranque */
 			if (ufindx < 2)                                    /* disquete */
 			    unidadLogicaArranque = ufindx ;
         }			
-		db = ptrDUFisica->db ; 
-		if ((ufindx >= 2) && (db >= 0))                      /* disco duro */
+		if (ufindx >= 2)                                     /* disco duro */
 		{                               /* leemos el sector 0 de la unidad */
-//			df = open(d_bloque[db].nombre, O_RDONLY) ;
-//			lseek(df, 0, SEEK_SET) ;
-//			read(df, (pointer_t)mbr, 512) ;                         /* MBR */
-//			close(df) ;
-            err = opSectorDB(0, db, ptrBuferSO1, cmd_read_sector) ;
 
-            if ((mbr->signatura[0] != 0x55) || (mbr->signatura[1] != 0xAA))
+    		err = opSectorDB(0, db, (pointer_t)mbr, cmd_read_sector) ;
+
+			if (err) 
+			{
+                printStrBIOS("\n error: no funciona la unidad de disco ") ;
+                printStrBIOS(d_bloque[db].nombre) ;
+                printLnBIOS() ;
+				leerTeclaBIOS() ;
+				ptrDUFisica->db = -1 ;               /* se anula la unidad */
+				continue ;
+			}
+            else if ((mbr->signatura[0] != 0x55) || 
+			         (mbr->signatura[1] != 0xAA))
             {
                 printStrBIOS("\n error: MBR sin signatura (0x55, 0xAA) en ") ;
                 printStrBIOS(d_bloque[db].nombre) ;
                 printLnBIOS() ;
 				leerTeclaBIOS() ;
-                rebootBIOS() ; 
+				ptrDUFisica->db = -1 ;               /* se anula la unidad */
+				continue ;
             }   		
 			else 
 			{
@@ -243,11 +232,13 @@ int comprobarUnits ( byte_t unidadBIOS )
 	            printHexBIOS(ptrDUFisica->unidadBIOS, 2) ; 
 	            printStrBIOS(" contUL = ") ; 
 	            printIntBIOS(ptrDUFisica->contUL, 1) ; 
+				printStrBIOS(" [") ;
 				for ( k = 0 ; k < ptrDUFisica->contUL ; k++ )
 				{
 					printCarBIOS(' ') ;
      	            printIntBIOS(ptrDUFisica->ulindx[k], 1) ; 
 				}	
+				printStrBIOS(" ]") ;
 #endif 			
                 j = 0 ;
                 for ( i = 0 ; i < maxParticiones ; i++ )
@@ -266,28 +257,11 @@ int comprobarUnits ( byte_t unidadBIOS )
                     printStrBIOS(d_bloque[db].nombre) ;
                     printLnBIOS() ;
 			        leerTeclaBIOS() ;
-//                  rebootBIOS() ; 
                 }
-				else if (ptrDUFisica->unidadBIOS == unidadBIOS) 
+				else if (unidadFisicaArranque == ufindx) 
 				{	
 			        ulindx = ptrDUFisica->ulindx[j] ;
                     unidadLogicaArranque = ulindx ;				
-                }
-				
-                if ((tipo != 0x01) && (tipo != 0x04)) 
-                {
-                    printStrBIOS("\n aviso: particion de tipo no soportado 0x") ;
-                    printHexBIOS(tipo, 2) ;
-                    printStrBIOS(" presente en ") ;
-                    printStrBIOS(d_bloque[db].nombre) ;
-            		if (ptrDUFisica->unidadBIOS == unidadBIOS) 
-					{
-                        printStrBIOS("\n error: particion de arranque de tipo no soportado 0x") ;
-                        printHexBIOS(tipo, 2) ;
-						return(-1) ;
-					}
-                    leerTeclaBIOS() ;
-//                  rebootBIOS() ;
                 }
             }				
 		}
@@ -313,28 +287,34 @@ int comprobarUnits ( byte_t unidadBIOS )
 		return(-1) ;
     }		
 		
-leerTeclaBIOS() ;	
-return(0) ;	
-	
     for ( ulindx = 0 ; ulindx < maxUL ; ulindx++ )     /* descUnidadLogica */
     {
 		ptrDULogica = (descUnidadLogica_t *)&descUnidadLogica[ulindx] ;
 		db = ptrDULogica->db ;
-		if (db > 0) 
+		if (db >= 0) 
 		{
-//			df = open(d_bloque[db].nombre, O_RDONLY) ;
-//			lseek(df, (db < 2) ? 0 : d_bloque[db].primerSector*512, SEEK_SET) ;
-//			read(df, (pointer_t)boot, 512) ;                   /* PBR/BOOT */
-//			close(df) ;
-            err = opSectorDB(d_bloque[db].primerSector, db, ptrBuferSO1, cmd_read_sector) ;
-            if ((boot->signatura[0] != 0x55) || (boot->signatura[1] != 0xAA))
+			ufindx = ptrDULogica->ufindx ;
+			ptrDUFisica = (descUnidadFisica_t *)&descUnidadFisica[ufindx] ;
+			ptrDParticion = (descParticion_t *)&ptrDUFisica->descParticion ;
+            err = opSectorDB(d_bloque[db].primerSector, db, (pointer_t)boot, cmd_read_sector) ;
+            if (err) 
+			{
+                printStrBIOS("\n aviso: no puede leerse el PBR en ") ;
+                printStrBIOS(d_bloque[db].nombre) ;
+				if (db < 2) 
+                    printStrBIOS(" (disquete posiblemente no insertado) ") ;
+                printLnBIOS() ;
+				ptrDULogica->db = -1 ;		
+				leerTeclaBIOS() ;
+            }				
+            else if ((boot->signatura[0] != 0x55) || 
+			    (boot->signatura[1] != 0xAA))
             {
                 printStrBIOS("\n aviso: PBR sin signatura (0x55, 0xAA) en ") ;
                 printStrBIOS(d_bloque[db].nombre) ;
                 printLnBIOS() ;
 				ptrDULogica->db = -1 ;		
 				leerTeclaBIOS() ;
-                rebootBIOS() ;
             }
 			else if ((boot->instJMP[0]   != 0xEB) || 
 			         (boot->instJMP[1]   <  0x3C) || 
@@ -346,27 +326,38 @@ return(0) ;
                 printLnBIOS() ;
 				ptrDULogica->db = -1 ;		
 				leerTeclaBIOS() ;
-                rebootBIOS() ;
 			}
-            else if ((strncmp(boot->SF, "FAT12   ", 8) && (tipo == 0x01)) ||
-                     (strncmp(boot->SF, "FAT16   ", 8) && (tipo == 0x04)))
+			else if ((ulindx == unidadLogicaArranque) && 
+			         (boot->unidad != ptrDUFisica->unidadBIOS))
             {
-                printStrBIOS("\n el tipo de sistema de ficheros no corresponde a \"") ;
-                for ( i = 0 ; i < 8 ; i++ ) printCarBIOS(boot->SF[i]) ;
-                printStrBIOS("\" en ") ;
+                printStrBIOS("\n unidad de arranque distinta de la indicada en el sector de arranque: 0x") ;
+                printHexBIOS(boot->unidad, 2) ;   
+                leerTeclaBIOS() ;
+            }    					 
+            else if (((ulindx < 2) && 
+			          ((!strncmp(boot->SF, "FAT12   ", 8)) ||
+					   (!strncmp(boot->SF, "FAT16   ", 8)))) ||
+					 (((ulindx >= 2) &&  
+				      ((!strncmp(boot->SF, "FAT12   ", 8) && 
+			           (ptrDParticion[ptrDULogica->indParticion].tipo == 0x01)) ||
+                       (!strncmp(boot->SF, "FAT16   ", 8) && 
+					   (ptrDParticion[ptrDULogica->indParticion].tipo == 0x04))))))
+            {
+				memcpy(&ptrDULogica->BPB, &boot->BPB, sizeof(BPB_t)) ;
+				ptrDULogica->letra = (db < 2) ? 'A' + db : letraUnidad++ ;
+            }
+			else 
+			{
+                printStrBIOS("\n tipo de sistema de ficheros no soportado en ") ;
                 printStrBIOS(d_bloque[db].nombre) ;
                 printLnBIOS() ;
 				ptrDULogica->db = -1 ;		
                 leerTeclaBIOS() ;
-                rebootBIOS() ;
-            }
-			else {
-				memcpy(&ptrDULogica->BPB, &boot->BPB, sizeof(BPB_t)) ;
-				ptrDULogica->letra = (db < 2) ? 'A' + db : letraUnidad++ ;
 			}
 		}		
-    }
-	
-leerTeclaBIOS() ;	
+    }	
+#if (MOSTRARUNIDADES)	
+    printLnBIOS() ;	
+#endif	
 	return(0) ;
 }

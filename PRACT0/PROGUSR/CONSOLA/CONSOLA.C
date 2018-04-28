@@ -924,6 +924,38 @@ void hacerTablaNula ( char * tablaDeConversion )
 		tablaDeConversion[i] = (char)i ;
 }
 
+word_t fechaCompactada ( pointer_t ptrFecha ) {
+    word_t mes, dia, anio ;
+    if ((ptrFecha[2] != '/') || (ptrFecha[5] != '/')) return(0x0000) ;
+    mes  = 10*(ptrFecha[0] - '0') + (ptrFecha[1] - '0') ;   /* mes:  4 bits */ 
+    if ((mes == 0) || (mes > 12)) return(0x0000) ;
+    dia  = 10*(ptrFecha[3] - '0') + (ptrFecha[4] - '0') ;   /* dia:  5 bits */ 
+    if ((dia == 0) || (dia > 31)) return(0x0000) ;
+    anio = 10*(ptrFecha[6] - '0') + (ptrFecha[7] - '0') ;   /* año: 7 bits */ 
+    return((anio << 9) | (mes << 5) | dia) ; 
+}
+
+void establecerTablaDeConversion ( void )
+{
+    switch (fechaCompactada(ptrFechaBios))  
+	{
+	case 50077L : /* hay86Box  */                            /* "12/29/97" */ 	
+    case 50903L : /* hayQemu   */                            /* "06/23/99" */
+    case  5706L : /* hayBochs  */                            /* "02/10/11" */ /* Bochs 2.6.7 */ 
+    case  7578L : /* hayBochs  */                            /* "12/26/14" */ /* Bochs 2.6.8 */
+    case  8784L : /* hayBochs  */                            /* "02/16/17" */ /* Bochs 2.6.9 */ 
+    case 48867L : /* hayNTVDM  */                            /* "07/03/95" */
+    case  6306L : /* hayFake86 */                            /* "05/02/12" */
+    case 50721L : /* hayVDos   */                            /* "01/01/99" */
+        break ;
+    case 47137L : /* hayDBox   */                            /* "01/01/92" */
+    case  3158L : /* hayMsdos  */                            /* "02/22/06" */        
+    default  : ;
+        hacerTablaNula(tablaDeConversion) ;                          /* US */
+	}
+}
+
+#if (0) 
 void establecerTablaDeConversion ( void )
 {
     int anioBIOS ;
@@ -944,8 +976,9 @@ void establecerTablaDeConversion ( void )
     case 92 : /* hayDBox   */   /* "01/01/92" */
     default  :
         hacerTablaNula(tablaDeConversion) ;                          /* US */
-    }
+    }	
 }
+#endif 
 
 int integrarConsola ( byte_t numConsolas, bool_t conMensajes )
 {

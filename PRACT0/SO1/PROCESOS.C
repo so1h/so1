@@ -475,7 +475,7 @@ pindx_t crearProceso (       word_t     segmento,
 }
 
 char strSo1 [4][12] = { "SO1.BIN", "SO1.COM", "SO1.EXE", "SO1.SLX" } ;
-char comandoSo1a [tamComando] = "boot de disquete" ;
+char comandoSo1a [tamComando] = "boot unit 00" ;
 char comandoSo1b [tamComando] = "SO1 (desde MSDOS)" ;
 //char comandoSo1c [tamComando] = "SO1 (desde SYSLINUX)" ;
 
@@ -572,7 +572,10 @@ void inicProcesos ( void )
     switch (modoSO1()) 
 	{
         case modoSO1_Bin:                                /* so1.bin (boot) */
+//					  sprintf(ptrDP0->comando, "%s%02X", comandoSo1a, unidadBIOS()) ;
                       strcpy(ptrDP0->comando, comandoSo1a) ;
+					  ptrDP0->comando[10] = '0' + (unidadBIOS() / 16) ;
+					  ptrDP0->comando[11] = '0' + (unidadBIOS() % 16) ;
                       break ;
         case modoSO1_Com:
         case modoSO1_Exe:
