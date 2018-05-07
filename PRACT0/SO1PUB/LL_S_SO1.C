@@ -502,7 +502,7 @@ int eliminarCcbRecurso ( callBack_t cb, const char far * nombre )
 /* 0300: obtenInfoPS(&descProceso,&e2FFR,&c2cPFR)                          */
 /* 0301: obtenInfoMEM(&descProceso,&e2FFR,&c2cPFR,&listaLibres,&tamBlqMax) */
 /* 0302: obtenInfoPFR(&descProc,&descFich,&descRec,&e2FFR,&c2cPFR)         */
-/* 0303: obtenInfoFAB(&df)                                                 */
+/////* 0303: obtenInfoFAB(&df)                                                 */
 /* 0304: obtenInfoINFO(&info)                                              */
 /* 0305: listarDirectorio(unidad, recursivo)                               */
 /* 0306: unidadLoficaLista(unidadLogica)                                   */
@@ -608,6 +608,7 @@ void obtenInfoPFR ( descProceso_t far * descProceso,         /* ah = 0302h */
     }
 }
 
+#if (FALSE)
 /* ----------------------------------------------------------------------- */
 /* obtenInfoFAB(&df) ;                                                     */
 /* ----------------------------------------------------------------------- */
@@ -624,6 +625,7 @@ void obtenInfoFAB ( descriptor_de_fichero_t far * df )       /* ax = 0303h */
         int nVIntSO1 ;
     }
 }
+#endif
 
 /* ----------------------------------------------------------------------- */
 /* obtenInfoINFO(&info)                                                    */

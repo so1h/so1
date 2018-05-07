@@ -7,11 +7,16 @@
 #ifndef AJUSTSP_H
 #define AJUSTSP_H
 
-#define SP0_SO1   0x4FFE        /* puntero de pila inicial del sistema SO1 */ /* 20 */
+#define SP0_SO1   0x5FFE        /* puntero de pila inicial del sistema SO1 */ /* 20 */
+//#define SP0_SO1   0x4FFE        /* puntero de pila inicial del sistema SO1 */ /* 20 */
 //#define SP0_SO1   0x3FFE      /* puntero de pila inicial del sistema SO1 */ /* 16 */
 //                                  /* para atender traps e interrupciones */
 
-#define SP0_DB    0x3FFF   
+#define SP0_SF    0x4FFE   
+//#define SP0_SF    0x3FFE   
+
+#define SP0_DB    0x3FFE   
+//#define SP0_DB    0x3BFE   
 
 //#define SP0_GP    0x67FE                   /* puntero de pila inicial GP */
 

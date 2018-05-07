@@ -93,7 +93,8 @@ int main ( int argc, char * argv [ ] )
     res = interpretarComandos() ;        /* interpretacion de los camandos */
 	
 //  if (getppid() != 1)                             /* el padre no es inic */
-    if (getppid() != 2)                             /* el padre no es inic */
+//  if (getppid() != 2)                             /* el padre no es inic */
+    if (getpid() > 9)                               /* el padre no es inic */
 		return(res) ;                                   /* fin del proceso */             
 		
     if ((pid = createProcess("CONSOLA", "consola -nq")) < 0)      /* falla */

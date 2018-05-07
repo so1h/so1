@@ -26,7 +26,7 @@
 #include <so1.h\procesos.h>   /* descProceso, descFichero, descRecurso ... */
 #include <so1.h\units.h>    
 #include <so1.h\fatunit.h>     
-#include <so1.h\sf.h>     /* findFirstSo1, findNextSo1, unidadLogicaActual */
+#include <so1.h\sf_fbios.h> /* findFirstSo1, findNextSo1, unidadLogicaActual */
 
 static void copiarDescProcesos ( bloquePFR_t far * ptrPFR ) 
 {
@@ -111,6 +111,7 @@ void so1_manejador_03 ( void )                         /* ah = 3 ; int SO1 */
 		}
         break ;
 		
+#if (FALSE)		
     case OBTENINFOFAB :                                          /* 0x0303 */
 	    {
 		    descriptor_de_fichero_t far * df ;
@@ -122,6 +123,7 @@ void so1_manejador_03 ( void )                         /* ah = 3 ; int SO1 */
                 inicTablaFichAbiertos() ;     /* borramos la tabla de f.a. */
 		}	
         break ;
+#endif
 		
     case OBTENINFOINFO :                                         /* 0x0304 */
 	    {

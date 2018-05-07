@@ -42,4 +42,3 @@
 #define US    (char)31  /* unit separator       ^_ */
 
 #endif /* CARSCTRL_H */
-

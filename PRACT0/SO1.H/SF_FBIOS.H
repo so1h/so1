@@ -20,10 +20,61 @@
 #ifndef SF_FATBIOS_H
 #define SF_FATBIOS_H
 
+#include <so1pub.h\tipos.h>
+
 extern rindx_t rec_sf ;                     /* recurso sistema de ficheros */
 
 extern dfs_t dfs_sf ;                       /* descriptor del fichero "SF" */
 
 int inicSF_FATBIOS ( void ) ;  
+
+void * SF ( void * arg ) ;            /* funcion ejecutada por el servidor */
+
+extern pindx_t pindxSrvSF ;
+
+typedef struct {
+  bool_t libre ;                  /* descriptor de fichero libre u ocupado */
+  entrada_t entrada ;              /* entrada del fichero en el directorio */
+  byte_t unidadLogica ;     /* unidad logica donde se encuentra el fichero */
+  int sectorLogico ;               /* sector logico ocupado por la entrada */
+  int numEntrada ;                   /* numero de la entrada en ese sector */
+} descriptor_de_fichero_t ;
+
+typedef struct {
+  char      ff_attrib ;
+  unsigned  ff_ftime ;
+  unsigned  ff_fdate ;
+  long      ff_fsize ;
+  char      ff_name [13] ;
+  int       unidadLogica ;
+  byte_t    bindx ;    /* indice (0..15) de la entrada actual en el buffer */
+  word_t    eindx ; /* indice (0.. ) de la entrada actual en el directorio */
+  pointer_t buffer ;  /* puntero a un bufer local del proceso de 512 bytes */
+} ffblk_t ;
+
+extern int numFichAbiertos ;
+
+extern descriptor_de_fichero_t tablaFichAbiertos [ maxFichAbiertos ] ;
+
+int inicTablaFichAbiertos ( void ) ;
+
+bool_t formatearNombre ( const char far * nombre, char * formateado ) ;
+
+long tamFichero ( int df ) ;
+
+int abrirFichero ( const char far * nombre, byte_t unidadLogica ) ;
+
+int cerrarFichero ( int df )      ;
+
+word_t tamProceso ( int df ) ;
+
+int cargaFicheroAbierto_Ok ( int df, word_t segmento ) ;
+
+int cargaFichero_Ok ( char * nombre, byte_t unidad, word_t segmento ) ;
+
+
+int findFirstSo1 ( int unidadLogica, ffblk_t far * ffblk ) ;
+
+int findNextSo1 ( ffblk_t far * ffblk ) ;
 
 #endif /* SF_FATBIOS_H */

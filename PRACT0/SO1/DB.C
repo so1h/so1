@@ -520,6 +520,7 @@ int procesarPeticionDB ( pindx_t pindx )
     int despl ;
     int despl_a ;
     int despl_b ;
+	int nbytes_sector ;
 
     df = descProceso[pindx].trama->BX ;
 //  df     = peticionDB[pindx].df ;               /* peticion actual df     */
@@ -550,13 +551,32 @@ int procesarPeticionDB ( pindx_t pindx )
     cont = 0 ;
     for ( s = sectorLogico1 ; s <= sectorLogico2 ; s++ )
     {
-        err = opSectorDB(s, db, ptrBuferSO1, cmd) ;
-        if (err != 0) return(-1) ;
         if (s == sectorLogico1) despl_a = despl1 ; else despl_a = 0 ;
-        if (s < sectorLogico2) despl_b = 511 ; else despl_b = despl2 ;
-        for ( despl = despl_a ; despl <= despl_b ; despl++ )
-            *dir++ = ptrBuferSO1[despl] ;
-        cont = cont + despl_b - despl_a + 1 ;
+        if (s < sectorLogico2) despl_b = 511 ; else despl_b = despl2 ;	
+		nbytes_sector = despl_b - despl_a + 1 ;
+        if (cmd == cmd_read_sector)	             /* cmd == cmd_read_sector */
+		{	
+            err = opSectorDB(s, db, ptrBuferSO1, cmd) ;
+            if (err != 0) return(-1) ;
+//          for ( despl = despl_a ; despl <= despl_b ; despl++ )
+//              *dir++ = ptrBuferSO1[despl] ;
+            memcpy(dir, &ptrBuferSO1[despl_a], nbytes_sector) ;
+		}
+		else                                    /* cmd == cmd_write_sector */ 
+		{
+           	if (nbytes_sector < 512) 
+			{                                       
+                err = opSectorDB(s, db, ptrBuferSO1, cmd_read_sector) ;
+                if (err != 0) return(-1) ;
+			}
+//          for ( despl = despl_a ; despl <= despl_b ; despl++ )
+//              ptrBuferSO1[despl] = *dir++ ;
+            memcpy(&ptrBuferSO1[despl_a], dir, nbytes_sector) ;
+            err = opSectorDB(s, db, ptrBuferSO1, cmd) ;
+            if (err != 0) return(-1) ;
+		}
+		dir = dir + nbytes_sector ;
+        cont = cont + nbytes_sector ;
     }
     descProceso[pindx].tfa[df].pos += cont ;
     return(cont) ;

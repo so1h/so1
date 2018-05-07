@@ -16,6 +16,8 @@
 #include <so1pub.h\ll_s_exc.h>                            /* exec, killpid */
 #include <so1pub.h\ll_s_sig.h>         /* kill, sigaction, sigalarm, pause */ 
 
+#include <so1.h\sf_fbios.h> /* ffblk_t */
+
 /* ----------------------------------------------------------------------- */
 /* -                                                                     - */
 /* -     Llamadas al sistema implementadas mediante traps (int 0x60)     - */
@@ -375,14 +377,14 @@ void obtenInfoPFR ( descProceso_t far * descProceso,
 /* para conocer el orden los procesos preparados.                          */
 /* ----------------------------------------------------------------------- */
 
-
+#if (FALSE)
 void obtenInfoFAB ( descriptor_de_fichero_t far * df ) ;
 
 /* ----------------------------------------------------------------------- */
 /* Esta llamada al sistema copia la tabla de ficheros abiertos en la       */
 /* direccion indicada por df.                                              */
 /* ----------------------------------------------------------------------- */
-
+#endif
 
 void obtenInfoINFO ( info_t far * info ) ;
 

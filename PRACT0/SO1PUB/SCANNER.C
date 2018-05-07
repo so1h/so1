@@ -60,10 +60,10 @@ void inicScanner ( void ) {             /* prepara el analisis del comando */
 }
 
 void obtenCar ( void ) {       /* obtiene el siguiente caracter a analizar */
-  if ((pos < tamComando) && (car != (char)0))
+  if ((pos < tamComando) && (car != '\0'))
     car = toupper(comando[inCmd][pos++]) ;
   else
-    car = (char)0 ;
+    car = '\0' ;
 //escribirLn() ;
 //escribirCar(car) ;
 }
@@ -173,7 +173,7 @@ void identificador ( void ) {          /* analizar siguiente identificador */
       j = 0 ;
       for ( i = pos0 ; i < pos-1 ; i++ )
         str[j++] = toupper(comando[inCmd][i]) ;
-      str[j] = (char)0 ;
+      str[j] = '\0' ;
       return ;
     }
   }
@@ -186,7 +186,7 @@ void identificador ( void ) {          /* analizar siguiente identificador */
   j = 0 ;
   for ( i = pos0 ; i < pos-1 ; i++ )
     str[j++] = toupper(comando[inCmd][i]) ;
-  str[j] = (char)0 ;
+  str[j] = '\0' ;
   simb = s_ident ;
 //escribirStr(" ident = \"") ; escribirStr(str) ; escribirStr("\"\n") ;
 }
@@ -199,12 +199,12 @@ void obtenSimb ( void ) {                  /* obtener el siguiente símbolo */
   else if (('0' <= car) && (car <= '9')) numDec() ;
   else {
     switch (car) {
-    case '>'     : simb = s_mayor ; break ;
-    case '<'     : simb = s_menor ; break ;
-    case '|'     : simb = s_pipe ; break ;
-    case '&'     : simb = s_ampersand ; break ;
-    case (char)0 : simb = s_fin ; break ;
-    default      : simb = s_nulo ;
+    case '>'  : simb = s_mayor ; break ;
+    case '<'  : simb = s_menor ; break ;
+    case '|'  : simb = s_pipe ; break ;
+    case '&'  : simb = s_ampersand ; break ;
+    case '\0' : simb = s_fin ; break ;
+    default   : simb = s_nulo ;
     }
   }
 //printStr("\n simbolo = ") ; printDec(simb, 1) ; printLn() ;
@@ -218,8 +218,7 @@ void obtenStr ( void ) {                    /* obtiene el siguiente string */
   do {
     str[i++] = car ;
     obtenCar() ;
-  } while ((car != ' ') && (car != (char)0)) ;
-  str[i] = (char)0 ;
+  } while ((car != ' ') && (car != '\0')) ;
+  str[i] = '\0' ;
   /* printStr("\n str = ") ; printStr(str) ; printLn() ; */
 }
-

@@ -22,10 +22,11 @@ OBJS = createprocess.obj  exec.obj      thread.obj      yield.obj   \
        leerListo.obj leerAsciiListo.obj fcntl.obj  ioctl.obj   \
        obtenInfoSO1.obj    crearRecurso.obj crearFichero.obj esperarDesinstalacion.obj \
        destruirRecurso.obj encolarCcbRecurso.obj eliminarCcbRecurso.obj obtenInfoPS.obj \
-       obtenInfoMEM.obj obtenInfoPFR.obj obtenInfoFAB.obj obtenInfoINFO.obj \
+       obtenInfoMEM.obj obtenInfoPFR.obj obtenInfoINFO.obj \
+#       obtenInfoMEM.obj obtenInfoPFR.obj obtenInfoFAB.obj obtenInfoINFO.obj \
 	   getdisk.obj   procesarEntrada.obj findFirst.obj findNext.obj \
 	   activarTraza.obj analizarProcesos.obj \
-	   ll_buscarBloque.obj ll_devolverBloque.obj ll_tamBloqueMax.obj \
+	   buscarBloque.obj devolverBloque.obj tamBloqueMax.obj \
 	   retardoActivo.obj \
 	   sig_ign.obj sig_dfl.obj __sighandler.obj __handlerreturn.c \
 	   kill.obj sigaction.obj alarm.obj pause.obj sigsuspend.obj 

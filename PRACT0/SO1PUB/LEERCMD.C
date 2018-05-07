@@ -246,7 +246,7 @@ void leerComando ( bool_t autoCompletado, bool_t enmascarado ) {
 
   while (TRUE) {
     carAnt = car ;                       /* guardamos el caracter anterior */
-    if (((car = getchar()) == '\r') || (car == '\n'))       /* fin linea */
+    if (((car = getchar()) == '\r') || (car == '\n'))         /* fin linea */
       break ;
 
     if (car == '\b')                                           /* bakspace */
@@ -255,7 +255,7 @@ void leerComando ( bool_t autoCompletado, bool_t enmascarado ) {
         i-- ;
       }
       else putchar('\a') ;              /* pitido si el comando esta vacio */
-    else if (car == '\0') {                 /* caracter ascii extendido */
+    else if (car == '\0') {                    /* caracter ascii extendido */
       scanCode = (byte_t)getchar() ;
 //    printf("\n scanCode = 0x%02X", scanCode) ;
       switch (scanCode) {
@@ -331,9 +331,15 @@ void leerComando ( bool_t autoCompletado, bool_t enmascarado ) {
       }
     }
     else if (car == '\f') {         /* '\f' (formfeed ==> borrar pantalla) */
+//	  putchar('L') ;                                             /* Ctrl-L */
 	  putchar(car) ; 
       car = '\r' ;                                     /* retorno de carro */
       break ;
+    }
+    else if (car == EOT) {                        /* EOT (Ctrl-D ==> exit) */
+//	  putchar('D') ;
+      strcpy(comando[inCmd], "exit") ;
+	  return ;
     }
     else {              /* introducir el caracter car en comando[inCmd][i] */
 

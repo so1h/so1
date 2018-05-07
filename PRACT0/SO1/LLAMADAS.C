@@ -36,7 +36,8 @@ extern void so1_manejador_02 ( void ) ;                 /* 0: obtenInfoSO1 */
 
 extern void so1_manejador_03 ( void ) ;                      /* 0: retardo */
 //                                       /* 1: obtenInfoPS 2: obtenInfoMEM */
-//                                     /* 3: obtenInfoFAB 4: obtenInfoINFO */
+//                                                     /* 4: obtenInfoINFO */
+/////                                     /* 3: obtenInfoFAB 4: obtenInfoINFO */
 //                                  /* 5: getdisk 6: findFirst 7: findNext */
 
 extern void so1_manejador_04 ( void ) ;                 /* 0: activarTraza */

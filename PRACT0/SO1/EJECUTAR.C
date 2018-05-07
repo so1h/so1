@@ -19,7 +19,8 @@
 #include <so1.h\ajustes.h>                                     /* desplCab */
 #include <so1.h\units.h>
 #include <so1.h\fatunit.h>
-#include <so1.h\sf.h>
+#include <so1.h\sf_fbios.h>  /* formatearNombre, abrirFichero, tamFichero, */
+                      /* tamProceso, cerrarFichero, cargaFicheroAbierto_Ok */
 
 //#include <so1.h\so1dbg.h>                            /* puntoDeParadaSO1 */
 

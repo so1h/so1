@@ -71,21 +71,21 @@ int redirigirSTDIO ( char * nombreDispositivo ) {
 void interpretar_exit ( void ) 
 {
     int signo = +1 ;
-    if (getppid() != 0) 
-	{
-        saltarBlancos() ; obtenSimb() ; 
-        if (car == '-') { obtenCar() ; obtenSimb() ; signo = -1 ; }
-        if (simb == s_fin) { num = 0 ; simb = s_exit ; return ; }
-        if (simb == s_numero) { num = signo*num ; simb = s_exit ; return ; }
-        printf(" formato exit [num] ") ;
-    }
-    else                                    /* exit tecleado en la consola */
+    if (getppid() == 0)                     /* exit tecleado en la consola */
 	{
         printf(
             "\a"                                                      "\n"
             ""                                                        "\n"
             " comando no permitido en la consola (use shutdown o halt) \n"
         ) ;
+    }
+	else 
+	{
+        saltarBlancos() ; obtenSimb() ; 
+        if (car == '-') { obtenCar() ; obtenSimb() ; signo = -1 ; }
+        if (simb == s_fin) { num = 0 ; simb = s_exit ; return ; }
+        if (simb == s_numero) { num = signo*num ; simb = s_exit ; return ; }
+        printf(" formato exit [num] ") ;
     }
     simb = s_nulo ;
 }

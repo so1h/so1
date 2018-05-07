@@ -120,24 +120,4 @@ typedef struct {                                  /* entrada de directorio */
 
 #define bytesPorEntrada sizeof(entrada_t)                            /* 32 */
 
-typedef struct {
-  bool_t libre ;                  /* descriptor de fichero libre u ocupado */
-  entrada_t entrada ;              /* entrada del fichero en el directorio */
-  byte_t unidadLogica ;     /* unidad logica donde se encuentra el fichero */
-  int sectorLogico ;               /* sector logico ocupado por la entrada */
-  int numEntrada ;                   /* numero de la entrada en ese sector */
-} descriptor_de_fichero_t ;
-
-typedef struct {
-  char      ff_attrib ;
-  unsigned  ff_ftime ;
-  unsigned  ff_fdate ;
-  long      ff_fsize ;
-  char      ff_name [13] ;
-  int       unidadLogica ;
-  byte_t    bindx ;    /* indice (0..15) de la entrada actual en el buffer */
-  word_t    eindx ; /* indice (0.. ) de la entrada actual en el directorio */
-  pointer_t buffer ;  /* puntero a un bufer local del proceso de 512 bytes */
-} ffblk_t ;
-
 #endif /* DEF_SF_H */

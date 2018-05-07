@@ -25,6 +25,7 @@
 #include <so1pub.h\pic.h>                                   /* IRQ_TECLADO */
 #include <so1pub.h\def_timer.h>                            /* argCbTimer_t */
 #include <so1pub.h\printgen.h>            /* printGenStr, printGenDec, ... */
+#include <so1pub.h\carsctrl.h>                                      /* EOT */
 
 #include <so1pub.h\debug.h>                               /* puntoDeParada */
 
@@ -517,9 +518,13 @@ void far isr_consola ( void )
     if (scanCodeAnt == CS_Ctrl) CtrlPulsada = TRUE ;
     else if (scanCodeAnt == (CS_Ctrl | 0x80)) CtrlPulsada = FALSE ;
 
-    if ((CtrlPulsada) && (scanCode == 0x26))                     /* Ctrl+L */
-        cambiarTeclaListaBDA((teclaListaBDA() & 0xFF00) | '\f') ;
-
+    if (CtrlPulsada) {
+		if (scanCode == 0x26)                                    /* Ctrl+L */
+            cambiarTeclaListaBDA((teclaListaBDA() & 0xFF00) | '\f') ;
+        else if (scanCode == 0x32)                               /* Ctrl+D */
+            cambiarTeclaListaBDA((teclaListaBDA() & 0xFF00) | EOT) ;  
+    }
+	
     if (AltPulsada)
     {
         switch (scanCode)
@@ -1140,7 +1145,7 @@ int desintegrarConsola ( void )
           ) ;
     if (res != 0)
         printf(" no pudo eliminarse el callback del TIMER ") ;
-    else if (ll_devolverBloque(                                      /* GM */
+    else if (devolverBloque(                                         /* GM */
                 FP_SEG(descConsola),
                 ((maxConsolas*sizeof(descConsola_t))+15)/16)
             )

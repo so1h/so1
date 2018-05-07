@@ -23,10 +23,9 @@
 #include <so1.h\recursos.h>                   /* inicRecursos, destruirRec */
 #include <so1.h\procesos.h>     /* descProceso, ... , inicProcesos, c2cPFR */ 
 #include <so1.h\sf_msdos.h>                                /* inicSF_MSDOS */
-#include <so1.h\sf_fbios.h> 
 #include <so1.h\units.h>
 #include <so1.h\fatunit.h>        
-#include <so1.h\sf.h>        /* inicSF, inicTablaFichAbiertos, segBuferSO1 */
+#include <so1.h\sf_fbios.h>                 /* inicSF_FATBIOS, segBuferSO1 */
 #include <so1.h\plot.h>                                         /* finPlot */
 #include <so1.h\ajustes.h>   /* modoSO1, guardarDS_SO1, IMRInicial, CS_SO1 */
 //                                                           /* unidadBIOS */
@@ -171,7 +170,9 @@ void main ( void )                             /* interrupciones inhibidas */
         printStrBIOS("\n unidadBIOS = 0x") ;
         printHexBIOS(unidadBIOS(), 2) ;		
         inicSF_FATBIOS() ;                    /* asigna memoria a FAT (GM) */
-    }
+	    E(pid = thread(SF, SP0_SF, 0x0000)) ;                 /* driver DB */
+        strcpy(descProceso[indice(pid)].comando, "SF") ;
+	}
     else
         assert(inicSF_MSDOS() == 0, "\a\n so1(): ERROR inicSF_MSDOS") ;
 

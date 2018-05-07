@@ -117,7 +117,7 @@ int inic_0 ( word_t numConsolas, word_t ticsPorRodaja )
 
 #if (CONSOLA) 
 
-    ll_buscarBloque(                                                 /* GM */
+    buscarBloque(                                                    /* GM */
 	    (((numConsolas+1)*sizeof(descConsola_t))+15)/16
 	) ; 
     

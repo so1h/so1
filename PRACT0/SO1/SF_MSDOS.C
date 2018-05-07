@@ -22,7 +22,6 @@
 #include <so1.h\recursos.h>                                    /* crearRec */
 #include <so1.h\interrup.h>                                       /* VIOrg */
 #include <so1.h\plot.h>                                            /* plot */
-#include <so1.h\sf.h>                                   /* formatearNombre */
 
 #include <so1.h\sf_msdos.h> 
 
@@ -120,7 +119,7 @@ int inicSF_MSDOS ( void )
     descRecurso_t dR ;
 
     dR.tipo = rSF ;
-    strcpy(dR.nombre, "SF_MSDOS") ;
+    strcpy(dR.nombre, "SF") ;
     dR.ccb = (ccb_t)&descCcbSF ;
     dR.ccb->arg = NULL ;
     dR.pindx = indProcesoActual ;

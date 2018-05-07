@@ -8,7 +8,6 @@
 #define CONST_H
 
 #define maxProcesos 20                        /* numero maximo de procesos */ 
-//#define maxProcesos 16                        /* numero maximo de procesos */ 
 
 #define dfMax 10   /* numero maximo de descriptores de fichero del proceso */
 
@@ -19,4 +18,3 @@
 #define nVIntMax 128 /* 256 */    /* vectores de interrupcion redirigibles */
 
 #endif /* CONST_H */
-

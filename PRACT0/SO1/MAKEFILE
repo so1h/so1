@@ -33,7 +33,7 @@ OBJS0 = obj\ajustes.obj  \
         obj\recursos.obj \
         obj\units.obj    \
         obj\fatunit.obj  \
-        obj\sf.obj       \
+###        obj\sf.obj       \
 #                        \
 #       drivers:         \
 #       =======          \

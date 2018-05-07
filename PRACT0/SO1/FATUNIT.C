@@ -115,15 +115,17 @@ int inicFatUnit ( void )                     /* asigna memoria para la FAT */
     primerSectorDatos =
         primerSectorDirRaiz + sectoresDirRaiz ;
 
-    tamFAT =
-        (dword_t)ptrBPB->sectoresPorFAT
-        *(dword_t)bytesPorSector ;
+    tamFAT = (dword_t)ptrBPB->sectoresPorFAT * (dword_t)bytesPorSector ;
 
-	tipo = ptrDParticion[i].tipo ;	
-    if (tipo == 0x01)
+    if (d_bloque[ptrDULogica->db].unidadBIOS >= 0x80)	     /* disco duro */
+	    if ((tipo = ptrDParticion[i].tipo) == 0x04)
+            entradasFAT = tamFAT/2 ;                              /* FAT16 */
+		else return(-1) ;
+    else 
+	{	
+        tipo = 0x01 ; 
         entradasFAT = (tamFAT*2)/3 ;                              /* FAT12 */
-    else /* tipo == 0x04 */
-        entradasFAT = tamFAT/2 ;                                  /* FAT16 */
+	}
 		
 	if ((ptrBPB->numeroDeFATs == 0) ||
         (ptrBPB->numeroDeFATs > 2))		
@@ -150,13 +152,15 @@ int inicFatUnit ( void )                     /* asigna memoria para la FAT */
 //  printLDecBIOS(entradasFAT, 1) ;
 
     segmento = k_buscarBloque(                                       /* GM */
-	    (word_t)(((ptrBPB->numeroDeFATs*entradasFAT)+15)/16)
+	    (word_t)(((sizeof(word_t)*entradasFAT)+15)/16)
 	) ;  
     FAT = (word_t far *)MK_FP(segmento, 0x0000) ;
 
     printStrBIOS(" FAT = ") ;
     printPtrBIOS((pointer_t)FAT) ;
-
+//  printStrBIOS(" tipo = 0x") ;
+//  printHexBIOS(tipo, 4) ;
+	
     if (((tipo == 0x01) && (cargaFAT12_Ok(unidadLogicaActual) != 0)) ||
         ((tipo == 0x04) && (cargaFAT16_Ok(unidadLogicaActual) != 0)))
     {
@@ -199,9 +203,9 @@ void desempaquetarFAT12 ( pointer_t    bufer,
 //      FAT[i] = ((ptr[1] << 8) + ptr[0]) & 0x0FFF ;
 //      FAT[i+1] = ((word_t)((ptr[2] << 8) + ptr[1])) >> 4 ;
 //      incPtr((pointer_t *)&ptr, 3) ;
-        FAT[i] = (*((word_t *)ptr)) & 0x0FFF ;
-		FAT[i+1] = (*((word_t *)(++ptr))) >> 4 ;
-        incPtr((pointer_t *)&ptr, 2) ;
+        FAT[i] = (*((word_t far *)ptr++)) & 0x0FFF ;
+ 		FAT[i+1] = (*((word_t far *)ptr)) >> 4 ;
+		ptr += 2 ;
     }
 }
 
@@ -211,6 +215,8 @@ int cargaFAT12_Ok ( byte_t unidadLogica )
     word_t segmento ;
     segmento =  k_buscarBloque((word_t)((tamFAT + 15)/16)) ;         /* GM */
     bytesFAT = (pointer_t)MK_FP(segmento, 0x0000) ;
+    printStrBIOS(" bytes packed FAT12 = ") ;
+    printPtrBIOS((pointer_t)bytesFAT) ;
     cargarSectoresFAT(unidadLogica, bytesFAT) ;    /* lectura FAT12 packed */
     if ((bytesFAT[0] != descUnidadLogica[unidadLogica].BPB.tipoDeMedio) ||
         (bytesFAT[1] != 0xFF) ||
