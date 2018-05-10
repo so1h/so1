@@ -22,8 +22,8 @@ descUnidadLogica_t descUnidadLogica [ maxUL ] ;
 
 descUnidadFisica_t descUnidadFisica [ maxUF ] ;
 
-#define MOSTRARUNIDADES TRUE
-//#define MOSTRARUNIDADES FALSE
+//#define MOSTRARUNIDADES TRUE
+#define MOSTRARUNIDADES FALSE
 
 void inicUnits ( void )            /* inicializa las unidades con d_bloque */
 {

@@ -86,7 +86,7 @@ void main ( void )                             /* interrupciones inhibidas */
     case modoSO1_Bin : /* SO1.BIN arrancado desde un disco/disquete (BIOS) */
     case modoSO1_Exe :                                          /* SO1.EXE */
     case modoSO1_Com :                                          /* SO1.COM */
-    case modoSO1_Bs  :                   /* SO1.BIN arrancado con SYSLINUX */
+    case modoSO1_Bs  :            /* SO1.BIN arrancado con SYSLINUX o iPXE */
         mostrarFlags() ;
         printStrBIOS("=> SO1 v1.4.1 (C) Pedro Pablo Lopez Rodriguez\n") ;
         assert((valorFlags() & 0x0200) == 0x0000,
@@ -165,12 +165,13 @@ void main ( void )                             /* interrupciones inhibidas */
     /* Para llegar a un VFS los puntos de montaje del sistema de ficheros  */
     /* deben aludir a nuevos recursos de tipo sistema de ficheros rec_sf_i */ 	
 	
-    if ((modoSO1() == modoSO1_Bin) || (modoSO1() == modoSO1_Bs))
+    if ((modoSO1() == modoSO1_Bin) ||                 /* boot from PBR/MBR */
+	    (modoSO1() == modoSO1_Bs))              /* boot from SYSLINUX/iPXE */
     {
         printStrBIOS("\n unidadBIOS = 0x") ;
         printHexBIOS(unidadBIOS(), 2) ;		
-        inicSF_FATBIOS() ;                    /* asigna memoria a FAT (GM) */
-	    E(pid = thread(SF, SP0_SF, 0x0000)) ;                 /* driver DB */
+        inicSF_FATBIOS() ;                 /* asigna memoria a la FAT (GM) */
+	    E(pid = thread(SF, SP0_SF, 0x0000)) ;                 /* driver SF */
         strcpy(descProceso[indice(pid)].comando, "SF") ;
 	}
     else

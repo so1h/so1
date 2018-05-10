@@ -79,9 +79,6 @@ shell:
   cd so1pub
   if exist interpre.c (touch interpre.c)
   make obj\interpre.obj
-  cd ..\so1
-  if exist iniccode.c (touch iniccode.c)
-  make obj\iniccode.obj
   cd ..\progusr\sh
   make
   cd ..\inic
@@ -122,7 +119,34 @@ rundosboxdbg:
 # cd disquete
 # start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe so1.exe -noconsole -exit
   start $(UUSB):\Interno\dosbox-0.74\dosbox-74-debug.exe so1dbox.bat -noconsole -exit 
-
+  
+rundebug: DISQUETE\so1.bin
+  @echo.
+  @cd DISQUETE
+  @if not exist so1.com @copy so1.bin so1.com  
+# msdos_debug so1.com
+  start cmd /K "mode con cols=80 lines=25 & cls & msdos_debug so1.com "
+  $(UUSB):\Utilidades\teraterm.exe telnet://localhost:23 /T=1
+ 
+rd: 
+  @if not exist .\RD mkdir .\RD
+  copy .\disquete\so1.exe      .\RD > NUL
+  copy .\disquete\inic_0.bin   .\RD > NUL
+  copy .\disquete\inic.bin     .\RD > NUL
+  copy .\disquete\inic_end.bin .\RD > NUL
+  copy .\disquete\retardo.bin  .\RD > NUL
+  copy .\disquete\timer.bin    .\RD > NUL
+  copy .\disquete\consola.bin  .\RD > NUL
+  copy .\disquete\reloj.bin    .\RD > NUL
+  copy .\disquete\raton.bin    .\RD > NUL
+  copy .\disquete\login.bin    .\RD > NUL
+  copy .\disquete\sh.bin       .\RD > NUL
+  copy .\disquete\info.bin     .\RD > NUL
+  copy .\disquete\time.bin     .\RD > NUL
+  copy .\disquete\date.bin     .\RD > NUL
+  copy .\disquete\ps.bin       .\RD > NUL
+  copy .\disquete\mem.bin      .\RD > NUL
+ 
 help:
 # echo off & color 07 & title help & msg * "Hola"
   @"echo."
@@ -132,9 +156,11 @@ help:
   @"echo    make clean     borra todo salvo los fuentes y ficheros MAKEFILE"
   @"echo    make build     borra todo y genera de nuevo (make clean + make)"
   @"echo    make disquete  copia SO1.BIN y SO1.EXE en el directorio DISQUETE"
+  @"echo    make rd        copia SO1.EXE y drivers en el directorio RD"
   @"echo    make shell     recompila interpre.c y actualiza SH.BIN e INIC.BIN"
   @"echo    make run       ejecuta SO1.EXE en el directorio DISQUETE (Player)"
   @"echo    make runcom    ejecuta SO1.COM en el directorio DISQUETE (Player)"
+  @"echo    make rundebug  ejecuta SO1.COM en el directorio DISQUETE (Player)"
   @"echo    make rundosbox ejecuta SO1.EXE en el directorio DISQUETE (DOSBox)"
   @"echo    make show      mueve los ficheros .C de los directorios SOURCE"
   @"echo    make hide      mueve los ficheros .C a los directorios SOURCE"

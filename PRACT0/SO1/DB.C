@@ -221,21 +221,31 @@ word_t segBuferSO1 = 0xFFFF ;  /* bufer para leer de forma segura sectores */
 /* 512 bytes, devolviendo de los 1024 bytes solicitados los bytes          */
 /* restantes tras el bufer.                                                */
 
-word_t segBuferSeguro ( void )                        /* seguro con el DMA */
+word_t segBuferSeguro ( bool_t Ok )                   /* seguro con el DMA */
 {
-    word_t segB ;
+    static word_t segB ;
+    static word_t tamB ;
     word_t segBufer ;                     /* 512 bytes = 512/16 paragrafos */
-    segB = k_buscarBloque(2*(512/16)) ;                              /* GM */
-    segBufer = segB ;
-//  if ((segB % (512/16)) != 0)                 /* no multiplo de (512/16) */
-    if ((segB & 0xF000) != ((segB + 512/16) & 0xF000))   /* atraviesa 64KB */
-        segBufer = ((segB & 0xFFE0) + 512/16) ;      /* siguiente multiplo */
-    k_devolverBloque(
-        segBufer + 512/16,
-//      segB + 2*(512/16) - (segBufer + 512/16)
-        segB + 512/16 - segBufer
-    ) ;                                                              /* GM */
-    return(segBufer) ;
+	if (Ok) 
+	{	
+    	tamB = 2*(512/16) ;                        /* pedimos dos sectores */
+        segB = k_buscarBloque(tamB) ;                                /* GM */
+        segBufer = segB ;
+//      if ((segB % (512/16)) != 0)             /* no multiplo de (512/16) */
+        if ((segB & 0xF000) != ((segB + 512/16) & 0xF000)) /* traverse 64K */
+            segBufer = ((segB & 0xFFE0) + 512/16) ;  /* siguiente multiplo */
+        k_devolverBloque(
+            segBufer + 512/16,
+//          segB + 2*(512/16) - (segBufer + 512/16)
+            segB + 512/16 - segBufer
+        ) ;                                                          /* GM */
+	    tamB = segBufer + 512/16 - segB ;  /* tamaño real del bloque usado */
+        return(segBufer) ;
+	}
+	else 
+	{
+		return((word_t)k_devolverBloque(segB, tamB)) ; 
+    }		
 }
 
 d_bloque_t d_bloque [ dbMax ] = {
@@ -257,10 +267,88 @@ d_bloque_t d_bloque [ dbMax ] = {
 
 //#define dbMax (sizeof(d_bloque)/sizeof(d_bloque_t))
 
-int detectarDB ( void )          /* retorna el numero de unidades detectadas */
+/* ----------------------------------------------------------------------- */
+
+#if (CONCACHE)
+	
+descBloqueCache_t descBloqueCache [ numBloquesCache ] ;
+
+int victimaDB = 0 ;                        /* positica de sustitucion FIFO */
+
+void inicCacheDB ( void ) 
+{
+	int i ;
+   	for ( i = 0 ; i < numBloquesCache ; i++ )    /* inicializamos la cache */
+   	{
+        descBloqueCache[i].ocupado = FALSE ;
+    	descBloqueCache[i].db = -1 ;
+    	descBloqueCache[i].sectorLogico = 0L ;
+    	descBloqueCache[i].dir = MK_FP(k_buscarBloque(512/16), 0x0000) ;    
+    }   
+}
+
+int leerDeCache ( dword_t sectorLogico,  int db, pointer_t dir )  
+{
+    int i ;
+	for ( i = 0 ; i < numBloquesCache ; i++ ) 
+	    if ((descBloqueCache[i].ocupado) &&
+	        (descBloqueCache[i].sectorLogico == sectorLogico) &&
+	        (descBloqueCache[i].db == db)) 
+			break ;
+	if (i < numBloquesCache) 
+	{
+    	memcpy(dir, descBloqueCache[i].dir, 512) ;    
+		return(0) ;
+	}
+	else return(-1) ;
+} 
+
+void meterEnCacheDB ( dword_t sectorLogico,  int db, pointer_t dir )  
+{
+    int i ;
+	for ( i = 0 ; i < numBloquesCache ; i++ ) 
+	    if (!descBloqueCache[i].ocupado) 
+			break ;
+	if (i < numBloquesCache) 
+	{
+        descBloqueCache[i].ocupado = TRUE ;
+    	descBloqueCache[i].db = db ;
+    	descBloqueCache[i].sectorLogico = sectorLogico ;
+    	memcpy(descBloqueCache[i].dir, dir, 512) ;    
+	}
+	else 
+	{
+		i = victimaDB ;
+		victimaDB = (victimaDB + 1) % numBloquesCache ;
+        descBloqueCache[i].ocupado = TRUE ;
+    	descBloqueCache[i].db = db ;
+    	descBloqueCache[i].sectorLogico = sectorLogico ;
+    	memcpy(descBloqueCache[i].dir, dir, 512) ;    
+	}	
+}
+
+int sacarDeCacheDB ( dword_t sectorLogico,  int db )  
+{
+    int i ;
+	for ( i = 0 ; i < numBloquesCache ; i++ ) 
+	    if ((descBloqueCache[i].ocupado) &&
+	        (descBloqueCache[i].sectorLogico == sectorLogico) &&
+	        (descBloqueCache[i].db == db)) 
+		{
+			descBloqueCache[i].ocupado = FALSE ;
+			return(0) ;
+		}
+	return(-1) ;	
+}
+
+#endif                                                         /* CONCACHE */
+
+/* ----------------------------------------------------------------------- */
+
+int detectarDB ( void )        /* retorna el numero de unidades detectadas */
 {
     int i, j, k ;
-	int cont ;                    /* cuenta el numero de unidades detectadas */
+	int cont ;                  /* cuenta el numero de unidades detectadas */
     byte_t tipoUnidad ;
     CSH_t CSH, CSHMax ;
 
@@ -275,8 +363,9 @@ int detectarDB ( void )          /* retorna el numero de unidades detectadas */
     word_t sectoresPorCilindro ;
     int error ;
 
-    segBuferSO1 = segBuferSeguro() ;                /* para poder leer las */
+    segBuferSO1 = segBuferSeguro(TRUE) ;            /* para poder leer las */
                                             /* tablas de particiones (MBR) */
+											
     mbr = (mbr_t far *)ptrBuferSO1 ;
     CSH.h = 0 ;                      /* sector logico 0 => sector fisico 1 */
     CSH.cs = 0x0001 ;                              /* C = 0, S = 1 y H = 0 */
@@ -332,6 +421,17 @@ int detectarDB ( void )          /* retorna el numero de unidades detectadas */
     for ( i = 0 ; i < dbMax ; i++ ) 
         if (d_bloque[i].tipoUnidad != 0x00) 
             cont++ ;
+		
+	if (cont > 0)
+    {		           
+#if (CONCACHE)
+	    inicCacheDB() ;
+#endif
+	}		
+	else                    /* devolvemos el bloque que contiene a segBuferSO1 */
+	{
+		segBuferSeguro(FALSE) ;
+	}
     return(cont) ;		
 }
 
@@ -413,6 +513,12 @@ int opSectorDB ( dword_t sectorLogico, int db, pointer_t dir, byte_t cmd )
 
     if (db >= dbMax) return(-1) ;
     if (d_bloque[db].tipoUnidad == 0x00) return(-1) ;
+	if (sectorLogico >= d_bloque[db].primerSector + d_bloque[db].numSectores)
+		return(-1) ;
+#if (CONCACHE)	
+	if ((cmd == cmd_read_sector) && (leerDeCache(sectorLogico, db, dir) == 0))
+        return(0) ;		
+#endif 	
     unidadBIOS = d_bloque[db].unidadBIOS ;
 	dir = normalizar(dir) ;
     posibleErr9 = posibleErr9EnOpBIOS(FP_SEG(dir)) ;
@@ -436,6 +542,11 @@ int opSectorDB ( dword_t sectorLogico, int db, pointer_t dir, byte_t cmd )
     }
     else err = opSectorLBA(sectorLogico, unidadBIOS, dirAux, cmd) ;
 
+#if (CONCACHE)
+	if ((cmd == cmd_read_sector) && (!err))
+		meterEnCacheDB(sectorLogico, db, dirAux) ;
+#endif 		
+	
     if ((!err) && (posibleErr9) && (cmd == cmd_read_sector))
         memcpy(dir, dirAux, 512) ;
     return(err) ;

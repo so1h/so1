@@ -33,11 +33,11 @@ int inicDB ( void ) ;                                    /* inicializacion */
 
 void * DB ( void * arg ) ;            /* funcion ejecutada por el servidor */
 
-extern pindx_t pindxSrvDB ;
+extern pindx_t pindxSrvDB ;                         /* indice del servidor */
 
 #define ptrBuferSO1 ((pointer_t)MK_FP(segBuferSO1, 0x0000))   
 
-word_t segBuferSeguro ( void ) ;                      /* seguro con el DMA */
+word_t segBuferSeguro ( bool_t Ok ) ;                 /* seguro con el DMA */
 
 extern word_t segBuferSO1 ;    /* bufer para leer de forma segura sectores */
                                     /* con el BIOS (ver error 0x09 int 13) */
@@ -51,5 +51,33 @@ typedef struct {                        /* peticion read/write al servidor */
 	word_t    nbytes ;                                  /* numero de bytes */ /*  2 bytes */
     byte_t    cmd ;                                             /* comando */ /*  1 byte  */
 } peticionDB_t ;                                                  /* total */ /*  9 bytes */    
+
+/* cache */
+			
+#define CONCACHE TRUE
+//#define CONCACHE FALSE
+			
+#if (CONCACHE)
+	
+#define numBloquesCache 16 
+
+typedef struct {
+	bool_t    ocupado ;                            /* bloque libre/ocupado */
+	int       db ;                               /* dispositivo de bloques */
+    dword_t   sectorLogico ;                   /* sector logico almacenado */
+    pointer_t dir ;                                /* bloques de 512 bytes */
+} descBloqueCache_t ;
+
+extern descBloqueCache_t descBloqueCache [ numBloquesCache ] ;
+
+void inicCacheDB ( void ) ;
+
+int leerDeCache ( dword_t sectorLogico,  int db, pointer_t dir ) ;
+
+void meterEnCacheDB ( dword_t sectorLogico,  int db, pointer_t dir ) ;
+
+int sacarDeCacheDB ( dword_t sectorLogico,  int db ) ; 
+ 
+#endif									
 									
 #endif /* DB_H */

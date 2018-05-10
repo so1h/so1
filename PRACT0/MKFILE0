@@ -110,5 +110,3 @@ OPCIONES_LR = format dos output raw offset=0x0000 op v, start=_startBin, map, qu
 #RELLENAR   = $(UTMP):\PRGTOOLS\BIN\RELLENAR.EXE
 #SETSR      = $(UTMP):\PRGTOOLS\BIN\SETSR.EXE
 #SPINIC     = $(UTMP):\PRGTOOLS\BIN\SPINIC.EXE
-
- 

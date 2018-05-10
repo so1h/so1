@@ -159,6 +159,14 @@ rundosbox:
 # cd ..\..\disquete
 # start $(UUSB):\Interno\dosbox-0.74\dosbox.exe so1.exe -noconsole -exit
   start $(UUSB):\Interno\dosbox-0.74\dosbox.exe ..\..\so1dbox.bat -noconsole -exit
+  
+rundebug: ..\..\disquete\so1.bin
+  @echo.
+  @cd ..\..\DISQUETE
+  @if not exist so1.com @copy so1.bin so1.com
+# msdos_debug so1.com
+  start cmd /K "mode con cols=80 lines=25 & cls & msdos_debug so1.com "
+  $(UUSB):\Utilidades\teraterm.exe telnet://localhost:23 /T=1
 
 rundosboxdbg:
   @echo.
@@ -182,6 +190,7 @@ help:
   @"echo    make lst        genera nuevo fichero de listado $(PROGRAMA).LST"
   @"echo    make run        ejecuta SO1.EXE en el directorio DISQUETE (Player)"
   @"echo    make runcom     ejecuta SO1.COM en el directorio DISQUETE (Player)"
+  @"echo    make rundebug   ejecuta SO1.COM en el directorio DISQUETE (Player)"  
   @"echo    make rundosbox  ejecuta SO1.EXE en el directorio DISQUETE (DOSBox)"
   @"echo    make spinic     ejecuta spinic $(PROGRAMA).BIN para conocer su pila"  
   @"echo    make show       mueve los ficheros .C de los directorios SOURCE"
